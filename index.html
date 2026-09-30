@@ -138,7 +138,7 @@ a.sel-card{display:block;text-decoration:none;color:inherit}
 .empty-st .ico{font-size:32px;margin-bottom:10px;opacity:.5}
 .empty-st p{font-size:13px;margin-bottom:12px;line-height:1.6}
 .modal-overlay{position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(0,0,0,.75);z-index:1000;display:none;align-items:center;justify-content:center;padding:20px}
-.modal-overlay.on{display:flex}
+.modal-overlay.on{display:flex!important}
 .modal-box{background:var(--card);border:1px solid var(--border2);border-radius:18px;width:100%;max-width:480px;max-height:88vh;display:flex;flex-direction:column}
 .modal-hd{padding:18px 22px;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;flex-shrink:0}
 .modal-ttl{font-family:'Rajdhani',sans-serif;font-weight:700;font-size:19px}
@@ -697,10 +697,10 @@ var currentStudentId=null,currentWinId=null,currentWinProfile=null;
   // Checkbox disparadores — patrón label+checkbox change (confirmed working)
   function bOn(id,fn){var b=document.getElementById(id);if(b)b.addEventListener("click",fn);}
   function bAll(cls,fn){document.querySelectorAll("."+cls).forEach(function(b){b.addEventListener("click",fn);});}
-  bOn("fit-btn-add",function(){openAddStudent();});
-  bAll("fit-btn-add",function(){openAddStudent();});
-  bOn("fit-btn-edit-rev",function(){editRevenue("fit");});
-  bAll("fit-btn-add-win",function(){addWin("fit");});
+  bOn("fit-btn-add",function(){try{openAddStudent();}catch(e){alert("Error +Alumno: "+e.message);}});
+  bAll("fit-btn-add",function(){try{openAddStudent();}catch(e){alert("Error +Agregar: "+e.message);}});
+  bOn("fit-btn-edit-rev",function(){try{editRevenue("fit");}catch(e){alert("Error editRev: "+e.message);}});
+  bAll("fit-btn-add-win",function(){try{addWin("fit");}catch(e){alert("Error addWin: "+e.message);}});
   bOn("modal-x-btn",function(){closeModal();});
   bOn("modal-cancel-btn",function(){closeModal();});
   bOn("modal-save-btn",function(){modalSave();});
@@ -1006,15 +1006,16 @@ function renderPipeline(){
 <script>
 // === CRUD MODALS ===
 function openModal(title,bodyHtml,saveFn){
-  el("modal-ttl").textContent=title;
-  el("modal-bd").innerHTML=bodyHtml;
-  var mo=el("modal-overlay");
-  mo.style.setProperty("display","flex","important");
+  var ttl=el("modal-ttl"),bd=el("modal-bd"),mo=el("modal-overlay");
+  if(!ttl||!bd||!mo){alert("Modal missing: ttl="+(!!ttl)+",bd="+(!!bd)+",mo="+(!!mo));return;}
+  ttl.textContent=title;
+  bd.innerHTML=bodyHtml;
+  mo.classList.add("on");
   modalSaveFn=saveFn;
 }
 function closeModal(){
   var mo=el("modal-overlay");
-  if(mo)mo.style.setProperty("display","none","important");
+  if(mo)mo.classList.remove("on");
   modalSaveFn=null;
 }
 function modalSave(){
