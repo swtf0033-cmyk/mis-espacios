@@ -1005,6 +1005,7 @@ function renderPipeline(){
 </script>
 <script>
 // === CRUD MODALS ===
+function el(id){return document.getElementById(id);}
 function openModal(title,bodyHtml,saveFn){
   var ttl=el("modal-ttl"),bd=el("modal-bd"),mo=el("modal-overlay");
   if(!ttl||!bd||!mo){alert("Modal missing: ttl="+(!!ttl)+",bd="+(!!bd)+",mo="+(!!mo));return;}
@@ -1294,6 +1295,7 @@ function renderAgFinSummary(){
 </script>
 <script>
 // === CHART HELPERS ===
+function el(id){return document.getElementById(id);}
 function dc(id){if(charts[id]){try{charts[id].destroy();}catch(e){}delete charts[id];}}
 Chart.defaults.font.family="Inter,system-ui";
 Chart.defaults.font.size=11;
