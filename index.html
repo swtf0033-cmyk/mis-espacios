@@ -962,7 +962,7 @@ var currentStudentId=null,currentWinId=null,currentWinProfile=null;
   bAll("fit-btn-add-win",function(){try{addWin("fit");}catch(e){alert("Error addWin: "+e.message);}});
   bOn("modal-x-btn",function(){closeModal();});
   bOn("modal-cancel-btn",function(){closeModal();});
-  bOn("modal-save-btn",function(){modalSave();});
+  bOn("modal-save-btn",function(){try{modalSave();}catch(e){alert("Error al guardar: "+e.message);}});
   bOn("btn-new-quote",function(){newQuote();});
 })();
 </script>
