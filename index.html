@@ -997,6 +997,21 @@ function renderFitAlerts(){
   var attn=state.students.filter(function(s){return s.payStatus==="Atencion";});
   var items=overdue.map(function(s){return '<div class="ai"><div class="aico" style="background:var(--danger-d)">&#128179;</div><div><div class="aim">'+s.name+' &mdash; pago vencido</div><div class="ais">'+fmtMoney(s.fee)+'/mes</div></div></div>';});
   items=items.concat(attn.map(function(s){return '<div class="ai"><div class="aico" style="background:var(--warn-d)">&#9888;</div><div><div class="aim">'+s.name+' &mdash; atencion</div><div class="ais">Seguimiento pendiente</div></div></div>';}));
+  // Cumpleaños: hoy y próximos 7 días
+  var now=new Date();var todayY=now.getFullYear();
+  state.students.forEach(function(s){
+    if(!s.birthday)return;
+    var p=s.birthday.split("/");if(p.length!==2)return;
+    var d=parseInt(p[0]),m=parseInt(p[1]);if(!d||!m)return;
+    var bDate=new Date(todayY,m-1,d);
+    var diff=Math.round((bDate-now)/(86400000));
+    if(diff<0){bDate=new Date(todayY+1,m-1,d);diff=Math.round((bDate-now)/(86400000));}
+    if(diff===0){
+      items.push('<div class="ai"><div class="aico" style="background:rgba(251,191,36,.15);font-size:18px">&#127874;</div><div><div class="aim" style="color:var(--warn)">&#161;Hoy es el cumpleanos de '+s.name+'!</div><div class="ais">Felicitalo hoy</div></div></div>');
+    } else if(diff<=7){
+      items.push('<div class="ai"><div class="aico" style="background:rgba(168,85,247,.12);font-size:18px">&#127874;</div><div><div class="aim">Cumpleanos de '+s.name+' en '+diff+' dia'+(diff===1?"":"s")+'</div><div class="ais">'+d+'/'+(m<10?"0"+m:m)+'</div></div></div>');
+    }
+  });
   var html=items.length?items.join(""):'<div class="empty-st"><div class="ico">&#9989;</div><p>Sin alertas pendientes</p></div>';
   el("fit-alerts").innerHTML=html;
 }
@@ -1313,7 +1328,10 @@ function studentForm(s){
     '</div><div class="form-r">'+
     '<div class="form-g"><label>Estado pago</label><select id="f-pay" class="fi"><option value="Al dia"'+(v.payStatus==="Al dia"?" selected":"")+'>Al dia</option><option value="Vencido"'+(v.payStatus==="Vencido"?" selected":"")+'>Vencido</option><option value="Atencion"'+(v.payStatus==="Atencion"?" selected":"")+'>Atencion</option></select></div>'+
     '<div class="form-g"><label>Dieta</label><select id="f-diet" class="fi"><option value="Omnivoro"'+(v.diet==="Omnivoro"?" selected":"")+'>Omnivoro</option><option value="Vegetariana"'+(v.diet==="Vegetariana"?" selected":"")+'>Vegetariana</option><option value="Vegana"'+(v.diet==="Vegana"?" selected":"")+'>Vegana</option><option value="Keto"'+(v.diet==="Keto"?" selected":"")+'>Keto</option></select></div>'+
-    '</div><div class="form-g"><label>Ultimo pago (ej: 01 oct)</label><input id="f-lastpay" class="fi" value="'+(v.lastPayment||"")+'"></div>'+
+    '</div><div class="form-r">'+
+    '<div class="form-g"><label>Ultimo pago (ej: 01 oct)</label><input id="f-lastpay" class="fi" value="'+(v.lastPayment||"")+'"></div>'+
+    '<div class="form-g"><label>Cumpleanos (DD/MM)</label><input id="f-bday" class="fi" placeholder="ej: 15/03" value="'+(v.birthday||"")+'"></div>'+
+    '</div>'+
     '<div class="form-g" style="margin-top:8px"><label>Lesiones / condiciones medicas</label><textarea id="f-injuries" class="fi" rows="2" placeholder="Ej: rodilla derecha, hernia lumbar...">'+(v.injuries||"")+'</textarea></div>'+
     '<div class="form-g"><label>Notas del entrenador</label><textarea id="f-notes" class="fi" rows="2" placeholder="Observaciones, progreso, recordatorios...">'+(v.notes||"")+'</textarea></div>';
 }
@@ -1335,6 +1353,7 @@ function getStudentData(){
     payStatus:el("f-pay").value,
     diet:el("f-diet").value,
     lastPayment:el("f-lastpay").value.trim(),
+    birthday:el("f-bday").value.trim(),
     injuries:el("f-injuries").value.trim(),
     notes:el("f-notes").value.trim()
   };
