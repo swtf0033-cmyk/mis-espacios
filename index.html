@@ -1339,9 +1339,14 @@ function getStudentData(){
 }
 
 function refreshStudents(){
-  state.students=lsGet("students",[]).sort(function(a,b){return(a.name||"").localeCompare(b.name||"");});
-  renderStudents();renderFitStats();renderFitAlerts();renderFitRanking();
-  if(currentApp==="fit")setTimeout(function(){initCharts("fit",currentView("fit"));},60);
+  try{
+    state.students=lsGet("students",[]).sort(function(a,b){return(a.name||"").localeCompare(b.name||"");});
+    if(typeof renderStudents==="function")renderStudents();else{alert("renderStudents no existe. Bloque JS no cargo.");}
+    if(typeof renderFitStats==="function")renderFitStats();
+    if(typeof renderFitAlerts==="function")renderFitAlerts();
+    if(typeof renderFitRanking==="function")renderFitRanking();
+    if(currentApp==="fit")setTimeout(function(){try{initCharts("fit",currentView("fit"));}catch(e){}},60);
+  }catch(e){alert("Error en refreshStudents: "+e.message);}
 }
 function openAddStudent(){
   openModal("Agregar alumno",studentForm(null),function(){
