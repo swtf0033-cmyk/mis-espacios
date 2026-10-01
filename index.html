@@ -1197,22 +1197,22 @@ function renderFreedom(){
   if(rEl&&!rEl.matches(":focus"))rEl.value=rate||"";
   if(nEl&&!nEl.matches(":focus"))nEl.value=networth||"";
   calcFreedomDisplay(monthly,rate,networth);
-  var nwEl=el(“fr-nw-display”);if(nwEl)nwEl.textContent=networth>0?fmtMoney(networth):”$—“;
+  var nwEl=el("fr-nw-display");if(nwEl)nwEl.textContent=networth>0?fmtMoney(networth):"$—";
 }
 
 function calcFreedom(){
-  var monthly=parseFloat((el(“fr-monthly”)||{}).value)||0;
-  var rate=parseFloat((el(“fr-rate”)||{}).value)||0;
-  var networth=parseFloat((el(“fr-networth”)||{}).value)||0;
+  var monthly=parseFloat((el("fr-monthly")||{}).value)||0;
+  var rate=parseFloat((el("fr-rate")||{}).value)||0;
+  var networth=parseFloat((el("fr-networth")||{}).value)||0;
   calcFreedomDisplay(monthly,rate,networth);
-  var nwEl=el(“fr-nw-display”);if(nwEl)nwEl.textContent=networth>0?fmtMoney(networth):”$—“;
-  var fd={monthly:monthly,rate:rate,networth:networth};lsSettingSet(“settings/freedom”,fd);state.freedom=fd;
+  var nwEl=el("fr-nw-display");if(nwEl)nwEl.textContent=networth>0?fmtMoney(networth):"$—";
+  var fd={monthly:monthly,rate:rate,networth:networth};lsSettingSet("settings/freedom",fd);state.freedom=fd;
 }
 
 function calcFreedomDisplay(monthly,rate,networth){
-  var capEl=el(“fr-capital”);var pctEl=el(“fr-pct”);var barEl=el(“fr-bar”);
+  var capEl=el("fr-capital");var pctEl=el("fr-pct");var barEl=el("fr-bar");
   if(!capEl)return;
-  if(rate<=0){capEl.textContent=”$—“;pctEl.textContent=”0%”;barEl.style.width=”0%”;return;}
+  if(rate<=0){capEl.textContent="$—";pctEl.textContent="0%";barEl.style.width="0%";return;}
   var cap=monthly*12*100;cap=safediv(cap,rate);
   var pct=cap>0?Math.min(safediv(networth*100,cap),100):0;
   capEl.textContent=fmtMoney(Math.round(cap));
