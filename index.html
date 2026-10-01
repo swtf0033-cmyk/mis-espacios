@@ -661,6 +661,8 @@ label.switch-btn:hover{background:var(--acc-d2);color:var(--txt)}
           <div class="bm-f"><div class="bm-l">Pecho</div><div class="bm-r"><input class="bm-i" type="number" id="e-pecho" placeholder="—"><span class="bm-u">cm</span></div></div>
           <div class="bm-f"><div class="bm-l">Bícep</div><div class="bm-r"><input class="bm-i" type="number" id="e-bicep" placeholder="—"><span class="bm-u">cm</span></div></div>
           <div class="bm-f"><div class="bm-l">Muslo</div><div class="bm-r"><input class="bm-i" type="number" id="e-muslo" placeholder="—"><span class="bm-u">cm</span></div></div>
+          <div class="bm-f"><div class="bm-l">Glúteo</div><div class="bm-r"><input class="bm-i" type="number" id="e-glut" placeholder="—"><span class="bm-u">cm</span></div></div>
+          <div class="bm-f"><div class="bm-l">Pantorrilla</div><div class="bm-r"><input class="bm-i" type="number" id="e-pant" placeholder="—"><span class="bm-u">cm</span></div></div>
         </div>
       </div>
       <div class="eval-layout">
@@ -1556,6 +1558,8 @@ function saveCurrentEval(){
     pecho:parseFloat((el("e-pecho")||{}).value)||null,
     bicep:parseFloat((el("e-bicep")||{}).value)||null,
     muslo:parseFloat((el("e-muslo")||{}).value)||null,
+    glut:parseFloat((el("e-glut")||{}).value)||null,
+    pant:parseFloat((el("e-pant")||{}).value)||null,
     p1:parseFloat((el("ep1")||{}).value)||null,
     p2:parseFloat((el("ep2")||{}).value)||null,
     p3:parseFloat((el("ep3")||{}).value)||null,
