@@ -635,7 +635,7 @@ label.switch-btn:hover{background:var(--acc-d2);color:var(--txt)}
   <div class="eval-body">
 
     <!-- TAB 0: COMPOSICIÓN -->
-    <div class="eval-panel on" id="ep0">
+    <div class="eval-panel on" id="etab0">
       <div class="calc-banner" id="eval-calc-banner">
         <div class="cb-item"><div class="cb-lbl">IMC</div><div class="cb-val" id="e-imc">—</div><div class="cb-cat" id="e-imc-cat">—</div></div>
         <div class="cb-item"><div class="cb-lbl">ICC</div><div class="cb-val" id="e-icc">—</div><div class="cb-cat" id="e-icc-cat">—</div></div>
@@ -718,7 +718,7 @@ label.switch-btn:hover{background:var(--acc-d2);color:var(--txt)}
     </div>
 
     <!-- TAB 1: TESTS FÍSICOS -->
-    <div class="eval-panel" id="ep1">
+    <div class="eval-panel" id="etab1">
       <div style="background:rgba(168,85,247,.08);border:1px solid var(--border2);border-radius:8px;padding:10px 13px;font-size:12px;color:var(--txt2);margin-bottom:14px">Repite estos tests cada <strong style="color:var(--acc)">4–6 semanas</strong> para ver la evolución.</div>
       <div class="test-c">
         <div class="test-hd"><div class="test-ico">🧘</div><div><div style="font-size:13px;font-weight:700">Flexibilidad — Sit &amp; Reach</div><div style="font-size:11px;color:var(--txt2);margin-top:2px">Sentado, piernas extendidas. Centímetros más allá de los pies (+ adelante / − atrás).</div></div></div>
@@ -770,7 +770,7 @@ label.switch-btn:hover{background:var(--acc-d2);color:var(--txt)}
     </div>
 
     <!-- TAB 2: HISTORIAL -->
-    <div class="eval-panel" id="ep2">
+    <div class="eval-panel" id="etab2">
       <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:14px">
         <div style="font-size:14px;font-weight:700">Evaluaciones guardadas</div>
         <button class="btn btn-p" style="font-size:11px;padding:6px 14px" onclick="setEvalTab(0)">+ Nueva evaluación</button>
@@ -1392,7 +1392,7 @@ function closeEval(){
 }
 function setEvalTab(n){
   document.querySelectorAll(".eval-tab").forEach(function(t,i){t.classList.toggle("on",i===n);});
-  for(var i=0;i<3;i++){var p=el("ep"+i);if(p)p.classList.toggle("on",i===n);}
+  for(var i=0;i<3;i++){var p=el("etab"+i);if(p)p.classList.toggle("on",i===n);}
   // hide save btn on history tab
   var sb=el("eval-save-btn");if(sb)sb.style.display=n===2?"none":"inline-flex";
 }
