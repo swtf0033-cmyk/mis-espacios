@@ -1369,7 +1369,7 @@ function deleteStudent(id){
 }
 
 // ═══ EVAL OVERLAY ═══
-var evalStudentId=null;
+var evalStudentId=null,editingEvalIndex=null;
 function openEval(id){
   var s=state.students.find(function(x){return x.id===id;});if(!s)return;
   evalStudentId=id;
@@ -1381,8 +1381,10 @@ function openEval(id){
   if(s.height){var eh=el("e-altura");if(eh)eh.value=s.height;}
   // reset caliper & FC
   ["ep1","ep2","ep3","ep4"].forEach(function(id){var i=el(id);if(i)i.value="";});
-  ["e-cin","e-cad","e-pecho","e-bicep","e-muslo","e-fc-rep","e-fc-antes","e-fc-med"].forEach(function(id){var i=el(id);if(i)i.value="";});
+  ["e-cin","e-cad","e-pecho","e-bicep","e-muslo","e-glut","e-pant","e-fc-rep","e-fc-antes","e-fc-med"].forEach(function(id){var i=el(id);if(i)i.value="";});
   ["e-sr","e-push","e-sit","e-sq","e-step"].forEach(function(id){var i=el(id);if(i)i.value="";});
+  editingEvalIndex=null;
+  var sb=el("eval-save-btn");if(sb)sb.textContent="Guardar evaluacion";
   eCalcAuto();eCalcGrasa();eCalcZona();
   renderEvalHistory();
   setEvalTab(0);
@@ -1390,7 +1392,24 @@ function openEval(id){
 }
 function closeEval(){
   var o=el("eval-overlay");if(o)o.classList.remove("on");
-  evalStudentId=null;
+  evalStudentId=null;editingEvalIndex=null;
+  var sb=el("eval-save-btn");if(sb)sb.textContent="Guardar evaluacion";
+}
+function loadEvalForEdit(idx){
+  var evs=lsGet("evals-"+evalStudentId,[]);
+  var ev=evs[idx];if(!ev)return;
+  editingEvalIndex=idx;
+  function sv(id,v){var e=el(id);if(e&&v!=null)e.value=v;}
+  sv("e-peso",ev.peso);sv("e-altura",ev.altura);
+  sv("e-cin",ev.cin);sv("e-cad",ev.cad);
+  sv("e-pecho",ev.pecho);sv("e-bicep",ev.bicep);sv("e-muslo",ev.muslo);
+  sv("e-glut",ev.glut);sv("e-pant",ev.pant);
+  sv("ep1",ev.p1);sv("ep2",ev.p2);sv("ep3",ev.p3);sv("ep4",ev.p4);
+  sv("e-fc-rep",ev.fcRep);sv("e-fc-antes",ev.fcAntes);sv("e-fc-med",ev.fcMed);
+  sv("e-sr",ev.testSR);sv("e-push",ev.testPush);sv("e-sit",ev.testSit);sv("e-sq",ev.testSq);sv("e-step",ev.testStep);
+  eCalcGrasa();eCalcAuto();if(ev.fcMed)eCalcZona();
+  var sb=el("eval-save-btn");if(sb)sb.textContent="Actualizar evaluacion";
+  setEvalTab(0);
 }
 function setEvalTab(n){
   document.querySelectorAll(".eval-tab").forEach(function(t,i){t.classList.toggle("on",i===n);});
@@ -1578,9 +1597,18 @@ function saveCurrentEval(){
   if(ev.peso)lsDocSet("students",evalStudentId,{weight:ev.peso});
   if(ev.altura)lsDocSet("students",evalStudentId,{height:ev.altura});
   if(ev.grasa)lsDocSet("students",evalStudentId,{bodyFat:ev.grasa});
-  // save eval to student's eval list
+  // save/update eval in student's eval list
   var key="evals-"+evalStudentId;
-  var evs=lsGet(key,[]);evs.unshift(ev);lsSave(key,evs);
+  var evs=lsGet(key,[]);
+  if(editingEvalIndex!==null&&editingEvalIndex<evs.length){
+    ev.ts=evs[editingEvalIndex].ts;ev.date=evs[editingEvalIndex].date;
+    evs[editingEvalIndex]=ev;
+  } else {
+    evs.unshift(ev);
+  }
+  lsSave(key,evs);
+  editingEvalIndex=null;
+  var sb=el("eval-save-btn");if(sb)sb.textContent="Guardar evaluacion";
   state.students=lsGet("students",[]).sort(function(a,b){return(a.name||"").localeCompare(b.name||"");});
   renderEvalHistory();
   renderStudents();renderFitStats();
@@ -1601,7 +1629,8 @@ function renderEvalHistory(){
     if(ev.testPush)items.push({l:"Flexiones",v:ev.testPush+" reps"});
     if(ev.testStep){var vo2=Math.round((111.33-(0.42*ev.testStep))*10)/10;items.push({l:"VO₂ máx",v:vo2+" ml/kg/min"});}
     return '<div class="ev-item">'+
-      '<div class="ev-hd"><div style="font-size:13px;font-weight:700">Evaluacion #'+(evs.length-i)+'</div><div style="font-size:11px;color:var(--txt2)">'+ev.date+'</div></div>'+
+      '<div class="ev-hd"><div style="font-size:13px;font-weight:700">Evaluacion #'+(evs.length-i)+'</div><div style="font-size:11px;color:var(--txt2)">'+ev.date+'</div>'+
+      '<button onclick="loadEvalForEdit('+i+')" style="margin-left:auto;background:var(--acc-d);color:var(--acc);border:1px solid var(--border2);border-radius:6px;font-size:10px;font-weight:700;padding:3px 10px;cursor:pointer;letter-spacing:.03em">Editar</button></div>'+
       '<div class="ev-stats">'+items.map(function(it){return '<div class="ev-stat"><div class="ev-sl">'+it.l+'</div><div class="ev-sv">'+it.v+'</div></div>';}).join("")+'</div>'+
       '</div>';
   }).join("");
