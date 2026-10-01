@@ -1,4 +1,4 @@
-﻿<!doctype html>
+<!doctype html>
 <html>
 <head>
 <meta charset=utf8>
@@ -74,6 +74,7 @@ a.sel-card{display:block;text-decoration:none;color:inherit}
 .tb-title{font-family:'Rajdhani',sans-serif;font-weight:700;font-size:20px;flex:1}
 .btn{display:inline-flex;align-items:center;gap:6px;padding:8px 16px;border-radius:8px;font-size:13px;font-weight:600;font-family:'Inter',sans-serif;cursor:pointer;border:none;transition:all .18s}
 .btn-p{background:var(--grad);color:#fff}
+.btn-c{background:var(--surf);color:var(--txt2);border:1px solid var(--border)}
 .btn-p:hover{opacity:.9;transform:translateY(-1px)}
 .content{flex:1;overflow-y:auto;overflow-x:hidden;padding:20px 22px}
 .sg{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-bottom:18px}
@@ -139,6 +140,95 @@ a.sel-card{display:block;text-decoration:none;color:inherit}
 .empty-st p{font-size:13px;margin-bottom:12px;line-height:1.6}
 .modal-overlay{position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(0,0,0,.75);z-index:1000;display:none;align-items:center;justify-content:center;padding:20px}
 .modal-overlay.on{display:flex!important}
+/* eval overlay */
+.eval-overlay{position:fixed;top:0;left:0;right:0;bottom:0;background:var(--bg);z-index:1100;display:none;flex-direction:column;overflow:hidden}
+.eval-overlay.on{display:flex!important}
+.eval-hd{display:flex;align-items:center;gap:12px;padding:14px 20px;border-bottom:1px solid var(--border);flex-shrink:0;background:var(--card)}
+.eval-hd-name{font-family:'Rajdhani',sans-serif;font-weight:700;font-size:18px;flex:1}
+.eval-hd-sub{font-size:11px;color:var(--txt2);margin-top:1px}
+.eval-tabs{display:flex;gap:6px;padding:12px 20px 0;border-bottom:1px solid var(--border);flex-shrink:0;background:var(--card)}
+.eval-tab{padding:8px 14px;border-radius:8px 8px 0 0;border:none;background:transparent;color:var(--txt2);font-size:12px;font-weight:600;font-family:'Inter',sans-serif;cursor:pointer;border:1px solid transparent;border-bottom:none;margin-bottom:-1px}
+.eval-tab.on{background:var(--bg);color:var(--acc);border-color:var(--border2)}
+.eval-body{flex:1;overflow-y:auto;padding:18px 20px}
+.eval-panel{display:none}.eval-panel.on{display:block}
+.eval-section{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:16px;margin-bottom:14px}
+.eval-sec-ttl{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:var(--txt2);margin-bottom:12px;display:flex;align-items:center;gap:7px}
+.eval-sec-ttl::before{content:"";display:block;width:3px;height:12px;background:var(--grad);border-radius:2px}
+/* calc banner */
+.calc-banner{display:flex;flex-wrap:wrap;gap:0;background:var(--acc-d);border:1px solid var(--border2);border-radius:12px;margin-bottom:14px;overflow:hidden}
+.cb-item{padding:12px 16px;text-align:center;flex:1;min-width:90px}
+.cb-item+.cb-item{border-left:1px solid var(--border2)}
+.cb-lbl{font-size:9px;font-weight:700;text-transform:uppercase;letter-spacing:.06em;color:var(--txt2)}
+.cb-val{font-family:'Rajdhani',sans-serif;font-size:22px;font-weight:700;background:var(--grad);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;line-height:1.2}
+.cb-cat{font-size:9px;font-weight:700;margin-top:2px}
+/* bm grid */
+.bm-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin-bottom:10px}
+.bm-grid3{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}
+.bm-f{background:var(--surf);border:1px solid var(--border);border-radius:9px;padding:10px}
+.bm-l{font-size:9px;font-weight:700;text-transform:uppercase;letter-spacing:.05em;color:var(--txt2);margin-bottom:5px}
+.bm-r{display:flex;align-items:center;gap:4px}
+.bm-i{flex:1;background:transparent;border:none;color:var(--txt);font-size:17px;font-weight:700;font-family:'Rajdhani',sans-serif;outline:none;min-width:0;width:100%}
+.bm-u{font-size:10px;color:var(--txt2)}
+/* skinfold rows */
+.eval-layout{display:grid;grid-template-columns:170px 1fr;gap:14px;align-items:start}
+.sil-card-e{background:var(--surf);border:1px solid var(--border);border-radius:12px;padding:14px}
+.mfc-e{background:var(--surf);border:1px solid var(--border);border-radius:12px;padding:14px}
+.mf-row{display:flex;align-items:center;gap:8px;padding:8px 10px;border-radius:8px;border:1px solid var(--border);margin-bottom:6px;background:var(--card);transition:border .2s}
+.mf-row.on{border-color:var(--acc);background:var(--acc-d)}
+.mf-n{width:19px;height:19px;border-radius:50%;background:var(--acc-d);border:1px solid var(--acc);color:var(--acc);font-size:9px;font-weight:800;display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.mf-info{flex:1;min-width:0}
+.mf-name{font-size:12px;font-weight:600}
+.mf-hint{font-size:10px;color:var(--txt2)}
+.mf-iw{display:flex;align-items:center;gap:4px}
+.mf-i{width:60px;background:var(--card);border:1px solid var(--border2);border-radius:6px;padding:5px 8px;color:var(--txt);font-size:13px;font-weight:700;font-family:'Rajdhani',sans-serif;text-align:right;outline:none}
+.mf-i:focus{border-color:var(--acc)}
+.mf-u{font-size:10px;color:var(--txt2)}
+.e-rbox{border-radius:9px;padding:11px 14px;margin-top:10px;display:flex;justify-content:space-between;align-items:center;border:1px solid var(--border2);background:var(--acc-d)}
+.e-rbox-val{font-family:'Rajdhani',sans-serif;font-size:28px;font-weight:700;background:var(--grad);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
+/* zona bars */
+.zona-row{display:flex;align-items:center;gap:8px;padding:7px 10px;border-radius:7px;border:1px solid transparent;margin-bottom:4px;transition:all .25s}
+.zona-row.on{border-color:currentColor}
+/* test cards */
+.test-c{background:var(--surf);border:1px solid var(--border);border-radius:12px;padding:14px;margin-bottom:10px}
+.test-hd{display:flex;align-items:center;gap:10px;margin-bottom:12px}
+.test-ico{width:32px;height:32px;border-radius:8px;background:var(--acc-d);display:flex;align-items:center;justify-content:center;font-size:16px;flex-shrink:0}
+.test-body{display:grid;grid-template-columns:auto 1fr;gap:14px;align-items:start}
+.test-fields{display:flex;flex-direction:column;gap:7px}
+.t-field{display:flex;align-items:center;gap:8px;background:var(--card);border:1px solid var(--border);border-radius:8px;padding:8px 10px}
+.t-field label{font-size:11px;font-weight:600;color:var(--txt2);flex:1;white-space:nowrap}
+.t-field input{width:56px;background:var(--surf);border:1px solid var(--border2);border-radius:6px;padding:4px 7px;color:var(--txt);font-size:14px;font-weight:700;font-family:'Rajdhani',sans-serif;text-align:right;outline:none}
+.t-field input:focus{border-color:var(--acc)}
+.t-field .tu{font-size:10px;color:var(--txt2)}
+.t-result{font-size:11px;font-weight:700;padding:8px 10px;border-radius:7px;background:var(--card);border:1px solid var(--border);margin-top:4px}
+.ref-tbl{width:100%;border-collapse:collapse;font-size:11px}
+.ref-tbl th{font-size:9px;font-weight:700;text-transform:uppercase;letter-spacing:.05em;color:var(--txt2);padding:5px 7px;text-align:left;border-bottom:1px solid var(--border)}
+.ref-tbl td{padding:5px 7px;border-bottom:1px solid rgba(255,255,255,.04)}
+.ref-tbl tr.hl td{background:var(--acc-d);color:var(--acc)}
+.cat-b{display:inline-block;padding:2px 7px;border-radius:20px;font-size:10px;font-weight:700}
+/* historial */
+.ev-item{background:var(--surf);border:1px solid var(--border);border-radius:10px;padding:12px 14px;margin-bottom:8px;cursor:pointer;transition:border .2s}
+.ev-item:hover{border-color:var(--acc)}
+.ev-item.latest{border-color:var(--acc)}
+.ev-hd{display:flex;justify-content:space-between;align-items:center;margin-bottom:6px}
+.ev-stat{background:var(--card);border:1px solid var(--border);border-radius:7px;padding:7px 10px;min-width:90px}
+.zona-name{font-size:12px;font-weight:700;width:60px;flex-shrink:0}
+.zona-sub{font-size:10px;color:var(--txt2);flex:1}
+.zona-range{font-size:11px;font-family:'Rajdhani',sans-serif;font-weight:700;width:90px;text-align:right;flex-shrink:0}
+.zona-bar-w{width:80px;height:6px;background:var(--border);border-radius:3px;overflow:hidden;flex-shrink:0}
+.zona-bar-f{height:100%;border-radius:3px;transition:width .4s}
+.zona-act-badge{font-size:9px;font-weight:700;padding:2px 6px;border-radius:10px;flex-shrink:0}
+.zona-row.active{background:var(--surf)}
+.ev-date{font-family:'Rajdhani',sans-serif;font-size:14px;font-weight:700;color:var(--acc)}
+.ev-stats{display:flex;gap:14px;flex-wrap:wrap;margin-top:6px}
+.ev-sv{font-family:'Rajdhani',sans-serif;font-size:16px;font-weight:700}
+.ev-sl{font-size:9px;color:var(--txt2);font-weight:700;text-transform:uppercase}
+.ev-delta{font-size:11px;font-weight:700}
+.ev-green{color:var(--green)}.ev-red{color:var(--danger)}
+/* eval footer */
+.eval-ft{padding:12px 20px;border-top:1px solid var(--border);background:var(--card);display:flex;gap:8px;justify-content:flex-end;flex-shrink:0}
+/* mdot */
+.mdot{position:absolute;width:16px;height:16px;border-radius:50%;background:var(--card);border:2px solid var(--acc);color:var(--acc);font-size:8px;font-weight:800;display:flex;align-items:center;justify-content:center;cursor:pointer;transition:all .2s;transform:translate(-50%,-50%)}
+.mdot.on,.mdot:hover{background:var(--acc);color:#fff}
 .modal-box{background:var(--card);border:1px solid var(--border2);border-radius:18px;width:100%;max-width:480px;max-height:88vh;display:flex;flex-direction:column}
 .modal-hd{padding:18px 22px;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;flex-shrink:0}
 .modal-ttl{font-family:'Rajdhani',sans-serif;font-weight:700;font-size:19px}
@@ -526,6 +616,175 @@ label.switch-btn:hover{background:var(--acc-d2);color:var(--txt)}
     </div>
   </div>
 </div>
+
+<!-- ══ EVAL OVERLAY ══ -->
+<div class="eval-overlay" id="eval-overlay">
+  <div class="eval-hd">
+    <div style="width:38px;height:38px;border-radius:9px;background:var(--acc-d);display:flex;align-items:center;justify-content:center;font-size:17px;flex-shrink:0" id="eval-av">S</div>
+    <div style="flex:1;min-width:0">
+      <div class="eval-hd-name" id="eval-name">Alumno</div>
+      <div class="eval-hd-sub" id="eval-sub">Evaluación corporal</div>
+    </div>
+    <button style="background:none;border:none;color:var(--txt2);cursor:pointer;font-size:22px;padding:4px 8px;border-radius:6px;line-height:1" onclick="closeEval()">✕</button>
+  </div>
+  <div class="eval-tabs">
+    <button class="eval-tab on" onclick="setEvalTab(0)">① Composición</button>
+    <button class="eval-tab" onclick="setEvalTab(1)">② Tests físicos</button>
+    <button class="eval-tab" onclick="setEvalTab(2)">③ Historial</button>
+  </div>
+  <div class="eval-body">
+
+    <!-- TAB 0: COMPOSICIÓN -->
+    <div class="eval-panel on" id="ep0">
+      <div class="calc-banner" id="eval-calc-banner">
+        <div class="cb-item"><div class="cb-lbl">IMC</div><div class="cb-val" id="e-imc">—</div><div class="cb-cat" id="e-imc-cat">—</div></div>
+        <div class="cb-item"><div class="cb-lbl">ICC</div><div class="cb-val" id="e-icc">—</div><div class="cb-cat" id="e-icc-cat">—</div></div>
+        <div class="cb-item"><div class="cb-lbl">Masa muscular</div><div class="cb-val" id="e-mm">—</div><div class="cb-cat" id="e-mm-cat">kg estimados</div></div>
+        <div class="cb-item"><div class="cb-lbl">TMB (Mifflin)</div><div class="cb-val" id="e-tmb">—</div><div class="cb-cat" style="color:var(--txt2)">kcal reposo</div></div>
+        <div class="cb-item">
+          <div class="cb-lbl">TDEE</div><div class="cb-val" id="e-tdee">—</div>
+          <select id="e-act" style="font-size:9px;background:transparent;border:none;color:var(--txt2);outline:none;margin-top:2px;cursor:pointer" onchange="eCalcAuto()">
+            <option value="1.2">Sedentario</option><option value="1.375">Leve (1-3×)</option>
+            <option value="1.55" selected>Moderado (3-5×)</option><option value="1.725">Activo (6-7×)</option><option value="1.9">Atleta</option>
+          </select>
+        </div>
+      </div>
+      <div class="eval-section">
+        <div class="eval-sec-ttl">Medidas corporales</div>
+        <div class="bm-grid">
+          <div class="bm-f"><div class="bm-l">Peso (kg)</div><div class="bm-r"><input class="bm-i" type="number" id="e-peso" placeholder="—" oninput="eCalcAuto()"><span class="bm-u">kg</span></div></div>
+          <div class="bm-f"><div class="bm-l">Altura (cm)</div><div class="bm-r"><input class="bm-i" type="number" id="e-altura" placeholder="—" oninput="eCalcAuto()"><span class="bm-u">cm</span></div></div>
+          <div class="bm-f"><div class="bm-l">Cintura</div><div class="bm-r"><input class="bm-i" type="number" id="e-cin" placeholder="—" oninput="eCalcAuto()"><span class="bm-u">cm</span></div></div>
+          <div class="bm-f"><div class="bm-l">Cadera</div><div class="bm-r"><input class="bm-i" type="number" id="e-cad" placeholder="—" oninput="eCalcAuto()"><span class="bm-u">cm</span></div></div>
+        </div>
+        <div class="bm-grid3">
+          <div class="bm-f"><div class="bm-l">Pecho</div><div class="bm-r"><input class="bm-i" type="number" id="e-pecho" placeholder="—"><span class="bm-u">cm</span></div></div>
+          <div class="bm-f"><div class="bm-l">Bícep</div><div class="bm-r"><input class="bm-i" type="number" id="e-bicep" placeholder="—"><span class="bm-u">cm</span></div></div>
+          <div class="bm-f"><div class="bm-l">Muslo</div><div class="bm-r"><input class="bm-i" type="number" id="e-muslo" placeholder="—"><span class="bm-u">cm</span></div></div>
+        </div>
+      </div>
+      <div class="eval-layout">
+        <div class="sil-card-e">
+          <div style="font-size:9px;font-weight:700;text-transform:uppercase;letter-spacing:.06em;color:var(--txt2);text-align:center;margin-bottom:8px">Puntos caliper</div>
+          <div style="position:relative;width:100px;margin:0 auto">
+            <svg viewBox="0 0 130 280" fill="none" style="width:100px;height:auto;display:block">
+              <ellipse cx="65" cy="24" rx="18" ry="22" fill="#1A1235" stroke="#2F1F56" stroke-width="1.5"/>
+              <rect x="59" y="44" width="12" height="14" rx="4" fill="#1A1235" stroke="#2F1F56" stroke-width="1.5"/>
+              <path d="M38 58 Q28 65 26 90 L28 155 Q30 165 65 167 Q100 165 102 155 L104 90 Q102 65 92 58 Q80 54 65 54 Q50 54 38 58Z" fill="#1A1235" stroke="#2F1F56" stroke-width="1.5"/>
+              <path d="M38 60 Q20 70 18 100 Q16 125 22 145 Q26 155 30 152 Q34 148 32 135 Q28 115 30 95 Q32 75 40 68Z" fill="#1A1235" stroke="#2F1F56" stroke-width="1.5"/>
+              <path d="M92 60 Q110 70 112 100 Q114 125 108 145 Q104 155 100 152 Q96 148 98 135 Q102 115 100 95 Q98 75 90 68Z" fill="#1A1235" stroke="#2F1F56" stroke-width="1.5"/>
+              <path d="M42 164 Q36 180 34 210 Q32 235 34 260 Q36 270 44 270 Q52 270 54 260 Q56 235 56 210 Q58 185 58 165Z" fill="#1A1235" stroke="#2F1F56" stroke-width="1.5"/>
+              <path d="M88 164 Q94 180 96 210 Q98 235 96 260 Q94 270 86 270 Q78 270 76 260 Q74 235 74 210 Q72 185 72 165Z" fill="#1A1235" stroke="#2F1F56" stroke-width="1.5"/>
+            </svg>
+            <div class="mdot" style="left:18%;top:30%" id="ed1" onclick="eDot(1)">1</div>
+            <div class="mdot" style="left:83%;top:26%" id="ed2" onclick="eDot(2)">2</div>
+            <div class="mdot" style="left:36%;top:38%" id="ed3" onclick="eDot(3)">3</div>
+            <div class="mdot" style="left:79%;top:52%" id="ed4" onclick="eDot(4)">4</div>
+          </div>
+          <div style="margin-top:10px;display:flex;flex-direction:column;gap:3px">
+            <div style="display:flex;align-items:center;gap:5px;font-size:10px;color:var(--txt2)"><div style="width:13px;height:13px;border-radius:50%;background:var(--acc-d);border:1px solid var(--acc);color:var(--acc);font-size:8px;font-weight:800;display:flex;align-items:center;justify-content:center;flex-shrink:0">1</div>Trícep</div>
+            <div style="display:flex;align-items:center;gap:5px;font-size:10px;color:var(--txt2)"><div style="width:13px;height:13px;border-radius:50%;background:var(--acc-d);border:1px solid var(--acc);color:var(--acc);font-size:8px;font-weight:800;display:flex;align-items:center;justify-content:center;flex-shrink:0">2</div>Bícep</div>
+            <div style="display:flex;align-items:center;gap:5px;font-size:10px;color:var(--txt2)"><div style="width:13px;height:13px;border-radius:50%;background:var(--acc-d);border:1px solid var(--acc);color:var(--acc);font-size:8px;font-weight:800;display:flex;align-items:center;justify-content:center;flex-shrink:0">3</div>Subescapular</div>
+            <div style="display:flex;align-items:center;gap:5px;font-size:10px;color:var(--txt2)"><div style="width:13px;height:13px;border-radius:50%;background:var(--acc-d);border:1px solid var(--acc);color:var(--acc);font-size:8px;font-weight:800;display:flex;align-items:center;justify-content:center;flex-shrink:0">4</div>Cresta ilíaca</div>
+          </div>
+        </div>
+        <div>
+          <div class="mfc-e" style="margin-bottom:10px">
+            <div style="font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.07em;color:var(--txt2);margin-bottom:10px">Pliegues cutáneos (caliper)</div>
+            <div class="mf-row" id="emr1"><div class="mf-n">1</div><div class="mf-info"><div class="mf-name">Trícep</div><div class="mf-hint">Posterior del brazo, punto medio</div></div><div class="mf-iw"><input class="mf-i" type="number" id="ep1" placeholder="0" oninput="eCalcGrasa()" min="0" max="80"><span class="mf-u">mm</span></div></div>
+            <div class="mf-row" id="emr2"><div class="mf-n">2</div><div class="mf-info"><div class="mf-name">Bícep</div><div class="mf-hint">Anterior del brazo, punto medio</div></div><div class="mf-iw"><input class="mf-i" type="number" id="ep2" placeholder="0" oninput="eCalcGrasa()" min="0" max="80"><span class="mf-u">mm</span></div></div>
+            <div class="mf-row" id="emr3"><div class="mf-n">3</div><div class="mf-info"><div class="mf-name">Subescapular</div><div class="mf-hint">45° bajo el omóplato</div></div><div class="mf-iw"><input class="mf-i" type="number" id="ep3" placeholder="0" oninput="eCalcGrasa()" min="0" max="80"><span class="mf-u">mm</span></div></div>
+            <div class="mf-row" id="emr4"><div class="mf-n">4</div><div class="mf-info"><div class="mf-name">Cresta ilíaca</div><div class="mf-hint">Sobre la cresta ilíaca, horizontal</div></div><div class="mf-iw"><input class="mf-i" type="number" id="ep4" placeholder="0" oninput="eCalcGrasa()" min="0" max="80"><span class="mf-u">mm</span></div></div>
+            <div class="e-rbox">
+              <div><div style="font-size:10px;font-weight:700;color:var(--txt2)">% Grasa corporal</div><div style="font-size:10px;color:var(--acc);font-weight:700;margin-top:2px" id="e-grasa-cat">Ingresa los 4 pliegues</div></div>
+              <div class="e-rbox-val" id="e-grasa-val">—</div>
+            </div>
+          </div>
+          <div class="mfc-e">
+            <div style="font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.07em;color:var(--txt2);margin-bottom:10px">Frecuencia cardíaca</div>
+            <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:7px;margin-bottom:10px">
+              <div class="bm-f"><div class="bm-l">FC reposo</div><div style="font-size:8px;color:var(--txt2);margin-bottom:4px">Mañana / quieto</div><div class="bm-r"><input class="bm-i" type="number" id="e-fc-rep" placeholder="60" min="30" max="120"><span class="bm-u">bpm</span></div></div>
+              <div class="bm-f"><div class="bm-l">FC antes</div><div style="font-size:8px;color:var(--txt2);margin-bottom:4px">Al llegar al gym</div><div class="bm-r"><input class="bm-i" type="number" id="e-fc-antes" placeholder="—" min="30" max="200"><span class="bm-u">bpm</span></div></div>
+              <div class="bm-f" style="border-color:var(--border2)"><div class="bm-l" style="color:var(--acc)">FC 30 min ⚡</div><div style="font-size:8px;color:var(--txt2);margin-bottom:4px">Durante el entreno</div><div class="bm-r"><input class="bm-i" type="number" id="e-fc-med" placeholder="—" oninput="eCalcZona()" min="30" max="220" style="color:var(--acc)"><span class="bm-u">bpm</span></div></div>
+            </div>
+            <div style="background:var(--card);border:1px solid var(--border);border-radius:8px;padding:8px 12px;display:flex;justify-content:space-between;align-items:center;margin-bottom:8px">
+              <span style="font-size:11px;font-weight:700;color:var(--txt2)">FC máxima (220 − edad)</span>
+              <span style="font-family:'Rajdhani',sans-serif;font-size:18px;font-weight:700;color:var(--acc)" id="e-fc-max">— bpm</span>
+            </div>
+            <div id="e-zona-bar"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- TAB 1: TESTS FÍSICOS -->
+    <div class="eval-panel" id="ep1">
+      <div style="background:rgba(168,85,247,.08);border:1px solid var(--border2);border-radius:8px;padding:10px 13px;font-size:12px;color:var(--txt2);margin-bottom:14px">Repite estos tests cada <strong style="color:var(--acc)">4–6 semanas</strong> para ver la evolución.</div>
+      <div class="test-c">
+        <div class="test-hd"><div class="test-ico">🧘</div><div><div style="font-size:13px;font-weight:700">Flexibilidad — Sit &amp; Reach</div><div style="font-size:11px;color:var(--txt2);margin-top:2px">Sentado, piernas extendidas. Centímetros más allá de los pies (+ adelante / − atrás).</div></div></div>
+        <div class="test-body">
+          <div class="test-fields">
+            <div class="t-field"><label>Resultado</label><input type="number" id="e-sr" oninput="eEvalSR()"><span class="tu">cm</span></div>
+            <div class="t-result" id="e-sr-res" style="display:none"></div>
+          </div>
+          <table class="ref-tbl"><thead><tr><th>Nivel</th><th>Hombre</th><th>Mujer</th></tr></thead><tbody>
+            <tr id="tsr-ex"><td><span class="cat-b" style="background:var(--green-d);color:var(--green)">Excelente</span></td><td>&gt;27 cm</td><td>&gt;30 cm</td></tr>
+            <tr id="tsr-bn"><td><span class="cat-b" style="background:rgba(134,239,172,.1);color:#86EFAC">Bueno</span></td><td>17–27</td><td>21–30</td></tr>
+            <tr id="tsr-pr"><td><span class="cat-b" style="background:var(--warn-d);color:var(--warn)">Promedio</span></td><td>6–16</td><td>11–20</td></tr>
+            <tr id="tsr-po"><td><span class="cat-b" style="background:var(--danger-d);color:var(--danger)">Por mejorar</span></td><td>&lt;6</td><td>&lt;11</td></tr>
+          </tbody></table>
+        </div>
+      </div>
+      <div class="test-c">
+        <div class="test-hd"><div class="test-ico">💪</div><div><div style="font-size:13px;font-weight:700">Fuerza funcional — 1 minuto</div><div style="font-size:11px;color:var(--txt2);margin-top:2px">Contar repeticiones en 1 min continuo con forma correcta.</div></div></div>
+        <div class="test-body">
+          <div class="test-fields">
+            <div class="t-field"><label>Flexiones</label><input type="number" id="e-push" oninput="eEvalFuerza()"><span class="tu">reps</span></div>
+            <div class="t-field"><label>Abdominales</label><input type="number" id="e-sit"><span class="tu">reps</span></div>
+            <div class="t-field"><label>Sentadillas</label><input type="number" id="e-sq"><span class="tu">reps</span></div>
+            <div class="t-result" id="e-push-res" style="display:none"></div>
+          </div>
+          <table class="ref-tbl"><thead><tr><th>Nivel</th><th>Flexiones H/M</th></tr></thead><tbody>
+            <tr><td><span class="cat-b" style="background:var(--green-d);color:var(--green)">Excelente</span></td><td>&gt;45 / &gt;36</td></tr>
+            <tr><td><span class="cat-b" style="background:rgba(134,239,172,.1);color:#86EFAC">Bueno</span></td><td>35–44 / 25–35</td></tr>
+            <tr><td><span class="cat-b" style="background:var(--warn-d);color:var(--warn)">Promedio</span></td><td>20–34 / 15–24</td></tr>
+            <tr><td><span class="cat-b" style="background:var(--danger-d);color:var(--danger)">Por mejorar</span></td><td>&lt;20 / &lt;15</td></tr>
+          </tbody></table>
+        </div>
+      </div>
+      <div class="test-c">
+        <div class="test-hd"><div class="test-ico">🪜</div><div><div style="font-size:13px;font-weight:700">Test de escalón — VO₂ máx estimado</div><div style="font-size:11px;color:var(--txt2);margin-top:2px">Sube/baja escalón 30 cm durante 3 min (96 pasos/min). Cuenta pulso 60 seg al terminar.</div></div></div>
+        <div class="test-body">
+          <div class="test-fields">
+            <div class="t-field"><label>FC post-test</label><input type="number" id="e-step" oninput="eEvalStep()"><span class="tu">bpm</span></div>
+            <div class="t-result" id="e-step-res" style="display:none"></div>
+          </div>
+          <table class="ref-tbl"><thead><tr><th>VO₂ max</th><th>Nivel H/M</th></tr></thead><tbody>
+            <tr><td>&gt;55 / &gt;52</td><td><span class="cat-b" style="background:var(--green-d);color:var(--green)">Excelente</span></td></tr>
+            <tr><td>45–54 / 42–51</td><td><span class="cat-b" style="background:rgba(134,239,172,.1);color:#86EFAC">Bueno</span></td></tr>
+            <tr><td>35–44 / 33–41</td><td><span class="cat-b" style="background:var(--warn-d);color:var(--warn)">Promedio</span></td></tr>
+            <tr><td>&lt;35 / &lt;33</td><td><span class="cat-b" style="background:var(--danger-d);color:var(--danger)">Por mejorar</span></td></tr>
+          </tbody></table>
+        </div>
+      </div>
+    </div>
+
+    <!-- TAB 2: HISTORIAL -->
+    <div class="eval-panel" id="ep2">
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:14px">
+        <div style="font-size:14px;font-weight:700">Evaluaciones guardadas</div>
+        <button class="btn btn-p" style="font-size:11px;padding:6px 14px" onclick="setEvalTab(0)">+ Nueva evaluación</button>
+      </div>
+      <div id="eval-hist-list"><div style="text-align:center;padding:30px;color:var(--txt2);font-size:13px">No hay evaluaciones aún. Completa la pestaña de Composición y guarda.</div></div>
+    </div>
+
+  </div><!-- /eval-body -->
+  <div class="eval-ft">
+    <button class="btn btn-c" onclick="closeEval()">Cerrar</button>
+    <button class="btn btn-p" id="eval-save-btn" onclick="saveCurrentEval()">Guardar evaluación</button>
+  </div>
+</div>
+
 <script>
 var QQ=[
 {t:"No busques el exito, busca la excelencia, el exito llegara.",a:"Miyamoto Musashi"},
@@ -758,17 +1017,24 @@ function renderFitRanking(){
 function renderStudents(){
   var html=state.students.map(function(s){
     var pc=s.payStatus==="Al dia"?"bg":s.payStatus==="Vencido"?"bd":"bw";
+    var bodyInfo=(s.weight?s.weight+"kg":"—")+" / "+(s.height?s.height+"cm":"—");
+    var fatTxt=s.bodyFat?s.bodyFat+"%":"—";
     return '<div class="row-item">'+
       '<div class="cap" style="background:var(--acc-d);color:var(--acc);width:40px;height:40px;font-size:14px">'+mkInitials(s.name)+'</div>'+
       '<div style="flex:1;min-width:0"><div style="font-weight:600;font-size:14px">'+s.name+'</div>'+
-      '<div style="font-size:11px;color:var(--txt2);margin-top:2px">'+(s.objective||'')+(s.months?' &middot; '+s.months+' meses':'')+' &middot; '+(s.diet||'')+'</div></div>'+
+      '<div style="font-size:11px;color:var(--txt2);margin-top:2px">'+(s.objective||'')+(s.months?' &middot; '+s.months+' meses':'')+' &middot; '+bodyInfo+'</div></div>'+
       '<div style="text-align:right;margin-right:8px"><div style="font-family:Rajdhani,sans-serif;font-weight:700;font-size:18px;color:var(--acc)">'+(s.progress||0)+'%</div><div style="font-size:10px;color:var(--txt2)">progreso</div></div>'+
-      '<div style="text-align:right;margin-right:10px"><div style="font-family:Rajdhani,sans-serif;font-weight:700;font-size:16px">'+(s.bodyFat||0)+'%</div><div style="font-size:10px;color:var(--txt2)">grasa</div></div>'+
+      '<div style="text-align:right;margin-right:10px"><div style="font-family:Rajdhani,sans-serif;font-weight:700;font-size:16px">'+fatTxt+'</div><div style="font-size:10px;color:var(--txt2)">grasa</div></div>'+
       '<span class="badge '+pc+'">'+s.payStatus+'</span>'+
-      '<div class="row-actions"><button class="btn-icon s-edit" data-id="'+s.id+'">&#9999;</button><button class="btn-icon btn-del s-del" data-id="'+s.id+'">&#128465;</button></div></div>';
+      '<div class="row-actions">'+
+        '<button class="btn-icon s-eval" data-id="'+s.id+'" title="Evaluar" style="font-size:15px">&#128202;</button>'+
+        '<button class="btn-icon s-edit" data-id="'+s.id+'">&#9999;</button>'+
+        '<button class="btn-icon btn-del s-del" data-id="'+s.id+'">&#128465;</button>'+
+      '</div></div>';
   }).join("");
   if(!html)html='<div class="empty-st"><div class="ico">&#128170;</div><p>Aun no tienes alumnos.<br>Agrega tu primero!</p></div>';
   el("students-list").innerHTML=html;
+  el("students-list").querySelectorAll(".s-eval").forEach(function(b){b.addEventListener("click",function(){openEval(this.getAttribute("data-id"));});});
   el("students-list").querySelectorAll(".s-edit").forEach(function(b){b.addEventListener("click",function(){currentStudentId=this.getAttribute("data-id");openEditStudent(currentStudentId);});});
   el("students-list").querySelectorAll(".s-del").forEach(function(b){b.addEventListener("click",function(){currentStudentId=this.getAttribute("data-id");deleteStudent(currentStudentId);});});
 
@@ -1033,21 +1299,45 @@ function studentForm(s){
     '<div class="form-g"><label>Nombre</label><input id="f-name" class="fi" value="'+((v.name||"").replace(/"/g,"&quot;"))+'" placeholder="Nombre completo"></div>'+
     '<div class="form-g"><label>Objetivo</label><select id="f-obj" class="fi"><option value="Perdida de grasa"'+(v.objective==="Perdida de grasa"?" selected":"")+'>Perdida de grasa</option><option value="Volumen"'+(v.objective==="Volumen"?" selected":"")+'>Volumen</option><option value="Definicion"'+(v.objective==="Definicion"?" selected":"")+'>Definicion</option><option value="Salud general"'+(v.objective==="Salud general"?" selected":"")+'>Salud general</option></select></div>'+
     '</div><div class="form-r">'+
-    '<div class="form-g"><label>Meses entrenando</label><input id="f-months" type="number" class="fi" value="'+(v.months||1)+'" min="1"></div>'+
-    '<div class="form-g"><label>% Grasa corporal</label><input id="f-fat" type="number" step="0.1" class="fi" value="'+(v.bodyFat||0)+'"></div>'+
+    '<div class="form-g"><label>Edad</label><input id="f-age" type="number" class="fi" value="'+(v.age||"")+'" min="10" max="90" placeholder="Años"></div>'+
+    '<div class="form-g"><label>Sexo</label><select id="f-sex" class="fi"><option value="M"'+(v.sex==="M"?" selected":"")+'>Masculino</option><option value="F"'+(v.sex==="F"?" selected":"")+'>Femenino</option></select></div>'+
     '</div><div class="form-r">'+
+    '<div class="form-g"><label>Peso (kg)</label><input id="f-weight" type="number" step="0.1" class="fi" value="'+(v.weight||"")+'" placeholder="—"></div>'+
+    '<div class="form-g"><label>Altura (cm)</label><input id="f-height" type="number" class="fi" value="'+(v.height||"")+'" placeholder="—"></div>'+
+    '</div><div class="form-r">'+
+    '<div class="form-g"><label>Meses entrenando</label><input id="f-months" type="number" class="fi" value="'+(v.months||1)+'" min="1"></div>'+
     '<div class="form-g"><label>% Progreso (0-100)</label><input id="f-prog" type="number" class="fi" value="'+(v.progress||0)+'" min="0" max="100"></div>'+
+    '</div><div class="form-r">'+
     '<div class="form-g"><label>Mensualidad ($)</label><input id="f-fee" type="number" class="fi" value="'+(v.fee||0)+'"></div>'+
+    '<div class="form-g"><label>Modalidad de pago</label><select id="f-paymode" class="fi"><option value="Mensual"'+(v.payMode==="Mensual"?" selected":"")+'>Mensual</option><option value="Cuotas"'+(v.payMode==="Cuotas"?" selected":"")+'>Cuotas</option><option value="Credito"'+(v.payMode==="Credito"?" selected":"")+'>Credito</option></select></div>'+
     '</div><div class="form-r">'+
     '<div class="form-g"><label>Estado pago</label><select id="f-pay" class="fi"><option value="Al dia"'+(v.payStatus==="Al dia"?" selected":"")+'>Al dia</option><option value="Vencido"'+(v.payStatus==="Vencido"?" selected":"")+'>Vencido</option><option value="Atencion"'+(v.payStatus==="Atencion"?" selected":"")+'>Atencion</option></select></div>'+
     '<div class="form-g"><label>Dieta</label><select id="f-diet" class="fi"><option value="Omnivoro"'+(v.diet==="Omnivoro"?" selected":"")+'>Omnivoro</option><option value="Vegetariana"'+(v.diet==="Vegetariana"?" selected":"")+'>Vegetariana</option><option value="Vegana"'+(v.diet==="Vegana"?" selected":"")+'>Vegana</option><option value="Keto"'+(v.diet==="Keto"?" selected":"")+'>Keto</option></select></div>'+
-    '</div><div class="form-g"><label>Ultimo pago (ej: 01 oct)</label><input id="f-lastpay" class="fi" value="'+(v.lastPayment||"")+'"></div>';
+    '</div><div class="form-g"><label>Ultimo pago (ej: 01 oct)</label><input id="f-lastpay" class="fi" value="'+(v.lastPayment||"")+'"></div>'+
+    '<div class="form-g" style="margin-top:8px"><label>Lesiones / condiciones medicas</label><textarea id="f-injuries" class="fi" rows="2" placeholder="Ej: rodilla derecha, hernia lumbar...">'+(v.injuries||"")+'</textarea></div>'+
+    '<div class="form-g"><label>Notas del entrenador</label><textarea id="f-notes" class="fi" rows="2" placeholder="Observaciones, progreso, recordatorios...">'+(v.notes||"")+'</textarea></div>';
 }
 function getStudentData(){
   var name=el("f-name").value.trim();
   if(!name)return null;
   var parts=name.split(" ");
-  return {name:name,initials:(parts[0][0]+(parts[1]?parts[1][0]:"")).toUpperCase(),objective:el("f-obj").value,months:parseInt(el("f-months").value)||1,bodyFat:parseFloat(el("f-fat").value)||0,progress:parseInt(el("f-prog").value)||0,fee:parseInt(el("f-fee").value)||0,payStatus:el("f-pay").value,diet:el("f-diet").value,lastPayment:el("f-lastpay").value.trim()};
+  return {
+    name:name,initials:(parts[0][0]+(parts[1]?parts[1][0]:"")).toUpperCase(),
+    objective:el("f-obj").value,
+    age:parseInt(el("f-age").value)||null,
+    sex:el("f-sex").value,
+    weight:parseFloat(el("f-weight").value)||null,
+    height:parseFloat(el("f-height").value)||null,
+    months:parseInt(el("f-months").value)||1,
+    progress:parseInt(el("f-prog").value)||0,
+    fee:parseInt(el("f-fee").value)||0,
+    payMode:el("f-paymode").value,
+    payStatus:el("f-pay").value,
+    diet:el("f-diet").value,
+    lastPayment:el("f-lastpay").value.trim(),
+    injuries:el("f-injuries").value.trim(),
+    notes:el("f-notes").value.trim()
+  };
 }
 
 function refreshStudents(){
@@ -1071,6 +1361,243 @@ function openEditStudent(id){
 function deleteStudent(id){
   if(!confirm("Eliminar este alumno?"))return;
   lsDocDel("students",id);refreshStudents();
+}
+
+// ═══ EVAL OVERLAY ═══
+var evalStudentId=null;
+function openEval(id){
+  var s=state.students.find(function(x){return x.id===id;});if(!s)return;
+  evalStudentId=id;
+  el("eval-av").textContent=mkInitials(s.name);
+  el("eval-name").textContent=s.name;
+  el("eval-sub").textContent=(s.objective||"")+(s.age?" · "+s.age+" años":"")+(s.sex?" · "+(s.sex==="M"?"Hombre":"Mujer"):"");
+  // pre-fill from student base data
+  if(s.weight){var ew=el("e-peso");if(ew)ew.value=s.weight;}
+  if(s.height){var eh=el("e-altura");if(eh)eh.value=s.height;}
+  // reset caliper & FC
+  ["ep1","ep2","ep3","ep4"].forEach(function(id){var i=el(id);if(i)i.value="";});
+  ["e-cin","e-cad","e-pecho","e-bicep","e-muslo","e-fc-rep","e-fc-antes","e-fc-med"].forEach(function(id){var i=el(id);if(i)i.value="";});
+  ["e-sr","e-push","e-sit","e-sq","e-step"].forEach(function(id){var i=el(id);if(i)i.value="";});
+  eCalcAuto();eCalcGrasa();eCalcZona();
+  renderEvalHistory();
+  setEvalTab(0);
+  el("eval-overlay").classList.add("on");
+}
+function closeEval(){
+  var o=el("eval-overlay");if(o)o.classList.remove("on");
+  evalStudentId=null;
+}
+function setEvalTab(n){
+  document.querySelectorAll(".eval-tab").forEach(function(t,i){t.classList.toggle("on",i===n);});
+  for(var i=0;i<3;i++){var p=el("ep"+i);if(p)p.classList.toggle("on",i===n);}
+  // hide save btn on history tab
+  var sb=el("eval-save-btn");if(sb)sb.style.display=n===2?"none":"inline-flex";
+}
+function eDot(n){
+  var f=el("ep"+n);if(!f)return;
+  f.focus();f.select();
+  document.querySelectorAll(".mdot").forEach(function(d,i){d.classList.toggle("active",i+1===n);});
+}
+// Durnin-Womersley 4 pliegues
+function eCalcGrasa(){
+  var s=state.students.find(function(x){return x.id===evalStudentId;});
+  var sex=s?s.sex:"M";var age=s?parseInt(s.age)||25:25;
+  var p1=parseFloat((el("ep1")||{}).value)||0;
+  var p2=parseFloat((el("ep2")||{}).value)||0;
+  var p3=parseFloat((el("ep3")||{}).value)||0;
+  var p4=parseFloat((el("ep4")||{}).value)||0;
+  if(p1+p2+p3+p4<1){el("e-grasa-val").textContent="—";el("e-grasa-cat").textContent="Ingresa los 4 pliegues";return;}
+  var S=p1+p2+p3+p4;
+  var logS=Math.log10(S);
+  var D,c1,c2;
+  if(sex==="M"){
+    if(age<17){c1=1.1533;c2=0.0643;}
+    else if(age<20){c1=1.1620;c2=0.0630;}
+    else if(age<30){c1=1.1631;c2=0.0632;}
+    else if(age<40){c1=1.1422;c2=0.0544;}
+    else if(age<50){c1=1.1620;c2=0.0700;}
+    else{c1=1.1715;c2=0.0779;}
+  } else {
+    if(age<17){c1=1.1369;c2=0.0598;}
+    else if(age<20){c1=1.1549;c2=0.0678;}
+    else if(age<30){c1=1.1599;c2=0.0717;}
+    else if(age<40){c1=1.1423;c2=0.0632;}
+    else if(age<50){c1=1.1333;c2=0.0612;}
+    else{c1=1.1339;c2=0.0645;}
+  }
+  D=c1-(c2*logS);
+  var fat=((4.95/D)-4.50)*100;
+  fat=Math.round(fat*10)/10;
+  var cat,col;
+  if(sex==="M"){cat=fat<6?"Esencial":fat<14?"Atleta":fat<18?"Fitness":fat<25?"Normal":"Alto";}
+  else{cat=fat<14?"Esencial":fat<21?"Atleta":fat<25?"Fitness":fat<32?"Normal":"Alto";}
+  col=cat==="Alto"?"var(--danger)":cat==="Normal"?"var(--warn)":"var(--green)";
+  el("e-grasa-val").textContent=fat+"%";
+  el("e-grasa-cat").style.color=col;el("e-grasa-cat").textContent=cat;
+  // update MM if we have weight
+  var w=parseFloat((el("e-peso")||{}).value)||0;
+  if(w>0){var mm=Math.round((w*(1-fat/100))*10)/10;el("e-mm").textContent=mm;el("e-mm-cat").textContent="kg masa magra";}
+  return fat;
+}
+// IMC, ICC, TMB, TDEE
+function eCalcAuto(){
+  var s=state.students.find(function(x){return x.id===evalStudentId;});
+  var sex=s?s.sex:"M";var age=s?parseInt(s.age)||25:25;
+  var peso=parseFloat((el("e-peso")||{}).value)||0;
+  var alt=parseFloat((el("e-altura")||{}).value)||0;
+  var cin=parseFloat((el("e-cin")||{}).value)||0;
+  var cad=parseFloat((el("e-cad")||{}).value)||0;
+  // IMC
+  if(peso>0&&alt>0){
+    var altM=alt/100;var imc=Math.round((peso/(altM*altM))*10)/10;
+    el("e-imc").textContent=imc;
+    var imcCat=imc<18.5?"Bajo peso":imc<25?"Normal":imc<30?"Sobrepeso":imc<35?"Obesidad I":"Obesidad II";
+    var imcCol=imc<18.5?"var(--warn)":imc<25?"var(--green)":imc<30?"var(--warn)":"var(--danger)";
+    el("e-imc-cat").textContent=imcCat;el("e-imc-cat").style.color=imcCol;
+  }
+  // ICC
+  if(cin>0&&cad>0){
+    var icc=Math.round((cin/cad)*100)/100;
+    el("e-icc").textContent=icc;
+    var riesgo;
+    if(sex==="M"){riesgo=icc<0.90?"Bajo":icc<0.95?"Moderado":"Alto";}
+    else{riesgo=icc<0.80?"Bajo":icc<0.86?"Moderado":"Alto";}
+    var iccCol=riesgo==="Bajo"?"var(--green)":riesgo==="Moderado"?"var(--warn)":"var(--danger)";
+    el("e-icc-cat").textContent=riesgo;el("e-icc-cat").style.color=iccCol;
+  }
+  // TMB Mifflin-St Jeor
+  if(peso>0&&alt>0){
+    var tmb;
+    if(sex==="M"){tmb=Math.round((10*peso)+(6.25*alt)-(5*age)+5);}
+    else{tmb=Math.round((10*peso)+(6.25*alt)-(5*age)-161);}
+    el("e-tmb").textContent=tmb+" kcal";
+    var act=parseFloat((el("e-act")||{}).value)||1.55;
+    var tdee=Math.round(tmb*act);
+    el("e-tdee").textContent=tdee+" kcal";
+  }
+  // FC max
+  el("e-fc-max").textContent=(220-age)+" bpm";
+  eCalcZona();
+  eCalcGrasa();
+}
+// Zona cardíaca
+function eCalcZona(){
+  var s=state.students.find(function(x){return x.id===evalStudentId;});
+  var age=s?parseInt(s.age)||25:25;
+  var fcMax=220-age;
+  var fcMed=parseInt((el("e-fc-med")||{}).value)||0;
+  var bar=el("e-zona-bar");if(!bar)return;
+  var zonas=[
+    {n:"Zona 1",sub:"Recuperación",min:0.5,max:0.6,col:"#22C55E"},
+    {n:"Zona 2",sub:"Aeróbico suave",min:0.6,max:0.7,col:"#84CC16"},
+    {n:"Zona 3",sub:"Aeróbico",min:0.7,max:0.8,col:"#EAB308"},
+    {n:"Zona 4",sub:"Umbral anaeróbico",min:0.8,max:0.9,col:"#F97316"},
+    {n:"Zona 5",sub:"Máximo",min:0.9,max:1.0,col:"#EF4444"}
+  ];
+  bar.innerHTML=zonas.map(function(z){
+    var lo=Math.round(fcMax*z.min);var hi=Math.round(fcMax*z.max);
+    var active=fcMed>=lo&&fcMed<(z.max===1.0?fcMax+1:hi);
+    return '<div class="zona-row'+(active?" active":"")+'">'+
+      '<div class="zona-name" style="color:'+z.col+'">'+z.n+'</div>'+
+      '<div class="zona-sub">'+z.sub+'</div>'+
+      '<div class="zona-range" style="color:'+z.col+'">'+lo+'–'+hi+' bpm</div>'+
+      '<div class="zona-bar-w"><div class="zona-bar-f" style="background:'+z.col+';width:'+Math.round((hi-lo)/fcMax*300)+'%"></div></div>'+
+      (active?'<div class="zona-act-badge" style="background:'+z.col+'20;color:'+z.col+';border:1px solid '+z.col+'">Ahora</div>':'')+
+      '</div>';
+  }).join("");
+}
+// Test evaluations
+function eEvalSR(){
+  var v=parseFloat((el("e-sr")||{}).value);var r=el("e-sr-res");if(!r)return;
+  if(isNaN(v)){r.style.display="none";return;}
+  var s=state.students.find(function(x){return x.id===evalStudentId;});
+  var sex=s?s.sex:"M";
+  var cat,col;
+  if(sex==="M"){cat=v>27?"Excelente":v>=17?"Bueno":v>=6?"Promedio":"Por mejorar";}
+  else{cat=v>30?"Excelente":v>=21?"Bueno":v>=11?"Promedio":"Por mejorar";}
+  col=cat==="Excelente"?"var(--green)":cat==="Bueno"?"#86EFAC":cat==="Promedio"?"var(--warn)":"var(--danger)";
+  r.style.display="block";r.style.color=col;r.textContent="Resultado: "+cat+" ("+v+" cm)";
+}
+function eEvalFuerza(){
+  var v=parseInt((el("e-push")||{}).value);var r=el("e-push-res");if(!r)return;
+  if(!v){r.style.display="none";return;}
+  var s=state.students.find(function(x){return x.id===evalStudentId;});
+  var sex=s?s.sex:"M";
+  var cat,col;
+  if(sex==="M"){cat=v>45?"Excelente":v>=35?"Bueno":v>=20?"Promedio":"Por mejorar";}
+  else{cat=v>36?"Excelente":v>=25?"Bueno":v>=15?"Promedio":"Por mejorar";}
+  col=cat==="Excelente"?"var(--green)":cat==="Bueno"?"#86EFAC":cat==="Promedio"?"var(--warn)":"var(--danger)";
+  r.style.display="block";r.style.color=col;r.textContent="Flexiones: "+cat+" ("+v+" reps)";
+}
+function eEvalStep(){
+  var v=parseInt((el("e-step")||{}).value);var r=el("e-step-res");if(!r)return;
+  if(!v){r.style.display="none";return;}
+  var vo2=Math.round((111.33-(0.42*v))*10)/10;
+  var s=state.students.find(function(x){return x.id===evalStudentId;});
+  var sex=s?s.sex:"M";
+  var cat,col;
+  if(sex==="M"){cat=vo2>55?"Excelente":vo2>=45?"Bueno":vo2>=35?"Promedio":"Por mejorar";}
+  else{cat=vo2>52?"Excelente":vo2>=42?"Bueno":vo2>=33?"Promedio":"Por mejorar";}
+  col=cat==="Excelente"?"var(--green)":cat==="Bueno"?"#86EFAC":cat==="Promedio"?"var(--warn)":"var(--danger)";
+  r.style.display="block";r.style.color=col;r.textContent="VO₂ máx ≈ "+vo2+" mL/kg/min — "+cat;
+}
+function saveCurrentEval(){
+  if(!evalStudentId){alert("No hay alumno seleccionado");return;}
+  var s=state.students.find(function(x){return x.id===evalStudentId;});if(!s)return;
+  var ev={
+    ts:Date.now(),date:new Date().toLocaleDateString("es-CR",{day:"2-digit",month:"short",year:"numeric"}),
+    peso:parseFloat((el("e-peso")||{}).value)||null,
+    altura:parseFloat((el("e-altura")||{}).value)||null,
+    cin:parseFloat((el("e-cin")||{}).value)||null,
+    cad:parseFloat((el("e-cad")||{}).value)||null,
+    pecho:parseFloat((el("e-pecho")||{}).value)||null,
+    bicep:parseFloat((el("e-bicep")||{}).value)||null,
+    muslo:parseFloat((el("e-muslo")||{}).value)||null,
+    p1:parseFloat((el("ep1")||{}).value)||null,
+    p2:parseFloat((el("ep2")||{}).value)||null,
+    p3:parseFloat((el("ep3")||{}).value)||null,
+    p4:parseFloat((el("ep4")||{}).value)||null,
+    grasa:parseFloat(el("e-grasa-val").textContent)||null,
+    fcRep:parseInt((el("e-fc-rep")||{}).value)||null,
+    fcAntes:parseInt((el("e-fc-antes")||{}).value)||null,
+    fcMed:parseInt((el("e-fc-med")||{}).value)||null,
+    testSR:parseFloat((el("e-sr")||{}).value)||null,
+    testPush:parseInt((el("e-push")||{}).value)||null,
+    testSit:parseInt((el("e-sit")||{}).value)||null,
+    testSq:parseInt((el("e-sq")||{}).value)||null,
+    testStep:parseInt((el("e-step")||{}).value)||null
+  };
+  // update student weight/height from eval
+  if(ev.peso)lsDocSet("students",evalStudentId,{weight:ev.peso});
+  if(ev.altura)lsDocSet("students",evalStudentId,{height:ev.altura});
+  if(ev.grasa)lsDocSet("students",evalStudentId,{bodyFat:ev.grasa});
+  // save eval to student's eval list
+  var key="evals-"+evalStudentId;
+  var evs=lsGet(key,[]);evs.unshift(ev);lsSave(key,evs);
+  state.students=lsGet("students",[]).sort(function(a,b){return(a.name||"").localeCompare(b.name||"");});
+  renderEvalHistory();
+  renderStudents();renderFitStats();
+  setEvalTab(2);
+  alert("Evaluacion guardada correctamente");
+}
+function renderEvalHistory(){
+  var cont=el("eval-hist-list");if(!cont)return;
+  if(!evalStudentId){cont.innerHTML='<div style="text-align:center;padding:30px;color:var(--txt2)">Sin alumno seleccionado</div>';return;}
+  var evs=lsGet("evals-"+evalStudentId,[]);
+  if(!evs.length){cont.innerHTML='<div style="text-align:center;padding:30px;color:var(--txt2);font-size:13px">No hay evaluaciones aun.<br>Completa la pestana de Composicion y guarda.</div>';return;}
+  cont.innerHTML=evs.map(function(ev,i){
+    var items=[];
+    if(ev.peso)items.push({l:"Peso",v:ev.peso+" kg"});
+    if(ev.grasa)items.push({l:"% Grasa",v:ev.grasa+"%"});
+    if(ev.cin&&ev.cad)items.push({l:"ICC",v:Math.round((ev.cin/ev.cad)*100)/100});
+    if(ev.fcMed)items.push({l:"FC entreno",v:ev.fcMed+" bpm"});
+    if(ev.testPush)items.push({l:"Flexiones",v:ev.testPush+" reps"});
+    if(ev.testStep){var vo2=Math.round((111.33-(0.42*ev.testStep))*10)/10;items.push({l:"VO₂ máx",v:vo2+" ml/kg/min"});}
+    return '<div class="ev-item">'+
+      '<div class="ev-hd"><div style="font-size:13px;font-weight:700">Evaluacion #'+(evs.length-i)+'</div><div style="font-size:11px;color:var(--txt2)">'+ev.date+'</div></div>'+
+      '<div class="ev-stats">'+items.map(function(it){return '<div class="ev-stat"><div class="ev-sl">'+it.l+'</div><div class="ev-sv">'+it.v+'</div></div>';}).join("")+'</div>'+
+      '</div>';
+  }).join("");
 }
 
 // CLIENT FORMS
