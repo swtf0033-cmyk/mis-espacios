@@ -875,7 +875,7 @@ function lsAdd(col,data){
 function lsDocSet(col,id,data){
   var arr=lsGet(col,[]);
   var i=arr.findIndex(function(x){return x.id===id;});
-  var item=Object.assign({},data,{id:id});
+  var item=Object.assign({},i>=0?arr[i]:{},data,{id:id});
   if(i>=0)arr[i]=item;else arr.push(item);
   lsSave(col,arr);
 }
@@ -1610,10 +1610,12 @@ function saveCurrentEval(){
     testSq:parseInt((el("e-sq")||{}).value)||null,
     testStep:parseInt((el("e-step")||{}).value)||null
   };
-  // update student weight/height from eval
-  if(ev.peso)lsDocSet("students",evalStudentId,{weight:ev.peso});
-  if(ev.altura)lsDocSet("students",evalStudentId,{height:ev.altura});
-  if(ev.grasa)lsDocSet("students",evalStudentId,{bodyFat:ev.grasa});
+  // update student fields from eval (merge, no reemplazar)
+  var upd={};
+  if(ev.peso)upd.weight=ev.peso;
+  if(ev.altura)upd.height=ev.altura;
+  if(ev.grasa)upd.bodyFat=ev.grasa;
+  if(Object.keys(upd).length)lsDocSet("students",evalStudentId,upd);
   // save/update eval in student's eval list
   var key="evals-"+evalStudentId;
   var evs=lsGet(key,[]);
