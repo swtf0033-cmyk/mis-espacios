@@ -1677,22 +1677,22 @@ var MESO_TYPES=[
    info:"1–5 reps · 85–100% 1RM · Adaptación neuromuscular. Reclutamiento de unidades motoras de alto umbral (Zatsiorsky & Kraemer, 2006).",
    series:"4–5",reps:"1–5",pctLo:85,pctHi:100,rest:"3–5 min",rpe:"9–10",
    objetivo:"Máxima expresión de fuerza. Reclutamiento neuromuscular de alto umbral.",
-   defaultDays:["inf","sup","rest","inf","sup","opt"]},
+   defaultDays:["inf","sup","rest","jump","sup","opt"]},
   {key:"hiper", label:"🏋️ Hipertrofia",    cls:"mw-hiper",
    info:"6–12 reps · 65–80% 1RM · Tensión mecánica + estrés metabólico + daño muscular. Mayor tiempo bajo tensión (Schoenfeld, 2010).",
    series:"3–4",reps:"6–12",pctLo:65,pctHi:80,rest:"60–90 s",rpe:"7–8",
    objetivo:"Tiempo bajo tensión. Maximizar estrés metabólico y daño muscular controlado.",
-   defaultDays:["inf","sup","inf","rest","sup","full"]},
+   defaultDays:["inf","sup","inf","jump","sup","full"]},
   {key:"power", label:"⚡ Potencia",        cls:"mw-power",
    info:"3–6 reps · 75–85% 1RM · Ejecución explosiva. Desarrolla la Tasa de Desarrollo de Fuerza (RFD) y fibras tipo IIx (Haff & Triplett, 2016).",
    series:"4–5",reps:"3–6",pctLo:75,pctHi:85,rest:"3–4 min",rpe:"8–9",
    objetivo:"Velocidad de ejecución máxima. Desarrollar RFD y fibras tipo IIx.",
-   defaultDays:["inf","sup","rest","inf","sup","opt"]},
+   defaultDays:["inf","sup","rest","jump","sup","opt"]},
   {key:"deload",label:"🔄 Deload / Resist.",cls:"mw-deload",
    info:"15–20 reps · 50–65% 1RM · Recuperación activa. Permite supercompensación antes del siguiente mesociclo (Bompa & Buzzichelli, 2015).",
    series:"2–3",reps:"15–20",pctLo:50,pctHi:65,rest:"45–60 s",rpe:"5–6",
    objetivo:"Recuperación activa. Supercompensación para el próximo mesociclo.",
-   defaultDays:["full","rest","full","rest","full","rest"]}
+   defaultDays:["full","rest","full","jump","full","rest"]}
 ];
 var DAYS=["Lun","Mar","Mié","Jue","Vie","Sáb"];
 
@@ -1783,6 +1783,7 @@ var SESSION_TYPES=[
   {key:"inf", label:"🦵 Tren Inferior"},
   {key:"sup", label:"💪 Tren Superior"},
   {key:"full",label:"🔄 Full Body"},
+  {key:"jump",label:"🦘 Jumping"},
   {key:"card",label:"🏃 Cardio"},
   {key:"rest",label:"😴 Descanso"},
   {key:"opt", label:"✅ Opcional"}
@@ -1832,12 +1833,14 @@ function renderProfPlanning(){
         return'<option value="'+st.key+'"'+(curType===st.key?' selected':'')+'>'+st.label+'</option>';
       }).join("");
       var isRest=curType==="rest";
+      var isJump=curType==="jump";
+      var pholder=isRest?"Descanso activo, movilidad, estiramientos...":isJump?"Clase de Jumping — duración, nivel, observaciones...":"Ejercicio · series×reps @% · notas...";
       return'<div class="meso-day">'+
         '<div class="meso-day-left">'+
           '<span class="meso-day-lbl">'+d+'</span>'+
           '<select class="meso-day-type" onchange="savePlanDayType('+wi+','+di+',this.value)">'+selOpts+'</select>'+
         '</div>'+
-        '<textarea class="meso-day-ta'+(isRest?' meso-ta-rest':'')+'" id="meso-d-'+wi+'-'+di+'" placeholder="'+(isRest?'Descanso activo, movilidad, estiramientos...':'Ejercicio · series×reps @% · notas...')+'" onblur="savePlanDay('+wi+','+di+')">'+(w.days[dkey]||"")+'</textarea>'+
+        '<textarea class="meso-day-ta'+(isRest?' meso-ta-rest':'')+'" id="meso-d-'+wi+'-'+di+'" placeholder="'+pholder+'" onblur="savePlanDay('+wi+','+di+')">'+(w.days[dkey]||"")+'</textarea>'+
       '</div>';
     }).join("");
     return'<div class="meso-week">'+
@@ -1978,7 +1981,7 @@ function savePlanDayType(wi,di,val){
   if(ta){
     var isRest=val==="rest";
     ta.className="meso-day-ta"+(isRest?" meso-ta-rest":"");
-    ta.placeholder=isRest?"Descanso activo, movilidad, estiramientos...":"Ejercicio · series×reps @% · notas...";
+    ta.placeholder=isRest?"Descanso activo, movilidad, estiramientos...":val==="jump"?"Clase de Jumping — duración, nivel, observaciones...":"Ejercicio · series×reps @% · notas...";
   }
 }
 
