@@ -143,6 +143,48 @@ a.sel-card{display:block;text-decoration:none;color:inherit}
 /* eval overlay */
 .eval-overlay{position:fixed;top:0;left:0;right:0;bottom:0;background:var(--bg);z-index:1100;display:none;flex-direction:column;overflow:hidden}
 .eval-overlay.on{display:flex!important}
+/* ── perfil alumno ── */
+.prof-metrics{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-bottom:16px}
+@media(max-width:600px){.prof-metrics{grid-template-columns:repeat(2,1fr)}}
+.prof-metric{background:var(--card);border:1px solid var(--border);border-radius:10px;padding:12px;text-align:center}
+.prof-metric-val{font-family:'Rajdhani',sans-serif;font-size:22px;font-weight:700;color:var(--acc)}
+.prof-metric-lbl{font-size:10px;color:var(--txt2);margin-top:2px}
+.prof-metric-delta{font-size:11px;margin-top:4px;font-weight:600}
+.chart-wrap{background:var(--card);border:1px solid var(--border);border-radius:10px;padding:14px;margin-bottom:14px}
+.chart-title{font-size:11px;font-weight:700;color:var(--txt2);margin-bottom:10px;text-transform:uppercase;letter-spacing:.07em}
+.meso-sel{display:flex;align-items:center;gap:8px;margin-bottom:14px;flex-wrap:wrap}
+.meso-sel-btn{background:var(--card);border:1px solid var(--border);color:var(--txt2);font-size:11px;font-weight:600;padding:5px 12px;border-radius:99px;cursor:pointer;transition:all .2s;font-family:'Inter',sans-serif}
+.meso-sel-btn.on,.meso-sel-btn:hover{background:var(--acc-d);border-color:var(--acc);color:var(--acc)}
+.meso-week{background:var(--card);border:1px solid var(--border);border-radius:10px;margin-bottom:8px;overflow:hidden}
+.meso-week-head{display:flex;align-items:center;gap:10px;padding:11px 14px;cursor:pointer;user-select:none}
+.meso-week-head:hover{background:var(--acc-d2)}
+.mw-badge{font-size:10px;font-weight:700;padding:3px 10px;border-radius:99px;text-transform:uppercase;letter-spacing:.05em;flex-shrink:0}
+.mw-pr{background:rgba(248,113,113,.15);color:var(--danger)}
+.mw-hiper{background:rgba(168,85,247,.15);color:var(--acc)}
+.mw-power{background:rgba(251,191,36,.15);color:var(--warn)}
+.mw-deload{background:rgba(52,211,153,.15);color:var(--green)}
+.meso-week-body{display:none;padding:12px 14px;border-top:1px solid var(--border)}
+.meso-week-body.on{display:block}
+.meso-day{display:flex;gap:8px;margin-bottom:7px;align-items:flex-start}
+.meso-day-lbl{font-size:10px;font-weight:700;color:var(--acc);width:28px;flex-shrink:0;padding-top:7px}
+.meso-day-ta{flex:1;background:var(--surf);border:1px solid var(--border);border-radius:6px;padding:6px 8px;color:var(--txt);font-size:11px;font-family:'Inter',sans-serif;resize:vertical;min-height:34px;outline:none;line-height:1.5}
+.meso-day-ta:focus{border-color:var(--acc)}
+.mw-info{font-size:10px;color:var(--txt2);flex:1;line-height:1.5}
+.mw-chevron{font-size:12px;color:var(--txt2);transition:transform .2s;flex-shrink:0}
+.mw-chevron.open{transform:rotate(90deg)}
+.cycle-pill{display:inline-flex;align-items:center;gap:5px;font-size:10px;font-weight:700;padding:3px 10px;border-radius:99px;margin-left:8px;cursor:default}
+.nut-row{display:flex;align-items:center;gap:10px;margin-bottom:10px}
+.nut-lbl{font-size:12px;font-weight:600;width:90px;flex-shrink:0}
+.nut-bar-wrap{flex:1;height:8px;border-radius:99px;background:var(--border);overflow:hidden}
+.nut-fill{height:100%;border-radius:99px;transition:width .4s}
+.nut-val{font-size:12px;font-weight:700;font-family:'Rajdhani',sans-serif;min-width:60px;text-align:right;color:var(--txt)}
+.goal-card{background:var(--card);border:1px solid var(--border);border-radius:10px;padding:14px;margin-bottom:10px}
+.goal-bar-wrap{height:12px;border-radius:99px;background:var(--border);overflow:hidden;margin:8px 0 4px}
+.goal-fill{height:100%;border-radius:99px;background:var(--grad);transition:width .6s}
+.note-item{background:var(--card);border:1px solid var(--border);border-radius:8px;padding:10px 12px;margin-bottom:7px;display:flex;gap:10px;align-items:flex-start}
+.note-date{font-size:10px;color:var(--acc);font-weight:700;min-width:64px;flex-shrink:0;padding-top:2px}
+.note-txt{font-size:12px;color:var(--txt);flex:1;line-height:1.6}
+.sci-note{background:var(--acc-d2);border-left:3px solid var(--acc);border-radius:0 6px 6px 0;padding:8px 12px;font-size:10px;color:var(--txt2);margin-bottom:12px;line-height:1.6}
 .eval-hd{display:flex;align-items:center;gap:12px;padding:14px 20px;border-bottom:1px solid var(--border);flex-shrink:0;background:var(--card)}
 .eval-hd-name{font-family:'Rajdhani',sans-serif;font-weight:700;font-size:18px;flex:1}
 .eval-hd-sub{font-size:11px;color:var(--txt2);margin-top:1px}
@@ -802,6 +844,125 @@ label.switch-btn:hover{background:var(--acc-d2);color:var(--txt)}
   </div>
 </div>
 
+<!-- ══════════════ PERFIL ALUMNO ══════════════ -->
+<div class="eval-overlay" id="prof-overlay">
+  <div class="eval-hd">
+    <div style="width:38px;height:38px;border-radius:9px;background:var(--acc-d);display:flex;align-items:center;justify-content:center;font-size:17px;flex-shrink:0" id="prof-av">S</div>
+    <div style="flex:1;min-width:0">
+      <div style="display:flex;align-items:center;flex-wrap:wrap;gap:4px">
+        <div class="eval-hd-name" id="prof-name">Alumno</div>
+        <span id="prof-cycle-pill" style="display:none"></span>
+      </div>
+      <div class="eval-hd-sub" id="prof-sub">Perfil completo</div>
+    </div>
+    <button style="background:none;border:none;color:var(--txt2);cursor:pointer;font-size:22px;padding:4px 8px;border-radius:6px;line-height:1" onclick="closeProfile()">✕</button>
+  </div>
+  <div class="eval-tabs" style="flex-wrap:wrap">
+    <button class="eval-tab on" onclick="setProfTab(0)">① Dashboard</button>
+    <button class="eval-tab" onclick="setProfTab(1)">② Planificación</button>
+    <button class="eval-tab" onclick="setProfTab(2)">③ Nutrición</button>
+    <button class="eval-tab" onclick="setProfTab(3)">④ Metas</button>
+    <button class="eval-tab" onclick="setProfTab(4)">⑤ Notas</button>
+  </div>
+  <div class="eval-body">
+
+    <!-- TAB 0: DASHBOARD -->
+    <div class="eval-panel on" id="ptab0">
+      <div class="prof-metrics" id="prof-metrics-row"></div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:14px">
+        <div class="chart-wrap"><div class="chart-title">Evolución de peso (kg)</div><canvas id="prof-chart-w" height="160"></canvas></div>
+        <div class="chart-wrap"><div class="chart-title">Evolución de % grasa</div><canvas id="prof-chart-f" height="160"></canvas></div>
+      </div>
+      <div id="prof-no-data" style="display:none;text-align:center;padding:40px;color:var(--txt2);font-size:13px">Sin evaluaciones aún. Agrega evaluaciones en el módulo de composición.</div>
+    </div>
+
+    <!-- TAB 1: PLANIFICACIÓN -->
+    <div class="eval-panel" id="ptab1">
+      <div class="sci-note">📚 Periodización por bloques (Issurin, 2008 · Bompa & Buzzichelli, 2015): cada mesociclo de 4 semanas alterna estímulos — Fuerza/PR → Hipertrofia → Potencia → Deload — optimizando adaptaciones sin meseta. En mujeres, la fase del ciclo menstrual modula la respuesta hormonal al entrenamiento (Wikström-Frisén et al., 2017).</div>
+      <div style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:8px;margin-bottom:12px">
+        <div class="meso-sel" id="meso-sel-btns"></div>
+        <button class="btn btn-p" style="font-size:11px;padding:6px 14px" onclick="addMesociclo()">+ Mesociclo</button>
+      </div>
+      <div id="meso-weeks-container"></div>
+      <!-- Ciclo menstrual (solo mujeres) -->
+      <div id="prof-cycle-section" style="display:none;margin-top:16px;background:var(--card);border:1px solid rgba(236,72,153,.3);border-radius:10px;padding:14px">
+        <div style="font-size:12px;font-weight:700;margin-bottom:10px;color:#EC4899">🌸 Ciclo menstrual — Entrenamiento por fases</div>
+        <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;margin-bottom:12px">
+          <div><div style="font-size:10px;color:var(--txt2);margin-bottom:3px">Inicio último período</div><input type="date" id="cycle-start" style="width:100%;background:var(--surf);border:1px solid var(--border);border-radius:6px;padding:5px 8px;color:var(--txt);font-size:12px;outline:none" oninput="saveCycleData();renderCyclePhase()"></div>
+          <div><div style="font-size:10px;color:var(--txt2);margin-bottom:3px">Duración ciclo (días)</div><input type="number" id="cycle-len" value="28" min="21" max="35" style="width:100%;background:var(--surf);border:1px solid var(--border);border-radius:6px;padding:5px 8px;color:var(--txt);font-size:12px;outline:none;font-family:'Rajdhani',sans-serif;font-weight:700" oninput="saveCycleData();renderCyclePhase()"></div>
+          <div><div style="font-size:10px;color:var(--txt2);margin-bottom:3px">Duración período (días)</div><input type="number" id="cycle-period-len" value="5" min="2" max="10" style="width:100%;background:var(--surf);border:1px solid var(--border);border-radius:6px;padding:5px 8px;color:var(--txt);font-size:12px;outline:none;font-family:'Rajdhani',sans-serif;font-weight:700" oninput="saveCycleData();renderCyclePhase()"></div>
+        </div>
+        <div id="cycle-phase-info"></div>
+        <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:6px;margin-top:10px">
+          <div style="background:rgba(248,113,113,.1);border-radius:8px;padding:8px;text-align:center"><div style="font-size:9px;font-weight:700;color:var(--danger);margin-bottom:3px">MENSTRUAL</div><div style="font-size:9px;color:var(--txt2);line-height:1.4">Baja intensidad. Movilidad, caminata, yoga. Evitar cargas máximas.</div></div>
+          <div style="background:rgba(168,85,247,.1);border-radius:8px;padding:8px;text-align:center"><div style="font-size:9px;font-weight:700;color:var(--acc);margin-bottom:3px">FOLICULAR</div><div style="font-size:9px;color:var(--txt2);line-height:1.4">↑ Estrógenos. Pico de fuerza y energía. Ideal para semana de PR y cargas altas.</div></div>
+          <div style="background:rgba(251,191,36,.1);border-radius:8px;padding:8px;text-align:center"><div style="font-size:9px;font-weight:700;color:var(--warn);margin-bottom:3px">OVULATORIA</div><div style="font-size:9px;color:var(--txt2);line-height:1.4">Rendimiento pico. Ideal para trabajo de potencia y explosividad.</div></div>
+          <div style="background:rgba(52,211,153,.1);border-radius:8px;padding:8px;text-align:center"><div style="font-size:9px;font-weight:700;color:var(--green);margin-bottom:3px">LÚTEA</div><div style="font-size:9px;color:var(--txt2);line-height:1.4">↑ Progesterona. Mayor fatiga. Ideal para hipertrofia y entrenamiento moderado.</div></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- TAB 2: NUTRICIÓN -->
+    <div class="eval-panel" id="ptab2">
+      <div class="sci-note">⚡ TDEE calculado con Mifflin-St Jeor + factor de actividad. Macros ajustados al objetivo del alumno. Proteína mínima recomendada: 1.6–2.2 g/kg peso corporal (Morton et al., 2018).</div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:14px">
+        <div class="bm-f"><div class="bm-l">Nivel de actividad</div><select id="nut-activity" onchange="renderNutrition()" style="width:100%;background:var(--card);border:1px solid var(--border2);border-radius:6px;padding:6px 8px;color:var(--txt);font-size:12px;outline:none;margin-top:4px">
+          <option value="1.2">Sedentario (sin ejercicio)</option>
+          <option value="1.375">Ligero (1-3 días/semana)</option>
+          <option value="1.55" selected>Moderado (3-5 días/semana)</option>
+          <option value="1.725">Activo (6-7 días/semana)</option>
+          <option value="1.9">Muy activo (2 sesiones/día)</option>
+        </select></div>
+        <div class="bm-f"><div class="bm-l">Objetivo</div><select id="nut-goal" onchange="renderNutrition()" style="width:100%;background:var(--card);border:1px solid var(--border2);border-radius:6px;padding:6px 8px;color:var(--txt);font-size:12px;outline:none;margin-top:4px">
+          <option value="deficit">Déficit — Pérdida de grasa (-300 kcal)</option>
+          <option value="mant" selected>Mantenimiento</option>
+          <option value="superavit">Superávit — Ganancia muscular (+300 kcal)</option>
+        </select></div>
+      </div>
+      <div id="nut-result"></div>
+      <div style="margin-top:12px"><div style="font-size:11px;font-weight:700;color:var(--txt2);margin-bottom:6px;text-transform:uppercase;letter-spacing:.05em">Notas de nutrición</div><textarea id="nut-notes" placeholder="Restricciones alimentarias, preferencias, suplementos..." style="width:100%;background:var(--surf);border:1px solid var(--border);border-radius:8px;padding:10px 12px;color:var(--txt);font-size:12px;font-family:'Inter',sans-serif;resize:vertical;min-height:70px;outline:none" oninput="saveNutNotes()"></textarea></div>
+    </div>
+
+    <!-- TAB 3: METAS -->
+    <div class="eval-panel" id="ptab3">
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:14px">
+        <div class="goal-card">
+          <div style="font-size:12px;font-weight:700;margin-bottom:10px">🎯 Meta de peso</div>
+          <div style="display:flex;gap:8px;align-items:center">
+            <input type="number" id="goal-weight" placeholder="ej. 75" style="flex:1;background:var(--surf);border:1px solid var(--border);border-radius:6px;padding:6px 8px;color:var(--txt);font-size:13px;font-family:'Rajdhani',sans-serif;font-weight:700;outline:none" oninput="saveGoals();renderGoals()">
+            <span style="font-size:11px;color:var(--txt2)">kg</span>
+          </div>
+          <input type="date" id="goal-weight-date" style="width:100%;margin-top:7px;background:var(--surf);border:1px solid var(--border);border-radius:6px;padding:5px 8px;color:var(--txt);font-size:11px;outline:none" oninput="saveGoals();renderGoals()">
+          <div id="goal-weight-bar" style="margin-top:8px"></div>
+        </div>
+        <div class="goal-card">
+          <div style="font-size:12px;font-weight:700;margin-bottom:10px">🔥 Meta de % grasa</div>
+          <div style="display:flex;gap:8px;align-items:center">
+            <input type="number" id="goal-fat" placeholder="ej. 15" style="flex:1;background:var(--surf);border:1px solid var(--border);border-radius:6px;padding:6px 8px;color:var(--txt);font-size:13px;font-family:'Rajdhani',sans-serif;font-weight:700;outline:none" oninput="saveGoals();renderGoals()">
+            <span style="font-size:11px;color:var(--txt2)">%</span>
+          </div>
+          <input type="date" id="goal-fat-date" style="width:100%;margin-top:7px;background:var(--surf);border:1px solid var(--border);border-radius:6px;padding:5px 8px;color:var(--txt);font-size:11px;outline:none" oninput="saveGoals();renderGoals()">
+          <div id="goal-fat-bar" style="margin-top:8px"></div>
+        </div>
+      </div>
+      <div id="goals-summary"></div>
+    </div>
+
+    <!-- TAB 4: NOTAS -->
+    <div class="eval-panel" id="ptab4">
+      <div style="display:flex;gap:8px;margin-bottom:14px;align-items:flex-start">
+        <textarea id="note-input" placeholder="Observaciones de la sesión de hoy..." style="flex:1;background:var(--surf);border:1px solid var(--border);border-radius:8px;padding:10px 12px;color:var(--txt);font-size:12px;font-family:'Inter',sans-serif;resize:vertical;min-height:54px;outline:none"></textarea>
+        <button class="btn btn-p" style="font-size:11px;padding:8px 14px;flex-shrink:0;align-self:flex-end" onclick="addNote()">Guardar nota</button>
+      </div>
+      <div id="notes-list"></div>
+    </div>
+
+  </div><!-- /eval-body -->
+  <div class="eval-ft">
+    <button class="btn btn-c" onclick="closeProfile()">Cerrar</button>
+  </div>
+</div>
+
 <script>
 var QQ=[
 {t:"No busques el exito, busca la excelencia, el exito llegara.",a:"Miyamoto Musashi"},
@@ -1059,6 +1220,7 @@ function renderStudents(){
       '<div style="text-align:right;margin-right:10px"><div style="font-family:Rajdhani,sans-serif;font-weight:700;font-size:16px">'+fatTxt+'</div><div style="font-size:10px;color:var(--txt2)">grasa</div></div>'+
       '<span class="badge '+pc+'">'+s.payStatus+'</span>'+
       '<div class="row-actions">'+
+        '<button class="btn-icon s-prof" data-id="'+s.id+'" title="Perfil" style="font-size:15px">&#128100;</button>'+
         '<button class="btn-icon s-eval" data-id="'+s.id+'" title="Evaluar" style="font-size:15px">&#128202;</button>'+
         '<button class="btn-icon s-edit" data-id="'+s.id+'">&#9999;</button>'+
         '<button class="btn-icon btn-del s-del" data-id="'+s.id+'">&#128465;</button>'+
@@ -1066,6 +1228,7 @@ function renderStudents(){
   }).join("");
   if(!html)html='<div class="empty-st"><div class="ico">&#128170;</div><p>Aun no tienes alumnos.<br>Agrega tu primero!</p></div>';
   el("students-list").innerHTML=html;
+  el("students-list").querySelectorAll(".s-prof").forEach(function(b){b.addEventListener("click",function(){openProfile(this.getAttribute("data-id"));});});
   el("students-list").querySelectorAll(".s-eval").forEach(function(b){b.addEventListener("click",function(){openEval(this.getAttribute("data-id"));});});
   el("students-list").querySelectorAll(".s-edit").forEach(function(b){b.addEventListener("click",function(){currentStudentId=this.getAttribute("data-id");openEditStudent(currentStudentId);});});
   el("students-list").querySelectorAll(".s-del").forEach(function(b){b.addEventListener("click",function(){currentStudentId=this.getAttribute("data-id");deleteStudent(currentStudentId);});});
@@ -1430,6 +1593,304 @@ function closeEval(){
   evalStudentId=null;editingEvalIndex=null;
   var sb=el("eval-save-btn");if(sb)sb.textContent="Guardar evaluacion";
 }
+
+// ═══════════════════════════════════════
+// PERFIL ALUMNO
+// ═══════════════════════════════════════
+var profileStudentId=null,profChartW=null,profChartF=null;
+var MESO_TYPES=[
+  {key:"pr",    label:"💪 Fuerza / PR",    cls:"mw-pr",    info:"1–5 reps · 85–100% 1RM · Adaptación neuromuscular. Reclutamiento de unidades motoras de alto umbral (Zatsiorsky & Kraemer, 2006)."},
+  {key:"hiper", label:"🏋️ Hipertrofia",    cls:"mw-hiper", info:"6–12 reps · 65–80% 1RM · Tensión mecánica + estrés metabólico + daño muscular. Mayor tiempo bajo tensión (Schoenfeld, 2010)."},
+  {key:"power", label:"⚡ Potencia",        cls:"mw-power", info:"3–6 reps · 75–85% 1RM · Ejecución explosiva. Desarrolla la Tasa de Desarrollo de Fuerza (RFD) y fibras tipo IIx (Haff & Triplett, 2016)."},
+  {key:"deload",label:"🔄 Deload / Resist.",cls:"mw-deload",info:"15–20 reps · 50–65% 1RM · Recuperación activa. Permite supercompensación antes del siguiente mesociclo (Bompa & Buzzichelli, 2015)."}
+];
+var DAYS=["Lun","Mar","Mié","Jue","Vie","Sáb"];
+
+function openProfile(id){
+  var s=state.students.find(function(x){return x.id===id;});if(!s)return;
+  profileStudentId=id;
+  el("prof-av").textContent=mkInitials(s.name);
+  el("prof-name").textContent=s.name;
+  el("prof-sub").textContent=(s.objective||"Perfil completo")+(s.age?" · "+s.age+" años":"")+(s.sex?" · "+(s.sex==="M"?"Hombre":"Mujer"):"");
+  // ciclo menstrual badge
+  var pill=el("prof-cycle-pill");
+  if(s.sex==="F"){
+    pill.style.display="inline-flex";
+    el("prof-cycle-section").style.display="block";
+    var cyc=lsGet("cycle-"+id,{});
+    if(cyc.lastStart){el("cycle-start").value=cyc.lastStart;}
+    if(cyc.length){el("cycle-len").value=cyc.length;}
+    if(cyc.periodLength){el("cycle-period-len").value=cyc.periodLength;}
+    renderCyclePhase();
+  } else {
+    pill.style.display="none";
+    el("prof-cycle-section").style.display="none";
+  }
+  setProfTab(0);
+  el("prof-overlay").classList.add("on");
+}
+function closeProfile(){
+  var o=el("prof-overlay");if(o)o.classList.remove("on");
+  profileStudentId=null;
+  if(profChartW){profChartW.destroy();profChartW=null;}
+  if(profChartF){profChartF.destroy();profChartF=null;}
+}
+function setProfTab(n){
+  document.querySelectorAll("#prof-overlay .eval-tab").forEach(function(t,i){t.classList.toggle("on",i===n);});
+  for(var i=0;i<5;i++){var p=el("ptab"+i);if(p)p.classList.toggle("on",i===n);}
+  if(n===0)renderProfDashboard();
+  else if(n===1)renderProfPlanning();
+  else if(n===2)renderNutrition();
+  else if(n===3)renderGoals();
+  else if(n===4)renderNotes();
+}
+
+// ── Dashboard ──────────────────────────
+function renderProfDashboard(){
+  var evs=lsGet("evals-"+profileStudentId,[]);
+  var s=state.students.find(function(x){return x.id===profileStudentId;})||{};
+  if(profChartW){profChartW.destroy();profChartW=null;}
+  if(profChartF){profChartF.destroy();profChartF=null;}
+  if(!evs.length){el("prof-metrics-row").innerHTML="";el("prof-no-data").style.display="block";return;}
+  el("prof-no-data").style.display="none";
+  var latest=evs[0],prev=evs[1]||{};
+  function delta(cur,old,unit,invert){
+    if(cur==null||old==null)return"";
+    var d=Math.round((cur-old)*10)/10;
+    var col=(invert?d<0:d<0)?"var(--green)":"var(--danger)";
+    if(d===0)col="var(--txt2)";
+    return'<div class="prof-metric-delta" style="color:'+col+'">'+(d>0?"+":"")+d+unit+'</div>';
+  }
+  el("prof-metrics-row").innerHTML=
+    '<div class="prof-metric"><div class="prof-metric-val">'+(latest.peso||s.weight||"—")+'</div><div class="prof-metric-lbl">Peso (kg)</div>'+delta(latest.peso,prev.peso,"kg",true)+'</div>'+
+    '<div class="prof-metric"><div class="prof-metric-val">'+(latest.grasa||s.bodyFat||"—")+'</div><div class="prof-metric-lbl">% Grasa</div>'+delta(latest.grasa,prev.grasa,"%",true)+'</div>'+
+    '<div class="prof-metric"><div class="prof-metric-val" id="pm-imc">—</div><div class="prof-metric-lbl">IMC</div></div>'+
+    '<div class="prof-metric"><div class="prof-metric-val" id="pm-mm">—</div><div class="prof-metric-lbl">Masa magra (kg)</div></div>';
+  // IMC y masa magra
+  if(latest.peso&&latest.altura){
+    var imc=Math.round((latest.peso/Math.pow(latest.altura/100,2))*10)/10;
+    var imcEl=el("pm-imc");if(imcEl)imcEl.textContent=imc;
+  }
+  if(latest.peso&&latest.grasa){
+    var mm=Math.round((latest.peso*(1-latest.grasa/100))*10)/10;
+    var mmEl=el("pm-mm");if(mmEl)mmEl.textContent=mm;
+  }
+  // Charts
+  var labels=evs.slice().reverse().map(function(e){return e.date||"";});
+  var weights=evs.slice().reverse().map(function(e){return e.peso||null;});
+  var fats=evs.slice().reverse().map(function(e){return e.grasa||null;});
+  var chartOpts={responsive:true,plugins:{legend:{display:false}},scales:{x:{ticks:{font:{size:9},color:"#7A6A9E"},grid:{color:"rgba(255,255,255,.04)"}},y:{ticks:{font:{size:9},color:"#7A6A9E"},grid:{color:"rgba(255,255,255,.04)"}}}};
+  var cwCtx=el("prof-chart-w");if(cwCtx&&weights.some(function(v){return v!==null;})){
+    profChartW=new Chart(cwCtx,{type:"line",data:{labels:labels,datasets:[{data:weights,borderColor:"#A855F7",backgroundColor:"rgba(168,85,247,.1)",tension:.35,fill:true,pointBackgroundColor:"#A855F7",pointRadius:3}]},options:chartOpts});
+  }
+  var cfCtx=el("prof-chart-f");if(cfCtx&&fats.some(function(v){return v!==null;})){
+    profChartF=new Chart(cfCtx,{type:"line",data:{labels:labels,datasets:[{data:fats,borderColor:"#EC4899",backgroundColor:"rgba(236,72,153,.1)",tension:.35,fill:true,pointBackgroundColor:"#EC4899",pointRadius:3}]},options:chartOpts});
+  }
+}
+
+// ── Planificación ──────────────────────
+function renderProfPlanning(){
+  var plan=lsGet("plan-"+profileStudentId,{mesociclos:[],current:0});
+  if(!plan.mesociclos.length){plan.mesociclos.push({id:1,start:"",weeks:MESO_TYPES.map(function(t){return{type:t.key,days:{}};})});lsSave("plan-"+profileStudentId,plan);}
+  // selector de mesociclos
+  var selHtml=plan.mesociclos.map(function(m,i){
+    return'<button class="meso-sel-btn'+(i===plan.current?" on":"")+'" onclick="selectMeso('+i+')">Mesociclo '+m.id+'</button>';
+  }).join("");
+  el("meso-sel-btns").innerHTML=selHtml;
+  // render semanas
+  var meso=plan.mesociclos[plan.current];
+  var html=meso.weeks.map(function(w,wi){
+    var t=MESO_TYPES[wi];
+    var daysHtml=DAYS.map(function(d,di){
+      var key=d.toLowerCase();
+      return'<div class="meso-day"><span class="meso-day-lbl">'+d+'</span>'+
+        '<textarea class="meso-day-ta" id="meso-d-'+wi+'-'+di+'" placeholder="ej: Sentadilla 4×6 80% · Peso muerto 3×5 85%..." onblur="savePlanDay('+wi+','+di+')">'+(w.days[key]||"")+'</textarea></div>';
+    }).join("");
+    return'<div class="meso-week"><div class="meso-week-head" onclick="toggleMesoWeek('+wi+')">'+
+      '<span class="mw-badge '+t.cls+'">S'+( wi+1)+' '+t.label+'</span>'+
+      '<span class="mw-info">'+t.info+'</span>'+
+      '<span class="mw-chevron" id="mw-chev-'+wi+'">▶</span>'+
+    '</div><div class="meso-week-body" id="mw-body-'+wi+'">'+daysHtml+'</div></div>';
+  }).join("");
+  el("meso-weeks-container").innerHTML=html;
+}
+function toggleMesoWeek(wi){
+  var b=el("mw-body-"+wi),c=el("mw-chev-"+wi);
+  if(!b)return;
+  b.classList.toggle("on");
+  if(c)c.classList.toggle("open",b.classList.contains("on"));
+}
+function selectMeso(i){
+  var plan=lsGet("plan-"+profileStudentId,{mesociclos:[],current:0});
+  plan.current=i;lsSave("plan-"+profileStudentId,plan);
+  renderProfPlanning();
+}
+function addMesociclo(){
+  var plan=lsGet("plan-"+profileStudentId,{mesociclos:[],current:0});
+  var num=plan.mesociclos.length+1;
+  plan.mesociclos.push({id:num,start:"",weeks:MESO_TYPES.map(function(t){return{type:t.key,days:{}};})});
+  plan.current=plan.mesociclos.length-1;
+  lsSave("plan-"+profileStudentId,plan);
+  renderProfPlanning();
+}
+function savePlanDay(wi,di){
+  var plan=lsGet("plan-"+profileStudentId,{mesociclos:[],current:0});
+  var meso=plan.mesociclos[plan.current];if(!meso)return;
+  var key=DAYS[di].toLowerCase();
+  var ta=el("meso-d-"+wi+"-"+di);
+  if(ta)meso.weeks[wi].days[key]=ta.value;
+  lsSave("plan-"+profileStudentId,plan);
+}
+
+// ── Ciclo menstrual ────────────────────
+function saveCycleData(){
+  var d=el("cycle-start"),l=el("cycle-len"),p=el("cycle-period-len");
+  lsSave("cycle-"+profileStudentId,{lastStart:d?d.value:"",length:l?parseInt(l.value)||28:28,periodLength:p?parseInt(p.value)||5:5});
+}
+function calcCyclePhase(){
+  var cyc=lsGet("cycle-"+profileStudentId,{});
+  if(!cyc.lastStart)return null;
+  var start=new Date(cyc.lastStart),now=new Date();
+  var diff=Math.floor((now-start)/86400000)%((cyc.length)||28);
+  if(diff<0)diff=0;
+  var pd=cyc.periodLength||5;
+  if(diff<pd)return{phase:"Menstrual",day:diff+1,col:"var(--danger)",rec:"Baja intensidad. Prioriza movilidad, yoga o caminata. Evita cargas máximas."};
+  if(diff<14)return{phase:"Folicular",day:diff+1,col:"var(--acc)",rec:"Energía y fuerza en alza por estrógenos. Semana ideal para PR y cargas altas."};
+  if(diff<17)return{phase:"Ovulatoria",day:diff+1,col:"var(--warn)",rec:"Pico de rendimiento. Ideal para trabajo de potencia y explosividad."};
+  return{phase:"Lútea",day:diff+1,col:"var(--green)",rec:"Progesterona alta, mayor fatiga y temperatura corporal. Moderada intensidad, hipertrofia."};
+}
+function renderCyclePhase(){
+  var ph=calcCyclePhase();
+  var pill=el("prof-cycle-pill"),info=el("cycle-phase-info");
+  if(!ph){if(pill)pill.style.display="none";if(info)info.innerHTML="";return;}
+  if(pill){pill.style.display="inline-flex";pill.style.background="rgba(0,0,0,.3)";pill.style.color=ph.col;pill.style.border="1px solid "+ph.col;pill.textContent="🌸 "+ph.phase+" · Día "+ph.day;}
+  if(info){info.innerHTML='<div style="background:var(--card);border-radius:8px;padding:10px 12px;border-left:3px solid '+ph.col+'"><span style="font-size:11px;font-weight:700;color:'+ph.col+'">Fase actual: '+ph.phase+' (Día '+ph.day+')</span><div style="font-size:11px;color:var(--txt2);margin-top:4px">'+ph.rec+'</div></div>';}
+}
+
+// ── Nutrición ──────────────────────────
+function renderNutrition(){
+  var s=state.students.find(function(x){return x.id===profileStudentId;})||{};
+  var peso=parseFloat(s.weight)||70,altura=parseFloat(s.height)||170;
+  var age=parseInt(s.age)||25,sex=s.sex||"M";
+  var act=parseFloat((el("nut-activity")||{}).value)||1.55;
+  var goal=(el("nut-goal")||{}).value||"mant";
+  // TMB Mifflin-St Jeor
+  var tmb=sex==="M"?(10*peso)+(6.25*altura)-(5*age)+5:(10*peso)+(6.25*altura)-(5*age)-161;
+  var tdee=Math.round(tmb*act);
+  var kcal=goal==="deficit"?tdee-300:goal==="superavit"?tdee+300:tdee;
+  // Macros
+  var pPct=sex==="M"?30:28,cPct=goal==="superavit"?45:goal==="deficit"?35:40,fPct=100-pPct-cPct;
+  var protG=Math.round((kcal*pPct/100)/4),carbG=Math.round((kcal*cPct/100)/4),fatG=Math.round((kcal*fPct/100)/9);
+  var minProt=Math.round(peso*1.8);
+  var html='<div style="display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-bottom:14px">'+
+    '<div class="prof-metric"><div class="prof-metric-val">'+tmb+'</div><div class="prof-metric-lbl">TMB (kcal/día)</div></div>'+
+    '<div class="prof-metric"><div class="prof-metric-val" style="color:var(--green)">'+tdee+'</div><div class="prof-metric-lbl">TDEE (kcal/día)</div></div>'+
+    '<div class="prof-metric"><div class="prof-metric-val" style="color:var(--warn)">'+kcal+'</div><div class="prof-metric-lbl">Meta calórica</div></div>'+
+  '</div>'+
+  '<div style="background:var(--card);border:1px solid var(--border);border-radius:10px;padding:14px">'+
+    '<div style="font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.07em;color:var(--txt2);margin-bottom:12px">Distribución de macros</div>'+
+    macroRow("🥩 Proteína",protG,pPct,"#A855F7","kcal: "+Math.round(protG*4)+" · "+Math.round(protG/peso*10)/10+"g/kg")+
+    macroRow("🍞 Carbohidratos",carbG,cPct,"#FBBF24","kcal: "+Math.round(carbG*4))+
+    macroRow("🥑 Grasas",fatG,fPct,"#34D399","kcal: "+Math.round(fatG*9))+
+  '</div>'+
+  (protG<minProt?'<div style="margin-top:10px;background:rgba(248,113,113,.1);border:1px solid rgba(248,113,113,.3);border-radius:8px;padding:8px 12px;font-size:11px;color:var(--danger)">⚠ Proteína calculada ('+protG+'g) está por debajo del mínimo recomendado de '+minProt+'g (1.8g/kg). Considera ajustar el reparto calórico.</div>':"")+
+  '<div style="margin-top:10px;font-size:10px;color:var(--txt2)">Hidratación recomendada: '+(Math.round(peso*0.033*10)/10)+'–'+(Math.round(peso*0.040*10)/10)+' L/día</div>';
+  el("nut-result").innerHTML=html;
+  // cargar notas guardadas
+  var nd=lsGet("nutrition-"+profileStudentId,{});
+  if(nd.notes&&el("nut-notes"))el("nut-notes").value=nd.notes;
+  if(nd.activity&&el("nut-activity"))el("nut-activity").value=nd.activity;
+  if(nd.goal&&el("nut-goal"))el("nut-goal").value=nd.goal;
+}
+function macroRow(name,grams,pct,color,sub){
+  return'<div class="nut-row"><span class="nut-lbl">'+name+'</span>'+
+    '<div class="nut-bar-wrap"><div class="nut-fill" style="width:'+pct+'%;background:'+color+'"></div></div>'+
+    '<span class="nut-val">'+grams+'g <span style="font-size:10px;color:var(--txt2)">'+pct+'%</span></span>'+
+  '</div><div style="font-size:9px;color:var(--txt2);margin:-6px 0 8px 100px">'+sub+'</div>';
+}
+function saveNutNotes(){
+  var nd=lsGet("nutrition-"+profileStudentId,{});
+  nd.notes=(el("nut-notes")||{}).value||"";
+  nd.activity=(el("nut-activity")||{}).value||"1.55";
+  nd.goal=(el("nut-goal")||{}).value||"mant";
+  lsSave("nutrition-"+profileStudentId,nd);
+}
+
+// ── Metas ──────────────────────────────
+function saveGoals(){
+  lsSave("goals-"+profileStudentId,{
+    weightGoal:parseFloat((el("goal-weight")||{}).value)||null,
+    weightGoalDate:(el("goal-weight-date")||{}).value||null,
+    fatGoal:parseFloat((el("goal-fat")||{}).value)||null,
+    fatGoalDate:(el("goal-fat-date")||{}).value||null
+  });
+}
+function renderGoals(){
+  var g=lsGet("goals-"+profileStudentId,{});
+  var evs=lsGet("evals-"+profileStudentId,[]);
+  var s=state.students.find(function(x){return x.id===profileStudentId;})||{};
+  var latestW=evs.length?evs[0].peso:parseFloat(s.weight)||null;
+  var firstW=evs.length?evs[evs.length-1].peso:latestW;
+  var latestF=evs.length?evs[0].grasa:parseFloat(s.bodyFat)||null;
+  var firstF=evs.length?evs[evs.length-1].grasa:latestF;
+  // restore inputs
+  if(g.weightGoal&&el("goal-weight"))el("goal-weight").value=g.weightGoal;
+  if(g.weightGoalDate&&el("goal-weight-date"))el("goal-weight-date").value=g.weightGoalDate;
+  if(g.fatGoal&&el("goal-fat"))el("goal-fat").value=g.fatGoal;
+  if(g.fatGoalDate&&el("goal-fat-date"))el("goal-fat-date").value=g.fatGoalDate;
+  el("goal-weight-bar").innerHTML=goalBar(firstW,latestW,g.weightGoal,g.weightGoalDate,"kg",true);
+  el("goal-fat-bar").innerHTML=goalBar(firstF,latestF,g.fatGoal,g.fatGoalDate,"%",true);
+  // summary
+  var today=new Date();
+  var sumRows=[];
+  if(g.weightGoal&&g.weightGoalDate){
+    var d=Math.max(0,Math.round((new Date(g.weightGoalDate)-today)/86400000));
+    sumRows.push('<tr><td style="font-size:12px">⚖ Peso</td><td style="font-size:12px;color:var(--acc)">Meta: '+g.weightGoal+'kg</td><td style="font-size:12px">Actual: '+(latestW||"—")+'kg</td><td style="font-size:12px;color:var(--txt2)">'+d+' días</td></tr>');
+  }
+  if(g.fatGoal&&g.fatGoalDate){
+    var d2=Math.max(0,Math.round((new Date(g.fatGoalDate)-today)/86400000));
+    sumRows.push('<tr><td style="font-size:12px">🔥 Grasa</td><td style="font-size:12px;color:var(--acc)">Meta: '+g.fatGoal+'%</td><td style="font-size:12px">Actual: '+(latestF||"—")+'%</td><td style="font-size:12px;color:var(--txt2)">'+d2+' días</td></tr>');
+  }
+  el("goals-summary").innerHTML=sumRows.length?'<table class="rt" style="margin-top:4px"><tbody>'+sumRows.join("")+'</tbody></table>':"";
+}
+function goalBar(start,current,goal,dateStr,unit,lowerIsBetter){
+  if(start==null||current==null||goal==null)return'<div style="font-size:10px;color:var(--txt2);margin-top:4px">Ingresa la meta y habrá datos de evaluación para mostrar el progreso.</div>';
+  var total=Math.abs(goal-start)||1;
+  var done=Math.abs(current-start);
+  var pct=Math.min(100,Math.round(done/total*100));
+  var onTrack=(lowerIsBetter?current<=goal:current>=goal);
+  var col=onTrack?"var(--green)":"var(--warn)";
+  var daysLeft=dateStr?Math.max(0,Math.round((new Date(dateStr)-new Date())/86400000)):null;
+  return'<div class="goal-bar-wrap"><div class="goal-fill" style="width:'+pct+'%;background:'+col+'"></div></div>'+
+    '<div style="display:flex;justify-content:space-between;font-size:10px;color:var(--txt2);margin-top:3px">'+
+      '<span>'+start+unit+' → '+goal+unit+'</span>'+
+      '<span style="color:'+col+'">'+pct+'% completado'+(daysLeft!==null?" · "+daysLeft+" días":"")+'</span>'+
+    '</div>';
+}
+
+// ── Notas de sesión ────────────────────
+function renderNotes(){
+  var notes=lsGet("notes-"+profileStudentId,[]);
+  if(!notes.length){el("notes-list").innerHTML='<div style="text-align:center;padding:30px;color:var(--txt2);font-size:13px">Sin notas aún. Agrega observaciones después de cada sesión.</div>';return;}
+  el("notes-list").innerHTML=notes.map(function(n,i){
+    return'<div class="note-item"><span class="note-date">'+n.date+'</span><span class="note-txt">'+n.text+'</span>'+
+      '<button class="btn-icon btn-del" style="font-size:12px;flex-shrink:0" onclick="deleteNote('+i+')">🗑</button></div>';
+  }).join("");
+}
+function addNote(){
+  var inp=el("note-input");if(!inp||!inp.value.trim())return;
+  var notes=lsGet("notes-"+profileStudentId,[]);
+  notes.unshift({date:new Date().toLocaleDateString("es-CR",{day:"2-digit",month:"short",year:"numeric"}),text:inp.value.trim()});
+  lsSave("notes-"+profileStudentId,notes);
+  inp.value="";
+  renderNotes();
+}
+function deleteNote(i){
+  var notes=lsGet("notes-"+profileStudentId,[]);
+  notes.splice(i,1);lsSave("notes-"+profileStudentId,notes);
+  renderNotes();
+}
+
 function loadEvalForEdit(idx){
   var evs=lsGet("evals-"+evalStudentId,[]);
   var ev=evs[idx];if(!ev)return;
