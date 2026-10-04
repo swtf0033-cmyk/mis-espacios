@@ -183,6 +183,12 @@ a.sel-card{display:block;text-decoration:none;color:inherit}
 .mf-i{width:60px;background:var(--card);border:1px solid var(--border2);border-radius:6px;padding:5px 8px;color:var(--txt);font-size:13px;font-weight:700;font-family:'Rajdhani',sans-serif;text-align:right;outline:none}
 .mf-i:focus{border-color:var(--acc)}
 .mf-u{font-size:10px;color:var(--txt2)}
+.mf-takes{display:flex;align-items:center;gap:5px;flex-shrink:0}
+.mf-take{display:flex;flex-direction:column;align-items:center;gap:2px}
+.mf-take span{font-size:8px;color:var(--txt2);font-weight:700;letter-spacing:.5px;text-transform:uppercase}
+.mf-ti{width:42px;background:var(--card);border:1px solid var(--border2);border-radius:6px;padding:4px 5px;color:var(--txt);font-size:12px;font-weight:700;font-family:'Rajdhani',sans-serif;text-align:right;outline:none}
+.mf-ti:focus{border-color:var(--acc)}
+.mf-avg{font-size:11px;font-weight:700;color:var(--acc);font-family:'Rajdhani',sans-serif;min-width:40px;text-align:right;white-space:nowrap}
 .e-rbox{border-radius:9px;padding:11px 14px;margin-top:10px;display:flex;justify-content:space-between;align-items:center;border:1px solid var(--border2);background:var(--acc-d)}
 .e-rbox-val{font-family:'Rajdhani',sans-serif;font-size:28px;font-weight:700;background:var(--grad);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
 /* zona bars */
@@ -699,13 +705,13 @@ label.switch-btn:hover{background:var(--acc-d2);color:var(--txt)}
         <div>
           <div class="mfc-e" style="margin-bottom:10px">
             <div style="font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.07em;color:var(--txt2);margin-bottom:10px">Pliegues cutáneos (caliper)</div>
-            <div class="mf-row" id="emr1"><div class="mf-n">1</div><div class="mf-info"><div class="mf-name">Pectoral</div><div class="mf-hint">Diagonal, punto medio entre la axila anterior y el pezón</div></div><div class="mf-iw"><input class="mf-i" type="number" id="ep1" placeholder="0" oninput="eCalcGrasa()" min="0" max="80"><span class="mf-u">mm</span></div></div>
-            <div class="mf-row" id="emr2"><div class="mf-n">2</div><div class="mf-info"><div class="mf-name">Trícep</div><div class="mf-hint">Vertical, parte posterior del brazo — punto medio entre hombro y codo</div></div><div class="mf-iw"><input class="mf-i" type="number" id="ep2" placeholder="0" oninput="eCalcGrasa()" min="0" max="80"><span class="mf-u">mm</span></div></div>
-            <div class="mf-row" id="emr3"><div class="mf-n">3</div><div class="mf-info"><div class="mf-name">Subescapular</div><div class="mf-hint">45° diagonal, justo debajo del ángulo inferior del omóplato (espalda alta)</div></div><div class="mf-iw"><input class="mf-i" type="number" id="ep3" placeholder="0" oninput="eCalcGrasa()" min="0" max="80"><span class="mf-u">mm</span></div></div>
-            <div class="mf-row" id="emr4"><div class="mf-n">4</div><div class="mf-info"><div class="mf-name">Abdominal</div><div class="mf-hint">Vertical, 2 cm a la derecha del ombligo</div></div><div class="mf-iw"><input class="mf-i" type="number" id="ep4" placeholder="0" oninput="eCalcGrasa()" min="0" max="80"><span class="mf-u">mm</span></div></div>
-            <div class="mf-row" id="emr5"><div class="mf-n">5</div><div class="mf-info"><div class="mf-name">Cresta ilíaca</div><div class="mf-hint">Diagonal, sobre el hueso de la cadera — en línea con la axila anterior</div></div><div class="mf-iw"><input class="mf-i" type="number" id="ep5" placeholder="0" oninput="eCalcGrasa()" min="0" max="80"><span class="mf-u">mm</span></div></div>
-            <div class="mf-row" id="emr6"><div class="mf-n">6</div><div class="mf-info"><div class="mf-name">Axilar media</div><div class="mf-hint">Horizontal, en el costado (línea del sobaco) a la altura del esternón</div></div><div class="mf-iw"><input class="mf-i" type="number" id="ep6" placeholder="0" oninput="eCalcGrasa()" min="0" max="80"><span class="mf-u">mm</span></div></div>
-            <div class="mf-row" id="emr7"><div class="mf-n">7</div><div class="mf-info"><div class="mf-name">Femoral</div><div class="mf-hint">Vertical, cara frontal del muslo — punto medio entre el pliegue de la ingle y la rodilla</div></div><div class="mf-iw"><input class="mf-i" type="number" id="ep7" placeholder="0" oninput="eCalcGrasa()" min="0" max="80"><span class="mf-u">mm</span></div></div>
+            <div class="mf-row" id="emr1"><div class="mf-n">1</div><div class="mf-info"><div class="mf-name">Pectoral</div><div class="mf-hint">Diagonal, punto medio entre la axila anterior y el pezón</div></div><div class="mf-takes"><div class="mf-take"><span>T1</span><input class="mf-ti" type="number" id="ep1a" placeholder="0" oninput="eCalcGrasa()" min="0" max="80"></div><div class="mf-take"><span>T2</span><input class="mf-ti" type="number" id="ep1b" placeholder="0" oninput="eCalcGrasa()" min="0" max="80"></div><div class="mf-take"><span>T3</span><input class="mf-ti" type="number" id="ep1c" placeholder="0" oninput="eCalcGrasa()" min="0" max="80"></div><div class="mf-avg" id="ep1-avg">— mm</div></div></div>
+            <div class="mf-row" id="emr2"><div class="mf-n">2</div><div class="mf-info"><div class="mf-name">Trícep</div><div class="mf-hint">Vertical, parte posterior del brazo — punto medio entre hombro y codo</div></div><div class="mf-takes"><div class="mf-take"><span>T1</span><input class="mf-ti" type="number" id="ep2a" placeholder="0" oninput="eCalcGrasa()" min="0" max="80"></div><div class="mf-take"><span>T2</span><input class="mf-ti" type="number" id="ep2b" placeholder="0" oninput="eCalcGrasa()" min="0" max="80"></div><div class="mf-take"><span>T3</span><input class="mf-ti" type="number" id="ep2c" placeholder="0" oninput="eCalcGrasa()" min="0" max="80"></div><div class="mf-avg" id="ep2-avg">— mm</div></div></div>
+            <div class="mf-row" id="emr3"><div class="mf-n">3</div><div class="mf-info"><div class="mf-name">Subescapular</div><div class="mf-hint">45° diagonal, justo debajo del ángulo inferior del omóplato (espalda alta)</div></div><div class="mf-takes"><div class="mf-take"><span>T1</span><input class="mf-ti" type="number" id="ep3a" placeholder="0" oninput="eCalcGrasa()" min="0" max="80"></div><div class="mf-take"><span>T2</span><input class="mf-ti" type="number" id="ep3b" placeholder="0" oninput="eCalcGrasa()" min="0" max="80"></div><div class="mf-take"><span>T3</span><input class="mf-ti" type="number" id="ep3c" placeholder="0" oninput="eCalcGrasa()" min="0" max="80"></div><div class="mf-avg" id="ep3-avg">— mm</div></div></div>
+            <div class="mf-row" id="emr4"><div class="mf-n">4</div><div class="mf-info"><div class="mf-name">Abdominal</div><div class="mf-hint">Vertical, 2 cm a la derecha del ombligo</div></div><div class="mf-takes"><div class="mf-take"><span>T1</span><input class="mf-ti" type="number" id="ep4a" placeholder="0" oninput="eCalcGrasa()" min="0" max="80"></div><div class="mf-take"><span>T2</span><input class="mf-ti" type="number" id="ep4b" placeholder="0" oninput="eCalcGrasa()" min="0" max="80"></div><div class="mf-take"><span>T3</span><input class="mf-ti" type="number" id="ep4c" placeholder="0" oninput="eCalcGrasa()" min="0" max="80"></div><div class="mf-avg" id="ep4-avg">— mm</div></div></div>
+            <div class="mf-row" id="emr5"><div class="mf-n">5</div><div class="mf-info"><div class="mf-name">Cresta ilíaca</div><div class="mf-hint">Diagonal, sobre el hueso de la cadera — en línea con la axila anterior</div></div><div class="mf-takes"><div class="mf-take"><span>T1</span><input class="mf-ti" type="number" id="ep5a" placeholder="0" oninput="eCalcGrasa()" min="0" max="80"></div><div class="mf-take"><span>T2</span><input class="mf-ti" type="number" id="ep5b" placeholder="0" oninput="eCalcGrasa()" min="0" max="80"></div><div class="mf-take"><span>T3</span><input class="mf-ti" type="number" id="ep5c" placeholder="0" oninput="eCalcGrasa()" min="0" max="80"></div><div class="mf-avg" id="ep5-avg">— mm</div></div></div>
+            <div class="mf-row" id="emr6"><div class="mf-n">6</div><div class="mf-info"><div class="mf-name">Axilar media</div><div class="mf-hint">Horizontal, en el costado (línea del sobaco) a la altura del esternón</div></div><div class="mf-takes"><div class="mf-take"><span>T1</span><input class="mf-ti" type="number" id="ep6a" placeholder="0" oninput="eCalcGrasa()" min="0" max="80"></div><div class="mf-take"><span>T2</span><input class="mf-ti" type="number" id="ep6b" placeholder="0" oninput="eCalcGrasa()" min="0" max="80"></div><div class="mf-take"><span>T3</span><input class="mf-ti" type="number" id="ep6c" placeholder="0" oninput="eCalcGrasa()" min="0" max="80"></div><div class="mf-avg" id="ep6-avg">— mm</div></div></div>
+            <div class="mf-row" id="emr7"><div class="mf-n">7</div><div class="mf-info"><div class="mf-name">Femoral</div><div class="mf-hint">Vertical, cara frontal del muslo — punto medio entre el pliegue de la ingle y la rodilla</div></div><div class="mf-takes"><div class="mf-take"><span>T1</span><input class="mf-ti" type="number" id="ep7a" placeholder="0" oninput="eCalcGrasa()" min="0" max="80"></div><div class="mf-take"><span>T2</span><input class="mf-ti" type="number" id="ep7b" placeholder="0" oninput="eCalcGrasa()" min="0" max="80"></div><div class="mf-take"><span>T3</span><input class="mf-ti" type="number" id="ep7c" placeholder="0" oninput="eCalcGrasa()" min="0" max="80"></div><div class="mf-avg" id="ep7-avg">— mm</div></div></div>
             <div class="e-rbox">
               <div><div style="font-size:10px;font-weight:700;color:var(--txt2)">% Grasa corporal (J-P 7)</div><div style="font-size:10px;color:var(--acc);font-weight:700;margin-top:2px" id="e-grasa-cat">Ingresa los 7 pliegues</div></div>
               <div class="e-rbox-val" id="e-grasa-val">—</div>
@@ -1408,7 +1414,8 @@ function openEval(id){
   if(s.weight){var ew=el("e-peso");if(ew)ew.value=s.weight;}
   if(s.height){var eh=el("e-altura");if(eh)eh.value=s.height;}
   // reset caliper & FC
-  ["ep1","ep2","ep3","ep4","ep5","ep6","ep7"].forEach(function(id){var i=el(id);if(i)i.value="";});
+  ["a","b","c"].forEach(function(t){[1,2,3,4,5,6,7].forEach(function(n){var i=el("ep"+n+t);if(i)i.value="";});});
+  [1,2,3,4,5,6,7].forEach(function(n){var d=el("ep"+n+"-avg");if(d)d.textContent="— mm";});
   ["e-cin","e-cad","e-pecho","e-bicep","e-muslo","e-glut","e-pant","e-fc-rep","e-fc-antes","e-fc-med"].forEach(function(id){var i=el(id);if(i)i.value="";});
   ["e-sr","e-push","e-sit","e-sq","e-step"].forEach(function(id){var i=el(id);if(i)i.value="";});
   editingEvalIndex=null;
@@ -1432,7 +1439,7 @@ function loadEvalForEdit(idx){
   sv("e-cin",ev.cin);sv("e-cad",ev.cad);
   sv("e-pecho",ev.pecho);sv("e-bicep",ev.bicep);sv("e-muslo",ev.muslo);
   sv("e-glut",ev.glut);sv("e-pant",ev.pant);
-  sv("ep1",ev.p1);sv("ep2",ev.p2);sv("ep3",ev.p3);sv("ep4",ev.p4);sv("ep5",ev.p5);sv("ep6",ev.p6);sv("ep7",ev.p7);
+  [1,2,3,4,5,6,7].forEach(function(n){sv("ep"+n+"a",ev["p"+n+"a"]!=null?ev["p"+n+"a"]:ev["p"+n]);sv("ep"+n+"b",ev["p"+n+"b"]);sv("ep"+n+"c",ev["p"+n+"c"]);});
   sv("e-fc-rep",ev.fcRep);sv("e-fc-antes",ev.fcAntes);sv("e-fc-med",ev.fcMed);
   sv("e-sr",ev.testSR);sv("e-push",ev.testPush);sv("e-sit",ev.testSit);sv("e-sq",ev.testSq);sv("e-step",ev.testStep);
   eCalcGrasa();eCalcAuto();if(ev.fcMed)eCalcZona();
@@ -1446,21 +1453,20 @@ function setEvalTab(n){
   var sb=el("eval-save-btn");if(sb)sb.style.display=n===2?"none":"inline-flex";
 }
 function eDot(n){
-  var f=el("ep"+n);if(!f)return;
+  var f=el("ep"+n+"a");if(!f)return;
   f.focus();f.select();
   document.querySelectorAll(".mdot").forEach(function(d,i){d.classList.toggle("active",i+1===n);});
+}
+function pAvg(n){
+  var vals=["a","b","c"].map(function(t){return parseFloat((el("ep"+n+t)||{}).value)||0;}).filter(function(v){return v>0;});
+  return vals.length?vals.reduce(function(a,b){return a+b;},0)/vals.length:0;
 }
 // Jackson-Pollock 7 pliegues
 function eCalcGrasa(){
   var s=state.students.find(function(x){return x.id===evalStudentId;});
   var sex=s?s.sex:"M";var age=s?parseInt(s.age)||25:25;
-  var p1=parseFloat((el("ep1")||{}).value)||0;
-  var p2=parseFloat((el("ep2")||{}).value)||0;
-  var p3=parseFloat((el("ep3")||{}).value)||0;
-  var p4=parseFloat((el("ep4")||{}).value)||0;
-  var p5=parseFloat((el("ep5")||{}).value)||0;
-  var p6=parseFloat((el("ep6")||{}).value)||0;
-  var p7=parseFloat((el("ep7")||{}).value)||0;
+  var p1=pAvg(1),p2=pAvg(2),p3=pAvg(3),p4=pAvg(4),p5=pAvg(5),p6=pAvg(6),p7=pAvg(7);
+  [1,2,3,4,5,6,7].forEach(function(n){var a=pAvg(n);var d=el("ep"+n+"-avg");if(d)d.textContent=a>0?Math.round(a*10)/10+" mm":"— mm";});
   var S=p1+p2+p3+p4+p5+p6+p7;
   if(S<7){el("e-grasa-val").textContent="—";el("e-grasa-cat").textContent="Ingresa los 7 pliegues";return;}
   var dc;
@@ -1593,13 +1599,13 @@ function saveCurrentEval(){
     muslo:parseFloat((el("e-muslo")||{}).value)||null,
     glut:parseFloat((el("e-glut")||{}).value)||null,
     pant:parseFloat((el("e-pant")||{}).value)||null,
-    p1:parseFloat((el("ep1")||{}).value)||null,
-    p2:parseFloat((el("ep2")||{}).value)||null,
-    p3:parseFloat((el("ep3")||{}).value)||null,
-    p4:parseFloat((el("ep4")||{}).value)||null,
-    p5:parseFloat((el("ep5")||{}).value)||null,
-    p6:parseFloat((el("ep6")||{}).value)||null,
-    p7:parseFloat((el("ep7")||{}).value)||null,
+    p1a:parseFloat((el("ep1a")||{}).value)||null,p1b:parseFloat((el("ep1b")||{}).value)||null,p1c:parseFloat((el("ep1c")||{}).value)||null,
+    p2a:parseFloat((el("ep2a")||{}).value)||null,p2b:parseFloat((el("ep2b")||{}).value)||null,p2c:parseFloat((el("ep2c")||{}).value)||null,
+    p3a:parseFloat((el("ep3a")||{}).value)||null,p3b:parseFloat((el("ep3b")||{}).value)||null,p3c:parseFloat((el("ep3c")||{}).value)||null,
+    p4a:parseFloat((el("ep4a")||{}).value)||null,p4b:parseFloat((el("ep4b")||{}).value)||null,p4c:parseFloat((el("ep4c")||{}).value)||null,
+    p5a:parseFloat((el("ep5a")||{}).value)||null,p5b:parseFloat((el("ep5b")||{}).value)||null,p5c:parseFloat((el("ep5c")||{}).value)||null,
+    p6a:parseFloat((el("ep6a")||{}).value)||null,p6b:parseFloat((el("ep6b")||{}).value)||null,p6c:parseFloat((el("ep6c")||{}).value)||null,
+    p7a:parseFloat((el("ep7a")||{}).value)||null,p7b:parseFloat((el("ep7b")||{}).value)||null,p7c:parseFloat((el("ep7c")||{}).value)||null,
     grasa:parseFloat(el("e-grasa-val").textContent)||null,
     fcRep:parseInt((el("e-fc-rep")||{}).value)||null,
     fcAntes:parseInt((el("e-fc-antes")||{}).value)||null,
