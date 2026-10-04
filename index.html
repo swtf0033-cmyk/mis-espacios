@@ -909,12 +909,12 @@ label.switch-btn:hover{background:var(--acc-d2);color:var(--txt)}
         <div style="font-size:11px;font-weight:700;color:var(--acc);margin-bottom:8px;text-transform:uppercase;letter-spacing:.07em">Protocolo estándar NSCA previo al test</div>
         <div style="display:grid;grid-template-columns:repeat(5,1fr);gap:6px;margin-bottom:10px">
           <div style="background:var(--surf);border-radius:8px;padding:8px;text-align:center"><div style="font-size:18px;margin-bottom:4px">🚴</div><div style="font-size:9px;font-weight:700;color:var(--txt2)">GENERAL</div><div style="font-size:10px;color:var(--txt);margin-top:2px">5–10 min cardio ligero</div></div>
-          <div style="background:var(--surf);border-radius:8px;padding:8px;text-align:center"><div style="font-size:10px;font-weight:700;color:var(--green);margin-bottom:4px">SERIE 1</div><div style="font-size:16px;font-weight:700;font-family:'Rajdhani',sans-serif;color:var(--green)">40%</div><div style="font-size:9px;color:var(--txt2)">× 10 reps<br>2 min desc.</div></div>
-          <div style="background:var(--surf);border-radius:8px;padding:8px;text-align:center"><div style="font-size:10px;font-weight:700;color:var(--warn);margin-bottom:4px">SERIE 2</div><div style="font-size:16px;font-weight:700;font-family:'Rajdhani',sans-serif;color:var(--warn)">60%</div><div style="font-size:9px;color:var(--txt2)">× 5 reps<br>2 min desc.</div></div>
-          <div style="background:var(--surf);border-radius:8px;padding:8px;text-align:center"><div style="font-size:10px;font-weight:700;color:var(--danger);margin-bottom:4px">SERIE 3</div><div style="font-size:16px;font-weight:700;font-family:'Rajdhani',sans-serif;color:var(--danger)">80%</div><div style="font-size:9px;color:var(--txt2)">× 2 reps<br>3 min desc.</div></div>
-          <div style="background:var(--acc-d);border:1px solid var(--acc);border-radius:8px;padding:8px;text-align:center"><div style="font-size:10px;font-weight:700;color:var(--acc);margin-bottom:4px">TEST</div><div style="font-size:16px;font-weight:700;font-family:'Rajdhani',sans-serif;color:var(--acc)">1RM</div><div style="font-size:9px;color:var(--txt2)">o 3–5 reps sub-máx<br>3–5 min desc.</div></div>
+          <div style="background:var(--surf);border-radius:8px;padding:8px;text-align:center"><div style="font-size:10px;font-weight:700;color:var(--green);margin-bottom:4px">SERIE 1</div><div style="font-size:16px;font-weight:700;font-family:'Rajdhani',sans-serif;color:var(--green)">50%</div><div style="font-size:9px;color:var(--txt2)">× 8 reps<br>2 min desc.</div></div>
+          <div style="background:var(--surf);border-radius:8px;padding:8px;text-align:center"><div style="font-size:10px;font-weight:700;color:var(--warn);margin-bottom:4px">SERIE 2</div><div style="font-size:16px;font-weight:700;font-family:'Rajdhani',sans-serif;color:var(--warn)">70%</div><div style="font-size:9px;color:var(--txt2)">× 4 reps<br>2 min desc.</div></div>
+          <div style="background:var(--surf);border-radius:8px;padding:8px;text-align:center"><div style="font-size:10px;font-weight:700;color:var(--danger);margin-bottom:4px">SERIE 3</div><div style="font-size:16px;font-weight:700;font-family:'Rajdhani',sans-serif;color:var(--danger)">85%</div><div style="font-size:9px;color:var(--txt2)">× 2 reps<br>3 min desc.</div></div>
+          <div style="background:var(--acc-d);border:1px solid var(--acc);border-radius:8px;padding:8px;text-align:center"><div style="font-size:10px;font-weight:700;color:var(--acc);margin-bottom:4px">TEST</div><div style="font-size:16px;font-weight:700;font-family:'Rajdhani',sans-serif;color:var(--acc)">3RM</div><div style="font-size:9px;color:var(--txt2)">3 reps al máximo<br>3–5 min desc.</div></div>
         </div>
-        <div style="font-size:10px;color:var(--txt2);line-height:1.6">💡 <strong>Método sub-máximo</strong> (recomendado para principiantes): elige un peso con el que el alumno pueda hacer 3–8 reps antes de fallar. Ingresa peso y reps → la app calcula el 1RM con la fórmula de Epley: <em>1RM = peso × (1 + reps ÷ 30)</em>. Mayor precisión entre 2–6 reps.</div>
+        <div style="font-size:10px;color:var(--txt2);line-height:1.6">🎯 <strong>Test de 3RM</strong>: el alumno ejecuta 3 repeticiones al máximo con técnica limpia. La app calcula el 1RM automáticamente con Epley: <em>1RM = peso × 1.1</em>. El 3RM es más seguro que el 1RM directo y tiene alta correlación (&gt;95%) con el 1RM real (Mayhew et al., 1992).</div>
       </div>
       <div id="rm-grid"></div>
       <div style="height:1px;background:var(--border);margin:16px 0"></div>
@@ -1805,68 +1805,50 @@ function renderRmGrid(){
   RM_EXERCISES.forEach(function(ex){
     var stored=rms[ex.key]||{};
     var hasRm=stored.rm>0;
+    var rm3=stored.rm3||null;
     html+='<div class="rm-card'+(hasRm?" has-rm":"")+'" id="rmcard-'+ex.key+'">';
-    // head
+    // head: nombre + valores actuales
     html+='<div class="rm-card-head">'+
       '<div><div class="rm-card-name">'+ex.icon+' '+ex.name+'</div><div class="rm-card-pattern">'+ex.pattern+'</div></div>'+
-      '<div><div class="rm-current-val">'+(hasRm?stored.rm+" kg":"—")+'</div>'+
-      (hasRm?'<div class="rm-current-lbl">1RM actual</div><div class="rm-current-date">'+stored.date+'</div>':'')+
+      '<div style="text-align:right">'+
+        (hasRm?
+          '<div style="font-size:9px;color:var(--txt2)">3RM: <strong style="color:var(--txt)">'+(rm3||"—")+'kg</strong></div>'+
+          '<div class="rm-current-val">'+stored.rm+'kg</div>'+
+          '<div class="rm-current-lbl">1RM estimado</div>'+
+          '<div class="rm-current-date">'+stored.date+'</div>'
+        :'<div style="font-size:11px;color:var(--txt2);margin-top:4px">Sin test</div>')+
       '</div></div>';
-    // method tabs
-    html+='<div class="rm-method-tabs">'+
-      '<button class="rm-method-tab on" id="rmtab-d-'+ex.key+'" onclick="setRmMethodTab(\''+ex.key+'\',0)">1RM directo</button>'+
-      '<button class="rm-method-tab" id="rmtab-s-'+ex.key+'" onclick="setRmMethodTab(\''+ex.key+'\',1)">Sub-máximo</button>'+
+    // input 3RM
+    html+='<div class="rm-input-row" style="margin-top:8px">'+
+      '<span class="rm-i-lbl" style="white-space:nowrap;font-weight:700">Peso con 3 reps</span>'+
+      '<input class="rm-i" type="number" id="rm-3-'+ex.key+'" placeholder="kg" min="0" max="500"'+(rm3?' value="'+rm3+'"':'')+'>'+
+      '<span class="rm-i-lbl">kg</span>'+
+      '<button class="btn btn-p" style="font-size:11px;padding:5px 12px;flex-shrink:0" onclick="saveRm3(\''+ex.key+'\')">Guardar</button>'+
     '</div>';
-    // panel 0: direct
-    html+='<div id="rmpanel-0-'+ex.key+'">'+
-      '<div class="rm-input-row">'+
-        '<input class="rm-i" type="number" id="rm-dir-'+ex.key+'" placeholder="kg" min="0" max="500"'+(hasRm?' value="'+stored.rm+'"':'')+'>'+
-        '<span class="rm-i-lbl">kg</span>'+
-        '<button class="btn btn-p" style="font-size:11px;padding:5px 12px;flex-shrink:0" onclick="saveRmDirect(\''+ex.key+'\')">Guardar</button>'+
-      '</div></div>';
-    // panel 1: submax
-    html+='<div id="rmpanel-1-'+ex.key+'" style="display:none">'+
-      '<div class="rm-input-row">'+
-        '<input class="rm-i" type="number" id="rm-w-'+ex.key+'" placeholder="peso kg" min="0" max="500" style="width:60px">'+
-        '<span class="rm-i-lbl">kg ×</span>'+
-        '<input class="rm-i" type="number" id="rm-r-'+ex.key+'" placeholder="reps" min="1" max="20" style="width:48px">'+
-        '<span class="rm-i-lbl">reps</span>'+
-        '<button class="btn btn-p" style="font-size:11px;padding:5px 12px;flex-shrink:0" onclick="calcAndSaveRm(\''+ex.key+'\')">Calcular</button>'+
-      '</div></div>';
-    // weights grid
-    if(hasRm){html+=rmWeeksHtml(stored.rm);}else{html+='<div id="rm-wk-'+ex.key+'" style="font-size:10px;color:var(--txt2);margin-top:8px;text-align:center">Guarda el 1RM para ver los pesos de trabajo</div>';}
+    // pesos de trabajo
+    if(hasRm){
+      html+=rmWeeksHtml(stored.rm);
+    } else {
+      html+='<div style="font-size:10px;color:var(--txt2);margin-top:8px;text-align:center;padding:6px">Ingresa el peso para ver los rangos de trabajo</div>';
+    }
     html+='</div>';
   });
   html+='</div>';
   el("rm-grid").innerHTML=html;
 }
 
-function setRmMethodTab(key,n){
-  el("rmtab-d-"+key).classList.toggle("on",n===0);
-  el("rmtab-s-"+key).classList.toggle("on",n===1);
-  el("rmpanel-0-"+key).style.display=n===0?"block":"none";
-  el("rmpanel-1-"+key).style.display=n===1?"block":"none";
+function saveRm3(key){
+  var w=parseFloat((el("rm-3-"+key)||{}).value)||0;
+  if(!w){alert("Ingresa el peso con el que hizo 3 reps");return;}
+  var rm=Math.round(w*1.1); // Epley fija: 1RM = peso × (1 + 3/30) = peso × 1.1
+  storeRm(key,rm,w);
 }
-
-function saveRmDirect(key){
-  var v=parseFloat((el("rm-dir-"+key)||{}).value)||0;
-  if(!v){alert("Ingresa el 1RM en kg");return;}
-  storeRm(key,v);
-}
-function calcAndSaveRm(key){
-  var w=parseFloat((el("rm-w-"+key)||{}).value)||0;
-  var r=parseInt((el("rm-r-"+key)||{}).value)||0;
-  if(!w||!r){alert("Ingresa peso y repeticiones");return;}
-  if(r>15){alert("Para mayor precisión usa entre 2 y 10 reps.");return;}
-  var rm=Math.round(w*(1+r/30));
-  storeRm(key,rm);
-}
-function storeRm(key,rm){
+function storeRm(key,rm,rm3){
   var rms=lsGet("rm-"+profileStudentId,{});
   var prev=rms[key]||{};
   var hist=prev.history||[];
-  if(prev.rm)hist.unshift({rm:prev.rm,date:prev.date});
-  rms[key]={rm:rm,date:new Date().toLocaleDateString("es-CR",{day:"2-digit",month:"short",year:"numeric"}),history:hist.slice(0,20)};
+  if(prev.rm)hist.unshift({rm:prev.rm,rm3:prev.rm3,date:prev.date});
+  rms[key]={rm:rm,rm3:rm3||null,date:new Date().toLocaleDateString("es-CR",{day:"2-digit",month:"short",year:"numeric"}),history:hist.slice(0,20)};
   lsSave("rm-"+profileStudentId,rms);
   renderRmGrid();
 }
