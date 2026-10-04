@@ -169,6 +169,26 @@ a.sel-card{display:block;text-decoration:none;color:inherit}
 .meso-day-lbl{font-size:10px;font-weight:700;color:var(--acc);width:28px;flex-shrink:0;padding-top:7px}
 .meso-day-ta{flex:1;background:var(--surf);border:1px solid var(--border);border-radius:6px;padding:6px 8px;color:var(--txt);font-size:11px;font-family:'Inter',sans-serif;resize:vertical;min-height:34px;outline:none;line-height:1.5}
 .meso-day-ta:focus{border-color:var(--acc)}
+.meso-day-left{display:flex;flex-direction:column;align-items:center;gap:3px;flex-shrink:0;width:68px}
+.meso-day-type{background:var(--card2);border:1px solid var(--border);border-radius:5px;color:var(--txt2);font-size:8px;font-family:'Inter',sans-serif;padding:2px 3px;width:68px;outline:none;cursor:pointer;text-overflow:ellipsis}
+.meso-day-type:focus{border-color:var(--acc)}
+.meso-ta-rest{opacity:.45;font-style:italic}
+.meso-prescr{border-radius:8px;padding:10px 12px;margin-bottom:10px}
+.meso-prescr-pr{background:rgba(248,113,113,.07);border:1px solid rgba(248,113,113,.2)}
+.meso-prescr-hiper{background:rgba(168,85,247,.07);border:1px solid rgba(168,85,247,.2)}
+.meso-prescr-power{background:rgba(251,191,36,.07);border:1px solid rgba(251,191,36,.2)}
+.meso-prescr-deload{background:rgba(52,211,153,.07);border:1px solid rgba(52,211,153,.2)}
+.meso-prescr-grid{display:flex;gap:7px;flex-wrap:wrap;margin-bottom:7px}
+.meso-prescr-item{background:rgba(0,0,0,.25);border-radius:6px;padding:5px 9px;text-align:center;min-width:54px}
+.meso-prescr-lbl{font-size:8px;color:var(--txt2);text-transform:uppercase;letter-spacing:.4px;margin-bottom:2px}
+.meso-prescr-val{font-size:13px;font-weight:700;font-family:'Rajdhani',sans-serif;color:var(--txt)}
+.meso-prescr-obj{font-size:10px;color:var(--txt2);line-height:1.5}
+.meso-rm-ref{background:var(--surf);border:1px solid var(--border);border-radius:8px;padding:8px 10px;margin-bottom:10px}
+.meso-rm-ref-lbl{font-size:9px;font-weight:700;color:var(--txt2);text-transform:uppercase;letter-spacing:.5px;margin-bottom:6px}
+.meso-rm-ref-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:5px}
+.meso-rm-item{display:flex;align-items:center;justify-content:space-between;background:var(--card);border:1px solid var(--border);border-radius:5px;padding:4px 7px;gap:6px;min-width:0}
+.meso-rm-exname{font-size:9px;color:var(--txt2);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.meso-rm-range{font-size:11px;font-weight:700;font-family:'Rajdhani',sans-serif;color:var(--acc);white-space:nowrap;flex-shrink:0}
 .mw-info{font-size:10px;color:var(--txt2);flex:1;line-height:1.5}
 .mw-chevron{font-size:12px;color:var(--txt2);transition:transform .2s;flex-shrink:0}
 .mw-chevron.open{transform:rotate(90deg)}
@@ -1653,10 +1673,26 @@ function closeEval(){
 // ═══════════════════════════════════════
 var profileStudentId=null,profChartW=null,profChartF=null;
 var MESO_TYPES=[
-  {key:"pr",    label:"💪 Fuerza / PR",    cls:"mw-pr",    info:"1–5 reps · 85–100% 1RM · Adaptación neuromuscular. Reclutamiento de unidades motoras de alto umbral (Zatsiorsky & Kraemer, 2006)."},
-  {key:"hiper", label:"🏋️ Hipertrofia",    cls:"mw-hiper", info:"6–12 reps · 65–80% 1RM · Tensión mecánica + estrés metabólico + daño muscular. Mayor tiempo bajo tensión (Schoenfeld, 2010)."},
-  {key:"power", label:"⚡ Potencia",        cls:"mw-power", info:"3–6 reps · 75–85% 1RM · Ejecución explosiva. Desarrolla la Tasa de Desarrollo de Fuerza (RFD) y fibras tipo IIx (Haff & Triplett, 2016)."},
-  {key:"deload",label:"🔄 Deload / Resist.",cls:"mw-deload",info:"15–20 reps · 50–65% 1RM · Recuperación activa. Permite supercompensación antes del siguiente mesociclo (Bompa & Buzzichelli, 2015)."}
+  {key:"pr",    label:"💪 Fuerza / PR",    cls:"mw-pr",
+   info:"1–5 reps · 85–100% 1RM · Adaptación neuromuscular. Reclutamiento de unidades motoras de alto umbral (Zatsiorsky & Kraemer, 2006).",
+   series:"4–5",reps:"1–5",pctLo:85,pctHi:100,rest:"3–5 min",rpe:"9–10",
+   objetivo:"Máxima expresión de fuerza. Reclutamiento neuromuscular de alto umbral.",
+   defaultDays:["inf","sup","rest","inf","sup","opt"]},
+  {key:"hiper", label:"🏋️ Hipertrofia",    cls:"mw-hiper",
+   info:"6–12 reps · 65–80% 1RM · Tensión mecánica + estrés metabólico + daño muscular. Mayor tiempo bajo tensión (Schoenfeld, 2010).",
+   series:"3–4",reps:"6–12",pctLo:65,pctHi:80,rest:"60–90 s",rpe:"7–8",
+   objetivo:"Tiempo bajo tensión. Maximizar estrés metabólico y daño muscular controlado.",
+   defaultDays:["inf","sup","inf","rest","sup","full"]},
+  {key:"power", label:"⚡ Potencia",        cls:"mw-power",
+   info:"3–6 reps · 75–85% 1RM · Ejecución explosiva. Desarrolla la Tasa de Desarrollo de Fuerza (RFD) y fibras tipo IIx (Haff & Triplett, 2016).",
+   series:"4–5",reps:"3–6",pctLo:75,pctHi:85,rest:"3–4 min",rpe:"8–9",
+   objetivo:"Velocidad de ejecución máxima. Desarrollar RFD y fibras tipo IIx.",
+   defaultDays:["inf","sup","rest","inf","sup","opt"]},
+  {key:"deload",label:"🔄 Deload / Resist.",cls:"mw-deload",
+   info:"15–20 reps · 50–65% 1RM · Recuperación activa. Permite supercompensación antes del siguiente mesociclo (Bompa & Buzzichelli, 2015).",
+   series:"2–3",reps:"15–20",pctLo:50,pctHi:65,rest:"45–60 s",rpe:"5–6",
+   objetivo:"Recuperación activa. Supercompensación para el próximo mesociclo.",
+   defaultDays:["full","rest","full","rest","full","rest"]}
 ];
 var DAYS=["Lun","Mar","Mié","Jue","Vie","Sáb"];
 
@@ -1743,28 +1779,75 @@ function renderProfDashboard(){
 }
 
 // ── Planificación ──────────────────────
+var SESSION_TYPES=[
+  {key:"inf", label:"🦵 Tren Inferior"},
+  {key:"sup", label:"💪 Tren Superior"},
+  {key:"full",label:"🔄 Full Body"},
+  {key:"card",label:"🏃 Cardio"},
+  {key:"rest",label:"😴 Descanso"},
+  {key:"opt", label:"✅ Opcional"}
+];
 function renderProfPlanning(){
   var plan=lsGet("plan-"+profileStudentId,{mesociclos:[],current:0});
-  if(!plan.mesociclos.length){plan.mesociclos.push({id:1,start:"",weeks:MESO_TYPES.map(function(t){return{type:t.key,days:{}};})});lsSave("plan-"+profileStudentId,plan);}
-  // selector de mesociclos
+  if(!plan.mesociclos.length){plan.mesociclos.push({id:1,start:"",weeks:MESO_TYPES.map(function(t){return{type:t.key,days:{},dayTypes:{}};})});lsSave("plan-"+profileStudentId,plan);}
   var selHtml=plan.mesociclos.map(function(m,i){
     return'<button class="meso-sel-btn'+(i===plan.current?" on":"")+'" onclick="selectMeso('+i+')">Mesociclo '+m.id+'</button>';
   }).join("");
   el("meso-sel-btns").innerHTML=selHtml;
-  // render semanas
+  var rms=lsGet("rm-"+profileStudentId,{});
   var meso=plan.mesociclos[plan.current];
   var html=meso.weeks.map(function(w,wi){
     var t=MESO_TYPES[wi];
+    var dayTypes=w.dayTypes||{};
+    // tarjeta prescripción
+    var prescrHtml='<div class="meso-prescr meso-prescr-'+t.key+'">'+
+      '<div class="meso-prescr-grid">'+
+        '<div class="meso-prescr-item"><div class="meso-prescr-lbl">Series</div><div class="meso-prescr-val">'+t.series+'</div></div>'+
+        '<div class="meso-prescr-item"><div class="meso-prescr-lbl">Reps</div><div class="meso-prescr-val">'+t.reps+'</div></div>'+
+        '<div class="meso-prescr-item"><div class="meso-prescr-lbl">Intensidad</div><div class="meso-prescr-val">'+t.pctLo+'–'+t.pctHi+'%</div></div>'+
+        '<div class="meso-prescr-item"><div class="meso-prescr-lbl">Descanso</div><div class="meso-prescr-val">'+t.rest+'</div></div>'+
+        '<div class="meso-prescr-item"><div class="meso-prescr-lbl">RPE</div><div class="meso-prescr-val">'+t.rpe+'</div></div>'+
+      '</div>'+
+      '<div class="meso-prescr-obj">🎯 '+t.objetivo+'</div>'+
+    '</div>';
+    // pesos de trabajo desde 1RM
+    var hasRmData=RM_EXERCISES.some(function(e){return rms[e.key]&&rms[e.key].rm;});
+    var rmRefHtml="";
+    if(hasRmData){
+      rmRefHtml='<div class="meso-rm-ref"><div class="meso-rm-ref-lbl">📊 Pesos de trabajo · '+t.pctLo+'–'+t.pctHi+'% del 1RM</div><div class="meso-rm-ref-grid">';
+      RM_EXERCISES.forEach(function(ex){
+        if(rms[ex.key]&&rms[ex.key].rm){
+          var rm=rms[ex.key].rm;
+          var lo=Math.round(rm*t.pctLo/100),hi=Math.round(rm*t.pctHi/100);
+          rmRefHtml+='<div class="meso-rm-item"><span class="meso-rm-exname">'+ex.icon+' '+ex.name+'</span><span class="meso-rm-range">'+lo+'–'+hi+' kg</span></div>';
+        }
+      });
+      rmRefHtml+='</div></div>';
+    }
+    // días
     var daysHtml=DAYS.map(function(d,di){
-      var key=d.toLowerCase();
-      return'<div class="meso-day"><span class="meso-day-lbl">'+d+'</span>'+
-        '<textarea class="meso-day-ta" id="meso-d-'+wi+'-'+di+'" placeholder="ej: Sentadilla 4×6 80% · Peso muerto 3×5 85%..." onblur="savePlanDay('+wi+','+di+')">'+(w.days[key]||"")+'</textarea></div>';
+      var dkey=d.toLowerCase();
+      var curType=dayTypes[di]||(t.defaultDays?t.defaultDays[di]:"opt");
+      var selOpts=SESSION_TYPES.map(function(st){
+        return'<option value="'+st.key+'"'+(curType===st.key?' selected':'')+'>'+st.label+'</option>';
+      }).join("");
+      var isRest=curType==="rest";
+      return'<div class="meso-day">'+
+        '<div class="meso-day-left">'+
+          '<span class="meso-day-lbl">'+d+'</span>'+
+          '<select class="meso-day-type" onchange="savePlanDayType('+wi+','+di+',this.value)">'+selOpts+'</select>'+
+        '</div>'+
+        '<textarea class="meso-day-ta'+(isRest?' meso-ta-rest':'')+'" id="meso-d-'+wi+'-'+di+'" placeholder="'+(isRest?'Descanso activo, movilidad, estiramientos...':'Ejercicio · series×reps @% · notas...')+'" onblur="savePlanDay('+wi+','+di+')">'+(w.days[dkey]||"")+'</textarea>'+
+      '</div>';
     }).join("");
-    return'<div class="meso-week"><div class="meso-week-head" onclick="toggleMesoWeek('+wi+')">'+
-      '<span class="mw-badge '+t.cls+'">S'+( wi+1)+' '+t.label+'</span>'+
-      '<span class="mw-info">'+t.info+'</span>'+
-      '<span class="mw-chevron" id="mw-chev-'+wi+'">▶</span>'+
-    '</div><div class="meso-week-body" id="mw-body-'+wi+'">'+daysHtml+'</div></div>';
+    return'<div class="meso-week">'+
+      '<div class="meso-week-head" onclick="toggleMesoWeek('+wi+')">'+
+        '<span class="mw-badge '+t.cls+'">S'+(wi+1)+' '+t.label+'</span>'+
+        '<span class="mw-info">'+t.info+'</span>'+
+        '<span class="mw-chevron" id="mw-chev-'+wi+'">▶</span>'+
+      '</div>'+
+      '<div class="meso-week-body" id="mw-body-'+wi+'">'+prescrHtml+rmRefHtml+daysHtml+'</div>'+
+    '</div>';
   }).join("");
   el("meso-weeks-container").innerHTML=html;
 }
@@ -1883,6 +1966,20 @@ function savePlanDay(wi,di){
   var ta=el("meso-d-"+wi+"-"+di);
   if(ta)meso.weeks[wi].days[key]=ta.value;
   lsSave("plan-"+profileStudentId,plan);
+}
+function savePlanDayType(wi,di,val){
+  var plan=lsGet("plan-"+profileStudentId,{mesociclos:[],current:0});
+  var meso=plan.mesociclos[plan.current];if(!meso)return;
+  var w=meso.weeks[wi];if(!w)return;
+  if(!w.dayTypes)w.dayTypes={};
+  w.dayTypes[di]=val;
+  lsSave("plan-"+profileStudentId,plan);
+  var ta=el("meso-d-"+wi+"-"+di);
+  if(ta){
+    var isRest=val==="rest";
+    ta.className="meso-day-ta"+(isRest?" meso-ta-rest":"");
+    ta.placeholder=isRest?"Descanso activo, movilidad, estiramientos...":"Ejercicio · series×reps @% · notas...";
+  }
 }
 
 // ── Ciclo menstrual ────────────────────
