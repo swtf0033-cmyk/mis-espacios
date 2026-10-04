@@ -914,7 +914,21 @@ label.switch-btn:hover{background:var(--acc-d2);color:var(--txt)}
           <div style="background:var(--surf);border-radius:8px;padding:8px;text-align:center"><div style="font-size:10px;font-weight:700;color:var(--danger);margin-bottom:4px">SERIE 3</div><div style="font-size:16px;font-weight:700;font-family:'Rajdhani',sans-serif;color:var(--danger)">85%</div><div style="font-size:9px;color:var(--txt2)">× 2 reps<br>3 min desc.</div></div>
           <div style="background:var(--acc-d);border:1px solid var(--acc);border-radius:8px;padding:8px;text-align:center"><div style="font-size:10px;font-weight:700;color:var(--acc);margin-bottom:4px">TEST</div><div style="font-size:16px;font-weight:700;font-family:'Rajdhani',sans-serif;color:var(--acc)">3RM</div><div style="font-size:9px;color:var(--txt2)">3 reps al máximo<br>3–5 min desc.</div></div>
         </div>
-        <div style="font-size:10px;color:var(--txt2);line-height:1.6">🎯 <strong>Test de 3RM</strong>: el alumno ejecuta 3 repeticiones al máximo con técnica limpia. La app calcula el 1RM automáticamente con Epley: <em>1RM = peso × 1.1</em>. El 3RM es más seguro que el 1RM directo y tiene alta correlación (&gt;95%) con el 1RM real (Mayhew et al., 1992).</div>
+        <div style="font-size:10px;color:var(--txt2);line-height:1.6;margin-bottom:10px">🎯 <strong>Test de 3RM</strong>: el alumno ejecuta 3 repeticiones al máximo con técnica limpia. La app calcula el 1RM según la tabla oficial NSCA (Baechle &amp; Earle): <em>3RM = 93% del 1RM → 1RM = peso ÷ 0.93</em>. El 3RM es más seguro que el 1RM directo y más preciso que fórmulas estimadas (Mayhew et al., 1992).</div>
+        <div style="font-size:9px;font-weight:700;color:var(--txt2);margin-bottom:5px;text-transform:uppercase;letter-spacing:.07em">Tabla NSCA — Reps máximas vs % del 1RM</div>
+        <div style="display:flex;gap:3px;flex-wrap:wrap">
+          <div style="background:rgba(248,113,113,.15);border-radius:5px;padding:4px 7px;text-align:center"><div style="font-size:9px;font-weight:700;color:var(--danger)">1 rep</div><div style="font-size:11px;font-weight:700;font-family:'Rajdhani',sans-serif">100%</div></div>
+          <div style="background:rgba(248,113,113,.12);border-radius:5px;padding:4px 7px;text-align:center"><div style="font-size:9px;font-weight:700;color:var(--danger)">2 reps</div><div style="font-size:11px;font-weight:700;font-family:'Rajdhani',sans-serif">95%</div></div>
+          <div style="background:rgba(248,113,113,.1);border-radius:5px;padding:4px 7px;text-align:center;border:1px solid rgba(168,85,247,.5)"><div style="font-size:9px;font-weight:700;color:var(--acc)">3 reps ✓</div><div style="font-size:11px;font-weight:700;font-family:'Rajdhani',sans-serif;color:var(--acc)">93%</div></div>
+          <div style="background:var(--surf);border-radius:5px;padding:4px 7px;text-align:center"><div style="font-size:9px;color:var(--txt2)">4 reps</div><div style="font-size:11px;font-weight:700;font-family:'Rajdhani',sans-serif">90%</div></div>
+          <div style="background:var(--surf);border-radius:5px;padding:4px 7px;text-align:center"><div style="font-size:9px;color:var(--txt2)">5 reps</div><div style="font-size:11px;font-weight:700;font-family:'Rajdhani',sans-serif">87%</div></div>
+          <div style="background:var(--surf);border-radius:5px;padding:4px 7px;text-align:center"><div style="font-size:9px;color:var(--txt2)">6 reps</div><div style="font-size:11px;font-weight:700;font-family:'Rajdhani',sans-serif">85%</div></div>
+          <div style="background:var(--surf);border-radius:5px;padding:4px 7px;text-align:center"><div style="font-size:9px;color:var(--txt2)">7 reps</div><div style="font-size:11px;font-weight:700;font-family:'Rajdhani',sans-serif">83%</div></div>
+          <div style="background:rgba(168,85,247,.08);border-radius:5px;padding:4px 7px;text-align:center"><div style="font-size:9px;color:var(--txt2)">8 reps</div><div style="font-size:11px;font-weight:700;font-family:'Rajdhani',sans-serif">80%</div></div>
+          <div style="background:rgba(168,85,247,.08);border-radius:5px;padding:4px 7px;text-align:center"><div style="font-size:9px;color:var(--txt2)">10 reps</div><div style="font-size:11px;font-weight:700;font-family:'Rajdhani',sans-serif">75%</div></div>
+          <div style="background:rgba(52,211,153,.08);border-radius:5px;padding:4px 7px;text-align:center"><div style="font-size:9px;color:var(--txt2)">12 reps</div><div style="font-size:11px;font-weight:700;font-family:'Rajdhani',sans-serif">67%</div></div>
+          <div style="background:rgba(52,211,153,.08);border-radius:5px;padding:4px 7px;text-align:center"><div style="font-size:9px;color:var(--txt2)">15 reps</div><div style="font-size:11px;font-weight:700;font-family:'Rajdhani',sans-serif">65%</div></div>
+        </div>
       </div>
       <div id="rm-grid"></div>
       <div style="height:1px;background:var(--border);margin:16px 0"></div>
@@ -1840,7 +1854,7 @@ function renderRmGrid(){
 function saveRm3(key){
   var w=parseFloat((el("rm-3-"+key)||{}).value)||0;
   if(!w){alert("Ingresa el peso con el que hizo 3 reps");return;}
-  var rm=Math.round(w*1.1); // Epley fija: 1RM = peso × (1 + 3/30) = peso × 1.1
+  var rm=Math.round(w/0.93); // NSCA: 3RM = 93% del 1RM → 1RM = peso ÷ 0.93
   storeRm(key,rm,w);
 }
 function storeRm(key,rm,rm3){
