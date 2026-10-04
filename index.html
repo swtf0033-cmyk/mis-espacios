@@ -185,6 +185,28 @@ a.sel-card{display:block;text-decoration:none;color:inherit}
 .note-date{font-size:10px;color:var(--acc);font-weight:700;min-width:64px;flex-shrink:0;padding-top:2px}
 .note-txt{font-size:12px;color:var(--txt);flex:1;line-height:1.6}
 .sci-note{background:var(--acc-d2);border-left:3px solid var(--acc);border-radius:0 6px 6px 0;padding:8px 12px;font-size:10px;color:var(--txt2);margin-bottom:12px;line-height:1.6}
+.rm-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:10px;margin-bottom:4px}
+@media(max-width:600px){.rm-grid{grid-template-columns:1fr}}
+.rm-card{background:var(--card);border:1px solid var(--border);border-radius:10px;padding:12px;transition:border .2s}
+.rm-card.has-rm{border-color:rgba(168,85,247,.4)}
+.rm-card-head{display:flex;align-items:center;justify-content:space-between;margin-bottom:8px}
+.rm-card-name{font-size:12px;font-weight:700}
+.rm-card-pattern{font-size:9px;color:var(--txt2);margin-top:1px}
+.rm-current-val{font-family:'Rajdhani',sans-serif;font-size:22px;font-weight:700;color:var(--acc);text-align:right}
+.rm-current-lbl{font-size:9px;color:var(--txt2);text-align:right}
+.rm-current-date{font-size:9px;color:var(--txt2);text-align:right;margin-top:1px}
+.rm-method-tabs{display:flex;gap:4px;margin-bottom:8px}
+.rm-method-tab{flex:1;background:var(--surf);border:1px solid var(--border);color:var(--txt2);font-size:10px;font-weight:600;padding:4px 8px;border-radius:6px;cursor:pointer;font-family:'Inter',sans-serif;transition:all .15s}
+.rm-method-tab.on{background:var(--acc-d);border-color:var(--acc);color:var(--acc)}
+.rm-input-row{display:flex;gap:6px;align-items:center}
+.rm-i{flex:1;background:var(--surf);border:1px solid var(--border2);border-radius:6px;padding:5px 8px;color:var(--txt);font-size:13px;font-weight:700;font-family:'Rajdhani',sans-serif;outline:none;text-align:right}
+.rm-i:focus{border-color:var(--acc)}
+.rm-i-lbl{font-size:9px;color:var(--txt2);white-space:nowrap}
+.rm-weeks{display:grid;grid-template-columns:repeat(4,1fr);gap:4px;margin-top:10px;padding-top:8px;border-top:1px solid var(--border)}
+.rm-week-box{background:var(--surf);border-radius:6px;padding:5px 4px;text-align:center}
+.rm-week-lbl{font-size:8px;font-weight:700;margin-bottom:2px;text-transform:uppercase}
+.rm-week-range{font-size:10px;font-weight:700;font-family:'Rajdhani',sans-serif;color:var(--txt)}
+.rm-week-pct{font-size:8px;color:var(--txt2)}
 .eval-hd{display:flex;align-items:center;gap:12px;padding:14px 20px;border-bottom:1px solid var(--border);flex-shrink:0;background:var(--card)}
 .eval-hd-name{font-family:'Rajdhani',sans-serif;font-weight:700;font-size:18px;flex:1}
 .eval-hd-sub{font-size:11px;color:var(--txt2);margin-top:1px}
@@ -878,6 +900,24 @@ label.switch-btn:hover{background:var(--acc-d2);color:var(--txt)}
 
     <!-- TAB 1: PLANIFICACIÓN -->
     <div class="eval-panel" id="ptab1">
+      <!-- TEST DE 1RM -->
+      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:10px;flex-wrap:wrap;gap:8px">
+        <div style="font-size:13px;font-weight:700">🏆 Test de 1RM — Ejercicios fundamentales</div>
+        <button class="meso-sel-btn" onclick="toggleRmProtocol()" id="rm-prot-btn">📋 Ver protocolo de calentamiento</button>
+      </div>
+      <div id="rm-protocol" style="display:none;background:var(--card);border:1px solid var(--border);border-radius:10px;padding:14px;margin-bottom:12px">
+        <div style="font-size:11px;font-weight:700;color:var(--acc);margin-bottom:8px;text-transform:uppercase;letter-spacing:.07em">Protocolo estándar NSCA previo al test</div>
+        <div style="display:grid;grid-template-columns:repeat(5,1fr);gap:6px;margin-bottom:10px">
+          <div style="background:var(--surf);border-radius:8px;padding:8px;text-align:center"><div style="font-size:18px;margin-bottom:4px">🚴</div><div style="font-size:9px;font-weight:700;color:var(--txt2)">GENERAL</div><div style="font-size:10px;color:var(--txt);margin-top:2px">5–10 min cardio ligero</div></div>
+          <div style="background:var(--surf);border-radius:8px;padding:8px;text-align:center"><div style="font-size:10px;font-weight:700;color:var(--green);margin-bottom:4px">SERIE 1</div><div style="font-size:16px;font-weight:700;font-family:'Rajdhani',sans-serif;color:var(--green)">40%</div><div style="font-size:9px;color:var(--txt2)">× 10 reps<br>2 min desc.</div></div>
+          <div style="background:var(--surf);border-radius:8px;padding:8px;text-align:center"><div style="font-size:10px;font-weight:700;color:var(--warn);margin-bottom:4px">SERIE 2</div><div style="font-size:16px;font-weight:700;font-family:'Rajdhani',sans-serif;color:var(--warn)">60%</div><div style="font-size:9px;color:var(--txt2)">× 5 reps<br>2 min desc.</div></div>
+          <div style="background:var(--surf);border-radius:8px;padding:8px;text-align:center"><div style="font-size:10px;font-weight:700;color:var(--danger);margin-bottom:4px">SERIE 3</div><div style="font-size:16px;font-weight:700;font-family:'Rajdhani',sans-serif;color:var(--danger)">80%</div><div style="font-size:9px;color:var(--txt2)">× 2 reps<br>3 min desc.</div></div>
+          <div style="background:var(--acc-d);border:1px solid var(--acc);border-radius:8px;padding:8px;text-align:center"><div style="font-size:10px;font-weight:700;color:var(--acc);margin-bottom:4px">TEST</div><div style="font-size:16px;font-weight:700;font-family:'Rajdhani',sans-serif;color:var(--acc)">1RM</div><div style="font-size:9px;color:var(--txt2)">o 3–5 reps sub-máx<br>3–5 min desc.</div></div>
+        </div>
+        <div style="font-size:10px;color:var(--txt2);line-height:1.6">💡 <strong>Método sub-máximo</strong> (recomendado para principiantes): elige un peso con el que el alumno pueda hacer 3–8 reps antes de fallar. Ingresa peso y reps → la app calcula el 1RM con la fórmula de Epley: <em>1RM = peso × (1 + reps ÷ 30)</em>. Mayor precisión entre 2–6 reps.</div>
+      </div>
+      <div id="rm-grid"></div>
+      <div style="height:1px;background:var(--border);margin:16px 0"></div>
       <div class="sci-note">📚 Periodización por bloques (Issurin, 2008 · Bompa & Buzzichelli, 2015): cada mesociclo de 4 semanas alterna estímulos — Fuerza/PR → Hipertrofia → Potencia → Deload — optimizando adaptaciones sin meseta. En mujeres, la fase del ciclo menstrual modula la respuesta hormonal al entrenamiento (Wikström-Frisén et al., 2017).</div>
       <div style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:8px;margin-bottom:12px">
         <div class="meso-sel" id="meso-sel-btns"></div>
@@ -1639,7 +1679,7 @@ function setProfTab(n){
   document.querySelectorAll("#prof-overlay .eval-tab").forEach(function(t,i){t.classList.toggle("on",i===n);});
   for(var i=0;i<5;i++){var p=el("ptab"+i);if(p)p.classList.toggle("on",i===n);}
   if(n===0)renderProfDashboard();
-  else if(n===1)renderProfPlanning();
+  else if(n===1){renderRmGrid();renderProfPlanning();}
   else if(n===2)renderNutrition();
   else if(n===3)renderGoals();
   else if(n===4)renderNotes();
@@ -1732,6 +1772,113 @@ function addMesociclo(){
   plan.current=plan.mesociclos.length-1;
   lsSave("plan-"+profileStudentId,plan);
   renderProfPlanning();
+}
+
+// ── Test de 1RM ────────────────────────
+var RM_EXERCISES=[
+  {key:"squat",   name:"Sentadilla",       icon:"🏋️", pattern:"Tren inferior — Rodilla"},
+  {key:"deadlift",name:"Peso muerto",      icon:"⚡",  pattern:"Tren inferior — Cadera"},
+  {key:"hipthrust",name:"Hip thrust",      icon:"🍑",  pattern:"Tren inferior — Glúteo"},
+  {key:"bench",   name:"Press de banca",   icon:"💪",  pattern:"Tren superior — Empuje horizontal"},
+  {key:"ohp",     name:"Press militar",    icon:"🔝",  pattern:"Tren superior — Empuje vertical"},
+  {key:"row",     name:"Remo con barra",   icon:"🚣",  pattern:"Tren superior — Jalón horizontal"},
+  {key:"pulldown",name:"Jalón / Dominadas",icon:"📌",  pattern:"Tren superior — Jalón vertical"}
+];
+var RM_WEEKS=[
+  {label:"S1 PR",   pctLo:85,pctHi:100,cls:"mw-pr"},
+  {label:"S2 Hiper",pctLo:65,pctHi:80, cls:"mw-hiper"},
+  {label:"S3 Pot.", pctLo:75,pctHi:85, cls:"mw-power"},
+  {label:"S4 Deload",pctLo:50,pctHi:65,cls:"mw-deload"}
+];
+
+function toggleRmProtocol(){
+  var p=el("rm-protocol"),b=el("rm-prot-btn");
+  if(!p)return;
+  var on=p.style.display==="none"||p.style.display==="";
+  p.style.display=on?"block":"none";
+  if(b)b.textContent=on?"📋 Ocultar protocolo":"📋 Ver protocolo de calentamiento";
+}
+
+function renderRmGrid(){
+  var rms=lsGet("rm-"+profileStudentId,{});
+  var html='<div class="rm-grid">';
+  RM_EXERCISES.forEach(function(ex){
+    var stored=rms[ex.key]||{};
+    var hasRm=stored.rm>0;
+    html+='<div class="rm-card'+(hasRm?" has-rm":"")+'" id="rmcard-'+ex.key+'">';
+    // head
+    html+='<div class="rm-card-head">'+
+      '<div><div class="rm-card-name">'+ex.icon+' '+ex.name+'</div><div class="rm-card-pattern">'+ex.pattern+'</div></div>'+
+      '<div><div class="rm-current-val">'+(hasRm?stored.rm+" kg":"—")+'</div>'+
+      (hasRm?'<div class="rm-current-lbl">1RM actual</div><div class="rm-current-date">'+stored.date+'</div>':'')+
+      '</div></div>';
+    // method tabs
+    html+='<div class="rm-method-tabs">'+
+      '<button class="rm-method-tab on" id="rmtab-d-'+ex.key+'" onclick="setRmMethodTab(\''+ex.key+'\',0)">1RM directo</button>'+
+      '<button class="rm-method-tab" id="rmtab-s-'+ex.key+'" onclick="setRmMethodTab(\''+ex.key+'\',1)">Sub-máximo</button>'+
+    '</div>';
+    // panel 0: direct
+    html+='<div id="rmpanel-0-'+ex.key+'">'+
+      '<div class="rm-input-row">'+
+        '<input class="rm-i" type="number" id="rm-dir-'+ex.key+'" placeholder="kg" min="0" max="500"'+(hasRm?' value="'+stored.rm+'"':'')+'>'+
+        '<span class="rm-i-lbl">kg</span>'+
+        '<button class="btn btn-p" style="font-size:11px;padding:5px 12px;flex-shrink:0" onclick="saveRmDirect(\''+ex.key+'\')">Guardar</button>'+
+      '</div></div>';
+    // panel 1: submax
+    html+='<div id="rmpanel-1-'+ex.key+'" style="display:none">'+
+      '<div class="rm-input-row">'+
+        '<input class="rm-i" type="number" id="rm-w-'+ex.key+'" placeholder="peso kg" min="0" max="500" style="width:60px">'+
+        '<span class="rm-i-lbl">kg ×</span>'+
+        '<input class="rm-i" type="number" id="rm-r-'+ex.key+'" placeholder="reps" min="1" max="20" style="width:48px">'+
+        '<span class="rm-i-lbl">reps</span>'+
+        '<button class="btn btn-p" style="font-size:11px;padding:5px 12px;flex-shrink:0" onclick="calcAndSaveRm(\''+ex.key+'\')">Calcular</button>'+
+      '</div></div>';
+    // weights grid
+    if(hasRm){html+=rmWeeksHtml(stored.rm);}else{html+='<div id="rm-wk-'+ex.key+'" style="font-size:10px;color:var(--txt2);margin-top:8px;text-align:center">Guarda el 1RM para ver los pesos de trabajo</div>';}
+    html+='</div>';
+  });
+  html+='</div>';
+  el("rm-grid").innerHTML=html;
+}
+
+function setRmMethodTab(key,n){
+  el("rmtab-d-"+key).classList.toggle("on",n===0);
+  el("rmtab-s-"+key).classList.toggle("on",n===1);
+  el("rmpanel-0-"+key).style.display=n===0?"block":"none";
+  el("rmpanel-1-"+key).style.display=n===1?"block":"none";
+}
+
+function saveRmDirect(key){
+  var v=parseFloat((el("rm-dir-"+key)||{}).value)||0;
+  if(!v){alert("Ingresa el 1RM en kg");return;}
+  storeRm(key,v);
+}
+function calcAndSaveRm(key){
+  var w=parseFloat((el("rm-w-"+key)||{}).value)||0;
+  var r=parseInt((el("rm-r-"+key)||{}).value)||0;
+  if(!w||!r){alert("Ingresa peso y repeticiones");return;}
+  if(r>15){alert("Para mayor precisión usa entre 2 y 10 reps.");return;}
+  var rm=Math.round(w*(1+r/30));
+  storeRm(key,rm);
+}
+function storeRm(key,rm){
+  var rms=lsGet("rm-"+profileStudentId,{});
+  var prev=rms[key]||{};
+  var hist=prev.history||[];
+  if(prev.rm)hist.unshift({rm:prev.rm,date:prev.date});
+  rms[key]={rm:rm,date:new Date().toLocaleDateString("es-CR",{day:"2-digit",month:"short",year:"numeric"}),history:hist.slice(0,20)};
+  lsSave("rm-"+profileStudentId,rms);
+  renderRmGrid();
+}
+function rmWeeksHtml(rm){
+  var html='<div class="rm-weeks">';
+  RM_WEEKS.forEach(function(w){
+    var lo=Math.round(rm*w.pctLo/100),hi=Math.round(rm*w.pctHi/100);
+    html+='<div class="rm-week-box"><div class="rm-week-lbl '+w.cls.replace("mw-","mw-")+'">'+w.label+'</div>'+
+      '<div class="rm-week-range">'+lo+'–'+hi+'</div>'+
+      '<div class="rm-week-pct">'+w.pctLo+'–'+w.pctHi+'%</div></div>';
+  });
+  return html+'</div>';
 }
 function savePlanDay(wi,di){
   var plan=lsGet("plan-"+profileStudentId,{mesociclos:[],current:0});
