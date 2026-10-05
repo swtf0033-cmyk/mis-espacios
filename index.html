@@ -390,6 +390,7 @@ label.switch-btn:hover{background:var(--acc-d2);color:var(--txt)}
     <div class="sel-date" id="sel-date"></div>
     <div class="sel-title">Mis <span>Espacios</span></div>
     <div class="sel-sub">¿A donde vas hoy?</div>
+    <div id="sync-ind" style="display:none;font-size:11px;color:var(--txt2);margin-top:8px;letter-spacing:.5px">☁️ Sincronizando datos...</div>
   </div>
   <div class="sel-quote-box">
     <div class="sel-qt" id="quote-text"></div>
@@ -1102,10 +1103,38 @@ showQ();
 var charts={},currentApp="",modalSaveFn=null;
 var focoTimers={};
 
+// ── Supabase sync ─────────────────────────────────────────────────
+var SB_URL="https://qnkaaiazuwkofbbhrtns.supabase.co";
+var SB_KEY="sb_publishable_rS6hiZnNzUevos6Z8n9VDA_V6KSzj0u";
+var SB_H={"apikey":SB_KEY,"Authorization":"Bearer "+SB_KEY,"Content-Type":"application/json"};
+function sbPush(k,v){
+  fetch(SB_URL+"/rest/v1/app_data",{
+    method:"POST",
+    headers:Object.assign({},SB_H,{"Prefer":"resolution=merge-duplicates"}),
+    body:JSON.stringify({key:k,value:v,updated_at:new Date().toISOString()})
+  }).catch(function(){});
+}
+function syncFromCloud(cb){
+  var ind=document.getElementById("sync-ind");
+  if(ind)ind.style.display="block";
+  fetch(SB_URL+"/rest/v1/app_data?select=key,value",{headers:SB_H})
+    .then(function(r){return r.json();})
+    .then(function(rows){
+      if(Array.isArray(rows)){
+        rows.forEach(function(row){
+          try{localStorage.setItem(row.key,JSON.stringify(row.value));}catch(e){}
+        });
+      }
+      if(ind)ind.style.display="none";
+      cb();
+    })
+    .catch(function(){if(ind)ind.style.display="none";cb();});
+}
+
 // ── localStorage helpers ──────────────────────────────────────────
 var LSK="misEsp_";
 function lsGet(k,d){try{var v=JSON.parse(localStorage.getItem(LSK+k));return v!==null?v:d;}catch(e){return d;}}
-function lsSave(k,v){try{localStorage.setItem(LSK+k,JSON.stringify(v));}catch(e){}}
+function lsSave(k,v){try{localStorage.setItem(LSK+k,JSON.stringify(v));sbPush(LSK+k,v);}catch(e){}}
 function genId(){return Date.now().toString(36)+Math.random().toString(36).slice(2,7);}
 
 function lsAdd(col,data){
@@ -2742,7 +2771,7 @@ function sv(app,view,elem){
 el("modal-overlay").addEventListener("click",function(e){if(e.target===this)closeModal();});
 
 // INIT
-initDB();
+syncFromCloud(initDB);
 </script>
 </body>
 </html>
