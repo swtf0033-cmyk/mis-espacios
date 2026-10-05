@@ -1120,10 +1120,29 @@ function syncFromCloud(cb){
   fetch(SB_URL+"/rest/v1/app_data?select=key,value",{headers:SB_H})
     .then(function(r){return r.json();})
     .then(function(rows){
+      // 1) bajar datos de la nube al localStorage
       if(Array.isArray(rows)){
         rows.forEach(function(row){
           try{localStorage.setItem(row.key,JSON.stringify(row.value));}catch(e){}
         });
+      }
+      // 2) subir datos locales que aún no están en la nube
+      var batch=[];
+      for(var i=0;i<localStorage.length;i++){
+        var k=localStorage.key(i);
+        if(k&&k.indexOf("misEsp_")===0){
+          try{
+            var v=JSON.parse(localStorage.getItem(k));
+            if(v!==null)batch.push({key:k,value:v,updated_at:new Date().toISOString()});
+          }catch(e){}
+        }
+      }
+      if(batch.length){
+        fetch(SB_URL+"/rest/v1/app_data",{
+          method:"POST",
+          headers:Object.assign({},SB_H,{"Prefer":"resolution=merge-duplicates"}),
+          body:JSON.stringify(batch)
+        }).catch(function(){});
       }
       if(ind)ind.style.display="none";
       cb();
