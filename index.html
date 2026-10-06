@@ -380,6 +380,58 @@ label.switch-btn:hover{background:var(--acc-d2);color:var(--txt)}
 #app-fit:has(#fit-v-dash:checked) label[for=fit-v-dash],#app-fit:has(#fit-v-alumnos:checked) label[for=fit-v-alumnos],#app-fit:has(#fit-v-pagos:checked) label[for=fit-v-pagos],#app-fit:has(#fit-v-foco:checked) label[for=fit-v-foco]{background:var(--acc-d)!important;color:var(--acc)!important}
 #app-fit:has(#fit-v-dash:checked) label[for=fit-v-dash]::before,#app-fit:has(#fit-v-alumnos:checked) label[for=fit-v-alumnos]::before,#app-fit:has(#fit-v-pagos:checked) label[for=fit-v-pagos]::before,#app-fit:has(#fit-v-foco:checked) label[for=fit-v-foco]::before{content:'';position:absolute;left:0;top:20%;bottom:20%;width:3px;background:var(--grad);border-radius:99px}
 #app-fit:has(#fit-v-dash:checked) label[for=fit-v-dash] svg,#app-fit:has(#fit-v-alumnos:checked) label[for=fit-v-alumnos] svg,#app-fit:has(#fit-v-pagos:checked) label[for=fit-v-pagos] svg,#app-fit:has(#fit-v-foco:checked) label[for=fit-v-foco] svg{opacity:1}
+/* ── Search ── */
+.students-search{width:100%;background:var(--card);border:1px solid var(--border);border-radius:8px;padding:8px 12px;color:var(--txt);font-size:13px;font-family:'Inter',sans-serif;outline:none;margin-bottom:10px;transition:border .2s}
+.students-search:focus{border-color:var(--acc)}
+/* ── Birthday banner ── */
+.bday-banner{background:rgba(251,191,36,.10);border:1px solid rgba(251,191,36,.3);border-radius:10px;padding:10px 14px;margin-bottom:10px;font-size:12px;color:var(--warn);display:flex;align-items:center;gap:8px;line-height:1.5;flex-wrap:wrap}
+/* ── Attendance ── */
+.att-month-nav{display:flex;align-items:center;justify-content:space-between;margin-bottom:10px}
+.att-month-lbl{font-size:13px;font-weight:700;text-transform:capitalize}
+.att-grid{display:grid;grid-template-columns:repeat(7,1fr);gap:4px;margin-bottom:14px}
+.att-dow{font-size:9px;font-weight:700;color:var(--txt2);text-align:center;padding:3px 0;text-transform:uppercase}
+.att-day{aspect-ratio:1;border-radius:6px;border:1px solid var(--border);display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:600;cursor:pointer;transition:all .15s;background:var(--card);color:var(--txt2);user-select:none}
+.att-day:hover{border-color:var(--acc);color:var(--acc)}
+.att-day.present{background:rgba(168,85,247,.2);border-color:var(--acc);color:var(--acc)}
+.att-day.today{border-color:var(--warn);color:var(--warn);font-weight:800}
+.att-day.today.present{background:rgba(168,85,247,.2);border-color:var(--acc);color:var(--acc)}
+.att-day.future{opacity:.3;cursor:default;pointer-events:none}
+.att-day.empty{border:none;background:none;cursor:default;pointer-events:none}
+.att-stats{display:flex;gap:10px;flex-wrap:wrap;margin-bottom:14px}
+.att-stat{background:var(--card);border:1px solid var(--border);border-radius:8px;padding:10px 14px;flex:1;min-width:80px;text-align:center}
+.att-stat-val{font-size:22px;font-weight:700;font-family:'Rajdhani',sans-serif;color:var(--acc)}
+.att-stat-lbl{font-size:9px;color:var(--txt2);text-transform:uppercase;letter-spacing:.4px;margin-top:2px}
+/* ── Progression ── */
+.prog-ex{background:var(--card);border:1px solid var(--border);border-radius:10px;margin-bottom:8px;overflow:hidden}
+.prog-ex-head{display:flex;align-items:center;gap:10px;padding:11px 14px;cursor:pointer;user-select:none}
+.prog-ex-head:hover{background:var(--acc-d2)}
+.prog-ex-name{font-size:12px;font-weight:700;flex:1}
+.prog-ex-last{font-size:11px;color:var(--acc);font-family:'Rajdhani',sans-serif;font-weight:700;white-space:nowrap}
+.prog-ex-body{display:none;padding:12px 14px;border-top:1px solid var(--border)}
+.prog-ex-body.on{display:block}
+.prog-log-form{display:flex;gap:6px;flex-wrap:wrap;align-items:flex-end;margin-bottom:10px}
+.prog-fi-wrap{display:flex;flex-direction:column;gap:2px}
+.prog-fi-lbl{font-size:8px;color:var(--txt2);text-transform:uppercase;letter-spacing:.3px}
+.prog-fi{background:var(--surf);border:1px solid var(--border);border-radius:6px;padding:5px 8px;color:var(--txt);font-size:13px;font-family:'Rajdhani',sans-serif;font-weight:700;outline:none;width:64px;text-align:center}
+.prog-fi:focus{border-color:var(--acc)}
+.prog-log-tbl{width:100%;border-collapse:collapse;font-size:11px}
+.prog-log-tbl th{font-size:9px;color:var(--txt2);text-transform:uppercase;letter-spacing:.3px;font-weight:700;padding:3px 5px;text-align:left;border-bottom:1px solid var(--border)}
+.prog-log-tbl td{padding:5px 5px;border-bottom:1px solid var(--border2);vertical-align:middle}
+.prog-trend-up{color:var(--green);font-size:10px}
+.prog-trend-dn{color:var(--danger);font-size:10px}
+/* ── Print / PDF ── */
+@media print{body *{visibility:hidden}#print-report,#print-report *{visibility:visible}#print-report{position:fixed;left:0;top:0;width:100%;background:#fff;color:#000;padding:30px}}
+#print-report{display:none;font-family:'Inter',sans-serif;padding:30px;max-width:800px;margin:0 auto}
+.pr-title{font-size:22px;font-weight:700;margin-bottom:4px;color:#1a1a2e}
+.pr-sub{font-size:12px;color:#666;margin-bottom:20px;border-bottom:2px solid #A855F7;padding-bottom:10px}
+.pr-section{margin-bottom:18px}
+.pr-section-title{font-size:11px;font-weight:700;letter-spacing:.8px;text-transform:uppercase;color:#A855F7;margin-bottom:8px}
+.pr-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin-bottom:8px}
+.pr-item{border:1px solid #e5e5e5;border-radius:8px;padding:8px;text-align:center}
+.pr-item-val{font-size:16px;font-weight:700;color:#1a1a2e}
+.pr-item-lbl{font-size:9px;color:#666;text-transform:uppercase;margin-top:2px}
+.pr-pliegues{display:grid;grid-template-columns:repeat(4,1fr);gap:6px;font-size:11px}
+.pr-pliegue{border:1px solid #e5e5e5;border-radius:6px;padding:6px;text-align:center}
 </style>
 <input type="radio" id="nav-home" name="nav" checked>
 <input type="radio" id="nav-fit" name="nav">
@@ -469,7 +521,9 @@ label.switch-btn:hover{background:var(--acc-d2);color:var(--txt)}
         </div>
       </div>
       <div class="view" id="fit-alumnos">
-        <div class="ct" style="margin-bottom:14px">Alumnos<button class="btn-sm fit-btn-add">+ Agregar</button></div>
+        <div class="ct" style="margin-bottom:10px">Alumnos<button class="btn-sm fit-btn-add">+ Agregar</button></div>
+        <div id="bday-banner" style="display:none"></div>
+        <input class="students-search" id="students-search" type="text" placeholder="🔍 Buscar alumno..." oninput="renderStudents()">
         <div id="students-list"></div>
       </div>
       <div class="view" id="fit-pagos">
@@ -883,9 +937,11 @@ label.switch-btn:hover{background:var(--acc-d2);color:var(--txt)}
   </div><!-- /eval-body -->
   <div class="eval-ft">
     <button class="btn btn-c" onclick="closeEval()">Cerrar</button>
+    <button class="btn btn-c" onclick="printEval()" id="eval-pdf-btn" style="display:none">📄 Exportar PDF</button>
     <button class="btn btn-p" id="eval-save-btn" onclick="saveCurrentEval()">Guardar evaluación</button>
   </div>
 </div>
+<div id="print-report"></div>
 
 <!-- ══════════════ PERFIL ALUMNO ══════════════ -->
 <div class="eval-overlay" id="prof-overlay">
@@ -906,6 +962,8 @@ label.switch-btn:hover{background:var(--acc-d2);color:var(--txt)}
     <button class="eval-tab" onclick="setProfTab(2)">③ Nutrición</button>
     <button class="eval-tab" onclick="setProfTab(3)">④ Metas</button>
     <button class="eval-tab" onclick="setProfTab(4)">⑤ Notas</button>
+    <button class="eval-tab" onclick="setProfTab(5)">⑥ Asistencia</button>
+    <button class="eval-tab" onclick="setProfTab(6)">⑦ Progresión</button>
   </div>
   <div class="eval-body">
 
@@ -1030,6 +1088,23 @@ label.switch-btn:hover{background:var(--acc-d2);color:var(--txt)}
         <button class="btn btn-p" style="font-size:11px;padding:8px 14px;flex-shrink:0;align-self:flex-end" onclick="addNote()">Guardar nota</button>
       </div>
       <div id="notes-list"></div>
+    </div>
+
+    <!-- TAB 5: ASISTENCIA -->
+    <div class="eval-panel" id="ptab5">
+      <div class="att-stats" id="att-stats-row"></div>
+      <div class="att-month-nav">
+        <button class="btn-icon" style="font-size:18px" onclick="attChangeMonth(-1)">‹</button>
+        <div class="att-month-lbl" id="att-month-lbl"></div>
+        <button class="btn-icon" style="font-size:18px" onclick="attChangeMonth(1)">›</button>
+      </div>
+      <div class="att-grid" id="att-grid"></div>
+    </div>
+
+    <!-- TAB 6: PROGRESIÓN -->
+    <div class="eval-panel" id="ptab6">
+      <div class="sci-note" style="margin-bottom:12px">📈 Sobrecarga progresiva — registrá series, reps y peso por ejercicio. La app calcula la tendencia y te muestra cuándo aumentó o bajó el rendimiento.</div>
+      <div id="prog-ex-list"></div>
     </div>
 
   </div><!-- /eval-body -->
@@ -1330,18 +1405,36 @@ function renderFitRanking(){
 }
 
 function renderStudents(){
-  var html=state.students.map(function(s){
+  // búsqueda
+  var q=((el("students-search")||{}).value||"").toLowerCase().trim();
+  var list=q?state.students.filter(function(s){return(s.name||"").toLowerCase().indexOf(q)>=0;}):state.students;
+  // cumpleaños
+  var today=new Date();
+  var todayDDMM=(String(today.getDate()).padStart(2,"0"))+"/"+String(today.getMonth()+1).padStart(2,"0");
+  var bdayKids=state.students.filter(function(s){return s.birthday&&s.birthday.startsWith(todayDDMM);});
+  var bb=el("bday-banner");
+  if(bb){
+    if(bdayKids.length){
+      bb.style.display="flex";
+      bb.innerHTML='🎂 <strong>Cumpleaños hoy:</strong> '+bdayKids.map(function(s){return s.name;}).join(", ")+" — ¡Felicitalo!";
+    } else {
+      bb.style.display="none";
+    }
+  }
+  var html=list.map(function(s){
     var pc=s.payStatus==="Al dia"?"bg":s.payStatus==="Vencido"?"bd":"bw";
     var bodyInfo=(s.weight?s.weight+"kg":"—")+" / "+(s.height?s.height+"cm":"—");
     var fatTxt=s.bodyFat?s.bodyFat+"%":"—";
+    var telBtn=s.tel?'<a href="https://wa.me/'+s.tel.replace(/[^0-9+]/g,"")+'" target="_blank" class="btn-icon" title="WhatsApp" style="font-size:15px;text-decoration:none">💬</a>':"";
     return '<div class="row-item">'+
       '<div class="cap" style="background:var(--acc-d);color:var(--acc);width:40px;height:40px;font-size:14px">'+mkInitials(s.name)+'</div>'+
-      '<div style="flex:1;min-width:0"><div style="font-weight:600;font-size:14px">'+s.name+'</div>'+
+      '<div style="flex:1;min-width:0"><div style="font-weight:600;font-size:14px">'+s.name+(s.birthday&&s.birthday.startsWith(todayDDMM)?" 🎂":"")+'</div>'+
       '<div style="font-size:11px;color:var(--txt2);margin-top:2px">'+(s.objective||'')+(s.months?' &middot; '+s.months+' meses':'')+' &middot; '+bodyInfo+'</div></div>'+
       '<div style="text-align:right;margin-right:8px"><div style="font-family:Rajdhani,sans-serif;font-weight:700;font-size:18px;color:var(--acc)">'+(s.progress||0)+'%</div><div style="font-size:10px;color:var(--txt2)">progreso</div></div>'+
       '<div style="text-align:right;margin-right:10px"><div style="font-family:Rajdhani,sans-serif;font-weight:700;font-size:16px">'+fatTxt+'</div><div style="font-size:10px;color:var(--txt2)">grasa</div></div>'+
       '<span class="badge '+pc+'">'+s.payStatus+'</span>'+
       '<div class="row-actions">'+
+        telBtn+
         '<button class="btn-icon s-prof" data-id="'+s.id+'" title="Perfil" style="font-size:15px">&#128100;</button>'+
         '<button class="btn-icon s-eval" data-id="'+s.id+'" title="Evaluar" style="font-size:15px">&#128202;</button>'+
         '<button class="btn-icon s-edit" data-id="'+s.id+'">&#9999;</button>'+
@@ -1614,6 +1707,8 @@ function studentForm(s){
     '<div class="form-g"><label>Nombre</label><input id="f-name" class="fi" value="'+((v.name||"").replace(/"/g,"&quot;"))+'" placeholder="Nombre completo"></div>'+
     '<div class="form-g"><label>Objetivo</label><select id="f-obj" class="fi"><option value="Perdida de grasa"'+(v.objective==="Perdida de grasa"?" selected":"")+'>Perdida de grasa</option><option value="Volumen"'+(v.objective==="Volumen"?" selected":"")+'>Volumen</option><option value="Definicion"'+(v.objective==="Definicion"?" selected":"")+'>Definicion</option><option value="Salud general"'+(v.objective==="Salud general"?" selected":"")+'>Salud general</option></select></div>'+
     '</div><div class="form-r">'+
+    '<div class="form-g" style="grid-column:1/-1"><label>Teléfono / WhatsApp</label><input id="f-tel" class="fi" type="tel" value="'+(v.tel||"")+'" placeholder="Ej: +506 8888-8888"></div>'+
+    '</div><div class="form-r">'+
     '<div class="form-g"><label>Edad</label><input id="f-age" type="number" class="fi" value="'+(v.age||"")+'" min="10" max="90" placeholder="Años"></div>'+
     '<div class="form-g"><label>Sexo</label><select id="f-sex" class="fi"><option value="M"'+(v.sex==="M"?" selected":"")+'>Masculino</option><option value="F"'+(v.sex==="F"?" selected":"")+'>Femenino</option></select></div>'+
     '</div><div class="form-r">'+
@@ -1652,6 +1747,7 @@ function getStudentData(){
     payMode:el("f-paymode").value,
     payStatus:el("f-pay").value,
     diet:el("f-diet").value,
+    tel:(el("f-tel")||{}).value?el("f-tel").value.trim():"",
     lastPayment:el("f-lastpay").value.trim(),
     birthday:el("f-bday").value.trim(),
     injuries:el("f-injuries").value.trim(),
@@ -1775,12 +1871,14 @@ function closeProfile(){
 }
 function setProfTab(n){
   document.querySelectorAll("#prof-overlay .eval-tab").forEach(function(t,i){t.classList.toggle("on",i===n);});
-  for(var i=0;i<5;i++){var p=el("ptab"+i);if(p)p.classList.toggle("on",i===n);}
+  for(var i=0;i<7;i++){var p=el("ptab"+i);if(p)p.classList.toggle("on",i===n);}
   if(n===0)renderProfDashboard();
   else if(n===1){renderRmGrid();renderProfPlanning();}
   else if(n===2)renderNutrition();
   else if(n===3)renderGoals();
   else if(n===4)renderNotes();
+  else if(n===5)renderAttendance();
+  else if(n===6)renderProgression();
 }
 
 // ── Dashboard ──────────────────────────
@@ -2182,6 +2280,116 @@ function deleteNote(i){
   renderNotes();
 }
 
+// ── Asistencia ─────────────────────────
+var attYear=new Date().getFullYear(),attMonth=new Date().getMonth();
+function renderAttendance(){
+  var att=lsGet("att-"+profileStudentId,[]);
+  var today=new Date();
+  var yr=attYear,mo=attMonth;
+  var monthNames=["Enero","Febrero","Marzo","Abril","Mayo","Junio","Julio","Agosto","Septiembre","Octubre","Noviembre","Diciembre"];
+  el("att-month-lbl").textContent=monthNames[mo]+" "+yr;
+  // stats
+  var allDays=att.length;
+  var moStr=yr+"-"+String(mo+1).padStart(2,"0");
+  var moDays=att.filter(function(d){return d.startsWith(moStr);}).length;
+  var totalDaysInMo=new Date(yr,mo+1,0).getDate();
+  var pct=totalDaysInMo?Math.round(moDays/totalDaysInMo*100):0;
+  el("att-stats-row").innerHTML=
+    '<div class="att-stat"><div class="att-stat-val">'+moDays+'</div><div class="att-stat-lbl">Este mes</div></div>'+
+    '<div class="att-stat"><div class="att-stat-val">'+pct+'%</div><div class="att-stat-lbl">Asistencia</div></div>'+
+    '<div class="att-stat"><div class="att-stat-val">'+allDays+'</div><div class="att-stat-lbl">Total sesiones</div></div>';
+  // calendar grid
+  var firstDay=new Date(yr,mo,1).getDay();
+  firstDay=(firstDay+6)%7; // start on Monday
+  var daysInMonth=new Date(yr,mo+1,0).getDate();
+  var todayStr=today.getFullYear()+"-"+String(today.getMonth()+1).padStart(2,"0")+"-"+String(today.getDate()).padStart(2,"0");
+  var html='<div class="att-dow">Lu</div><div class="att-dow">Ma</div><div class="att-dow">Mi</div><div class="att-dow">Ju</div><div class="att-dow">Vi</div><div class="att-dow">Sa</div><div class="att-dow">Do</div>';
+  for(var e=0;e<firstDay;e++)html+='<div class="att-day empty"></div>';
+  for(var d=1;d<=daysInMonth;d++){
+    var ds=yr+"-"+String(mo+1).padStart(2,"0")+"-"+String(d).padStart(2,"0");
+    var cls="att-day"+(att.indexOf(ds)>=0?" present":"")+(ds===todayStr?" today":"")+(ds>todayStr?" future":"");
+    html+='<div class="'+cls+'" onclick="toggleAttDay(\''+ds+'\')">'+d+'</div>';
+  }
+  el("att-grid").innerHTML=html;
+}
+function attChangeMonth(dir){
+  attMonth+=dir;
+  if(attMonth<0){attMonth=11;attYear--;}
+  if(attMonth>11){attMonth=0;attYear++;}
+  renderAttendance();
+}
+function toggleAttDay(ds){
+  var att=lsGet("att-"+profileStudentId,[]);
+  var idx=att.indexOf(ds);
+  if(idx>=0)att.splice(idx,1);else att.push(ds);
+  att.sort();
+  lsSave("att-"+profileStudentId,att);
+  renderAttendance();
+}
+
+// ── Progresión de ejercicios ────────────
+function renderProgression(){
+  var prog=lsGet("prog-"+profileStudentId,{});
+  var html=RM_EXERCISES.map(function(ex,ei){
+    var log=prog[ex.key]||[];
+    var last=log.length?log[0]:null;
+    var lastTxt=last?(last.sets+"×"+last.reps+" @"+last.weight+"kg"):"Sin registros";
+    var bodyHtml='<div class="prog-log-form">'+
+      '<div class="prog-fi-wrap"><div class="prog-fi-lbl">Series</div><input class="prog-fi" id="pf-s-'+ex.key+'" type="number" min="1" max="20" placeholder="4"></div>'+
+      '<div class="prog-fi-wrap"><div class="prog-fi-lbl">Reps</div><input class="prog-fi" id="pf-r-'+ex.key+'" type="number" min="1" max="50" placeholder="6"></div>'+
+      '<div class="prog-fi-wrap"><div class="prog-fi-lbl">Peso (kg)</div><input class="prog-fi" id="pf-w-'+ex.key+'" type="number" min="0" step="0.5" placeholder="60"></div>'+
+      '<div class="prog-fi-wrap"><div class="prog-fi-lbl">Notas</div><input class="prog-fi" id="pf-n-'+ex.key+'" type="text" placeholder="ok" style="width:90px"></div>'+
+      '<button class="btn btn-p" style="font-size:11px;padding:5px 12px;align-self:flex-end" onclick="logProg(\''+ex.key+'\')">+ Guardar</button>'+
+    '</div>';
+    if(log.length){
+      bodyHtml+='<table class="prog-log-tbl"><thead><tr><th>Fecha</th><th>Series</th><th>Reps</th><th>Peso</th><th>Vol.</th><th></th></tr></thead><tbody>';
+      log.forEach(function(entry,li){
+        var prev=log[li+1];
+        var trend="";
+        if(prev){trend=entry.weight>prev.weight?'<span class="prog-trend-up">▲</span>':entry.weight<prev.weight?'<span class="prog-trend-dn">▼</span>':'<span style="color:var(--txt2)">—</span>';}
+        var vol=Math.round(entry.sets*entry.reps*entry.weight);
+        bodyHtml+='<tr><td>'+entry.date+'</td><td>'+entry.sets+'</td><td>'+entry.reps+'</td><td><strong>'+entry.weight+' kg</strong> '+trend+'</td><td style="color:var(--txt2)">'+vol+' kg</td>'+
+          '<td><button class="btn-icon btn-del" style="font-size:11px" onclick="delProg(\''+ex.key+'\','+li+')">🗑</button></td></tr>';
+      });
+      bodyHtml+='</tbody></table>';
+    }
+    return '<div class="prog-ex">'+
+      '<div class="prog-ex-head" onclick="toggleProgEx('+ei+')">'+
+        '<span style="font-size:16px">'+ex.icon+'</span>'+
+        '<span class="prog-ex-name">'+ex.name+'</span>'+
+        '<span class="prog-ex-last">'+lastTxt+'</span>'+
+        '<span class="mw-chevron" id="prog-chev-'+ei+'">▶</span>'+
+      '</div>'+
+      '<div class="prog-ex-body" id="prog-body-'+ei+'">'+bodyHtml+'</div>'+
+    '</div>';
+  }).join("");
+  el("prog-ex-list").innerHTML=html;
+}
+function toggleProgEx(i){
+  var b=el("prog-body-"+i),c=el("prog-chev-"+i);
+  if(!b)return;
+  b.classList.toggle("on");
+  if(c)c.classList.toggle("open",b.classList.contains("on"));
+}
+function logProg(key){
+  var s=parseInt((el("pf-s-"+key)||{}).value)||0;
+  var r=parseInt((el("pf-r-"+key)||{}).value)||0;
+  var w=parseFloat((el("pf-w-"+key)||{}).value)||0;
+  if(!s||!r||!w){alert("Ingresa series, reps y peso");return;}
+  var n=((el("pf-n-"+key)||{}).value||"").trim();
+  var prog=lsGet("prog-"+profileStudentId,{});
+  if(!prog[key])prog[key]=[];
+  prog[key].unshift({date:new Date().toLocaleDateString("es-CR",{day:"2-digit",month:"short",year:"numeric"}),sets:s,reps:r,weight:w,notes:n});
+  lsSave("prog-"+profileStudentId,prog);
+  renderProgression();
+}
+function delProg(key,idx){
+  var prog=lsGet("prog-"+profileStudentId,{});
+  if(prog[key])prog[key].splice(idx,1);
+  lsSave("prog-"+profileStudentId,prog);
+  renderProgression();
+}
+
 function loadEvalForEdit(idx){
   var evs=lsGet("evals-"+evalStudentId,[]);
   var ev=evs[idx];if(!ev)return;
@@ -2201,8 +2409,49 @@ function loadEvalForEdit(idx){
 function setEvalTab(n){
   document.querySelectorAll(".eval-tab").forEach(function(t,i){t.classList.toggle("on",i===n);});
   for(var i=0;i<3;i++){var p=el("etab"+i);if(p)p.classList.toggle("on",i===n);}
-  // hide save btn on history tab
   var sb=el("eval-save-btn");if(sb)sb.style.display=n===2?"none":"inline-flex";
+  var pb=el("eval-pdf-btn");if(pb){var evs=lsGet("evals-"+(evalStudentId||""),[]);pb.style.display=(n===2&&evs.length)?"inline-flex":"none";}
+}
+function printEval(){
+  if(!evalStudentId)return;
+  var s=state.students.find(function(x){return x.id===evalStudentId;})||{};
+  var evs=lsGet("evals-"+evalStudentId,[]);
+  if(!evs.length){alert("Sin evaluaciones guardadas");return;}
+  var ev=evs[0];
+  var PLIEGUES=["Pectoral","Axilar","Tríceps","Subescapular","Abdominal","Suprailiaco","Muslo"];
+  var plieguesHtml=PLIEGUES.map(function(p,i){
+    var n=i+1;
+    var a=parseFloat(ev["p"+n+"a"])||0,b=parseFloat(ev["p"+n+"b"])||0,c=parseFloat(ev["p"+n+"c"])||0;
+    var vals=[a,b,c].filter(function(v){return v>0;});
+    var avg=vals.length?Math.round(vals.reduce(function(x,y){return x+y;},0)/vals.length*10)/10:null;
+    return '<div class="pr-pliegue"><div style="font-size:9px;color:#666;text-transform:uppercase;margin-bottom:3px">'+p+'</div><div style="font-size:14px;font-weight:700">'+(avg?avg+" mm":"—")+'</div></div>';
+  }).join("");
+  var rpr=el("print-report");
+  rpr.innerHTML=
+    '<div class="pr-title">Evaluación — '+s.name+'</div>'+
+    '<div class="pr-sub">'+ev.date+' &nbsp;·&nbsp; Objetivo: '+(s.objective||"—")+' &nbsp;·&nbsp; Edad: '+(s.age||"—")+'</div>'+
+    '<div class="pr-section"><div class="pr-section-title">Composición corporal</div>'+
+      '<div class="pr-grid">'+
+        '<div class="pr-item"><div class="pr-item-val">'+(ev.peso||"—")+'</div><div class="pr-item-lbl">Peso (kg)</div></div>'+
+        '<div class="pr-item"><div class="pr-item-val">'+(ev.altura||"—")+'</div><div class="pr-item-lbl">Altura (cm)</div></div>'+
+        '<div class="pr-item"><div class="pr-item-val">'+(ev.grasa||"—")+'</div><div class="pr-item-lbl">% Grasa</div></div>'+
+        '<div class="pr-item"><div class="pr-item-val">'+(ev.peso&&ev.grasa?Math.round(ev.peso*(1-ev.grasa/100)*10)/10:"—")+'</div><div class="pr-item-lbl">Masa magra (kg)</div></div>'+
+      '</div>'+
+    '</div>'+
+    '<div class="pr-section"><div class="pr-section-title">Pliegues cutáneos</div><div class="pr-pliegues">'+plieguesHtml+'</div></div>'+
+    (ev.testPush||ev.testSR||ev.testSit?
+      '<div class="pr-section"><div class="pr-section-title">Tests de condición física</div>'+
+        '<div class="pr-grid">'+
+          (ev.testPush?'<div class="pr-item"><div class="pr-item-val">'+ev.testPush+'</div><div class="pr-item-lbl">Flexiones (reps)</div></div>':'')+
+          (ev.testSR?'<div class="pr-item"><div class="pr-item-val">'+ev.testSR+' cm</div><div class="pr-item-lbl">Sit & Reach</div></div>':'')+
+          (ev.testSit?'<div class="pr-item"><div class="pr-item-val">'+ev.testSit+'</div><div class="pr-item-lbl">Abdom. 1 min</div></div>':'')+
+          (ev.fcMed?'<div class="pr-item"><div class="pr-item-val">'+ev.fcMed+' bpm</div><div class="pr-item-lbl">FC entreno</div></div>':'')+
+        '</div></div>'
+    :"")+
+    '<div style="margin-top:30px;font-size:10px;color:#999;text-align:center">Generado por Mis Espacios · '+new Date().toLocaleDateString("es-CR")+'</div>';
+  rpr.style.display="block";
+  window.print();
+  setTimeout(function(){rpr.style.display="none";},1000);
 }
 function eDot(n){
   var f=el("ep"+n+"a");if(!f)return;
