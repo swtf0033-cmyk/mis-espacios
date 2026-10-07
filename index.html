@@ -1203,10 +1203,41 @@ function lsBatch(){
   return batch;
 }
 function syncFromCloud(cb){
-  // Modo de recuperación: ?push=1 sube local → nube sin bajar nada (protege datos locales más nuevos)
+  // Modo de recuperación: ?push=1 sube local → nube sin bajar nada
+  //                       ?pull=1 baja nube → local ignorando timestamps (recuperar datos perdidos)
   var forcePush=window.location.search.indexOf("push=1")>=0;
+  var forcePull=window.location.search.indexOf("pull=1")>=0;
   var ind=document.getElementById("sync-ind");
   if(ind)ind.style.display="block";
+  if(forcePull){
+    fetch(SB_URL+"/rest/v1/app_data?select=key,value,updated_at",{headers:SB_H})
+      .then(function(r){return r.json();})
+      .then(function(rows){
+        if(Array.isArray(rows)&&rows.length){
+          var tsMap={};
+          rows.forEach(function(row){
+            try{
+              localStorage.setItem(row.key,JSON.stringify(row.value));
+              tsMap[row.key]=new Date(row.updated_at||0).getTime();
+            }catch(e){}
+          });
+          try{localStorage.setItem(LS_TS,JSON.stringify(tsMap));}catch(e){}
+          if(ind)ind.style.display="none";
+          alert("✅ ¡Datos bajados de la nube! Recargando la app...");
+          window.location.href=window.location.pathname;
+        } else {
+          if(ind)ind.style.display="none";
+          alert("⚠️ La nube está vacía. Nada que bajar.");
+          cb();
+        }
+      })
+      .catch(function(){
+        if(ind)ind.style.display="none";
+        alert("⚠️ Error de conexión. Verificá el internet.");
+        cb();
+      });
+    return;
+  }
   if(forcePush){
     var batch=lsBatch();
     if(batch.length){
