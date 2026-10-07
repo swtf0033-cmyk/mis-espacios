@@ -1182,6 +1182,9 @@ var focoTimers={};
 var SB_URL="https://qnkaaiazuwkofbbhrtns.supabase.co";
 var SB_KEY="sb_publishable_rS6hiZnNzUevos6Z8n9VDA_V6KSzj0u";
 var SB_H={"apikey":SB_KEY,"Authorization":"Bearer "+SB_KEY,"Content-Type":"application/json"};
+var LS_TS="misEsp__ts";
+function getTsMap(){try{return JSON.parse(localStorage.getItem(LS_TS))||{};}catch(e){return{};}}
+function setTs(k){var m=getTsMap();m[k]=Date.now();try{localStorage.setItem(LS_TS,JSON.stringify(m));}catch(e){}}
 function sbPush(k,v){
   fetch(SB_URL+"/rest/v1/app_data",{
     method:"POST",
@@ -1189,29 +1192,63 @@ function sbPush(k,v){
     body:JSON.stringify({key:k,value:v,updated_at:new Date().toISOString()})
   }).catch(function(){});
 }
+function lsBatch(){
+  var batch=[],tsMap=getTsMap();
+  for(var i=0;i<localStorage.length;i++){
+    var k=localStorage.key(i);
+    if(k&&k.indexOf("misEsp_")===0&&k!==LS_TS){
+      try{var v=JSON.parse(localStorage.getItem(k));if(v!==null)batch.push({key:k,value:v,updated_at:new Date(tsMap[k]||Date.now()).toISOString()});}catch(e){}
+    }
+  }
+  return batch;
+}
 function syncFromCloud(cb){
+  // Modo de recuperación: ?push=1 sube local → nube sin bajar nada (protege datos locales más nuevos)
+  var forcePush=window.location.search.indexOf("push=1")>=0;
   var ind=document.getElementById("sync-ind");
   if(ind)ind.style.display="block";
-  fetch(SB_URL+"/rest/v1/app_data?select=key,value",{headers:SB_H})
+  if(forcePush){
+    var batch=lsBatch();
+    if(batch.length){
+      fetch(SB_URL+"/rest/v1/app_data",{
+        method:"POST",
+        headers:Object.assign({},SB_H,{"Prefer":"resolution=merge-duplicates"}),
+        body:JSON.stringify(batch)
+      }).then(function(){
+        if(ind)ind.style.display="none";
+        alert("✅ ¡Datos subidos a la nube!\nYa podés abrir la app en el otro dispositivo y van a aparecer todos los alumnos.");
+        cb();
+      }).catch(function(){
+        if(ind)ind.style.display="none";
+        alert("⚠️ Error de conexión. Verificá el internet e intentá de nuevo.");
+        cb();
+      });
+    } else {
+      if(ind)ind.style.display="none";cb();
+    }
+    return;
+  }
+  fetch(SB_URL+"/rest/v1/app_data?select=key,value,updated_at",{headers:SB_H})
     .then(function(r){return r.json();})
     .then(function(rows){
-      // 1) bajar datos de la nube al localStorage
+      // 1) bajar de la nube SOLO si la nube es más nueva que el dato local
+      var tsMap=getTsMap();
       if(Array.isArray(rows)){
         rows.forEach(function(row){
-          try{localStorage.setItem(row.key,JSON.stringify(row.value));}catch(e){}
+          try{
+            var cloudTs=new Date(row.updated_at||0).getTime();
+            var localTs=tsMap[row.key]||0;
+            var hasLocal=localStorage.getItem(row.key)!==null;
+            if(!hasLocal||cloudTs>localTs){
+              localStorage.setItem(row.key,JSON.stringify(row.value));
+              tsMap[row.key]=cloudTs;
+            }
+          }catch(e){}
         });
+        try{localStorage.setItem(LS_TS,JSON.stringify(tsMap));}catch(e){}
       }
       // 2) subir datos locales que aún no están en la nube
-      var batch=[];
-      for(var i=0;i<localStorage.length;i++){
-        var k=localStorage.key(i);
-        if(k&&k.indexOf("misEsp_")===0){
-          try{
-            var v=JSON.parse(localStorage.getItem(k));
-            if(v!==null)batch.push({key:k,value:v,updated_at:new Date().toISOString()});
-          }catch(e){}
-        }
-      }
+      var batch=lsBatch();
       if(batch.length){
         fetch(SB_URL+"/rest/v1/app_data",{
           method:"POST",
@@ -1228,7 +1265,7 @@ function syncFromCloud(cb){
 // ── localStorage helpers ──────────────────────────────────────────
 var LSK="misEsp_";
 function lsGet(k,d){try{var v=JSON.parse(localStorage.getItem(LSK+k));return v!==null?v:d;}catch(e){return d;}}
-function lsSave(k,v){try{localStorage.setItem(LSK+k,JSON.stringify(v));sbPush(LSK+k,v);}catch(e){}}
+function lsSave(k,v){try{localStorage.setItem(LSK+k,JSON.stringify(v));setTs(LSK+k);sbPush(LSK+k,v);}catch(e){}}
 function genId(){return Date.now().toString(36)+Math.random().toString(36).slice(2,7);}
 
 function lsAdd(col,data){
