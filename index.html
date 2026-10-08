@@ -394,6 +394,30 @@ label.switch-btn:hover{background:var(--acc-d2);color:var(--txt)}
 @keyframes syncpulse{0%,100%{opacity:1}50%{opacity:.3}}
 /* ── Birthday banner ── */
 .bday-banner{background:rgba(251,191,36,.10);border:1px solid rgba(251,191,36,.3);border-radius:10px;padding:10px 14px;margin-bottom:10px;font-size:12px;color:var(--warn);display:flex;align-items:center;gap:8px;line-height:1.5;flex-wrap:wrap}
+/* ── Nutrition Protocol ── */
+.nut-sec-btn{padding:5px 13px;border-radius:99px;border:1px solid var(--border2);background:var(--card);color:var(--txt2);font-size:12px;font-weight:600;cursor:pointer;font-family:'Inter',sans-serif;transition:all .15s}
+.nut-sec-btn.on{background:var(--acc-d);color:var(--acc);border-color:var(--acc)}
+.phase-card{border-radius:12px;padding:14px 16px;margin-bottom:12px;border:1px solid}
+.phase-prog-bar{height:7px;border-radius:99px;background:var(--border);overflow:hidden;margin-top:8px}
+.phase-prog-fill{height:100%;border-radius:99px;transition:width .5s}
+.meal-blk{background:var(--surf);border:1px solid var(--border);border-radius:10px;padding:11px 13px;margin-bottom:8px}
+.meal-hdr{font-size:12px;font-weight:700;margin-bottom:6px;display:flex;justify-content:space-between;align-items:center;color:var(--txt)}
+.meal-items{font-size:11px;color:var(--txt2);line-height:2;padding-left:8px;border-left:2px solid var(--border2)}
+.target-row{display:flex;align-items:center;gap:12px;padding:10px 13px;background:var(--surf);border-radius:10px;margin-bottom:8px;border:1px solid var(--border)}
+.target-icon{font-size:20px;flex-shrink:0;width:28px;text-align:center}
+.target-val{font-family:'Rajdhani',sans-serif;font-size:22px;font-weight:700;color:var(--acc);line-height:1}
+.target-lbl{font-size:10px;color:var(--txt2);margin-top:2px}
+.lab-row{display:grid;grid-template-columns:1fr 72px 54px 66px;gap:6px;align-items:center;padding:7px 0;border-bottom:1px solid var(--border)}
+.lab-row:last-child{border-bottom:none}
+.lab-name{font-size:11px;font-weight:600;color:var(--txt)}
+.lab-ref{font-size:10px;color:var(--txt3);margin-top:1px}
+.lab-inp{background:var(--surf);border:1px solid var(--border);border-radius:6px;padding:4px 7px;color:var(--txt);font-size:12px;font-family:'Rajdhani',sans-serif;font-weight:700;outline:none;width:100%;text-align:right}
+.lab-inp:focus{border-color:var(--acc)}
+.lab-pill{font-size:10px;font-weight:700;padding:2px 7px;border-radius:99px;text-align:center;white-space:nowrap}
+.lp-ok{background:var(--green-d);color:var(--green)}
+.lp-hi{background:var(--danger-d);color:var(--danger)}
+.lp-lo{background:var(--warn-d);color:var(--warn)}
+.lp-nd{background:var(--acc-d2);color:var(--txt3)}
 /* ── Attendance ── */
 .att-month-nav{display:flex;align-items:center;justify-content:space-between;margin-bottom:10px}
 .att-month-lbl{font-size:13px;font-weight:700;text-transform:capitalize}
@@ -1046,23 +1070,35 @@ label.switch-btn:hover{background:var(--acc-d2);color:var(--txt)}
 
     <!-- TAB 2: NUTRICIÓN -->
     <div class="eval-panel" id="ptab2">
-      <div class="sci-note">⚡ TDEE calculado con Mifflin-St Jeor + factor de actividad. Macros ajustados al objetivo del alumno. Proteína mínima recomendada: 1.6–2.2 g/kg peso corporal (Morton et al., 2018).</div>
-      <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:14px">
-        <div class="bm-f"><div class="bm-l">Nivel de actividad</div><select id="nut-activity" onchange="renderNutrition()" style="width:100%;background:var(--card);border:1px solid var(--border2);border-radius:6px;padding:6px 8px;color:var(--txt);font-size:12px;outline:none;margin-top:4px">
-          <option value="1.2">Sedentario (sin ejercicio)</option>
-          <option value="1.375">Ligero (1-3 días/semana)</option>
-          <option value="1.55" selected>Moderado (3-5 días/semana)</option>
-          <option value="1.725">Activo (6-7 días/semana)</option>
-          <option value="1.9">Muy activo (2 sesiones/día)</option>
-        </select></div>
-        <div class="bm-f"><div class="bm-l">Objetivo</div><select id="nut-goal" onchange="renderNutrition()" style="width:100%;background:var(--card);border:1px solid var(--border2);border-radius:6px;padding:6px 8px;color:var(--txt);font-size:12px;outline:none;margin-top:4px">
-          <option value="deficit">Déficit — Pérdida de grasa (-300 kcal)</option>
-          <option value="mant" selected>Mantenimiento</option>
-          <option value="superavit">Superávit — Ganancia muscular (+300 kcal)</option>
-        </select></div>
+      <div style="display:flex;gap:6px;margin-bottom:14px;flex-wrap:wrap">
+        <button class="nut-sec-btn on" id="nut-btn-0" onclick="setNutSec(0)">📊 Macros</button>
+        <button class="nut-sec-btn" id="nut-btn-1" onclick="setNutSec(1)">🥩 Protocolo</button>
+        <button class="nut-sec-btn" id="nut-btn-2" onclick="setNutSec(2)">🧪 Laboratorio</button>
       </div>
-      <div id="nut-result"></div>
-      <div style="margin-top:12px"><div style="font-size:11px;font-weight:700;color:var(--txt2);margin-bottom:6px;text-transform:uppercase;letter-spacing:.05em">Notas de nutrición</div><textarea id="nut-notes" placeholder="Restricciones alimentarias, preferencias, suplementos..." style="width:100%;background:var(--surf);border:1px solid var(--border);border-radius:8px;padding:10px 12px;color:var(--txt);font-size:12px;font-family:'Inter',sans-serif;resize:vertical;min-height:70px;outline:none" oninput="saveNutNotes()"></textarea></div>
+      <!-- Sección 0: Macros -->
+      <div id="nut-sec-0">
+        <div class="sci-note">⚡ TDEE calculado con Mifflin-St Jeor + factor de actividad. Macros ajustados al objetivo del alumno. Proteína mínima recomendada: 1.6–2.2 g/kg peso corporal (Morton et al., 2018).</div>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:14px">
+          <div class="bm-f"><div class="bm-l">Nivel de actividad</div><select id="nut-activity" onchange="renderNutrition()" style="width:100%;background:var(--card);border:1px solid var(--border2);border-radius:6px;padding:6px 8px;color:var(--txt);font-size:12px;outline:none;margin-top:4px">
+            <option value="1.2">Sedentario (sin ejercicio)</option>
+            <option value="1.375">Ligero (1-3 días/semana)</option>
+            <option value="1.55" selected>Moderado (3-5 días/semana)</option>
+            <option value="1.725">Activo (6-7 días/semana)</option>
+            <option value="1.9">Muy activo (2 sesiones/día)</option>
+          </select></div>
+          <div class="bm-f"><div class="bm-l">Objetivo</div><select id="nut-goal" onchange="renderNutrition()" style="width:100%;background:var(--card);border:1px solid var(--border2);border-radius:6px;padding:6px 8px;color:var(--txt);font-size:12px;outline:none;margin-top:4px">
+            <option value="deficit">Déficit — Pérdida de grasa (-300 kcal)</option>
+            <option value="mant" selected>Mantenimiento</option>
+            <option value="superavit">Superávit — Ganancia muscular (+300 kcal)</option>
+          </select></div>
+        </div>
+        <div id="nut-result"></div>
+        <div style="margin-top:12px"><div style="font-size:11px;font-weight:700;color:var(--txt2);margin-bottom:6px;text-transform:uppercase;letter-spacing:.05em">Notas de nutrición</div><textarea id="nut-notes" placeholder="Restricciones alimentarias, preferencias, suplementos..." style="width:100%;background:var(--surf);border:1px solid var(--border);border-radius:8px;padding:10px 12px;color:var(--txt);font-size:12px;font-family:'Inter',sans-serif;resize:vertical;min-height:70px;outline:none" oninput="saveNutNotes()"></textarea></div>
+      </div>
+      <!-- Sección 1: Protocolo Metabólico -->
+      <div id="nut-sec-1" style="display:none"><div id="proto-content"></div></div>
+      <!-- Sección 2: Laboratorio -->
+      <div id="nut-sec-2" style="display:none"><div id="labs-content"></div></div>
     </div>
 
     <!-- TAB 3: METAS -->
@@ -2266,6 +2302,262 @@ function renderCyclePhase(){
   if(!ph){if(pill)pill.style.display="none";if(info)info.innerHTML="";return;}
   if(pill){pill.style.display="inline-flex";pill.style.background="rgba(0,0,0,.3)";pill.style.color=ph.col;pill.style.border="1px solid "+ph.col;pill.textContent="🌸 "+ph.phase+" · Día "+ph.day;}
   if(info){info.innerHTML='<div style="background:var(--card);border-radius:8px;padding:10px 12px;border-left:3px solid '+ph.col+'"><span style="font-size:11px;font-weight:700;color:'+ph.col+'">Fase actual: '+ph.phase+' (Día '+ph.day+')</span><div style="font-size:11px;color:var(--txt2);margin-top:4px">'+ph.rec+'</div></div>';}
+}
+
+// ── Protocolo Metabólico ──────────────────────────────────────────
+var PROTO_PHASES=[
+  {id:0,name:"Fase 0A — Reducción CHO",days:3,col:"#FBBF24",
+   desc:"Reducir carbohidratos gradualmente. 1 CHO por comida. Sin snacks.",
+   meals:[
+     {t:"🌅 Desayuno",i:["2–3 huevos con mantequilla","1 porción CHO (arepa pequeña o tostada integral)","Café negro sin azúcar"]},
+     {t:"☀️ Almuerzo",i:["150g proteína (res, pollo o cerdo)","Ensalada verde + aceite de oliva","1 porción CHO (arroz blanco o papa pequeña)"]},
+     {t:"🌙 Cena",i:["100g proteína","Vegetales verdes","1 porción CHO pequeña (opcional)"]}
+   ]},
+  {id:1,name:"Fase 0B — Carnívoro",days:2,col:"#EF4444",
+   desc:"Solo carnes rojas, huevos y quesos. Prepara el cuerpo para la Fase 1.",
+   meals:[
+     {t:"🌅 Desayuno",i:["3 huevos revueltos en mantequilla","50g queso maduro (manchego, parmesano)","Café negro"]},
+     {t:"☀️ Almuerzo",i:["200g carne de res o cerdo","50g queso maduro","Sal, pimienta — sin vegetales"]},
+     {t:"🌙 Cena",i:["150g carne de res o cerdo","2 huevos","Mantequilla — sin vegetales"]}
+   ]},
+  {id:2,name:"Fase 1 — Reset Metabólico",days:21,col:"#A855F7",
+   desc:"Grasas + proteína + vegetales verdes. Cero CHO refinados. 21 días."},
+  {id:3,name:"Fase 2 — Adaptación",days:42,col:"#34D399",
+   desc:"Reintroducción gradual de CHO complejos según resultados de labs.",
+   meals:[
+     {t:"🌅 Desayuno",i:["3 huevos + aguacate","Sem. 1–2: fruta baja en azúcar (arándanos, fresas)","Café negro"]},
+     {t:"☀️ Almuerzo",i:["150g proteína + ensalada verde","Sem. 1–2: +20–30g CHO complejos (batata pequeña)","Aceite de oliva"]},
+     {t:"🌙 Cena",i:["150g proteína magra (pollo, pavo, salmón)","Vegetales salteados en mantequilla","Sem. 3–4: hasta 50g CHO si tolerancia OK"]}
+   ]},
+  {id:4,name:"Fase 3 — Mantenimiento",days:null,col:"#3B82F6",
+   desc:"Flexibilidad metabólica. Tu cuerpo quema grasa y CHO según lo necesite.",
+   meals:[
+     {t:"🌅 Desayuno",i:["Libre — sin CHO refinados","Huevos, aguacate, fruta de bajo IG","Café o té"]},
+     {t:"☀️ Almuerzo",i:["Proteína + grasas saludables","CHO complejos moderados (arroz integral, batata)","Vegetales verdes"]},
+     {t:"🌙 Cena",i:["Proteína + vegetales","CHO opcionales según actividad del día"]}
+   ]}
+];
+
+var LAB_DEFS=[
+  {k:"glucosa",n:"Glucosa en ayunas",u:"mg/dL",lo:70,hi:100,dir:"range"},
+  {k:"insulina",n:"Insulina",u:"µU/mL",lo:2,hi:25,dir:"lo"},
+  {k:"hba1c",n:"HbA1c (Hemoglobina Glicosilada)",u:"%",lo:0,hi:5.7,dir:"lo"},
+  {k:"colTotal",n:"Colesterol Total",u:"mg/dL",lo:0,hi:200,dir:"lo"},
+  {k:"trigli",n:"Triglicéridos",u:"mg/dL",lo:0,hi:150,dir:"lo"},
+  {k:"hdl",n:"HDL (colesterol bueno)",u:"mg/dL",lo:40,hi:999,dir:"hi"},
+  {k:"ldl",n:"LDL",u:"mg/dL",lo:0,hi:100,dir:"lo"},
+  {k:"ast",n:"AST",u:"U/L",lo:10,hi:40,dir:"range"},
+  {k:"alt",n:"ALT",u:"U/L",lo:7,hi:56,dir:"range"},
+  {k:"ggt",n:"GGT",u:"U/L",lo:9,hi:48,dir:"range"},
+  {k:"bilTotal",n:"Bilirrubina Total",u:"mg/dL",lo:0.2,hi:1.2,dir:"range"},
+  {k:"bilDir",n:"Bilirrubina Directa",u:"mg/dL",lo:0,hi:0.3,dir:"range"},
+  {k:"fosAlc",n:"Fosfatasa Alcalina",u:"U/L",lo:44,hi:147,dir:"range"},
+  {k:"creatinina",n:"Creatinina",u:"mg/dL",lo:0.7,hi:1.2,dir:"range"},
+  {k:"bun",n:"BUN (Nitrógeno Ureico)",u:"mg/dL",lo:7,hi:20,dir:"range"},
+  {k:"acidoUrico",n:"Ácido Úrico",u:"mg/dL",lo:3.5,hi:7.2,dir:"lo"},
+  {k:"tsh",n:"TSH",u:"µIU/mL",lo:0.4,hi:4.0,dir:"range"},
+  {k:"hemograma",n:"Hemograma completo",u:"—",lo:null,hi:null,dir:"note"},
+  {k:"apob",n:"APO-B (opcional, 3 meses)",u:"mg/dL",lo:0,hi:100,dir:"lo"},
+  {k:"lpA",n:"Lipoproteína A (opcional)",u:"mg/dL",lo:0,hi:30,dir:"lo"}
+];
+
+function hxRgb(h){var r=parseInt(h.slice(1,3),16),g=parseInt(h.slice(3,5),16),b=parseInt(h.slice(5,7),16);return r+","+g+","+b;}
+
+function calcPhaseInfo(sd){
+  if(!sd)return null;
+  var s=new Date(sd);s.setHours(0,0,0,0);
+  var t=new Date();t.setHours(0,0,0,0);
+  var d=Math.floor((t-s)/(86400000));
+  if(d<0)return{idx:-1,name:"No iniciado",col:"#7A6A9E",day:0,phaseDay:0,total:1,pct:0};
+  if(d<=2)return{idx:0,name:PROTO_PHASES[0].name,col:PROTO_PHASES[0].col,day:d+1,phaseDay:d+1,total:3,pct:Math.round((d+1)/3*100)};
+  if(d<=4)return{idx:1,name:PROTO_PHASES[1].name,col:PROTO_PHASES[1].col,day:d+1,phaseDay:d-2,total:2,pct:Math.round((d-2)/2*100)};
+  if(d<=25)return{idx:2,name:PROTO_PHASES[2].name,col:PROTO_PHASES[2].col,day:d+1,phaseDay:d-4,total:21,pct:Math.round((d-4)/21*100)};
+  if(d<=67)return{idx:3,name:PROTO_PHASES[3].name,col:PROTO_PHASES[3].col,day:d+1,phaseDay:d-25,total:42,pct:Math.round((d-25)/42*100)};
+  return{idx:4,name:PROTO_PHASES[4].name,col:PROTO_PHASES[4].col,day:d+1,phaseDay:d-67,total:null,pct:100};
+}
+
+function getMealHtml(phaseIdx,peso){
+  var ph=PROTO_PHASES[phaseIdx];if(!ph)return "";
+  var meals=ph.meals;
+  if(phaseIdx===2){
+    var pt=Math.min(132,Math.max(100,Math.round(peso*1.7)));
+    var water=(Math.max(2300,peso*35)/1000).toFixed(1);
+    var bp=Math.round(pt*0.30),lp=Math.round(pt*0.40),dp=pt-Math.round(pt*0.30)-Math.round(pt*0.40);
+    var lm=Math.round(lp/0.33),dm=Math.round(dp/0.25);
+    var eggsBp=Math.max(2,Math.round(bp/6.5));
+    return '<div class="target-row"><span class="target-icon">🥩</span><div><div class="target-val">'+pt+'g</div><div class="target-lbl">Proteína diaria (rango: 100–132g)</div></div></div>'+
+      '<div class="target-row"><span class="target-icon">💧</span><div><div class="target-val">'+water+'L</div><div class="target-lbl">Agua diaria · 1L con 4 granos sal rosada Himalaya</div></div></div>'+
+      '<div class="target-row"><span class="target-icon">💊</span><div><div class="target-val" style="font-size:14px;line-height:1.4">Omega-3 + Mg 400mg</div><div class="target-lbl">Suplementos diarios (NO óxido de Mg)</div></div></div>'+
+      [
+        {t:"🌅 Desayuno — "+bp+"g proteína",i:[eggsBp+" huevos revueltos en mantequilla ("+Math.round(eggsBp*6.5)+"g prot.)","40g queso maduro","½ aguacate","Café negro sin azúcar"]},
+        {t:"☀️ Almuerzo — "+lp+"g proteína",i:[lm+"g carne de res o cerdo cruda → "+lp+"g proteína","Ensalada verde grande (lechuga, pepino, espinaca, tomate)","Aceite de oliva + sal"]},
+        {t:"🌙 Cena — "+dp+"g proteína",i:[dm+"g pollo, pavo o salmón crudo → "+dp+"g proteína","Vegetales salteados en mantequilla (brócoli, zucchini, espinaca)","Sal del Himalaya"]}
+      ].map(function(m){return '<div class="meal-blk"><div class="meal-hdr">'+m.t+'</div><div class="meal-items">'+m.i.join('<br>')+'</div></div>';}).join("");
+  }
+  if(!meals)return "";
+  return meals.map(function(m){return '<div class="meal-blk"><div class="meal-hdr">'+m.t+'</div><div class="meal-items">'+m.i.join('<br>')+'</div></div>';}).join("");
+}
+
+function setNutSec(n){
+  for(var i=0;i<3;i++){
+    var b=el("nut-btn-"+i);if(b)b.className="nut-sec-btn"+(i===n?" on":"");
+    var s=el("nut-sec-"+i);if(s)s.style.display=i===n?"block":"none";
+  }
+  if(n===1)renderProtocol();
+  if(n===2)renderLabs();
+}
+
+function renderProtocol(){
+  var proto=lsGet("proto-"+profileStudentId,{});
+  var s=state.students.find(function(x){return x.id===profileStudentId;})||{};
+  var peso=parseFloat(s.weight)||70;
+  var c=el("proto-content");if(!c)return;
+  var phInfo=proto.startDate?calcPhaseInfo(proto.startDate):null;
+  var sel=function(id,val){var e=el(id);if(e&&val)e.value=val;};
+  var inp=function(lbl,id,type,val,ph,extra){
+    return '<div class="bm-f"><div class="bm-l">'+lbl+'</div><input type="'+type+'" id="'+id+'" value="'+(val||"")+'" placeholder="'+(ph||"")+'" style="width:100%;background:var(--surf);border:1px solid var(--border2);border-radius:6px;padding:6px 8px;color:var(--txt);font-size:12px;outline:none;margin-top:4px;font-family:\'Inter\',sans-serif" '+(extra||'')+'></div>';
+  };
+  var html='<div style="background:var(--card);border:1px solid var(--border);border-radius:12px;padding:14px;margin-bottom:12px">';
+  html+='<div style="font-size:12px;font-weight:700;margin-bottom:10px">⚙️ Configuración del protocolo</div>';
+  html+='<div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:8px">';
+  html+='<div class="bm-f"><div class="bm-l">Objetivo</div><select id="proto-obj" style="width:100%;background:var(--surf);border:1px solid var(--border2);border-radius:6px;padding:6px 8px;color:var(--txt);font-size:12px;outline:none;margin-top:4px"><option value="reset">Reset Metabólico</option><option value="perdida">Pérdida de grasa</option><option value="ganancia">Ganancia muscular</option><option value="salud">Salud general</option></select></div>';
+  html+='<div class="bm-f"><div class="bm-l">Horario de entreno</div><select id="proto-train" style="width:100%;background:var(--surf);border:1px solid var(--border2);border-radius:6px;padding:6px 8px;color:var(--txt);font-size:12px;outline:none;margin-top:4px"><option value="morning">Mañana</option><option value="afternoon">Tarde / Noche</option><option value="none">No entrena</option></select></div>';
+  html+='</div>';
+  html+='<div style="display:grid;grid-template-columns:1fr auto;gap:8px;align-items:end">';
+  html+=inp("Fecha de inicio","proto-start","date",proto.startDate||"");
+  html+='<button class="btn btn-p" style="font-size:11px;padding:7px 14px;align-self:end" onclick="saveProto()">Guardar</button>';
+  html+='</div></div>';
+  if(phInfo&&phInfo.idx>=0){
+    var ph=PROTO_PHASES[phInfo.idx];
+    var daysLeft=phInfo.total?phInfo.total-phInfo.phaseDay:null;
+    html+='<div class="phase-card" style="background:rgba('+hxRgb(phInfo.col)+',.08);border-color:rgba('+hxRgb(phInfo.col)+',.3)">';
+    html+='<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:5px">';
+    html+='<span style="font-size:13px;font-weight:700;color:'+phInfo.col+'">'+phInfo.name+'</span>';
+    html+='<span style="font-size:11px;background:rgba('+hxRgb(phInfo.col)+',.2);color:'+phInfo.col+';padding:2px 8px;border-radius:99px">Día '+phInfo.day+'</span>';
+    html+='</div>';
+    html+='<div style="font-size:11px;color:var(--txt2);margin-bottom:8px">'+ph.desc+'</div>';
+    if(phInfo.total){
+      html+='<div class="phase-prog-bar"><div class="phase-prog-fill" style="width:'+Math.min(100,phInfo.pct)+'%;background:'+phInfo.col+'"></div></div>';
+      html+='<div style="font-size:10px;color:var(--txt3);margin-top:4px;display:flex;justify-content:space-between"><span>Día '+phInfo.phaseDay+' de '+phInfo.total+'</span><span>'+phInfo.pct+'%</span></div>';
+    }
+    if(daysLeft!==null&&daysLeft<=3&&daysLeft>=0){
+      html+='<div style="margin-top:8px;padding:8px 10px;background:rgba(251,191,36,.1);border-radius:8px;border-left:3px solid var(--warn);font-size:11px;color:var(--warn)">⚠️ Esta fase termina en '+daysLeft+' día(s). Revisá los labs con el nutricionista antes de pasar a la siguiente.</div>';
+    }
+    html+='</div>';
+    html+='<div style="font-size:11px;font-weight:700;color:var(--txt2);text-transform:uppercase;letter-spacing:.05em;margin-bottom:8px">Plan de comidas</div>';
+    html+=getMealHtml(phInfo.idx,peso);
+    if(proto.trainTime==="morning"&&phInfo.idx===2){
+      html+='<div style="background:var(--acc-d2);border:1px solid var(--border2);border-radius:10px;padding:10px 12px;margin-top:4px;font-size:11px;color:var(--txt2)">🏋️ <strong style="color:var(--txt)">Entrena en la mañana:</strong> 1–2 huevos 1h antes del entreno. El desayuno normal hasta 1h después de entrenar.</div>';
+    }
+    if(phInfo.idx===2){
+      html+='<div style="background:var(--danger-d);border:1px solid rgba(248,113,113,.25);border-radius:10px;padding:10px 12px;margin-top:8px;font-size:11px;color:var(--txt2)">';
+      html+='🚫 <strong style="color:var(--danger)">Prohibido en Fase 1:</strong> Azúcar, arroz, papa, yuca, plátano, pan, arepa, frijoles, avena, frutas, jugos, gaseosas, leche, frutos secos, alcohol, aceites vegetales, embutidos comerciales.';
+      html+='</div>';
+    }
+  } else {
+    html+='<div style="background:var(--card);border:1px solid var(--border);border-radius:12px;padding:24px;text-align:center;color:var(--txt2);font-size:13px">Ingresá la fecha de inicio para ver el tracker de fases y el plan de comidas.</div>';
+  }
+  c.innerHTML=html;
+  sel("proto-obj",proto.objetivo);
+  sel("proto-train",proto.trainTime);
+}
+
+function saveProto(){
+  var proto=lsGet("proto-"+profileStudentId,{});
+  proto.startDate=(el("proto-start")||{}).value||proto.startDate||"";
+  proto.objetivo=(el("proto-obj")||{}).value||"reset";
+  proto.trainTime=(el("proto-train")||{}).value||"morning";
+  lsSave("proto-"+profileStudentId,proto);
+  renderProtocol();
+}
+
+function renderLabs(){
+  var all=lsGet("labs-"+profileStudentId,[]);
+  var lat=all.length?all[0]:{};
+  var c=el("labs-content");if(!c)return;
+  var labPill=function(lab,val){
+    if(val===""||val===null||val===undefined||lab.dir==="note")return '<span class="lab-pill lp-nd">—</span>';
+    var v=parseFloat(val);
+    if(lab.dir==="lo")return v<=lab.hi?'<span class="lab-pill lp-ok">Normal</span>':'<span class="lab-pill lp-hi">Alto ⚠</span>';
+    if(lab.dir==="hi")return v>=lab.lo?'<span class="lab-pill lp-ok">Normal</span>':'<span class="lab-pill lp-lo">Bajo ⚠</span>';
+    if(v>=lab.lo&&v<=lab.hi)return '<span class="lab-pill lp-ok">Normal</span>';
+    return v>lab.hi?'<span class="lab-pill lp-hi">Alto ⚠</span>':'<span class="lab-pill lp-lo">Bajo ⚠</span>';
+  };
+  var html='<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px;flex-wrap:wrap;gap:8px">';
+  html+='<div style="font-size:11px;color:var(--txt2)">Ingresá los valores y presioná Guardar</div>';
+  html+='<div style="display:flex;gap:6px;align-items:center"><input type="date" id="lab-date" value="'+(lat.date||new Date().toISOString().slice(0,10))+'" style="background:var(--surf);border:1px solid var(--border);border-radius:6px;padding:5px 8px;color:var(--txt);font-size:11px;outline:none"><button class="btn btn-p" style="font-size:11px;padding:6px 12px" onclick="saveLabs()">Guardar labs</button></div>';
+  html+='</div>';
+  html+='<div style="display:grid;grid-template-columns:1fr 72px 54px 66px;gap:6px;padding:4px 0 6px;border-bottom:1px solid var(--border2)">';
+  html+='<div style="font-size:10px;font-weight:700;color:var(--txt3);text-transform:uppercase">Examen</div>';
+  html+='<div style="font-size:10px;font-weight:700;color:var(--txt3);text-transform:uppercase;text-align:right">Valor</div>';
+  html+='<div style="font-size:10px;font-weight:700;color:var(--txt3);text-transform:uppercase;text-align:center">Unidad</div>';
+  html+='<div style="font-size:10px;font-weight:700;color:var(--txt3);text-transform:uppercase;text-align:center">Estado</div>';
+  html+='</div>';
+  LAB_DEFS.forEach(function(lab){
+    var val=lat.values&&lat.values[lab.k]!=null?lat.values[lab.k]:"";
+    var refTxt=lab.lo!==null?(lab.dir==="hi"?">"+lab.lo+" "+lab.u:lab.lo+"–"+(lab.hi<500?lab.hi:"")+" "+lab.u):"Ver resultado";
+    html+='<div class="lab-row">';
+    html+='<div><div class="lab-name">'+lab.n+'</div><div class="lab-ref">Ref: '+refTxt+'</div></div>';
+    if(lab.dir==="note"){
+      html+='<div style="grid-column:2/5;font-size:10px;color:var(--txt3);font-style:italic">Ver informe del laboratorio</div>';
+    } else {
+      html+='<input class="lab-inp" type="number" step="0.01" id="lab-'+lab.k+'" value="'+(val||"")+'" placeholder="—" oninput="updLabPill(\''+lab.k+'\')">';
+      html+='<div style="font-size:10px;color:var(--txt2);text-align:center">'+lab.u+'</div>';
+      html+='<div id="pill-'+lab.k+'">'+labPill(lab,val)+'</div>';
+    }
+    html+='</div>';
+  });
+  if(all.length>1){
+    html+='<div style="margin-top:16px;font-size:11px;font-weight:700;color:var(--txt2);text-transform:uppercase;letter-spacing:.05em;margin-bottom:6px">Historial</div>';
+    all.forEach(function(rec,i){
+      if(i===0)return;
+      var alerts=0;
+      if(rec.values)LAB_DEFS.forEach(function(lab){if(lab.dir==="note")return;var v=rec.values[lab.k];if(v==null)return;v=parseFloat(v);if(lab.dir==="lo"&&v>lab.hi)alerts++;else if(lab.dir==="hi"&&v<lab.lo)alerts++;else if(lab.dir==="range"&&(v<lab.lo||v>lab.hi))alerts++;});
+      html+='<div style="background:var(--surf);border:1px solid var(--border);border-radius:8px;padding:9px 12px;margin-bottom:5px;cursor:pointer;display:flex;justify-content:space-between;align-items:center" onclick="loadLabRec('+i+')">';
+      html+='<span style="font-size:12px;color:var(--txt2)">📋 '+rec.date+'</span>';
+      html+=(alerts?'<span class="lab-pill lp-hi">'+alerts+' alertas</span>':'<span class="lab-pill lp-ok">Sin alertas</span>');
+      html+='</div>';
+    });
+  }
+  c.innerHTML=html;
+}
+
+function updLabPill(k){
+  var lab=LAB_DEFS.find(function(l){return l.k===k;});
+  var inp=el("lab-"+k),pill=el("pill-"+k);
+  if(!lab||!inp||!pill)return;
+  var val=inp.value.trim();
+  if(!val){pill.innerHTML='<span class="lab-pill lp-nd">—</span>';return;}
+  var v=parseFloat(val);
+  if(lab.dir==="lo")pill.innerHTML=v<=lab.hi?'<span class="lab-pill lp-ok">Normal</span>':'<span class="lab-pill lp-hi">Alto ⚠</span>';
+  else if(lab.dir==="hi")pill.innerHTML=v>=lab.lo?'<span class="lab-pill lp-ok">Normal</span>':'<span class="lab-pill lp-lo">Bajo ⚠</span>';
+  else pill.innerHTML=(v>=lab.lo&&v<=lab.hi)?'<span class="lab-pill lp-ok">Normal</span>':v>lab.hi?'<span class="lab-pill lp-hi">Alto ⚠</span>':'<span class="lab-pill lp-lo">Bajo ⚠</span>';
+}
+
+function saveLabs(){
+  var date=(el("lab-date")||{}).value||new Date().toISOString().slice(0,10);
+  var values={};
+  LAB_DEFS.forEach(function(lab){
+    if(lab.dir==="note")return;
+    var inp=el("lab-"+lab.k);
+    if(inp&&inp.value.trim()!=="")values[lab.k]=parseFloat(inp.value.trim());
+  });
+  var all=lsGet("labs-"+profileStudentId,[]);
+  var idx=all.findIndex(function(r){return r.date===date;});
+  if(idx>=0)all[idx]={date:date,values:values};else all.unshift({date:date,values:values});
+  lsSave("labs-"+profileStudentId,all);
+  renderLabs();
+}
+
+function loadLabRec(i){
+  var all=lsGet("labs-"+profileStudentId,[]);
+  var rec=all[i];if(!rec)return;
+  var d=el("lab-date");if(d)d.value=rec.date;
+  LAB_DEFS.forEach(function(lab){
+    if(lab.dir==="note")return;
+    var inp=el("lab-"+lab.k);
+    if(inp){inp.value=rec.values&&rec.values[lab.k]!=null?rec.values[lab.k]:"";updLabPill(lab.k);}
+  });
 }
 
 // ── Nutrición ──────────────────────────
