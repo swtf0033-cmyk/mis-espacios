@@ -1341,24 +1341,44 @@ function syncFromCloud(cb){
   fetch(SB_URL+"/rest/v1/app_data?select=key,value,updated_at",{headers:SB_H})
     .then(function(r){return r.json();})
     .then(function(rows){
-      // 1) bajar de la nube SOLO si la nube es más nueva que el dato local
       var tsMap=getTsMap();
+      var cloudKeys={};   // claves que existen en Supabase
+      var localNewer={};  // claves donde local es más nuevo que la nube
+
+      // 1) bajar de la nube solo si la nube es más nueva; registrar cuál gana
       if(Array.isArray(rows)){
         rows.forEach(function(row){
           try{
+            cloudKeys[row.key]=true;
             var cloudTs=new Date(row.updated_at||0).getTime();
             var localTs=tsMap[row.key]||0;
             var hasLocal=localStorage.getItem(row.key)!==null;
             if(!hasLocal||cloudTs>localTs){
+              // la nube gana: bajar
               localStorage.setItem(row.key,JSON.stringify(row.value));
               tsMap[row.key]=cloudTs;
+            } else {
+              // local gana: marcar para subir
+              localNewer[row.key]=true;
             }
           }catch(e){}
         });
         try{localStorage.setItem(LS_TS,JSON.stringify(tsMap));}catch(e){}
       }
-      // 2) subir datos locales que aún no están en la nube
-      var batch=lsBatch();
+
+      // 2) subir SOLO lo que no existe en la nube O es genuinamente más nuevo en local
+      var batch=[];
+      for(var i=0;i<localStorage.length;i++){
+        var k=localStorage.key(i);
+        if(k&&k.indexOf("misEsp_")===0&&k!==LS_TS){
+          if(!cloudKeys[k]||localNewer[k]){
+            try{
+              var v=JSON.parse(localStorage.getItem(k));
+              if(v!==null)batch.push({key:k,value:v,updated_at:new Date(tsMap[k]||Date.now()).toISOString()});
+            }catch(e){}
+          }
+        }
+      }
       if(batch.length){
         fetch(SB_URL+"/rest/v1/app_data",{
           method:"POST",
