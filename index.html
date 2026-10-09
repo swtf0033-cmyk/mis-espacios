@@ -521,7 +521,7 @@ label.switch-btn:hover{background:var(--acc-d2);color:var(--txt)}
     <div class="sb-foot"><div class="av"><div class="av-pic">FC</div><div><div class="av-name">FitCoach Pro</div><div class="av-role">Entrenador</div></div></div></div>
   </div>
   <div class="main">
-    <div class="topbar"><div class="tb-title" id="fit-title">Dashboard</div><div id="sync-status" class="show syncing"><span class="sync-dot"></span><span id="sync-status-txt">Conectando...</span></div><button class="btn btn-p" id="fit-btn-add">+ Alumno</button></div>
+    <div class="topbar"><div class="tb-title" id="fit-title">Dashboard</div><div id="sync-status" class="show syncing" onclick="pullAndRefresh()" title="Toca para sincronizar ahora" style="cursor:pointer"><span class="sync-dot"></span><span id="sync-status-txt">Conectando...</span></div><button class="btn btn-p" id="fit-btn-add">+ Alumno</button></div>
     <div class="content">
       <div class="view on" id="fit-dash">
         <div class="sg" id="fit-stats-grid">
@@ -1227,176 +1227,120 @@ var focoTimers={};
 var SB_URL="https://qnkaaiazuwkofbbhrtns.supabase.co";
 var SB_KEY="sb_publishable_rS6hiZnNzUevos6Z8n9VDA_V6KSzj0u";
 var SB_H={"apikey":SB_KEY,"Authorization":"Bearer "+SB_KEY,"Content-Type":"application/json"};
-var LS_TS="misEsp__ts";
-var syncErrTimer=null,syncOkTimer=null;
-function getTsMap(){try{return JSON.parse(localStorage.getItem(LS_TS))||{};}catch(e){return{};}}
-function setTs(k){var m=getTsMap();m[k]=Date.now();try{localStorage.setItem(LS_TS,JSON.stringify(m));}catch(e){}}
+var syncErrTimer=null,syncOkTimer=null,autoSyncInt=null;
 function setSyncStatus(state,txt){
   var el=document.getElementById("sync-status");
   var tx=document.getElementById("sync-status-txt");
   var dot=el?el.querySelector(".sync-dot"):null;
   if(!el)return;
   clearTimeout(syncErrTimer);clearTimeout(syncOkTimer);
-  el.className="show "+state;
+  el.className="show "+state;el.style.opacity="1";
   if(tx)tx.textContent=txt;
   if(dot)dot.className="sync-dot"+(state==="syncing"?" pulse":"");
-  if(state==="ok"){syncOkTimer=setTimeout(function(){el.className="ok";el.style.opacity=".4";},4000);}
-  if(state==="err"){syncErrTimer=setTimeout(function(){setSyncStatus("ok","Sin cambios");},8000);}
+  if(state==="ok"){syncOkTimer=setTimeout(function(){el.style.opacity=".45";},5000);}
 }
 function sbPush(k,v){
   setSyncStatus("syncing","Guardando...");
-  fetch(SB_URL+"/rest/v1/app_data",{
-    method:"POST",
-    headers:Object.assign({},SB_H,{"Prefer":"resolution=merge-duplicates"}),
-    body:JSON.stringify({key:k,value:v,updated_at:new Date().toISOString()})
-  }).then(function(r){
-    if(r.ok||r.status===201||r.status===200){setSyncStatus("ok","✓ Sincronizado");}
-    else{setSyncStatus("err","⚠ Error nube");}
-  }).catch(function(){setSyncStatus("err","⚠ Sin conexión");});
+  var body=JSON.stringify({key:k,value:v,updated_at:new Date().toISOString()});
+  var doFetch=function(retry){
+    fetch(SB_URL+"/rest/v1/app_data",{
+      method:"POST",
+      headers:Object.assign({},SB_H,{"Prefer":"resolution=merge-duplicates"}),
+      body:body
+    }).then(function(r){
+      if(r.ok||r.status===200||r.status===201){setSyncStatus("ok","✓ Guardado en nube");}
+      else if(retry){setTimeout(function(){doFetch(false);},3000);}
+      else{setSyncStatus("err","⚠ Error — reintentando al recargar");}
+    }).catch(function(){
+      if(retry){setTimeout(function(){doFetch(false);},4000);}
+      else{setSyncStatus("err","⚠ Sin conexión");}
+    });
+  };
+  doFetch(true);
 }
-function backupData(){
-  var data={version:1,date:new Date().toISOString(),data:{}};
-  for(var i=0;i<localStorage.length;i++){
-    var k=localStorage.key(i);
-    if(k&&k.indexOf("misEsp_")===0){
-      try{data.data[k]=JSON.parse(localStorage.getItem(k));}catch(e){}
-    }
-  }
-  var blob=new Blob([JSON.stringify(data,null,2)],{type:"application/json"});
-  var url=URL.createObjectURL(blob);
-  var a=document.createElement("a");
-  var d=new Date();
-  a.href=url;
-  a.download="misEspacios-respaldo-"+d.getFullYear()+"-"+String(d.getMonth()+1).padStart(2,"0")+"-"+String(d.getDate()).padStart(2,"0")+".json";
-  a.click();
-  URL.revokeObjectURL(url);
-}
-function lsBatch(){
-  var batch=[],tsMap=getTsMap();
-  for(var i=0;i<localStorage.length;i++){
-    var k=localStorage.key(i);
-    if(k&&k.indexOf("misEsp_")===0&&k!==LS_TS){
-      try{var v=JSON.parse(localStorage.getItem(k));if(v!==null)batch.push({key:k,value:v,updated_at:new Date(tsMap[k]||Date.now()).toISOString()});}catch(e){}
-    }
-  }
-  return batch;
-}
-function syncFromCloud(cb){
-  // Modo de recuperación: ?push=1 sube local → nube sin bajar nada
-  //                       ?pull=1 baja nube → local ignorando timestamps (recuperar datos perdidos)
-  var forcePush=window.location.search.indexOf("push=1")>=0;
-  var forcePull=window.location.search.indexOf("pull=1")>=0;
-  var ind=document.getElementById("sync-ind");
-  if(ind)ind.style.display="block";
-  if(forcePull){
-    fetch(SB_URL+"/rest/v1/app_data?select=key,value,updated_at",{headers:SB_H})
-      .then(function(r){return r.json();})
-      .then(function(rows){
-        if(Array.isArray(rows)&&rows.length){
-          var tsMap={};
-          rows.forEach(function(row){
-            try{
-              localStorage.setItem(row.key,JSON.stringify(row.value));
-              tsMap[row.key]=new Date(row.updated_at||0).getTime();
-            }catch(e){}
-          });
-          try{localStorage.setItem(LS_TS,JSON.stringify(tsMap));}catch(e){}
-          if(ind)ind.style.display="none";
-          alert("✅ ¡Datos bajados de la nube! Recargando la app...");
-          window.location.href=window.location.pathname;
-        } else {
-          if(ind)ind.style.display="none";
-          alert("⚠️ La nube está vacía. Nada que bajar.");
-          cb();
-        }
-      })
-      .catch(function(){
-        if(ind)ind.style.display="none";
-        alert("⚠️ Error de conexión. Verificá el internet.");
-        cb();
-      });
-    return;
-  }
-  if(forcePush){
-    var batch=lsBatch();
-    if(batch.length){
-      fetch(SB_URL+"/rest/v1/app_data",{
-        method:"POST",
-        headers:Object.assign({},SB_H,{"Prefer":"resolution=merge-duplicates"}),
-        body:JSON.stringify(batch)
-      }).then(function(){
-        if(ind)ind.style.display="none";
-        alert("✅ ¡Datos subidos a la nube!\nYa podés abrir la app en el otro dispositivo y van a aparecer todos los alumnos.");
-        cb();
-      }).catch(function(){
-        if(ind)ind.style.display="none";
-        alert("⚠️ Error de conexión. Verificá el internet e intentá de nuevo.");
-        cb();
-      });
-    } else {
-      if(ind)ind.style.display="none";cb();
-    }
-    return;
-  }
-  fetch(SB_URL+"/rest/v1/app_data?select=key,value,updated_at",{headers:SB_H})
+// Pull Supabase → localStorage y refrescar UI sin recargar página
+function pullAndRefresh(){
+  setSyncStatus("syncing","Sincronizando...");
+  fetch(SB_URL+"/rest/v1/app_data?select=key,value",{headers:SB_H})
     .then(function(r){return r.json();})
     .then(function(rows){
-      var tsMap=getTsMap();
-      var cloudKeys={};   // claves que existen en Supabase
-      var localNewer={};  // claves donde local es más nuevo que la nube
-
-      // 1) bajar de la nube solo si la nube es más nueva; registrar cuál gana
       if(Array.isArray(rows)){
         rows.forEach(function(row){
-          try{
-            cloudKeys[row.key]=true;
-            var cloudTs=new Date(row.updated_at||0).getTime();
-            var localTs=tsMap[row.key]||0;
-            var hasLocal=localStorage.getItem(row.key)!==null;
-            if(!hasLocal||cloudTs>localTs){
-              // la nube gana: bajar
-              localStorage.setItem(row.key,JSON.stringify(row.value));
-              tsMap[row.key]=cloudTs;
-            } else {
-              // local gana: marcar para subir
-              localNewer[row.key]=true;
-            }
-          }catch(e){}
+          try{localStorage.setItem(row.key,JSON.stringify(row.value));}catch(e){}
         });
-        try{localStorage.setItem(LS_TS,JSON.stringify(tsMap));}catch(e){}
       }
-
-      // 2) subir SOLO lo que no existe en la nube O es genuinamente más nuevo en local
-      var batch=[];
+      // Refrescar estado en memoria y UI sin recargar
+      try{
+        var byName=function(a,b){return(a.name||"").localeCompare(b.name||"");};
+        state.students=lsGet("students",[]).sort(byName);
+        state.wins=lsGet("wins",[]);
+        state.pipeline=lsGet("pipeline",[]);
+        state.revenue=lsGet("revenue",{});
+        state.goals=lsGet("goals",{});
+        if(typeof renderStudents==="function")renderStudents();
+        if(typeof refreshPipeline==="function")refreshPipeline();
+      }catch(e){}
+      setSyncStatus("ok","✓ Sincronizado");
+    })
+    .catch(function(){setSyncStatus("err","⚠ Sin conexión");});
+}
+function syncFromCloud(cb){
+  var ind=document.getElementById("sync-ind");
+  if(ind)ind.style.display="block";
+  setSyncStatus("syncing","Conectando...");
+  // Modo ?push=1: subir todo local → nube (recuperación de emergencia)
+  if(window.location.search.indexOf("push=1")>=0){
+    var batch=[];
+    for(var i=0;i<localStorage.length;i++){var k=localStorage.key(i);if(k&&k.indexOf("misEsp_")===0){try{var v=JSON.parse(localStorage.getItem(k));if(v!==null)batch.push({key:k,value:v,updated_at:new Date().toISOString()});}catch(e){}}}
+    if(batch.length){
+      fetch(SB_URL+"/rest/v1/app_data",{method:"POST",headers:Object.assign({},SB_H,{"Prefer":"resolution=merge-duplicates"}),body:JSON.stringify(batch)})
+        .then(function(){if(ind)ind.style.display="none";alert("✅ Datos subidos a la nube. Podés abrir la app en el otro dispositivo.");cb();})
+        .catch(function(){if(ind)ind.style.display="none";alert("⚠️ Error de conexión.");cb();});
+    } else {if(ind)ind.style.display="none";cb();}
+    return;
+  }
+  // Sync normal: Supabase manda — bajar todo, luego subir lo que no está en nube
+  fetch(SB_URL+"/rest/v1/app_data?select=key,value",{headers:SB_H})
+    .then(function(r){return r.json();})
+    .then(function(rows){
+      var cloudKeys={};
+      if(Array.isArray(rows)){
+        rows.forEach(function(row){
+          try{cloudKeys[row.key]=true;localStorage.setItem(row.key,JSON.stringify(row.value));}catch(e){}
+        });
+      }
+      // Subir solo claves locales que no existen en la nube todavía
+      var newLocal=[];
       for(var i=0;i<localStorage.length;i++){
         var k=localStorage.key(i);
-        if(k&&k.indexOf("misEsp_")===0&&k!==LS_TS){
-          if(!cloudKeys[k]||localNewer[k]){
-            try{
-              var v=JSON.parse(localStorage.getItem(k));
-              if(v!==null)batch.push({key:k,value:v,updated_at:new Date(tsMap[k]||Date.now()).toISOString()});
-            }catch(e){}
-          }
+        if(k&&k.indexOf("misEsp_")===0&&!cloudKeys[k]){
+          try{var v=JSON.parse(localStorage.getItem(k));if(v!==null)newLocal.push({key:k,value:v,updated_at:new Date().toISOString()});}catch(e){}
         }
       }
-      if(batch.length){
-        fetch(SB_URL+"/rest/v1/app_data",{
-          method:"POST",
-          headers:Object.assign({},SB_H,{"Prefer":"resolution=merge-duplicates"}),
-          body:JSON.stringify(batch)
-        }).catch(function(){});
+      if(newLocal.length){
+        fetch(SB_URL+"/rest/v1/app_data",{method:"POST",headers:Object.assign({},SB_H,{"Prefer":"resolution=merge-duplicates"}),body:JSON.stringify(newLocal)}).catch(function(){});
       }
       if(ind)ind.style.display="none";
       setSyncStatus("ok","✓ Sincronizado");
       cb();
+      // Auto-sync cada 60s para capturar cambios del celular automáticamente
+      if(!autoSyncInt){autoSyncInt=setInterval(pullAndRefresh,60000);}
     })
     .catch(function(){if(ind)ind.style.display="none";setSyncStatus("err","⚠ Sin conexión");cb();});
+}
+function backupData(){
+  var data={version:1,date:new Date().toISOString(),data:{}};
+  for(var i=0;i<localStorage.length;i++){var k=localStorage.key(i);if(k&&k.indexOf("misEsp_")===0){try{data.data[k]=JSON.parse(localStorage.getItem(k));}catch(e){}}}
+  var blob=new Blob([JSON.stringify(data,null,2)],{type:"application/json"});
+  var url=URL.createObjectURL(blob),a=document.createElement("a"),d=new Date();
+  a.href=url;a.download="misEspacios-respaldo-"+d.getFullYear()+"-"+String(d.getMonth()+1).padStart(2,"0")+"-"+String(d.getDate()).padStart(2,"0")+".json";
+  a.click();URL.revokeObjectURL(url);
 }
 
 // ── localStorage helpers ──────────────────────────────────────────
 var LSK="misEsp_";
 function lsGet(k,d){try{var v=JSON.parse(localStorage.getItem(LSK+k));return v!==null?v:d;}catch(e){return d;}}
-function lsSave(k,v){try{localStorage.setItem(LSK+k,JSON.stringify(v));setTs(LSK+k);sbPush(LSK+k,v);}catch(e){}}
+function lsSave(k,v){try{localStorage.setItem(LSK+k,JSON.stringify(v));sbPush(LSK+k,v);}catch(e){}}
 function genId(){return Date.now().toString(36)+Math.random().toString(36).slice(2,7);}
 
 function lsAdd(col,data){
