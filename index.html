@@ -1815,29 +1815,62 @@ function renderPerStats(){
   el("per-st-sav").textContent=lastSav>0?fmtMoney(lastSav):"$0";
 }
 
+function focoGet(p,i){
+  var raw=state.foco[p+i];
+  if(!raw)return{lbl:"",tgt:0,cur:0};
+  if(typeof raw==="string")return{lbl:raw,tgt:0,cur:0};
+  return{lbl:raw.lbl||"",tgt:Number(raw.tgt)||0,cur:Number(raw.cur)||0};
+}
+function focoSave(p,i,obj){
+  var foco=lsGet("settings/foco",{});
+  foco[p+i]=obj;
+  lsSettingSet("settings/foco",foco);
+  state.foco=foco;
+}
 function renderFoco(){
   var profiles=["fit","agency","personal"];
   profiles.forEach(function(p){
     var wrapIds=["foco-"+p+"-wrap","foco-"+p+"-full"];
     var html="";
     for(var i=1;i<=3;i++){
-      var key=p+i.toString();
-      var val=(state.foco[key]||"").replace(/"/g,"&quot;");
-      var ph=i===1?"Prioridad 1 de la semana...":i===2?"Segunda prioridad...":"Tercera prioridad...";
-      html+='<div class="foco-item"><div class="foco-num">0'+i+'</div><input class="foco-in" data-foco-key="'+key+'" value="'+val+'" placeholder="'+ph+'" oninput="onFocoInput(this)"></div>';
+      var d=focoGet(p,i);
+      var pct=d.tgt>0?Math.min(100,Math.round(d.cur/d.tgt*100)):0;
+      var left=d.tgt>0?Math.max(0,d.tgt-d.cur):null;
+      var barCol=pct>=100?"#34D399":pct>=60?"#FBBF24":"var(--acc)";
+      var ph=i===1?"Objetivo 1 de la semana...":i===2?"Objetivo 2...":"Objetivo 3...";
+      var lbl=(d.lbl||"").replace(/"/g,"&quot;");
+      html+='<div class="foco-item" style="flex-direction:column;align-items:stretch;gap:8px">'
+        +'<div style="display:flex;align-items:center;gap:10px">'
+        +'<div class="foco-num">0'+i+'</div>'
+        +'<input class="foco-in" data-fp="'+p+'" data-fi="'+i+'" data-fk="lbl" value="'+lbl+'" placeholder="'+ph+'" oninput="onFocoField(this)" style="flex:1">'
+        +'</div>'
+        +'<div style="display:flex;align-items:center;gap:6px;padding-left:32px">'
+        +'<span style="font-size:10px;opacity:.5;white-space:nowrap">Llevamos</span>'
+        +'<input type="number" min="0" data-fp="'+p+'" data-fi="'+i+'" data-fk="cur" value="'+(d.cur||"")+'" placeholder="0" oninput="onFocoField(this)" style="width:60px;background:var(--card2);border:1px solid var(--border2);border-radius:6px;padding:3px 7px;color:var(--txt);font-size:12px;font-weight:700;outline:none;font-family:Rajdhani,sans-serif;text-align:center">'
+        +'<span style="font-size:10px;opacity:.5">/</span>'
+        +'<input type="number" min="0" data-fp="'+p+'" data-fi="'+i+'" data-fk="tgt" value="'+(d.tgt||"")+'" placeholder="Meta" oninput="onFocoField(this)" style="width:60px;background:var(--card2);border:1px solid var(--border2);border-radius:6px;padding:3px 7px;color:var(--txt);font-size:12px;font-weight:700;outline:none;font-family:Rajdhani,sans-serif;text-align:center">'
+        +(d.tgt>0?'<span style="font-size:11px;font-weight:700;margin-left:4px;color:'+(pct>=100?"#34D399":pct>=60?"#FBBF24":"var(--acc)")+'">'+pct+'%</span>':'')
+        +(left!==null&&left>0?'<span style="font-size:10px;opacity:.5;margin-left:2px">· faltan '+left+'</span>':'')
+        +(pct>=100?'<span style="font-size:11px;font-weight:700;color:#34D399;margin-left:4px">✓ Logrado</span>':'')
+        +'</div>'
+        +(d.tgt>0?'<div style="padding-left:32px"><div style="background:var(--border);border-radius:99px;height:5px;overflow:hidden"><div style="width:'+pct+'%;height:100%;background:'+barCol+';border-radius:99px;transition:width .4s"></div></div></div>':'')
+        +'</div>';
     }
     wrapIds.forEach(function(wid){var w=el(wid);if(w)w.innerHTML=html;});
   });
 }
-
-function onFocoInput(input){
-  var key=input.getAttribute("data-foco-key");
-  var val=input.value;
+function onFocoField(input){
+  var p=input.getAttribute("data-fp");
+  var i=input.getAttribute("data-fi");
+  var k=input.getAttribute("data-fk");
+  var key=p+i;
   clearTimeout(focoTimers[key]);
   focoTimers[key]=setTimeout(function(){
-    var patch={};patch[key]=val;
-    var foco=lsGet("settings/foco",{});foco[key]=val;lsSettingSet("settings/foco",foco);state.foco=foco;
-  },600);
+    var d=focoGet(p,i);
+    d[k]=k==="lbl"?input.value:(Number(input.value)||0);
+    focoSave(p,i,d);
+    renderFoco();
+  },500);
 }
 
 function renderWins(p){
