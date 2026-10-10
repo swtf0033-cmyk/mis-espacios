@@ -588,6 +588,7 @@ label.switch-btn:hover{background:var(--acc-d2);color:var(--txt)}
       <div class="ni" onclick="sv('agency','pipeline',this)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="7" width="20" height="14" rx="2"/><path d="M16 3H8L4 7h16z"/></svg>Pipeline</div>
       <div class="ni" onclick="sv('agency','finanzas',this)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="22 7 13.5 15.5 8.5 10.5 2 17"/><polyline points="16 7 22 7 22 13"/></svg>Finanzas</div>
       <div class="ni" onclick="sv('agency','gastos',this)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="16"/><line x1="8" y1="12" x2="16" y2="12"/></svg>Gastos</div>
+      <div class="ni" onclick="sv('agency','metricas',this)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="22 7 13.5 15.5 8.5 10.5 2 17"/><line x1="2" y1="12" x2="22" y2="12" stroke-dasharray="3 3"/></svg>Métricas</div>
       <div class="ni" onclick="sv('agency','mision',this)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>Mision</div>
     </nav>
     <div class="sb-switch"><label class="switch-btn" for="nav-home"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="15 18 9 12 15 6"/></svg>Cambiar espacio</label></div>
@@ -652,6 +653,14 @@ label.switch-btn:hover{background:var(--acc-d2);color:var(--txt)}
             <div class="ct">Distribucion gastos</div>
             <div class="chart-box" style="height:250px"><canvas id="ag-gastos"></canvas></div>
           </div>
+        </div>
+      </div>
+      <div class="view" id="agency-metricas">
+        <div class="ct" style="margin-bottom:14px">Métricas KPI<button class="btn-sm" onclick="openAddKpi()">+ Nueva métrica</button></div>
+        <div id="kpi-list"></div>
+        <div class="card" id="kpi-chart-card" style="margin-top:14px;display:none">
+          <div class="ct"><span id="kpi-chart-ttl">Evolución</span></div>
+          <div class="chart-box" style="height:260px"><canvas id="kpi-main-chart"></canvas></div>
         </div>
       </div>
       <div class="view" id="agency-mision">
@@ -1376,6 +1385,7 @@ function loadState(){
   state.agRev=lsGet("settings/agency-revenue",state.agRev);
   function migrateExp(raw,defs){if(Array.isArray(raw))return raw;if(raw&&typeof raw==="object"){return defs.filter(function(d){return(Number(raw[d.k])||0)>0;}).map(function(d){return{lbl:d.l,val:Number(raw[d.k])||0};});}return[];}
   state.agExp=migrateExp(lsGet("settings/agency-expenses",null),[{k:"tools",l:"Herramientas digitales"},{k:"freelancers",l:"Freelancers fijos"},{k:"office",l:"Oficina / coworking"},{k:"ownAds",l:"Publicidad propia"},{k:"others",l:"Otros"}]);
+  state.agKpis=lsGet("agency-kpis",[]);
   state.fitExp=migrateExp(lsGet("settings/fit-expenses",null),[{k:"space",l:"Espacio / gimnasio"},{k:"equip",l:"Equipos"},{k:"platform",l:"Plataforma / software"},{k:"ads",l:"Publicidad coach"},{k:"others",l:"Otros"}]);
   state.perInc=lsGet("settings/personal-income",state.perInc);
   state.perExp=migrateExp(lsGet("settings/personal-expenses",null),[{k:"rent",l:"Renta / vivienda"},{k:"food",l:"Alimentacion"},{k:"transport",l:"Transporte"},{k:"subs",l:"Suscripciones"},{k:"health",l:"Salud / seguros"},{k:"entertain",l:"Entretenimiento"}]);
@@ -1391,7 +1401,7 @@ var state={
   winsFit:[],winsAgency:[],winsPersonal:[],lifeGoals:[],
   fitRev:{months:["Ene","Feb","Mar","Abr","May","Jun"],vals:[0,0,0,0,0,0]},
   agRev:{months:["Ene","Feb","Mar","Abr","May","Jun"],vals:[0,0,0,0,0,0]},
-  agExp:[],
+  agExp:[],agKpis:[],
   fitExp:[],
   perInc:{fit:0,agency:0},
   perExp:[],
@@ -1405,7 +1415,7 @@ function initDB(){
   renderFoco();renderFreedom();renderMission();renderDreams();
   renderWins("fit");renderWins("agency");renderWins("personal");
   renderFitStats();renderFitAlerts();renderFitRanking();renderStudents();
-  renderAgStats();renderAgExp();renderClients();renderPipeline();
+  renderAgStats();renderAgExp();renderClients();renderPipeline();renderAgKpis();
   renderPerStats();renderPerInc();renderPerExp();renderLifeGoals();
 }
 
@@ -1420,7 +1430,7 @@ function initDB(){
       renderFoco();renderWins("fit");renderWins("agency");renderWins("personal");
       renderFreedom();renderMission();renderDreams();
       if(p==="fit"){renderFitStats();renderFitAlerts();renderFitRanking();renderStudents();}
-      if(p==="agency"){renderAgStats();renderAgExp();renderClients();renderPipeline();}
+      if(p==="agency"){renderAgStats();renderAgExp();renderClients();renderPipeline();renderAgKpis();}
       if(p==="personal"){renderPerStats();renderPerInc();renderPerExp();renderPayOrder();renderLifeGoals();}
     }catch(e){console.warn("nav render",e);}
     setTimeout(function(){try{initCharts(p);}catch(e){}},100);
@@ -3296,6 +3306,151 @@ function deleteClient(id){
   lsDocDel("clients",id);refreshClients();
 }
 
+// KPI MÉTRICAS
+var KPI_COLORS=["#7C6AEC","#34D399","#FBBF24","#F87171","#A855F7","#38BDF8","#FB923C","#E879F9"];
+var _kpiChart=null;
+function kpiSaveAll(){lsSave("agency-kpis",state.agKpis);}
+function kpiWeekLabel(i){return"S"+(i+1);}
+function renderAgKpis(){
+  var e=el("kpi-list");if(!e)return;
+  var list=state.agKpis;
+  if(!list.length){
+    e.innerHTML='<div class="empty-st"><div class="ico">📊</div><p>Sin métricas aún.<br>Agrega ventas, interacciones, guardados...</p></div>';
+    var cc=el("kpi-chart-card");if(cc)cc.style.display="none";
+    return;
+  }
+  var html=list.map(function(k,ki){
+    var logs=k.logs||[];
+    var goals=k.goals||[];
+    var period=logs.length; // próximo período a registrar = logs.length
+    var lastVal=logs.length?logs[logs.length-1].val:0;
+    var curGoal=goals[Math.min(logs.length,goals.length-1)]||0;
+    var prevGoal=goals.length>1&&logs.length>0?goals[Math.min(logs.length-1,goals.length-1)]:0;
+    var pct=curGoal>0?Math.min(100,Math.round(lastVal/curGoal*100)):0;
+    var col=k.color||KPI_COLORS[ki%KPI_COLORS.length];
+    var goalsStr=(goals||[]).join(", ");
+    return '<div style="background:var(--card);border:1px solid var(--border);border-radius:12px;padding:14px;margin-bottom:10px">'
+      +'<div style="display:flex;align-items:center;gap:10px;margin-bottom:10px">'
+      +'<div style="width:12px;height:12px;border-radius:50%;background:'+col+';flex-shrink:0"></div>'
+      +'<div style="flex:1;font-weight:700;font-size:15px">'+k.name+'</div>'
+      +'<span style="font-size:10px;opacity:.45;font-style:italic">Metas: '+goalsStr+'</span>'
+      +'<button class="btn-icon" onclick="openEditKpi(\''+k.id+'\')">✏</button>'
+      +'<button class="btn-icon btn-del" onclick="deleteKpi(\''+k.id+'\')">🗑</button>'
+      +'</div>'
+      +(logs.length?'<div style="display:flex;align-items:baseline;gap:6px;margin-bottom:8px">'
+        +'<span style="font-family:Rajdhani,sans-serif;font-weight:700;font-size:28px;color:'+col+'">'+lastVal+'</span>'
+        +'<span style="font-size:12px;opacity:.5">/ meta '+curGoal+' (S'+logs.length+')</span>'
+        +(pct>=100?'<span style="font-size:12px;font-weight:700;color:#34D399;margin-left:6px">✓ Logrado</span>':'<span style="font-size:11px;opacity:.4;margin-left:4px">faltan '+(curGoal-lastVal)+'</span>')
+        +'</div>':'<div style="font-size:12px;opacity:.4;margin-bottom:8px">Sin registros aún</div>')
+      +(logs.length?'<div style="background:var(--border);border-radius:99px;height:6px;overflow:hidden;margin-bottom:10px"><div style="width:'+pct+'%;height:100%;background:'+col+';border-radius:99px;transition:width .4s"></div></div>':'')
+      +'<div style="display:flex;gap:6px;flex-wrap:wrap">'
+      +'<button class="btn-sm" onclick="openLogKpi(\''+k.id+'\','+period+')" style="background:'+col+'22;color:'+col+';border:1px solid '+col+'44">+ Registrar S'+(period+1)+'</button>'
+      +(logs.length?'<button class="btn-sm" onclick="showKpiChart(\''+k.id+'\')" style="background:var(--surf)">📈 Ver gráfica</button>':'')
+      +(logs.length>0?'<button class="btn-sm" onclick="undoLastLog(\''+k.id+'\')" style="background:var(--surf);color:var(--txt2)">↩ Deshacer último</button>':'')
+      +'</div>'
+      +'</div>';
+  }).join("");
+  e.innerHTML=html;
+}
+function showKpiChart(id){
+  var k=state.agKpis.find(function(x){return x.id===id;});if(!k)return;
+  var cc=el("kpi-chart-card");if(!cc)return;
+  cc.style.display="block";
+  var ttl=el("kpi-chart-ttl");if(ttl)ttl.textContent=k.name+" — Evolución vs Meta";
+  var logs=k.logs||[];
+  var goals=k.goals||[];
+  var col=k.color||KPI_COLORS[0];
+  var labels=logs.map(function(_,i){return"S"+(i+1);});
+  var actuals=logs.map(function(l){return l.val;});
+  var targets=logs.map(function(_,i){return goals[Math.min(i,goals.length-1)]||0;});
+  // Añadir siguiente meta si no se ha llegado
+  if(goals.length>logs.length){labels.push("S"+(logs.length+1));actuals.push(null);targets.push(goals[logs.length]);}
+  dc("kpi-main-chart");
+  if(_kpiChart){try{_kpiChart.destroy();}catch(e){} _kpiChart=null;}
+  var canvas=el("kpi-main-chart");if(!canvas)return;
+  _kpiChart=new Chart(canvas,{
+    type:"line",
+    data:{
+      labels:labels,
+      datasets:[
+        {label:"Real",data:actuals,borderColor:col,backgroundColor:col+"22",fill:true,tension:.35,pointRadius:5,pointBackgroundColor:col,spanGaps:false},
+        {label:"Meta",data:targets,borderColor:col,borderDash:[6,4],borderWidth:2,fill:false,tension:0,pointRadius:3,pointBackgroundColor:"transparent",backgroundColor:"transparent"}
+      ]
+    },
+    options:{
+      responsive:true,maintainAspectRatio:false,
+      plugins:{legend:{display:true,labels:{color:"rgba(255,255,255,.7)",font:{size:11}}},tooltip:{mode:"index",intersect:false}},
+      scales:{
+        x:{ticks:{color:"rgba(255,255,255,.5)"},grid:{color:"rgba(255,255,255,.05)"}},
+        y:{beginAtZero:true,ticks:{color:"rgba(255,255,255,.5)"},grid:{color:"rgba(255,255,255,.07)"}}
+      }
+    }
+  });
+  cc.scrollIntoView({behavior:"smooth",block:"nearest"});
+}
+function openAddKpi(){
+  var usedColors=state.agKpis.map(function(k){return k.color;});
+  var nextColor=KPI_COLORS.find(function(c){return!usedColors.includes(c);})||KPI_COLORS[0];
+  var html='<div class="form-g"><label>Nombre de la métrica</label><input id="kpi-name" class="fi" placeholder="Ventas, Interacciones, Guardados..."></div>'
+    +'<div class="form-g"><label>Metas por período (separadas por coma)</label><input id="kpi-goals" class="fi" placeholder="10, 20, 30" value="10, 20, 30"></div>'
+    +'<div class="form-g"><label>Color</label><div style="display:flex;gap:8px;flex-wrap:wrap;margin-top:4px">'
+    +KPI_COLORS.map(function(c){return'<label style="cursor:pointer"><input type="radio" name="kpi-col" value="'+c+'" '+(c===nextColor?"checked":"")+' style="display:none"><div style="width:26px;height:26px;border-radius:50%;background:'+c+';outline:2px solid transparent;outline-offset:2px;transition:.15s" onmouseenter="this.style.outlineColor=\''+c+'\'" onmouseleave="this.style.outlineColor=\'transparent\'"></div></label>';}).join("")
+    +'</div></div>';
+  openModal("Nueva métrica",html,function(){
+    var name=el("kpi-name").value.trim();if(!name)return;
+    var goalsRaw=el("kpi-goals").value.split(",").map(function(s){return parseInt(s.trim())||0;}).filter(function(n){return n>0;});
+    var colSel=document.querySelector("input[name='kpi-col']:checked");
+    var col=colSel?colSel.value:nextColor;
+    var id="kpi_"+Date.now();
+    state.agKpis.push({id:id,name:name,color:col,goals:goalsRaw,logs:[]});
+    kpiSaveAll();renderAgKpis();
+  });
+}
+function openEditKpi(id){
+  var k=state.agKpis.find(function(x){return x.id===id;});if(!k)return;
+  var html='<div class="form-g"><label>Nombre</label><input id="kpi-name" class="fi" value="'+k.name.replace(/"/g,"&quot;")+'"></div>'
+    +'<div class="form-g"><label>Metas por período (separadas por coma)</label><input id="kpi-goals" class="fi" value="'+(k.goals||[]).join(", ")+'"></div>'
+    +'<div class="form-g"><label>Color</label><div style="display:flex;gap:8px;flex-wrap:wrap;margin-top:4px">'
+    +KPI_COLORS.map(function(c){return'<label style="cursor:pointer"><input type="radio" name="kpi-col" value="'+c+'" '+(c===k.color?"checked":"")+' style="display:none"><div style="width:26px;height:26px;border-radius:50%;background:'+c+'"></div></label>';}).join("")
+    +'</div></div>';
+  openModal("Editar métrica",html,function(){
+    var name=el("kpi-name").value.trim();if(!name)return;
+    var goalsRaw=el("kpi-goals").value.split(",").map(function(s){return parseInt(s.trim())||0;}).filter(function(n){return n>0;});
+    var colSel=document.querySelector("input[name='kpi-col']:checked");
+    k.name=name;k.goals=goalsRaw;if(colSel)k.color=colSel.value;
+    kpiSaveAll();renderAgKpis();
+  });
+}
+function openLogKpi(id,period){
+  var k=state.agKpis.find(function(x){return x.id===id;});if(!k)return;
+  var goals=k.goals||[];var curGoal=goals[Math.min(period,goals.length-1)]||0;
+  var html='<div style="text-align:center;margin-bottom:14px"><div style="font-size:13px;opacity:.5">Período S'+(period+1)+'</div><div style="font-size:12px;opacity:.4">Meta: '+curGoal+'</div></div>'
+    +'<div class="form-g" style="text-align:center"><label>¿Cuánto llevamos?</label>'
+    +'<input id="kpi-log-val" type="number" class="fi" placeholder="0" min="0" style="font-size:24px;font-weight:700;font-family:Rajdhani,sans-serif;text-align:center;height:56px"></div>';
+  openModal("Registrar "+k.name,html,function(){
+    var val=parseInt(el("kpi-log-val").value)||0;
+    if(!k.logs)k.logs=[];
+    // Si ya existe log para este period, sobreescribir
+    if(k.logs[period]!==undefined){k.logs[period]={val:val};}
+    else{k.logs.push({val:val});}
+    kpiSaveAll();renderAgKpis();showKpiChart(id);
+  });
+}
+function undoLastLog(id){
+  var k=state.agKpis.find(function(x){return x.id===id;});if(!k||!k.logs||!k.logs.length)return;
+  if(!confirm("Eliminar el último registro?"))return;
+  k.logs.pop();kpiSaveAll();renderAgKpis();
+  if(_kpiChart){try{_kpiChart.destroy();}catch(e){}_kpiChart=null;}
+  var cc=el("kpi-chart-card");if(cc)cc.style.display="none";
+}
+function deleteKpi(id){
+  if(!confirm("Eliminar esta métrica y todos sus datos?"))return;
+  state.agKpis=state.agKpis.filter(function(k){return k.id!==id;});
+  kpiSaveAll();renderAgKpis();
+  if(_kpiChart){try{_kpiChart.destroy();}catch(e){}_kpiChart=null;}
+  var cc=el("kpi-chart-card");if(cc)cc.style.display="none";
+}
+
 // PIPELINE
 function refreshPipeline(){
   state.pipeline=lsGet("pipeline",[]);
@@ -3616,7 +3771,7 @@ function enterApp(profile){
     renderFoco();renderWins("fit");renderWins("agency");renderWins("personal");
     renderFreedom();renderMission();renderDreams();
     if(profile==="fit"){renderFitStats();renderFitAlerts();renderFitRanking();renderStudents();}
-    if(profile==="agency"){renderAgStats();renderAgExp();renderClients();renderPipeline();}
+    if(profile==="agency"){renderAgStats();renderAgExp();renderClients();renderPipeline();renderAgKpis();}
     if(profile==="personal"){renderPerStats();renderPerInc();renderPerExp();renderPayOrder();renderLifeGoals();}
   }catch(e){console.warn("enterApp render",e);}
   setTimeout(function(){try{initCharts(profile);}catch(e){}},80);
