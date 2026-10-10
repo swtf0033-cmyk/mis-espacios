@@ -373,13 +373,13 @@ label.sel-card{display:block;text-decoration:none;color:inherit;cursor:pointer}
 label.switch-btn{display:flex;align-items:center;gap:8px;padding:9px 12px;border-radius:9px;cursor:pointer;font-size:12px;color:var(--txt2);font-weight:600;transition:all .15s}
 label.switch-btn:hover{background:var(--acc-d2);color:var(--txt)}
 /* FitCoach Pro — navegación interna de vistas via :has() */
-#fit-v-dash,#fit-v-alumnos,#fit-v-pagos,#fit-v-foco{display:none}
+#fit-v-dash,#fit-v-alumnos,#fit-v-pagos,#fit-v-foco,#fit-v-finanzas,#fit-v-gastos{display:none}
 #app-fit .view{display:none!important}
-#app-fit:has(#fit-v-dash:checked) #fit-dash,#app-fit:has(#fit-v-alumnos:checked) #fit-alumnos,#app-fit:has(#fit-v-pagos:checked) #fit-pagos,#app-fit:has(#fit-v-foco:checked) #fit-foco{display:block!important}
+#app-fit:has(#fit-v-dash:checked) #fit-dash,#app-fit:has(#fit-v-alumnos:checked) #fit-alumnos,#app-fit:has(#fit-v-pagos:checked) #fit-pagos,#app-fit:has(#fit-v-foco:checked) #fit-foco,#app-fit:has(#fit-v-finanzas:checked) #fit-finanzas,#app-fit:has(#fit-v-gastos:checked) #fit-gastos{display:block!important}
 #app-fit label.ni{color:var(--txt2);background:transparent!important}
-#app-fit:has(#fit-v-dash:checked) label[for=fit-v-dash],#app-fit:has(#fit-v-alumnos:checked) label[for=fit-v-alumnos],#app-fit:has(#fit-v-pagos:checked) label[for=fit-v-pagos],#app-fit:has(#fit-v-foco:checked) label[for=fit-v-foco]{background:var(--acc-d)!important;color:var(--acc)!important}
-#app-fit:has(#fit-v-dash:checked) label[for=fit-v-dash]::before,#app-fit:has(#fit-v-alumnos:checked) label[for=fit-v-alumnos]::before,#app-fit:has(#fit-v-pagos:checked) label[for=fit-v-pagos]::before,#app-fit:has(#fit-v-foco:checked) label[for=fit-v-foco]::before{content:'';position:absolute;left:0;top:20%;bottom:20%;width:3px;background:var(--grad);border-radius:99px}
-#app-fit:has(#fit-v-dash:checked) label[for=fit-v-dash] svg,#app-fit:has(#fit-v-alumnos:checked) label[for=fit-v-alumnos] svg,#app-fit:has(#fit-v-pagos:checked) label[for=fit-v-pagos] svg,#app-fit:has(#fit-v-foco:checked) label[for=fit-v-foco] svg{opacity:1}
+#app-fit:has(#fit-v-dash:checked) label[for=fit-v-dash],#app-fit:has(#fit-v-alumnos:checked) label[for=fit-v-alumnos],#app-fit:has(#fit-v-pagos:checked) label[for=fit-v-pagos],#app-fit:has(#fit-v-foco:checked) label[for=fit-v-foco],#app-fit:has(#fit-v-finanzas:checked) label[for=fit-v-finanzas],#app-fit:has(#fit-v-gastos:checked) label[for=fit-v-gastos]{background:var(--acc-d)!important;color:var(--acc)!important}
+#app-fit:has(#fit-v-dash:checked) label[for=fit-v-dash]::before,#app-fit:has(#fit-v-alumnos:checked) label[for=fit-v-alumnos]::before,#app-fit:has(#fit-v-pagos:checked) label[for=fit-v-pagos]::before,#app-fit:has(#fit-v-foco:checked) label[for=fit-v-foco]::before,#app-fit:has(#fit-v-finanzas:checked) label[for=fit-v-finanzas]::before,#app-fit:has(#fit-v-gastos:checked) label[for=fit-v-gastos]::before{content:'';position:absolute;left:0;top:20%;bottom:20%;width:3px;background:var(--grad);border-radius:99px}
+#app-fit:has(#fit-v-dash:checked) label[for=fit-v-dash] svg,#app-fit:has(#fit-v-alumnos:checked) label[for=fit-v-alumnos] svg,#app-fit:has(#fit-v-pagos:checked) label[for=fit-v-pagos] svg,#app-fit:has(#fit-v-foco:checked) label[for=fit-v-foco] svg,#app-fit:has(#fit-v-finanzas:checked) label[for=fit-v-finanzas] svg,#app-fit:has(#fit-v-gastos:checked) label[for=fit-v-gastos] svg{opacity:1}
 /* ── Search ── */
 .students-search{width:100%;background:var(--card);border:1px solid var(--border);border-radius:8px;padding:8px 12px;color:var(--txt);font-size:13px;font-family:'Inter',sans-serif;outline:none;margin-bottom:10px;transition:border .2s}
 .students-search:focus{border-color:var(--acc)}
@@ -509,6 +509,8 @@ label.switch-btn:hover{background:var(--acc-d2);color:var(--txt)}
 <input type="radio" id="fit-v-alumnos" name="fit-v" style="display:none">
 <input type="radio" id="fit-v-pagos" name="fit-v" style="display:none">
 <input type="radio" id="fit-v-foco" name="fit-v" style="display:none">
+<input type="radio" id="fit-v-finanzas" name="fit-v" style="display:none">
+<input type="radio" id="fit-v-gastos" name="fit-v" style="display:none">
   <div class="sb">
     <div class="sb-logo"><div class="logo-icon">&#128170;</div><div class="logo-name">FitCoach Pro</div><div class="logo-sub">Entrenador personal</div></div>
     <nav class="sb-nav">
@@ -516,6 +518,8 @@ label.switch-btn:hover{background:var(--acc-d2);color:var(--txt)}
       <label class="ni" for="fit-v-alumnos"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>Alumnos<span class="nb" id="fit-nb" style="display:none">0</span></label>
       <label class="ni" for="fit-v-pagos"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="5" width="20" height="14" rx="2"/><line x1="2" y1="10" x2="22" y2="10"/></svg>Pagos<span class="nb" id="pagos-nb" style="display:none">0</span></label>
       <label class="ni" for="fit-v-foco"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><circle cx="12" cy="12" r="6"/><circle cx="12" cy="12" r="2"/></svg>Semana</label>
+      <label class="ni" for="fit-v-finanzas" onclick="setTimeout(function(){initCharts('fit','finanzas');renderFitFinSummary();},60)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="22 7 13.5 15.5 8.5 10.5 2 17"/><polyline points="16 7 22 7 22 13"/></svg>Finanzas</label>
+      <label class="ni" for="fit-v-gastos" onclick="setTimeout(function(){initCharts('fit','gastos');},60)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="16"/><line x1="8" y1="12" x2="16" y2="12"/></svg>Gastos</label>
     </nav>
     <div class="sb-switch"><label class="switch-btn" for="nav-home"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="15 18 9 12 15 6"/></svg>Cambiar espacio</label><div class="switch-btn" onclick="backupData()" title="Descargar respaldo JSON de todos los datos" style="cursor:pointer">💾 Respaldo</div></div>
     <div class="sb-foot"><div class="av"><div class="av-pic">FC</div><div><div class="av-name">FitCoach Pro</div><div class="av-role">Entrenador</div></div></div></div>
@@ -573,6 +577,30 @@ label.switch-btn:hover{background:var(--acc-d2);color:var(--txt)}
         <div class="card" style="margin-top:14px">
           <div class="ct">Victorias recientes &#127942;<button class="btn-sm fit-btn-add-win">+ Agregar</button></div>
           <div id="wins-fit-2" class="al"></div>
+        </div>
+      </div>
+      <div class="view" id="fit-finanzas">
+        <div class="g2">
+          <div class="card">
+            <div class="ct">Ingresos vs Gastos</div>
+            <div class="chart-box" style="height:220px"><canvas id="fit-ivg"></canvas></div>
+          </div>
+          <div class="card">
+            <div class="ct">Resumen financiero</div>
+            <div id="fit-fin-summary"></div>
+          </div>
+        </div>
+      </div>
+      <div class="view" id="fit-gastos">
+        <div class="g2">
+          <div class="card">
+            <div class="ct">Gastos<button class="btn-sm" onclick="editFitExp()">&#9999; Editar</button></div>
+            <div id="fit-exp-list"></div>
+          </div>
+          <div class="card">
+            <div class="ct">Distribucion gastos</div>
+            <div class="chart-box" style="height:250px"><canvas id="fit-gastos-chart"></canvas></div>
+          </div>
         </div>
       </div>
     </div>
@@ -3620,7 +3648,7 @@ function editExpenses(title, stateProp, saveKey, onSave){
   });
 }
 function editAgExp(){editExpenses("Gastos agencia","agExp","settings/agency-expenses",function(){renderAgExp();renderAgStats();renderPerExp();renderPerStats();renderPayOrder();if(currentApp==="agency")setTimeout(function(){initCharts("agency",currentView("agency")||"dash");},60);});}
-function editFitExp(){editExpenses("Gastos FitCoach","fitExp","settings/fit-expenses",function(){renderPerExp();renderPerStats();renderPayOrder();if(currentApp==="personal")setTimeout(function(){initCharts("personal",currentView("personal")||"dash");},60);});}
+function editFitExp(){editExpenses("Gastos FitCoach","fitExp","settings/fit-expenses",function(){renderPerExp();renderPerStats();renderPayOrder();renderFitExpList();renderFitFinSummary();if(currentApp==="personal")setTimeout(function(){initCharts("personal",currentView("personal")||"dash");},60);if(currentApp==="fit")setTimeout(function(){initCharts("fit","gastos");},60);});}
 function editPerExp(){editExpenses("Gastos personales","perExp","settings/personal-expenses",function(){renderPerExp();renderPerStats();renderPayOrder();if(currentApp==="personal")setTimeout(function(){initCharts("personal",currentView("personal")||"dash");},60);});}
 
 function editPerInc(){
@@ -3632,6 +3660,45 @@ function editPerInc(){
     lsSettingSet("settings/personal-income",data);state.perInc=data;
     renderPerInc();renderPerStats();if(currentApp==="personal")setTimeout(function(){initCharts("personal",currentView("personal")||"dash");},60);
   });
+}
+
+// FITCOACH FINANZAS
+function renderFitFinSummary(){
+  var billing=state.fitRev&&state.fitRev.vals?state.fitRev.vals.reduce(function(s,v){return s+(Number(v)||0);},0)/Math.max(state.fitRev.vals.filter(function(v){return v>0;}).length,1):0;
+  // Usar último mes con valor si existe
+  var fr=state.fitRev||{vals:[0,0,0,0,0,0]};
+  var lastVal=0;for(var i=fr.vals.length-1;i>=0;i--){if(fr.vals[i]>0){lastVal=fr.vals[i];break;}}
+  var inc=lastVal||Number(state.perInc&&state.perInc.fit)||0;
+  var totalExp=expMonthly(state.fitExp);
+  var net=inc-totalExp;
+  var html='<div style="display:flex;flex-direction:column;gap:10px;margin-top:4px">'
+    +'<div style="display:flex;justify-content:space-between;align-items:center;padding:14px;background:var(--green-d);border-radius:10px;border:1px solid rgba(52,211,153,.2)"><span style="font-size:13px;font-weight:600;color:var(--green)">Ingresos mes</span><span style="font-family:Rajdhani,sans-serif;font-weight:700;font-size:22px;color:var(--green)">'+fmtMoney(inc)+'</span></div>'
+    +'<div style="display:flex;justify-content:space-between;align-items:center;padding:14px;background:var(--danger-d);border-radius:10px;border:1px solid rgba(248,113,113,.2)"><span style="font-size:13px;font-weight:600;color:var(--danger)">Gastos fijos</span><span style="font-family:Rajdhani,sans-serif;font-weight:700;font-size:22px;color:var(--danger)">&minus; '+fmtMoney(totalExp)+'</span></div>'
+    +'<div style="display:flex;justify-content:space-between;align-items:center;padding:14px;background:var(--acc-d);border-radius:10px;border:1px solid var(--border2)"><span style="font-size:13px;font-weight:600;color:var(--acc)">Utilidad neta</span><span style="font-family:Rajdhani,sans-serif;font-weight:700;font-size:28px;background:var(--grad);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text">'+fmtMoney(net)+'</span></div>'
+    +'</div>';
+  var e2=el("fit-fin-summary");if(e2)e2.innerHTML=html;
+}
+function renderFitExpList(){
+  var items=state.fitExp;
+  var monthly=expMonthly(items);var once=expOnce(items);var total=monthly+once;
+  function badge(type){
+    if(type==="unico")return'<span style="font-size:9px;background:rgba(245,158,11,.2);color:#F59E0B;border-radius:4px;padding:2px 5px;font-weight:700;margin-left:5px">ÚNICO</span>';
+    if(type==="por-cliente")return'<span style="font-size:9px;background:rgba(59,130,246,.2);color:#3B82F6;border-radius:4px;padding:2px 5px;font-weight:700;margin-left:5px">×cli</span>';
+    return'<span style="font-size:9px;background:rgba(52,211,153,.15);color:#34D399;border-radius:4px;padding:2px 5px;font-weight:700;margin-left:5px">/mes</span>';
+  }
+  var rows=items.filter(function(i){return i.val>0;}).map(function(i){
+    return '<div style="display:flex;justify-content:space-between;align-items:center;padding:10px 11px;background:var(--surf);border-radius:9px;margin-bottom:6px"><span style="font-size:13px;font-weight:600">'+i.lbl+badge(i.type)+'</span><span style="font-family:Rajdhani,sans-serif;font-weight:700;font-size:15px;color:var(--danger)">'+fmtMoney(getExpVal(i))+'</span></div>';
+  }).join("");
+  var html;
+  if(!rows){html='<div class="empty-st"><div class="ico">&#128184;</div><p>Sin gastos registrados</p><button class="btn-sm" onclick="editFitExp()">+ Agregar</button></div>';}
+  else{
+    html=rows+'<div style="display:flex;flex-direction:column;gap:6px;margin-top:8px">';
+    if(monthly>0)html+='<div style="display:flex;justify-content:space-between;align-items:center;padding:9px 12px;background:rgba(52,211,153,.08);border-radius:9px;border:1px solid rgba(52,211,153,.2)"><span style="font-size:12px;font-weight:700;color:#34D399">Mensuales</span><span style="font-family:Rajdhani,sans-serif;font-weight:700;font-size:16px;color:#34D399">'+fmtMoney(monthly)+'/mes</span></div>';
+    if(once>0)html+='<div style="display:flex;justify-content:space-between;align-items:center;padding:9px 12px;background:rgba(245,158,11,.08);border-radius:9px;border:1px solid rgba(245,158,11,.2)"><span style="font-size:12px;font-weight:700;color:#F59E0B">Únicos</span><span style="font-family:Rajdhani,sans-serif;font-weight:700;font-size:16px;color:#F59E0B">'+fmtMoney(once)+'</span></div>';
+    html+='<div style="display:flex;justify-content:space-between;align-items:center;padding:11px 13px;background:var(--danger-d);border-radius:9px;border:1px solid rgba(248,113,113,.2)"><span style="font-weight:700;font-size:14px">Total gastos</span><span style="font-family:Rajdhani,sans-serif;font-weight:700;font-size:22px;color:var(--danger)">'+fmtMoney(total)+'</span></div>';
+    html+='</div>';
+  }
+  var e2=el("fit-exp-list");if(e2)e2.innerHTML=html;
 }
 
 // AGENCIA FIN SUMMARY
@@ -3694,6 +3761,22 @@ function initCharts(app,view){
     var labels=fr.months||["Ene","Feb","Mar","Abr","May","Jun"];
     var vals=fr.vals||[0,0,0,0,0,0];
     barC("fit-rev",labels,vals,"rgba(168,85,247,.85)","rgba(236,72,153,.7)");
+  }
+  if(app==="fit"&&view==="finanzas"){
+    var fr2=state.fitRev||{months:["Ene","Feb","Mar","Abr","May","Jun"],vals:[0,0,0,0,0,0]};
+    var fitExpSum=expMonthly(state.fitExp);
+    var expData2=fr2.vals?fr2.vals.map(function(){return fitExpSum;}):[];
+    lineA("fit-ivg",fr2.months||[],
+      [{label:"Ingresos",data:fr2.vals||[],color:"#34D399",f0:"rgba(52,211,153,.4)",f1:"rgba(52,211,153,.02)"},
+       {label:"Gastos",data:expData2,color:"#EF4444",f0:"rgba(239,68,68,.4)",f1:"rgba(239,68,68,.02)"}],fitTC);
+    renderFitFinSummary();
+  }
+  if(app==="fit"&&view==="gastos"){
+    renderFitExpList();
+    var expLabels2=state.fitExp.map(function(i){return i.lbl;});
+    var expVals4=state.fitExp.map(function(i){return getExpVal(i)||0;});
+    if(expVals4.some(function(v){return v>0;}))donutC("fit-gastos-chart",expLabels2,expVals4,["#A855F7","#7C3AED","#6D28D9","#5B21B6","#4C1D95","#EC4899"]);
+    else dc("fit-gastos-chart");
   }
 
   if(app==="agency"){
