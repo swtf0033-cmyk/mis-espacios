@@ -1370,10 +1370,11 @@ function loadState(){
   state.lifeGoals=lsGet("life-goals",[]);
   state.fitRev=lsGet("settings/fit-revenue",state.fitRev);
   state.agRev=lsGet("settings/agency-revenue",state.agRev);
-  state.agExp=lsGet("settings/agency-expenses",state.agExp);
-  state.fitExp=lsGet("settings/fit-expenses",state.fitExp);
+  function migrateExp(raw,defs){if(Array.isArray(raw))return raw;if(raw&&typeof raw==="object"){return defs.filter(function(d){return(Number(raw[d.k])||0)>0;}).map(function(d){return{lbl:d.l,val:Number(raw[d.k])||0};});}return[];}
+  state.agExp=migrateExp(lsGet("settings/agency-expenses",null),[{k:"tools",l:"Herramientas digitales"},{k:"freelancers",l:"Freelancers fijos"},{k:"office",l:"Oficina / coworking"},{k:"ownAds",l:"Publicidad propia"},{k:"others",l:"Otros"}]);
+  state.fitExp=migrateExp(lsGet("settings/fit-expenses",null),[{k:"space",l:"Espacio / gimnasio"},{k:"equip",l:"Equipos"},{k:"platform",l:"Plataforma / software"},{k:"ads",l:"Publicidad coach"},{k:"others",l:"Otros"}]);
   state.perInc=lsGet("settings/personal-income",state.perInc);
-  state.perExp=lsGet("settings/personal-expenses",state.perExp);
+  state.perExp=migrateExp(lsGet("settings/personal-expenses",null),[{k:"rent",l:"Renta / vivienda"},{k:"food",l:"Alimentacion"},{k:"transport",l:"Transporte"},{k:"subs",l:"Suscripciones"},{k:"health",l:"Salud / seguros"},{k:"entertain",l:"Entretenimiento"}]);
   state.savings=lsGet("settings/savings",state.savings);
   state.foco=lsGet("settings/foco",state.foco);
   state.freedom=lsGet("settings/freedom",state.freedom);
@@ -1386,10 +1387,10 @@ var state={
   winsFit:[],winsAgency:[],winsPersonal:[],lifeGoals:[],
   fitRev:{months:["Ene","Feb","Mar","Abr","May","Jun"],vals:[0,0,0,0,0,0]},
   agRev:{months:["Ene","Feb","Mar","Abr","May","Jun"],vals:[0,0,0,0,0,0]},
-  agExp:{tools:0,freelancers:0,office:0,ownAds:0,others:0},
-  fitExp:{space:0,equip:0,platform:0,ads:0,others:0},
+  agExp:[],
+  fitExp:[],
   perInc:{fit:0,agency:0},
-  perExp:{rent:0,food:0,transport:0,subs:0,health:0,entertain:0},
+  perExp:[],
   savings:{months:["Ene","Feb","Mar","Abr","May","Jun"],vals:[0,0,0,0,0,0]},
   foco:{},freedom:{monthly:0,rate:0,networth:0},
   mission:{mision:"",vision:""},dreams:{}
@@ -1595,8 +1596,7 @@ function renderClients(){
 function renderAgStats(){
   var active=state.clients.filter(function(c){return c.status==="Activo";}).length;
   var billing=state.clients.filter(function(c){return c.status==="Activo";}).reduce(function(s,c){return s+(Number(c.monthly)||0);},0);
-  var expVals=Object.keys(state.agExp).map(function(k){return Number(state.agExp[k])||0;});
-  var totalExp=expVals.reduce(function(a,b){return a+b;},0);
+  var totalExp=state.agExp.reduce(function(s,i){return s+(Number(i.val)||0);},0);
   var net=billing-totalExp;
   el("ag-st-cli").textContent=active||"0";
   el("ag-st-bil").textContent=billing>0?fmtMoney(billing):"$0";
@@ -1606,17 +1606,11 @@ function renderAgStats(){
 }
 
 function renderAgExp(){
-  var exp=state.agExp;
-  var items=[
-    {lbl:"Herramientas digitales",val:exp.tools||0},
-    {lbl:"Freelancers fijos",val:exp.freelancers||0},
-    {lbl:"Oficina / coworking",val:exp.office||0},
-    {lbl:"Publicidad propia",val:exp.ownAds||0},
-    {lbl:"Otros",val:exp.others||0}
-  ];
-  var total=items.reduce(function(s,i){return s+i.val;},0);
-  var html=items.map(function(i){return '<div style="display:flex;justify-content:space-between;align-items:center;padding:11px;background:var(--surf);border-radius:9px;margin-bottom:7px"><span style="font-size:13px;font-weight:600">'+i.lbl+'</span><span style="font-family:Rajdhani,sans-serif;font-weight:700;font-size:16px;color:var(--danger)">'+fmtMoney(i.val)+'</span></div>';}).join("");
-  html+='<div style="display:flex;justify-content:space-between;align-items:center;padding:12px;background:var(--danger-d);border-radius:9px;border:1px solid rgba(248,113,113,.2);margin-top:4px"><span style="font-weight:700;font-size:14px">Total gastos</span><span style="font-family:Rajdhani,sans-serif;font-weight:700;font-size:22px;color:var(--danger)">'+fmtMoney(total)+'</span></div>';
+  var items=state.agExp;
+  var total=items.reduce(function(s,i){return s+(i.val||0);},0);
+  var html=items.filter(function(i){return i.val>0;}).map(function(i){return '<div style="display:flex;justify-content:space-between;align-items:center;padding:11px;background:var(--surf);border-radius:9px;margin-bottom:7px"><span style="font-size:13px;font-weight:600">'+i.lbl+'</span><span style="font-family:Rajdhani,sans-serif;font-weight:700;font-size:16px;color:var(--danger)">'+fmtMoney(i.val)+'</span></div>';}).join("");
+  if(!html)html='<div class="empty-st"><div class="ico">&#128184;</div><p>Sin gastos registrados</p><button class="btn-sm" onclick="editAgExp()">+ Agregar</button></div>';
+  else html+='<div style="display:flex;justify-content:space-between;align-items:center;padding:12px;background:var(--danger-d);border-radius:9px;border:1px solid rgba(248,113,113,.2);margin-top:4px"><span style="font-weight:700;font-size:14px">Total gastos</span><span style="font-family:Rajdhani,sans-serif;font-weight:700;font-size:22px;color:var(--danger)">'+fmtMoney(total)+'</span></div>';
   var e2=el("ag-exp-list");if(e2)e2.innerHTML=html;
 }
 
@@ -1632,15 +1626,12 @@ function renderPerInc(){
 }
 
 function renderPerExp(){
-  var exp=state.perExp;
-  var perItems=[{lbl:"Renta / vivienda",val:exp.rent||0},{lbl:"Alimentacion",val:exp.food||0},{lbl:"Transporte",val:exp.transport||0},{lbl:"Suscripciones",val:exp.subs||0},{lbl:"Salud / seguros",val:exp.health||0},{lbl:"Entretenimiento",val:exp.entertain||0}];
-  var perTotal=perItems.reduce(function(s,i){return s+i.val;},0);
-  var agx=state.agExp;
-  var agItems=[{lbl:"Herramientas digitales",val:agx.tools||0},{lbl:"Freelancers fijos",val:agx.freelancers||0},{lbl:"Oficina / coworking",val:agx.office||0},{lbl:"Publicidad propia",val:agx.ownAds||0},{lbl:"Otros agencia",val:agx.others||0}];
-  var agTotal=agItems.reduce(function(s,i){return s+i.val;},0);
-  var ftx=state.fitExp;
-  var fitItems=[{lbl:"Espacio / gimnasio",val:ftx.space||0},{lbl:"Equipos",val:ftx.equip||0},{lbl:"Plataforma / software",val:ftx.platform||0},{lbl:"Publicidad coach",val:ftx.ads||0},{lbl:"Otros coach",val:ftx.others||0}];
-  var fitTotal=fitItems.reduce(function(s,i){return s+i.val;},0);
+  var perItems=state.perExp;
+  var perTotal=perItems.reduce(function(s,i){return s+(i.val||0);},0);
+  var agItems=state.agExp;
+  var agTotal=agItems.reduce(function(s,i){return s+(i.val||0);},0);
+  var fitItems=state.fitExp;
+  var fitTotal=fitItems.reduce(function(s,i){return s+(i.val||0);},0);
   var grandTotal=perTotal+agTotal+fitTotal;
   function rowHtml(i){return '<div style="display:flex;justify-content:space-between;align-items:center;padding:10px;background:var(--surf);border-radius:9px;margin-bottom:6px"><span style="font-size:13px;font-weight:600">'+i.lbl+'</span><span style="font-family:Rajdhani,sans-serif;font-weight:700;font-size:15px;color:var(--danger)">'+fmtMoney(i.val)+'</span></div>';}
   function sectionLabel(txt,btn){return '<div style="font-size:11px;font-weight:700;letter-spacing:.07em;text-transform:uppercase;opacity:.5;margin:12px 0 7px">'+txt+(btn?'<button class="btn-sm" onclick="'+btn+'" style="margin-left:6px;font-size:10px">✏</button>':"")+'</div>';}
@@ -1681,10 +1672,7 @@ function renderPerExp(){
 
 function renderPerStats(){
   var inc=(Number(state.perInc.fit)||0)+(Number(state.perInc.agency)||0);
-  var perExpVals=Object.keys(state.perExp).map(function(k){return Number(state.perExp[k])||0;});
-  var agExpVals=Object.keys(state.agExp).map(function(k){return Number(state.agExp[k])||0;});
-  var fitExpVals=Object.keys(state.fitExp).map(function(k){return Number(state.fitExp[k])||0;});
-  var exp=perExpVals.reduce(function(a,b){return a+b;},0)+agExpVals.reduce(function(a,b){return a+b;},0)+fitExpVals.reduce(function(a,b){return a+b;},0);
+  var exp=state.perExp.reduce(function(s,i){return s+(Number(i.val)||0);},0)+state.agExp.reduce(function(s,i){return s+(Number(i.val)||0);},0)+state.fitExp.reduce(function(s,i){return s+(Number(i.val)||0);},0);
   var bal=inc-exp;
   var lastSav=state.savings.vals&&state.savings.vals.length?Number(state.savings.vals[state.savings.vals.length-1])||0:0;
   el("per-st-inc").textContent=inc>0?fmtMoney(inc):"$0";
@@ -3238,20 +3226,32 @@ function editSavings(){
   });
 }
 
-// EXPENSES EDIT
-function editAgExp(){
-  var exp=state.agExp;
-  var html='<div class="form-g"><label>Herramientas digitales (pesos)</label><input id="ae-tools" type="number" class="fi" value="'+(exp.tools||0)+'"></div>'+
-    '<div class="form-g"><label>Freelancers fijos (pesos)</label><input id="ae-free" type="number" class="fi" value="'+(exp.freelancers||0)+'"></div>'+
-    '<div class="form-g"><label>Oficina / coworking (pesos)</label><input id="ae-off" type="number" class="fi" value="'+(exp.office||0)+'"></div>'+
-    '<div class="form-g"><label>Publicidad propia (pesos)</label><input id="ae-ads" type="number" class="fi" value="'+(exp.ownAds||0)+'"></div>'+
-    '<div class="form-g"><label>Otros (pesos)</label><input id="ae-oth" type="number" class="fi" value="'+(exp.others||0)+'"></div>';
-  openModal("Gastos fijos agencia",html,function(){
-    var data={tools:parseInt(el("ae-tools").value)||0,freelancers:parseInt(el("ae-free").value)||0,office:parseInt(el("ae-off").value)||0,ownAds:parseInt(el("ae-ads").value)||0,others:parseInt(el("ae-oth").value)||0};
-    lsSettingSet("settings/agency-expenses",data);state.agExp=data;
-    renderAgExp();renderAgStats();if(currentApp==="agency")setTimeout(function(){initCharts("agency",currentView("agency")||"dash");},60);
+// EXPENSES EDIT — editor genérico de lista dinámica
+function editExpenses(title, stateProp, saveKey, onSave){
+  window.__expRows=(state[stateProp]||[]).map(function(r){return{lbl:r.lbl||"",val:r.val||0};});
+  function buildRows(){
+    var h=window.__expRows.map(function(r,i){
+      return '<div data-row="'+i+'" style="display:flex;gap:8px;margin-bottom:7px">'
+        +'<input class="fi" style="flex:2;min-width:0" placeholder="Nombre del gasto" value="'+r.lbl.replace(/"/g,"&quot;").replace(/</g,"&lt;")+'" oninput="__expRows['+i+'].lbl=this.value">'
+        +'<input class="fi" style="width:120px;flex:none" type="number" placeholder="$ 0" value="'+(r.val||"")+'" oninput="__expRows['+i+'].val=parseInt(this.value)||0">'
+        +'<button onclick="__expDel('+i+')" style="background:none;border:1px solid rgba(248,113,113,.35);border-radius:6px;color:var(--danger);cursor:pointer;padding:2px 9px;font-size:15px;flex:none">✕</button>'
+        +'</div>';
+    }).join("");
+    h+='<button onclick="__expAdd()" class="btn-sm" style="width:100%;justify-content:center;margin-top:2px;border:1px dashed var(--border2)">+ Agregar ítem</button>';
+    return h;
+  }
+  window.__expAdd=function(){window.__expRows.push({lbl:"",val:0});var c=document.getElementById("__exp-c");if(c)c.innerHTML=buildRows();};
+  window.__expDel=function(i){window.__expRows.splice(i,1);var c=document.getElementById("__exp-c");if(c)c.innerHTML=buildRows();};
+  openModal(title,'<div id="__exp-c">'+buildRows()+'</div>',function(){
+    var data=[];
+    var divs=document.querySelectorAll("#__exp-c [data-row]");
+    divs.forEach(function(d){var ins=d.querySelectorAll("input");var lbl=(ins[0]?ins[0].value:"").trim();var val=parseInt(ins[1]?ins[1].value:0)||0;if(lbl)data.push({lbl:lbl,val:val});});
+    lsSettingSet(saveKey,data);state[stateProp]=data;onSave();
   });
 }
+function editAgExp(){editExpenses("Gastos agencia","agExp","settings/agency-expenses",function(){renderAgExp();renderAgStats();renderPerExp();renderPerStats();if(currentApp==="agency")setTimeout(function(){initCharts("agency",currentView("agency")||"dash");},60);});}
+function editFitExp(){editExpenses("Gastos FitCoach","fitExp","settings/fit-expenses",function(){renderPerExp();renderPerStats();if(currentApp==="personal")setTimeout(function(){initCharts("personal",currentView("personal")||"dash");},60);});}
+function editPerExp(){editExpenses("Gastos personales","perExp","settings/personal-expenses",function(){renderPerExp();renderPerStats();if(currentApp==="personal")setTimeout(function(){initCharts("personal",currentView("personal")||"dash");},60);});}
 
 function editPerInc(){
   var inc=state.perInc;
@@ -3264,40 +3264,10 @@ function editPerInc(){
   });
 }
 
-function editPerExp(){
-  var exp=state.perExp;
-  var html='<div class="form-g"><label>Renta / vivienda (pesos)</label><input id="pe-rent" type="number" class="fi" value="'+(exp.rent||0)+'"></div>'+
-    '<div class="form-g"><label>Alimentacion (pesos)</label><input id="pe-food" type="number" class="fi" value="'+(exp.food||0)+'"></div>'+
-    '<div class="form-g"><label>Transporte (pesos)</label><input id="pe-tra" type="number" class="fi" value="'+(exp.transport||0)+'"></div>'+
-    '<div class="form-g"><label>Suscripciones (pesos)</label><input id="pe-sub" type="number" class="fi" value="'+(exp.subs||0)+'"></div>'+
-    '<div class="form-g"><label>Salud / seguros (pesos)</label><input id="pe-hlt" type="number" class="fi" value="'+(exp.health||0)+'"></div>'+
-    '<div class="form-g"><label>Entretenimiento (pesos)</label><input id="pe-ent" type="number" class="fi" value="'+(exp.entertain||0)+'"></div>';
-  openModal("Gastos personales",html,function(){
-    var data={rent:parseInt(el("pe-rent").value)||0,food:parseInt(el("pe-food").value)||0,transport:parseInt(el("pe-tra").value)||0,subs:parseInt(el("pe-sub").value)||0,health:parseInt(el("pe-hlt").value)||0,entertain:parseInt(el("pe-ent").value)||0};
-    lsSettingSet("settings/personal-expenses",data);state.perExp=data;
-    renderPerExp();renderPerStats();if(currentApp==="personal")setTimeout(function(){initCharts("personal",currentView("personal")||"dash");},60);
-  });
-}
-
-function editFitExp(){
-  var exp=state.fitExp;
-  var html='<div class="form-g"><label>Espacio / gimnasio (pesos)</label><input id="fe-space" type="number" class="fi" value="'+(exp.space||0)+'"></div>'+
-    '<div class="form-g"><label>Equipos (pesos)</label><input id="fe-equip" type="number" class="fi" value="'+(exp.equip||0)+'"></div>'+
-    '<div class="form-g"><label>Plataforma / software (pesos)</label><input id="fe-plat" type="number" class="fi" value="'+(exp.platform||0)+'"></div>'+
-    '<div class="form-g"><label>Publicidad coach (pesos)</label><input id="fe-ads" type="number" class="fi" value="'+(exp.ads||0)+'"></div>'+
-    '<div class="form-g"><label>Otros (pesos)</label><input id="fe-oth" type="number" class="fi" value="'+(exp.others||0)+'"></div>';
-  openModal("Gastos FitCoach",html,function(){
-    var data={space:parseInt(el("fe-space").value)||0,equip:parseInt(el("fe-equip").value)||0,platform:parseInt(el("fe-plat").value)||0,ads:parseInt(el("fe-ads").value)||0,others:parseInt(el("fe-oth").value)||0};
-    lsSettingSet("settings/fit-expenses",data);state.fitExp=data;
-    renderPerExp();renderPerStats();if(currentApp==="personal")setTimeout(function(){initCharts("personal",currentView("personal")||"dash");},60);
-  });
-}
-
 // AGENCIA FIN SUMMARY
 function renderAgFinSummary(){
   var billing=state.clients.filter(function(c){return c.status==="Activo";}).reduce(function(s,c){return s+(Number(c.monthly)||0);},0);
-  var expVals=Object.keys(state.agExp).map(function(k){return Number(state.agExp[k])||0;});
-  var totalExp=expVals.reduce(function(a,b){return a+b;},0);
+  var totalExp=state.agExp.reduce(function(s,i){return s+(Number(i.val)||0);},0);
   var net=billing-totalExp;
   var html='<div style="display:flex;flex-direction:column;gap:10px;margin-top:4px">'+
     '<div style="display:flex;justify-content:space-between;align-items:center;padding:14px;background:var(--green-d);border-radius:10px;border:1px solid rgba(52,211,153,.2)"><span style="font-size:13px;font-weight:600;color:var(--green)">Facturacion bruta</span><span style="font-family:Rajdhani,sans-serif;font-weight:700;font-size:22px;color:var(--green)">'+fmtMoney(billing)+'</span></div>'+
@@ -3368,20 +3338,16 @@ function initCharts(app,view){
     }
     if(view==="finanzas"){
       var ar2=state.agRev;
-      var expArr=ar2.vals?ar2.vals.map(function(){
-        var expVals2=Object.keys(state.agExp).map(function(k){return Number(state.agExp[k])||0;});
-        return expVals2.reduce(function(a,b){return a+b;},0);
-      }):[];
+      var expArr=ar2.vals?ar2.vals.map(function(){return state.agExp.reduce(function(s,i){return s+(Number(i.val)||0);},0);}):[];
       lineA("ag-ivg",ar2.months||[],
         [{label:"Ingresos",data:ar2.vals||[],color:"#34D399",f0:"rgba(52,211,153,.4)",f1:"rgba(52,211,153,.02)"},
          {label:"Gastos",data:expArr,color:"#EF4444",f0:"rgba(239,68,68,.4)",f1:"rgba(239,68,68,.02)"}],agTC);
       renderAgFinSummary();
     }
     if(view==="gastos"){
-      var exp=state.agExp;
-      var expLabels=["Herramientas","Freelancers","Oficina","Publicidad","Otros"];
-      var expVals3=[exp.tools||0,exp.freelancers||0,exp.office||0,exp.ownAds||0,exp.others||0];
-      donutC("ag-gastos",expLabels,expVals3,["#EF4444","#DC2626","#B91C1C","#991B1B","#7F1D1D"]);
+      var expLabels=state.agExp.map(function(i){return i.lbl;});
+      var expVals3=state.agExp.map(function(i){return i.val||0;});
+      if(expVals3.some(function(v){return v>0;}))donutC("ag-gastos",expLabels,expVals3,["#EF4444","#DC2626","#B91C1C","#991B1B","#7F1D1D"]);
     }
   }
 
@@ -3389,16 +3355,16 @@ function initCharts(app,view){
     if(!view||view==="dash"){
       var sr=state.savings;
       var perInc2=(Number(state.perInc.fit)||0)+(Number(state.perInc.agency)||0);
-      var perExpSum=Object.keys(state.perExp).map(function(k){return Number(state.perExp[k])||0;}).reduce(function(a,b){return a+b;},0);
+      var perExpSum=state.perExp.reduce(function(s,i){return s+(i.val||0);},0)+state.fitExp.reduce(function(s,i){return s+(i.val||0);},0)+state.agExp.reduce(function(s,i){return s+(i.val||0);},0);
       var incData=sr.months?sr.months.map(function(){return perInc2;}):[];
       var expData=sr.months?sr.months.map(function(){return perExpSum;}):[];
       lineA("per-ivg",sr.months||[],
         [{label:"Ingresos",data:incData,color:"#A855F7",f0:"rgba(168,85,247,.4)",f1:"rgba(168,85,247,.02)"},
          {label:"Gastos fijos",data:expData,color:"#EF4444",f0:"rgba(239,68,68,.4)",f1:"rgba(239,68,68,.02)"}],perTC);
-      var exp2=state.perExp;
-      var gLabels=["Renta","Alimentacion","Transporte","Suscripciones","Salud","Entret."];
-      var gVals=[exp2.rent||0,exp2.food||0,exp2.transport||0,exp2.subs||0,exp2.health||0,exp2.entertain||0];
-      if(gVals.some(function(v){return v>0;}))donutC("per-dist",gLabels,gVals,["#EF4444","#DC2626","#B91C1C","#A855F7","#7C3AED","#EC4899"]);
+      var allExp=state.perExp.concat(state.fitExp).concat(state.agExp);
+      var gLabels=allExp.map(function(i){return i.lbl;});
+      var gVals=allExp.map(function(i){return i.val||0;});
+      if(gVals.some(function(v){return v>0;}))donutC("per-dist",gLabels,gVals,["#EF4444","#DC2626","#B91C1C","#A855F7","#7C3AED","#EC4899","#F59E0B","#10B981","#3B82F6"]);
     }
     if(view==="ingresos"){
       var sr2=state.savings;
@@ -3411,9 +3377,10 @@ function initCharts(app,view){
          {label:"Agencia",data:agData2,color:"#EF4444",f0:"rgba(239,68,68,.45)",f1:"rgba(239,68,68,.02)"}],perTC);
     }
     if(view==="gastos"){
-      var exp3=state.perExp;
-      var gVals2=[exp3.rent||0,exp3.food||0,exp3.transport||0,exp3.subs||0,exp3.health||0,exp3.entertain||0];
-      if(gVals2.some(function(v){return v>0;}))donutC("per-gastos",["Renta","Alimentacion","Transporte","Suscripciones","Salud","Entret."],gVals2,["#EF4444","#DC2626","#B91C1C","#A855F7","#7C3AED","#EC4899"]);
+      var allExp2=state.perExp.concat(state.fitExp).concat(state.agExp);
+      var gLabels2=allExp2.map(function(i){return i.lbl;});
+      var gVals2=allExp2.map(function(i){return i.val||0;});
+      if(gVals2.some(function(v){return v>0;}))donutC("per-gastos",gLabels2,gVals2,["#EF4444","#DC2626","#B91C1C","#A855F7","#7C3AED","#EC4899","#F59E0B","#10B981","#3B82F6"]);
     }
     if(view==="metas"){
       var sr3=state.savings;
