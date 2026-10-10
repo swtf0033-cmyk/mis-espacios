@@ -739,6 +739,10 @@ label.switch-btn:hover{background:var(--acc-d2);color:var(--txt)}
             <div class="chart-box" style="height:250px"><canvas id="per-gastos"></canvas></div>
           </div>
         </div>
+        <div class="card" style="margin-top:18px">
+          <div class="ct">Orden de pago <span style="font-size:11px;font-weight:400;opacity:.5;margin-left:4px">Arrastra para reordenar · toca ✓ cuando pagás</span><button class="btn-sm" onclick="resetPayOrder()" style="margin-left:auto">↺ Reiniciar</button></div>
+          <div id="pay-order-list"></div>
+        </div>
       </div>
       <div class="view" id="personal-libertad">
         <div class="g2">
@@ -1417,7 +1421,7 @@ function initDB(){
       renderFreedom();renderMission();renderDreams();
       if(p==="fit"){renderFitStats();renderFitAlerts();renderFitRanking();renderStudents();}
       if(p==="agency"){renderAgStats();renderAgExp();renderClients();renderPipeline();}
-      if(p==="personal"){renderPerStats();renderPerInc();renderPerExp();renderLifeGoals();}
+      if(p==="personal"){renderPerStats();renderPerInc();renderPerExp();renderPayOrder();renderLifeGoals();}
     }catch(e){console.warn("nav render",e);}
     setTimeout(function(){try{initCharts(p);}catch(e){}},100);
   });
@@ -1458,10 +1462,10 @@ var currentStudentId=null,currentWinId=null,currentWinProfile=null;
 </script>
 <script>
 function mkInitials(name){if(!name)return "?";var parts=name.trim().split(" ");return(parts[0][0]+(parts[1]?parts[1][0]:"")).toUpperCase();}
-var COP_USD=4200; // tasa aproximada COP por 1 USD
-function fmtMoney(n){return"$"+(Number(n)||0).toLocaleString("es-CO");}
-function fmtUSD(cop){return"≈ US$"+Math.round((Number(cop)||0)/COP_USD).toLocaleString("en-US");}
-function fmtDual(cop){return fmtMoney(cop)+" <span style='font-size:11px;opacity:.6;font-weight:500'>"+fmtUSD(cop)+"</span>";}
+function fmtMoney(n){return"$"+(Number(n)||0).toLocaleString("en-US");}
+function expMonthly(arr){return(arr||[]).reduce(function(s,i){return s+(i.type!=="unico"?(Number(i.val)||0):0);},0);}
+function expOnce(arr){return(arr||[]).reduce(function(s,i){return s+(i.type==="unico"?(Number(i.val)||0):0);},0);}
+function expTotal(arr){return(arr||[]).reduce(function(s,i){return s+(Number(i.val)||0);},0);}
 function el(id){return document.getElementById(id);}
 function currentView(app){var views=document.querySelectorAll("#app-"+app+" .view.on");return views.length?views[0].id.replace(app+"-",""):"";}
 function safediv(a,b){return b?a/b:0;}
@@ -1596,7 +1600,7 @@ function renderClients(){
 function renderAgStats(){
   var active=state.clients.filter(function(c){return c.status==="Activo";}).length;
   var billing=state.clients.filter(function(c){return c.status==="Activo";}).reduce(function(s,c){return s+(Number(c.monthly)||0);},0);
-  var totalExp=state.agExp.reduce(function(s,i){return s+(Number(i.val)||0);},0);
+  var totalExp=expMonthly(state.agExp);
   var net=billing-totalExp;
   el("ag-st-cli").textContent=active||"0";
   el("ag-st-bil").textContent=billing>0?fmtMoney(billing):"$0";
@@ -1613,6 +1617,60 @@ function renderAgExp(){
   else html+='<div style="display:flex;justify-content:space-between;align-items:center;padding:12px;background:var(--danger-d);border-radius:9px;border:1px solid rgba(248,113,113,.2);margin-top:4px"><span style="font-weight:700;font-size:14px">Total gastos</span><span style="font-family:Rajdhani,sans-serif;font-weight:700;font-size:22px;color:var(--danger)">'+fmtMoney(total)+'</span></div>';
   var e2=el("ag-exp-list");if(e2)e2.innerHTML=html;
 }
+
+function renderPayOrder(){
+  var all=state.perExp.concat(state.fitExp).concat(state.agExp).filter(function(i){return i.val>0;});
+  if(!all.length){var e=el("pay-order-list");if(e)e.innerHTML='<div class="empty-st"><p>Agrega gastos primero</p></div>';return;}
+  var saved=lsGet("pay-order",null);
+  var paid=lsGet("pay-paid",{});
+  // Construir lista ordenada
+  var order;
+  if(saved&&Array.isArray(saved)){
+    // Merge: mantener orden guardado, añadir nuevos al final
+    var existing=saved.filter(function(s){return all.some(function(a){return a.lbl===s;});});
+    var newItems=all.filter(function(a){return !existing.includes(a.lbl);}).map(function(a){return a.lbl;});
+    order=existing.concat(newItems);
+  } else {
+    order=all.map(function(a){return a.lbl;});
+  }
+  lsSave("pay-order",order);
+  var byLbl={};all.forEach(function(i){byLbl[i.lbl]=i;});
+  var html=order.map(function(lbl,idx){
+    var item=byLbl[lbl];if(!item)return"";
+    var isPaid=paid[lbl];
+    return '<div draggable="true" data-lbl="'+lbl.replace(/"/g,"&quot;")+'" ondragstart="payDragStart(event,'+idx+')" ondragover="event.preventDefault()" ondrop="payDrop(event,'+idx+')" style="display:flex;align-items:center;gap:10px;padding:10px 12px;background:var(--surf);border-radius:10px;margin-bottom:7px;cursor:grab;opacity:'+(isPaid?.45:1)+';transition:opacity .2s">'
+      +'<span style="font-size:13px;font-weight:700;opacity:.35;min-width:20px">'+(idx+1)+'</span>'
+      +'<span style="flex:1;font-size:13px;font-weight:600;text-decoration:'+(isPaid?"line-through":"none")+'">'+(item?item.lbl:"")+'</span>'
+      +(item&&item.type==="unico"?'<span style="font-size:9px;background:rgba(245,158,11,.2);color:#F59E0B;border-radius:4px;padding:2px 5px;font-weight:700">ÚNICO</span>':'<span style="font-size:9px;background:rgba(52,211,153,.12);color:#34D399;border-radius:4px;padding:2px 5px;font-weight:700">/mes</span>')
+      +'<span style="font-family:Rajdhani,sans-serif;font-weight:700;font-size:14px;color:var(--danger)">'+(item?fmtMoney(item.val):"")+'</span>'
+      +'<button onclick="payToggle(\''+lbl.replace(/'/g,"\\'")+'\')" style="background:'+(isPaid?"rgba(52,211,153,.2)":"rgba(52,211,153,.08)")+';border:1px solid rgba(52,211,153,.3);border-radius:7px;color:#34D399;cursor:pointer;padding:4px 10px;font-size:13px;font-weight:700">'+(isPaid?"✓ Pagado":"✓")+'</button>'
+      +'</div>';
+  }).join("");
+  var e=el("pay-order-list");if(e)e.innerHTML=html;
+  // Mostrar total pagado vs pendiente
+  var totalPaid=order.reduce(function(s,lbl){return s+(paid[lbl]&&byLbl[lbl]?byLbl[lbl].val:0);},0);
+  var totalPend=order.reduce(function(s,lbl){return s+(!paid[lbl]&&byLbl[lbl]?byLbl[lbl].val:0);},0);
+  if(e&&order.length){e.innerHTML+=
+    '<div style="display:flex;gap:8px;margin-top:10px">'
+    +'<div style="flex:1;padding:10px;background:rgba(52,211,153,.08);border-radius:9px;border:1px solid rgba(52,211,153,.2);text-align:center"><div style="font-size:10px;opacity:.6;margin-bottom:3px">Pagado</div><div style="font-family:Rajdhani,sans-serif;font-weight:700;font-size:16px;color:#34D399">'+fmtMoney(totalPaid)+'</div></div>'
+    +'<div style="flex:1;padding:10px;background:rgba(248,113,113,.08);border-radius:9px;border:1px solid rgba(248,113,113,.2);text-align:center"><div style="font-size:10px;opacity:.6;margin-bottom:3px">Pendiente</div><div style="font-family:Rajdhani,sans-serif;font-weight:700;font-size:16px;color:var(--danger)">'+fmtMoney(totalPend)+'</div></div>'
+    +'</div>';
+  }
+}
+var __payDragIdx=null;
+function payDragStart(e,i){__payDragIdx=i;e.dataTransfer.effectAllowed="move";}
+function payDrop(e,toIdx){
+  e.preventDefault();
+  if(__payDragIdx===null||__payDragIdx===toIdx)return;
+  var order=lsGet("pay-order",[]);
+  var moved=order.splice(__payDragIdx,1)[0];
+  order.splice(toIdx,0,moved);
+  lsSave("pay-order",order);
+  __payDragIdx=null;
+  renderPayOrder();
+}
+function payToggle(lbl){var paid=lsGet("pay-paid",{});paid[lbl]=!paid[lbl];lsSave("pay-paid",paid);renderPayOrder();}
+function resetPayOrder(){lsSave("pay-paid",{});lsSave("pay-order",null);renderPayOrder();}
 
 function renderPerInc(){
   var inc=state.perInc;
@@ -1632,38 +1690,33 @@ function renderPerExp(){
   var agTotal=agItems.reduce(function(s,i){return s+(i.val||0);},0);
   var fitItems=state.fitExp;
   var fitTotal=fitItems.reduce(function(s,i){return s+(i.val||0);},0);
-  var grandTotal=perTotal+agTotal+fitTotal;
-  function rowHtml(i){return '<div style="display:flex;justify-content:space-between;align-items:center;padding:10px;background:var(--surf);border-radius:9px;margin-bottom:6px"><span style="font-size:13px;font-weight:600">'+i.lbl+'</span><span style="font-family:Rajdhani,sans-serif;font-weight:700;font-size:15px;color:var(--danger)">'+fmtMoney(i.val)+'</span></div>';}
-  function sectionLabel(txt,btn){return '<div style="font-size:11px;font-weight:700;letter-spacing:.07em;text-transform:uppercase;opacity:.5;margin:12px 0 7px">'+txt+(btn?'<button class="btn-sm" onclick="'+btn+'" style="margin-left:6px;font-size:10px">✏</button>':"")+'</div>';}
+  var allItems=perItems.concat(fitItems).concat(agItems);
+  var monthlyTotal=expMonthly(perItems)+expMonthly(fitItems)+expMonthly(agItems);
+  var onceTotal=expOnce(perItems)+expOnce(fitItems)+expOnce(agItems);
+  var grandTotal=monthlyTotal+onceTotal;
+  function badge(type){return type==="unico"?'<span style="font-size:9px;background:rgba(245,158,11,.2);color:#F59E0B;border-radius:4px;padding:2px 5px;font-weight:700;margin-left:5px">ÚNICO</span>':'<span style="font-size:9px;background:rgba(52,211,153,.15);color:#34D399;border-radius:4px;padding:2px 5px;font-weight:700;margin-left:5px">/mes</span>';}
+  function rowHtml(i,src){return '<div style="display:flex;justify-content:space-between;align-items:center;padding:9px 11px;background:var(--surf);border-radius:9px;margin-bottom:6px"><span style="font-size:13px;font-weight:600">'+i.lbl+badge(i.type)+'</span><span style="font-family:Rajdhani,sans-serif;font-weight:700;font-size:15px;color:var(--danger)">'+fmtMoney(i.val)+'</span></div>';}
+  function secLabel(txt,fn){return '<div style="font-size:10px;font-weight:700;letter-spacing:.07em;text-transform:uppercase;opacity:.45;margin:12px 0 6px">'+txt+' <button class="btn-sm" onclick="'+fn+'" style="font-size:10px">✏</button></div>';}
   var html="";
-  if(perTotal===0&&agTotal===0&&fitTotal===0){
+  if(grandTotal===0){
     html='<div class="empty-st"><div class="ico">&#128690;</div><p>Registra tus gastos</p><button class="btn-sm" onclick="editPerExp()">+ Personal</button> <button class="btn-sm" onclick="editFitExp()" style="margin-left:4px">+ Coach</button> <button class="btn-sm" onclick="editAgExp()" style="margin-left:4px">+ Agencia</button></div>';
   } else {
-    if(perTotal>0){
-      html+=sectionLabel("Personales","editPerExp()");
-      html+=perItems.filter(function(i){return i.val>0;}).map(rowHtml).join("");
-      html+='<div style="display:flex;justify-content:space-between;padding:9px 11px;background:rgba(248,113,113,.08);border-radius:8px;margin-bottom:4px"><span style="font-size:12px;font-weight:700;opacity:.7">Subtotal personal</span><span style="font-family:Rajdhani,sans-serif;font-weight:700;font-size:14px;color:var(--danger)">'+fmtMoney(perTotal)+'</span></div>';
-    }
-    if(fitTotal>0){
-      html+=sectionLabel("FitCoach","editFitExp()");
-      html+=fitItems.filter(function(i){return i.val>0;}).map(rowHtml).join("");
-      html+='<div style="display:flex;justify-content:space-between;padding:9px 11px;background:rgba(248,113,113,.08);border-radius:8px;margin-bottom:4px"><span style="font-size:12px;font-weight:700;opacity:.7">Subtotal coach</span><span style="font-family:Rajdhani,sans-serif;font-weight:700;font-size:14px;color:var(--danger)">'+fmtMoney(fitTotal)+'</span></div>';
-    }
-    if(agTotal>0){
-      html+=sectionLabel("Agencia","editAgExp()");
-      html+=agItems.filter(function(i){return i.val>0;}).map(rowHtml).join("");
-      html+='<div style="display:flex;justify-content:space-between;padding:9px 11px;background:rgba(248,113,113,.08);border-radius:8px;margin-bottom:4px"><span style="font-size:12px;font-weight:700;opacity:.7">Subtotal agencia</span><span style="font-family:Rajdhani,sans-serif;font-weight:700;font-size:14px;color:var(--danger)">'+fmtMoney(agTotal)+'</span></div>';
-    }
-    html+='<div style="display:flex;justify-content:space-between;align-items:center;padding:13px;background:var(--danger-d);border-radius:9px;border:1px solid rgba(248,113,113,.2);margin-top:8px"><span style="font-weight:700;font-size:14px">Total gastos</span><span style="font-family:Rajdhani,sans-serif;font-weight:700;font-size:22px;color:var(--danger)">'+fmtMoney(grandTotal)+' <span style="font-size:12px;opacity:.55">'+fmtUSD(grandTotal)+'</span></span></div>';
-    if(grandTotal>0){
-      var meta1=Math.round(grandTotal/0.7);
-      var meta2=Math.round(grandTotal/0.5);
-      html+='<div style="margin-top:14px;padding:14px;background:linear-gradient(135deg,rgba(168,85,247,.1),rgba(59,130,246,.08));border-radius:10px;border:1px solid rgba(168,85,247,.25)">';
-      html+='<div style="font-size:12px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;opacity:.6;margin-bottom:10px">¿Cuánto deberías ganar?</div>';
+    if(perTotal>0){html+=secLabel("Personales","editPerExp()");html+=perItems.filter(function(i){return i.val>0;}).map(rowHtml).join("");}
+    if(fitTotal>0){html+=secLabel("FitCoach","editFitExp()");html+=fitItems.filter(function(i){return i.val>0;}).map(rowHtml).join("");}
+    if(agTotal>0){html+=secLabel("Agencia","editAgExp()");html+=agItems.filter(function(i){return i.val>0;}).map(rowHtml).join("");}
+    // Totales separados por tipo
+    html+='<div style="margin-top:10px;display:flex;flex-direction:column;gap:6px">';
+    if(monthlyTotal>0)html+='<div style="display:flex;justify-content:space-between;align-items:center;padding:10px 13px;background:rgba(52,211,153,.08);border-radius:9px;border:1px solid rgba(52,211,153,.2)"><span style="font-size:12px;font-weight:700;color:#34D399">Mensuales</span><span style="font-family:Rajdhani,sans-serif;font-weight:700;font-size:18px;color:#34D399">'+fmtMoney(monthlyTotal)+'/mes</span></div>';
+    if(onceTotal>0)html+='<div style="display:flex;justify-content:space-between;align-items:center;padding:10px 13px;background:rgba(245,158,11,.08);border-radius:9px;border:1px solid rgba(245,158,11,.2)"><span style="font-size:12px;font-weight:700;color:#F59E0B">Únicos / eventuales</span><span style="font-family:Rajdhani,sans-serif;font-weight:700;font-size:18px;color:#F59E0B">'+fmtMoney(onceTotal)+'</span></div>';
+    html+='<div style="display:flex;justify-content:space-between;align-items:center;padding:12px 13px;background:var(--danger-d);border-radius:9px;border:1px solid rgba(248,113,113,.2)"><span style="font-weight:700;font-size:14px">Total gastos</span><span style="font-family:Rajdhani,sans-serif;font-weight:700;font-size:22px;color:var(--danger)">'+fmtMoney(grandTotal)+'</span></div>';
+    html+='</div>';
+    if(monthlyTotal>0){
+      var meta1=Math.round(monthlyTotal/0.7);var meta2=Math.round(monthlyTotal/0.5);
+      html+='<div style="margin-top:12px;padding:14px;background:linear-gradient(135deg,rgba(168,85,247,.1),rgba(59,130,246,.08));border-radius:10px;border:1px solid rgba(168,85,247,.25)">';
+      html+='<div style="font-size:11px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;opacity:.55;margin-bottom:10px">¿Cuánto deberías ganar? <span style="opacity:.6;font-weight:400">(basado en mensuales)</span></div>';
       html+='<div style="display:flex;flex-direction:column;gap:8px">';
-      html+='<div style="display:flex;justify-content:space-between;align-items:center"><span style="font-size:12px;opacity:.75">Mínimo (ahorro 30%)</span><span style="font-family:Rajdhani,sans-serif;font-weight:700;font-size:15px;color:#A855F7">'+fmtMoney(meta1)+' <span style="font-size:10px;opacity:.6">'+fmtUSD(meta1)+'</span></span></div>';
-      html+='<div style="display:flex;justify-content:space-between;align-items:center"><span style="font-size:12px;opacity:.75">Cómodo (ahorro 50%)</span><span style="font-family:Rajdhani,sans-serif;font-weight:700;font-size:15px;color:#3B82F6">'+fmtMoney(meta2)+' <span style="font-size:10px;opacity:.6">'+fmtUSD(meta2)+'</span></span></div>';
-      html+='<div style="font-size:10px;opacity:.4;margin-top:4px;text-align:right">Tasa referencia: 1 USD ≈ $'+COP_USD.toLocaleString("es-CO")+" COP</div>";
+      html+='<div style="display:flex;justify-content:space-between;align-items:center"><span style="font-size:12px;opacity:.75">Mínimo (30% ahorro)</span><span style="font-family:Rajdhani,sans-serif;font-weight:700;font-size:15px;color:#A855F7">'+fmtMoney(meta1)+'/mes</span></div>';
+      html+='<div style="display:flex;justify-content:space-between;align-items:center"><span style="font-size:12px;opacity:.75">Cómodo (50% ahorro)</span><span style="font-family:Rajdhani,sans-serif;font-weight:700;font-size:15px;color:#3B82F6">'+fmtMoney(meta2)+'/mes</span></div>';
       html+='</div></div>';
     }
   }
@@ -1672,7 +1725,7 @@ function renderPerExp(){
 
 function renderPerStats(){
   var inc=(Number(state.perInc.fit)||0)+(Number(state.perInc.agency)||0);
-  var exp=state.perExp.reduce(function(s,i){return s+(Number(i.val)||0);},0)+state.agExp.reduce(function(s,i){return s+(Number(i.val)||0);},0)+state.fitExp.reduce(function(s,i){return s+(Number(i.val)||0);},0);
+  var exp=expMonthly(state.perExp)+expMonthly(state.agExp)+expMonthly(state.fitExp);
   var bal=inc-exp;
   var lastSav=state.savings.vals&&state.savings.vals.length?Number(state.savings.vals[state.savings.vals.length-1])||0:0;
   el("per-st-inc").textContent=inc>0?fmtMoney(inc):"$0";
@@ -3228,30 +3281,39 @@ function editSavings(){
 
 // EXPENSES EDIT — editor genérico de lista dinámica
 function editExpenses(title, stateProp, saveKey, onSave){
-  window.__expRows=(state[stateProp]||[]).map(function(r){return{lbl:r.lbl||"",val:r.val||0};});
+  window.__expRows=(state[stateProp]||[]).map(function(r){return{lbl:r.lbl||"",val:r.val||0,type:r.type||"mensual"};});
   function buildRows(){
     var h=window.__expRows.map(function(r,i){
-      return '<div data-row="'+i+'" style="display:flex;gap:8px;margin-bottom:7px">'
+      var isMen=r.type!=="unico";
+      return '<div data-row="'+i+'" style="display:flex;gap:6px;margin-bottom:7px;align-items:center">'
         +'<input class="fi" style="flex:2;min-width:0" placeholder="Nombre del gasto" value="'+r.lbl.replace(/"/g,"&quot;").replace(/</g,"&lt;")+'" oninput="__expRows['+i+'].lbl=this.value">'
-        +'<input class="fi" style="width:120px;flex:none" type="number" placeholder="$ 0" value="'+(r.val||"")+'" oninput="__expRows['+i+'].val=parseInt(this.value)||0">'
-        +'<button onclick="__expDel('+i+')" style="background:none;border:1px solid rgba(248,113,113,.35);border-radius:6px;color:var(--danger);cursor:pointer;padding:2px 9px;font-size:15px;flex:none">✕</button>'
+        +'<input class="fi" style="width:90px;flex:none" type="number" placeholder="$ 0" value="'+(r.val||"")+'" oninput="__expRows['+i+'].val=parseInt(this.value)||0">'
+        +'<select onchange="__expRows['+i+'].type=this.value" style="background:var(--surf);border:1px solid var(--border);color:var(--txt);border-radius:7px;padding:6px 6px;font-size:11px;font-weight:600;cursor:pointer;flex:none">'
+        +'<option value="mensual"'+(isMen?" selected":"")+'>Mensual</option>'
+        +'<option value="unico"'+(!isMen?" selected":"")+'>Único</option>'
+        +'</select>'
+        +'<button onclick="__expDel('+i+')" style="background:none;border:1px solid rgba(248,113,113,.35);border-radius:6px;color:var(--danger);cursor:pointer;padding:2px 8px;font-size:14px;flex:none">✕</button>'
         +'</div>';
     }).join("");
-    h+='<button onclick="__expAdd()" class="btn-sm" style="width:100%;justify-content:center;margin-top:2px;border:1px dashed var(--border2)">+ Agregar ítem</button>';
+    h+='<button onclick="__expAdd()" class="btn-sm" style="width:100%;justify-content:center;margin-top:4px;border:1px dashed var(--border2)">+ Agregar ítem</button>';
     return h;
   }
-  window.__expAdd=function(){window.__expRows.push({lbl:"",val:0});var c=document.getElementById("__exp-c");if(c)c.innerHTML=buildRows();};
+  window.__expAdd=function(){window.__expRows.push({lbl:"",val:0,type:"mensual"});var c=document.getElementById("__exp-c");if(c)c.innerHTML=buildRows();};
   window.__expDel=function(i){window.__expRows.splice(i,1);var c=document.getElementById("__exp-c");if(c)c.innerHTML=buildRows();};
   openModal(title,'<div id="__exp-c">'+buildRows()+'</div>',function(){
     var data=[];
     var divs=document.querySelectorAll("#__exp-c [data-row]");
-    divs.forEach(function(d){var ins=d.querySelectorAll("input");var lbl=(ins[0]?ins[0].value:"").trim();var val=parseInt(ins[1]?ins[1].value:0)||0;if(lbl)data.push({lbl:lbl,val:val});});
+    divs.forEach(function(d){
+      var ins=d.querySelectorAll("input");var sel=d.querySelector("select");
+      var lbl=(ins[0]?ins[0].value:"").trim();var val=parseInt(ins[1]?ins[1].value:0)||0;var type=sel?sel.value:"mensual";
+      if(lbl)data.push({lbl:lbl,val:val,type:type});
+    });
     lsSettingSet(saveKey,data);state[stateProp]=data;onSave();
   });
 }
-function editAgExp(){editExpenses("Gastos agencia","agExp","settings/agency-expenses",function(){renderAgExp();renderAgStats();renderPerExp();renderPerStats();if(currentApp==="agency")setTimeout(function(){initCharts("agency",currentView("agency")||"dash");},60);});}
-function editFitExp(){editExpenses("Gastos FitCoach","fitExp","settings/fit-expenses",function(){renderPerExp();renderPerStats();if(currentApp==="personal")setTimeout(function(){initCharts("personal",currentView("personal")||"dash");},60);});}
-function editPerExp(){editExpenses("Gastos personales","perExp","settings/personal-expenses",function(){renderPerExp();renderPerStats();if(currentApp==="personal")setTimeout(function(){initCharts("personal",currentView("personal")||"dash");},60);});}
+function editAgExp(){editExpenses("Gastos agencia","agExp","settings/agency-expenses",function(){renderAgExp();renderAgStats();renderPerExp();renderPerStats();renderPayOrder();if(currentApp==="agency")setTimeout(function(){initCharts("agency",currentView("agency")||"dash");},60);});}
+function editFitExp(){editExpenses("Gastos FitCoach","fitExp","settings/fit-expenses",function(){renderPerExp();renderPerStats();renderPayOrder();if(currentApp==="personal")setTimeout(function(){initCharts("personal",currentView("personal")||"dash");},60);});}
+function editPerExp(){editExpenses("Gastos personales","perExp","settings/personal-expenses",function(){renderPerExp();renderPerStats();renderPayOrder();if(currentApp==="personal")setTimeout(function(){initCharts("personal",currentView("personal")||"dash");},60);});}
 
 function editPerInc(){
   var inc=state.perInc;
@@ -3267,7 +3329,7 @@ function editPerInc(){
 // AGENCIA FIN SUMMARY
 function renderAgFinSummary(){
   var billing=state.clients.filter(function(c){return c.status==="Activo";}).reduce(function(s,c){return s+(Number(c.monthly)||0);},0);
-  var totalExp=state.agExp.reduce(function(s,i){return s+(Number(i.val)||0);},0);
+  var totalExp=expMonthly(state.agExp);
   var net=billing-totalExp;
   var html='<div style="display:flex;flex-direction:column;gap:10px;margin-top:4px">'+
     '<div style="display:flex;justify-content:space-between;align-items:center;padding:14px;background:var(--green-d);border-radius:10px;border:1px solid rgba(52,211,153,.2)"><span style="font-size:13px;font-weight:600;color:var(--green)">Facturacion bruta</span><span style="font-family:Rajdhani,sans-serif;font-weight:700;font-size:22px;color:var(--green)">'+fmtMoney(billing)+'</span></div>'+
@@ -3338,7 +3400,7 @@ function initCharts(app,view){
     }
     if(view==="finanzas"){
       var ar2=state.agRev;
-      var expArr=ar2.vals?ar2.vals.map(function(){return state.agExp.reduce(function(s,i){return s+(Number(i.val)||0);},0);}):[];
+      var expArr=ar2.vals?ar2.vals.map(function(){return expMonthly(state.agExp);}):[];
       lineA("ag-ivg",ar2.months||[],
         [{label:"Ingresos",data:ar2.vals||[],color:"#34D399",f0:"rgba(52,211,153,.4)",f1:"rgba(52,211,153,.02)"},
          {label:"Gastos",data:expArr,color:"#EF4444",f0:"rgba(239,68,68,.4)",f1:"rgba(239,68,68,.02)"}],agTC);
@@ -3355,7 +3417,7 @@ function initCharts(app,view){
     if(!view||view==="dash"){
       var sr=state.savings;
       var perInc2=(Number(state.perInc.fit)||0)+(Number(state.perInc.agency)||0);
-      var perExpSum=state.perExp.reduce(function(s,i){return s+(i.val||0);},0)+state.fitExp.reduce(function(s,i){return s+(i.val||0);},0)+state.agExp.reduce(function(s,i){return s+(i.val||0);},0);
+      var perExpSum=expMonthly(state.perExp)+expMonthly(state.fitExp)+expMonthly(state.agExp);
       var incData=sr.months?sr.months.map(function(){return perInc2;}):[];
       var expData=sr.months?sr.months.map(function(){return perExpSum;}):[];
       lineA("per-ivg",sr.months||[],
@@ -3402,7 +3464,7 @@ function enterApp(profile){
     renderFreedom();renderMission();renderDreams();
     if(profile==="fit"){renderFitStats();renderFitAlerts();renderFitRanking();renderStudents();}
     if(profile==="agency"){renderAgStats();renderAgExp();renderClients();renderPipeline();}
-    if(profile==="personal"){renderPerStats();renderPerInc();renderPerExp();renderLifeGoals();}
+    if(profile==="personal"){renderPerStats();renderPerInc();renderPerExp();renderPayOrder();renderLifeGoals();}
   }catch(e){console.warn("enterApp render",e);}
   setTimeout(function(){try{initCharts(profile);}catch(e){}},80);
 }
