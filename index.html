@@ -645,7 +645,7 @@ label.switch-btn:hover{background:var(--acc-d2);color:var(--txt)}
       <div class="view" id="agency-gastos">
         <div class="g2">
           <div class="card">
-            <div class="ct">Gastos fijos<button class="btn-sm" onclick="editAgExp()">&#9999; Editar</button></div>
+            <div class="ct">Gastos<button class="btn-sm" onclick="editAgExp()">&#9999; Editar</button></div>
             <div id="ag-exp-list"></div>
           </div>
           <div class="card">
@@ -1611,10 +1611,18 @@ function renderAgStats(){
 
 function renderAgExp(){
   var items=state.agExp;
-  var total=items.reduce(function(s,i){return s+(i.val||0);},0);
-  var html=items.filter(function(i){return i.val>0;}).map(function(i){return '<div style="display:flex;justify-content:space-between;align-items:center;padding:11px;background:var(--surf);border-radius:9px;margin-bottom:7px"><span style="font-size:13px;font-weight:600">'+i.lbl+'</span><span style="font-family:Rajdhani,sans-serif;font-weight:700;font-size:16px;color:var(--danger)">'+fmtMoney(i.val)+'</span></div>';}).join("");
-  if(!html)html='<div class="empty-st"><div class="ico">&#128184;</div><p>Sin gastos registrados</p><button class="btn-sm" onclick="editAgExp()">+ Agregar</button></div>';
-  else html+='<div style="display:flex;justify-content:space-between;align-items:center;padding:12px;background:var(--danger-d);border-radius:9px;border:1px solid rgba(248,113,113,.2);margin-top:4px"><span style="font-weight:700;font-size:14px">Total gastos</span><span style="font-family:Rajdhani,sans-serif;font-weight:700;font-size:22px;color:var(--danger)">'+fmtMoney(total)+'</span></div>';
+  var monthly=expMonthly(items);var once=expOnce(items);var total=monthly+once;
+  function badge(type){return type==="unico"?'<span style="font-size:9px;background:rgba(245,158,11,.2);color:#F59E0B;border-radius:4px;padding:2px 5px;font-weight:700;margin-left:5px">ÚNICO</span>':'<span style="font-size:9px;background:rgba(52,211,153,.15);color:#34D399;border-radius:4px;padding:2px 5px;font-weight:700;margin-left:5px">/mes</span>';}
+  var rows=items.filter(function(i){return i.val>0;}).map(function(i){return '<div style="display:flex;justify-content:space-between;align-items:center;padding:10px 11px;background:var(--surf);border-radius:9px;margin-bottom:6px"><span style="font-size:13px;font-weight:600">'+i.lbl+badge(i.type)+'</span><span style="font-family:Rajdhani,sans-serif;font-weight:700;font-size:15px;color:var(--danger)">'+fmtMoney(i.val)+'</span></div>';}).join("");
+  var html;
+  if(!rows){html='<div class="empty-st"><div class="ico">&#128184;</div><p>Sin gastos registrados</p><button class="btn-sm" onclick="editAgExp()">+ Agregar</button></div>';}
+  else{
+    html=rows+'<div style="display:flex;flex-direction:column;gap:6px;margin-top:8px">';
+    if(monthly>0)html+='<div style="display:flex;justify-content:space-between;align-items:center;padding:9px 12px;background:rgba(52,211,153,.08);border-radius:9px;border:1px solid rgba(52,211,153,.2)"><span style="font-size:12px;font-weight:700;color:#34D399">Mensuales</span><span style="font-family:Rajdhani,sans-serif;font-weight:700;font-size:16px;color:#34D399">'+fmtMoney(monthly)+'/mes</span></div>';
+    if(once>0)html+='<div style="display:flex;justify-content:space-between;align-items:center;padding:9px 12px;background:rgba(245,158,11,.08);border-radius:9px;border:1px solid rgba(245,158,11,.2)"><span style="font-size:12px;font-weight:700;color:#F59E0B">Únicos</span><span style="font-family:Rajdhani,sans-serif;font-weight:700;font-size:16px;color:#F59E0B">'+fmtMoney(once)+'</span></div>';
+    html+='<div style="display:flex;justify-content:space-between;align-items:center;padding:11px 13px;background:var(--danger-d);border-radius:9px;border:1px solid rgba(248,113,113,.2)"><span style="font-weight:700;font-size:14px">Total gastos</span><span style="font-family:Rajdhani,sans-serif;font-weight:700;font-size:22px;color:var(--danger)">'+fmtMoney(total)+'</span></div>';
+    html+='</div>';
+  }
   var e2=el("ag-exp-list");if(e2)e2.innerHTML=html;
 }
 
