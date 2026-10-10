@@ -1645,8 +1645,8 @@ function renderPerExp(){
   function rowHtml(i){return '<div style="display:flex;justify-content:space-between;align-items:center;padding:10px;background:var(--surf);border-radius:9px;margin-bottom:6px"><span style="font-size:13px;font-weight:600">'+i.lbl+'</span><span style="font-family:Rajdhani,sans-serif;font-weight:700;font-size:15px;color:var(--danger)">'+fmtMoney(i.val)+'</span></div>';}
   function sectionLabel(txt,btn){return '<div style="font-size:11px;font-weight:700;letter-spacing:.07em;text-transform:uppercase;opacity:.5;margin:12px 0 7px">'+txt+(btn?'<button class="btn-sm" onclick="'+btn+'" style="margin-left:6px;font-size:10px">✏</button>':"")+'</div>';}
   var html="";
-  if(perTotal===0&&agTotal===0){
-    html='<div class="empty-st"><div class="ico">&#128690;</div><p>Registra tus gastos</p><button class="btn-sm" onclick="editPerExp()">+ Personal</button> <button class="btn-sm" onclick="editAgExp()">+ Agencia</button></div>';
+  if(perTotal===0&&agTotal===0&&fitTotal===0){
+    html='<div class="empty-st"><div class="ico">&#128690;</div><p>Registra tus gastos</p><button class="btn-sm" onclick="editPerExp()">+ Personal</button> <button class="btn-sm" onclick="editFitExp()" style="margin-left:4px">+ Coach</button> <button class="btn-sm" onclick="editAgExp()" style="margin-left:4px">+ Agencia</button></div>';
   } else {
     if(perTotal>0){
       html+=sectionLabel("Personales","editPerExp()");
