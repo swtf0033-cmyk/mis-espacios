@@ -731,7 +731,7 @@ label.switch-btn:hover{background:var(--acc-d2);color:var(--txt)}
       <div class="view" id="personal-gastos">
         <div class="g2">
           <div class="card">
-            <div class="ct">Gastos fijos<button class="btn-sm" onclick="editPerExp()">&#9999; Editar</button></div>
+            <div class="ct">Gastos totales<button class="btn-sm" onclick="editPerExp()">&#9999; Personal</button><button class="btn-sm" onclick="editFitExp()" style="margin-left:4px">&#9999; Coach</button><button class="btn-sm" onclick="editAgExp()" style="margin-left:4px">&#9999; Agencia</button></div>
             <div id="per-exp-list"></div>
           </div>
           <div class="card">
@@ -1371,6 +1371,7 @@ function loadState(){
   state.fitRev=lsGet("settings/fit-revenue",state.fitRev);
   state.agRev=lsGet("settings/agency-revenue",state.agRev);
   state.agExp=lsGet("settings/agency-expenses",state.agExp);
+  state.fitExp=lsGet("settings/fit-expenses",state.fitExp);
   state.perInc=lsGet("settings/personal-income",state.perInc);
   state.perExp=lsGet("settings/personal-expenses",state.perExp);
   state.savings=lsGet("settings/savings",state.savings);
@@ -1386,6 +1387,7 @@ var state={
   fitRev:{months:["Ene","Feb","Mar","Abr","May","Jun"],vals:[0,0,0,0,0,0]},
   agRev:{months:["Ene","Feb","Mar","Abr","May","Jun"],vals:[0,0,0,0,0,0]},
   agExp:{tools:0,freelancers:0,office:0,ownAds:0,others:0},
+  fitExp:{space:0,equip:0,platform:0,ads:0,others:0},
   perInc:{fit:0,agency:0},
   perExp:{rent:0,food:0,transport:0,subs:0,health:0,entertain:0},
   savings:{months:["Ene","Feb","Mar","Abr","May","Jun"],vals:[0,0,0,0,0,0]},
@@ -1631,15 +1633,40 @@ function renderPerInc(){
 
 function renderPerExp(){
   var exp=state.perExp;
-  var items=[{lbl:"Renta / vivienda",val:exp.rent||0},{lbl:"Alimentacion",val:exp.food||0},{lbl:"Transporte",val:exp.transport||0},{lbl:"Suscripciones",val:exp.subs||0},{lbl:"Salud / seguros",val:exp.health||0},{lbl:"Entretenimiento",val:exp.entertain||0}];
-  var total=items.reduce(function(s,i){return s+i.val;},0);
-  var html=items.filter(function(i){return i.val>0;}).map(function(i){return '<div style="display:flex;justify-content:space-between;align-items:center;padding:11px;background:var(--surf);border-radius:9px;margin-bottom:7px"><span style="font-size:13px;font-weight:600">'+i.lbl+'</span><span style="font-family:Rajdhani,sans-serif;font-weight:700;font-size:16px;color:var(--danger)">'+fmtMoney(i.val)+'</span></div>';}).join("");
-  if(!html)html='<div class="empty-st"><div class="ico">&#128690;</div><p>Registra tus gastos fijos</p><button class="btn-sm" onclick="editPerExp()">+ Registrar</button></div>';
-  else{
-    html+='<div style="display:flex;justify-content:space-between;align-items:center;padding:12px;background:var(--danger-d);border-radius:9px;border:1px solid rgba(248,113,113,.2);margin-top:4px"><span style="font-weight:700;font-size:14px">Total gastos</span><span style="font-family:Rajdhani,sans-serif;font-weight:700;font-size:22px;color:var(--danger)">'+fmtMoney(total)+' <span style="font-size:12px;opacity:.55">'+fmtUSD(total)+'</span></span></div>';
-    if(total>0){
-      var meta1=Math.round(total/0.7); // ahorro del 30%
-      var meta2=Math.round(total/0.5); // ahorro del 50%
+  var perItems=[{lbl:"Renta / vivienda",val:exp.rent||0},{lbl:"Alimentacion",val:exp.food||0},{lbl:"Transporte",val:exp.transport||0},{lbl:"Suscripciones",val:exp.subs||0},{lbl:"Salud / seguros",val:exp.health||0},{lbl:"Entretenimiento",val:exp.entertain||0}];
+  var perTotal=perItems.reduce(function(s,i){return s+i.val;},0);
+  var agx=state.agExp;
+  var agItems=[{lbl:"Herramientas digitales",val:agx.tools||0},{lbl:"Freelancers fijos",val:agx.freelancers||0},{lbl:"Oficina / coworking",val:agx.office||0},{lbl:"Publicidad propia",val:agx.ownAds||0},{lbl:"Otros agencia",val:agx.others||0}];
+  var agTotal=agItems.reduce(function(s,i){return s+i.val;},0);
+  var ftx=state.fitExp;
+  var fitItems=[{lbl:"Espacio / gimnasio",val:ftx.space||0},{lbl:"Equipos",val:ftx.equip||0},{lbl:"Plataforma / software",val:ftx.platform||0},{lbl:"Publicidad coach",val:ftx.ads||0},{lbl:"Otros coach",val:ftx.others||0}];
+  var fitTotal=fitItems.reduce(function(s,i){return s+i.val;},0);
+  var grandTotal=perTotal+agTotal+fitTotal;
+  function rowHtml(i){return '<div style="display:flex;justify-content:space-between;align-items:center;padding:10px;background:var(--surf);border-radius:9px;margin-bottom:6px"><span style="font-size:13px;font-weight:600">'+i.lbl+'</span><span style="font-family:Rajdhani,sans-serif;font-weight:700;font-size:15px;color:var(--danger)">'+fmtMoney(i.val)+'</span></div>';}
+  function sectionLabel(txt,btn){return '<div style="font-size:11px;font-weight:700;letter-spacing:.07em;text-transform:uppercase;opacity:.5;margin:12px 0 7px">'+txt+(btn?'<button class="btn-sm" onclick="'+btn+'" style="margin-left:6px;font-size:10px">✏</button>':"")+'</div>';}
+  var html="";
+  if(perTotal===0&&agTotal===0){
+    html='<div class="empty-st"><div class="ico">&#128690;</div><p>Registra tus gastos</p><button class="btn-sm" onclick="editPerExp()">+ Personal</button> <button class="btn-sm" onclick="editAgExp()">+ Agencia</button></div>';
+  } else {
+    if(perTotal>0){
+      html+=sectionLabel("Personales","editPerExp()");
+      html+=perItems.filter(function(i){return i.val>0;}).map(rowHtml).join("");
+      html+='<div style="display:flex;justify-content:space-between;padding:9px 11px;background:rgba(248,113,113,.08);border-radius:8px;margin-bottom:4px"><span style="font-size:12px;font-weight:700;opacity:.7">Subtotal personal</span><span style="font-family:Rajdhani,sans-serif;font-weight:700;font-size:14px;color:var(--danger)">'+fmtMoney(perTotal)+'</span></div>';
+    }
+    if(fitTotal>0){
+      html+=sectionLabel("FitCoach","editFitExp()");
+      html+=fitItems.filter(function(i){return i.val>0;}).map(rowHtml).join("");
+      html+='<div style="display:flex;justify-content:space-between;padding:9px 11px;background:rgba(248,113,113,.08);border-radius:8px;margin-bottom:4px"><span style="font-size:12px;font-weight:700;opacity:.7">Subtotal coach</span><span style="font-family:Rajdhani,sans-serif;font-weight:700;font-size:14px;color:var(--danger)">'+fmtMoney(fitTotal)+'</span></div>';
+    }
+    if(agTotal>0){
+      html+=sectionLabel("Agencia","editAgExp()");
+      html+=agItems.filter(function(i){return i.val>0;}).map(rowHtml).join("");
+      html+='<div style="display:flex;justify-content:space-between;padding:9px 11px;background:rgba(248,113,113,.08);border-radius:8px;margin-bottom:4px"><span style="font-size:12px;font-weight:700;opacity:.7">Subtotal agencia</span><span style="font-family:Rajdhani,sans-serif;font-weight:700;font-size:14px;color:var(--danger)">'+fmtMoney(agTotal)+'</span></div>';
+    }
+    html+='<div style="display:flex;justify-content:space-between;align-items:center;padding:13px;background:var(--danger-d);border-radius:9px;border:1px solid rgba(248,113,113,.2);margin-top:8px"><span style="font-weight:700;font-size:14px">Total gastos</span><span style="font-family:Rajdhani,sans-serif;font-weight:700;font-size:22px;color:var(--danger)">'+fmtMoney(grandTotal)+' <span style="font-size:12px;opacity:.55">'+fmtUSD(grandTotal)+'</span></span></div>';
+    if(grandTotal>0){
+      var meta1=Math.round(grandTotal/0.7);
+      var meta2=Math.round(grandTotal/0.5);
       html+='<div style="margin-top:14px;padding:14px;background:linear-gradient(135deg,rgba(168,85,247,.1),rgba(59,130,246,.08));border-radius:10px;border:1px solid rgba(168,85,247,.25)">';
       html+='<div style="font-size:12px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;opacity:.6;margin-bottom:10px">¿Cuánto deberías ganar?</div>';
       html+='<div style="display:flex;flex-direction:column;gap:8px">';
@@ -1654,8 +1681,10 @@ function renderPerExp(){
 
 function renderPerStats(){
   var inc=(Number(state.perInc.fit)||0)+(Number(state.perInc.agency)||0);
-  var expVals=Object.keys(state.perExp).map(function(k){return Number(state.perExp[k])||0;});
-  var exp=expVals.reduce(function(a,b){return a+b;},0);
+  var perExpVals=Object.keys(state.perExp).map(function(k){return Number(state.perExp[k])||0;});
+  var agExpVals=Object.keys(state.agExp).map(function(k){return Number(state.agExp[k])||0;});
+  var fitExpVals=Object.keys(state.fitExp).map(function(k){return Number(state.fitExp[k])||0;});
+  var exp=perExpVals.reduce(function(a,b){return a+b;},0)+agExpVals.reduce(function(a,b){return a+b;},0)+fitExpVals.reduce(function(a,b){return a+b;},0);
   var bal=inc-exp;
   var lastSav=state.savings.vals&&state.savings.vals.length?Number(state.savings.vals[state.savings.vals.length-1])||0:0;
   el("per-st-inc").textContent=inc>0?fmtMoney(inc):"$0";
@@ -3246,6 +3275,20 @@ function editPerExp(){
   openModal("Gastos personales",html,function(){
     var data={rent:parseInt(el("pe-rent").value)||0,food:parseInt(el("pe-food").value)||0,transport:parseInt(el("pe-tra").value)||0,subs:parseInt(el("pe-sub").value)||0,health:parseInt(el("pe-hlt").value)||0,entertain:parseInt(el("pe-ent").value)||0};
     lsSettingSet("settings/personal-expenses",data);state.perExp=data;
+    renderPerExp();renderPerStats();if(currentApp==="personal")setTimeout(function(){initCharts("personal",currentView("personal")||"dash");},60);
+  });
+}
+
+function editFitExp(){
+  var exp=state.fitExp;
+  var html='<div class="form-g"><label>Espacio / gimnasio (pesos)</label><input id="fe-space" type="number" class="fi" value="'+(exp.space||0)+'"></div>'+
+    '<div class="form-g"><label>Equipos (pesos)</label><input id="fe-equip" type="number" class="fi" value="'+(exp.equip||0)+'"></div>'+
+    '<div class="form-g"><label>Plataforma / software (pesos)</label><input id="fe-plat" type="number" class="fi" value="'+(exp.platform||0)+'"></div>'+
+    '<div class="form-g"><label>Publicidad coach (pesos)</label><input id="fe-ads" type="number" class="fi" value="'+(exp.ads||0)+'"></div>'+
+    '<div class="form-g"><label>Otros (pesos)</label><input id="fe-oth" type="number" class="fi" value="'+(exp.others||0)+'"></div>';
+  openModal("Gastos FitCoach",html,function(){
+    var data={space:parseInt(el("fe-space").value)||0,equip:parseInt(el("fe-equip").value)||0,platform:parseInt(el("fe-plat").value)||0,ads:parseInt(el("fe-ads").value)||0,others:parseInt(el("fe-oth").value)||0};
+    lsSettingSet("settings/fit-expenses",data);state.fitExp=data;
     renderPerExp();renderPerStats();if(currentApp==="personal")setTimeout(function(){initCharts("personal",currentView("personal")||"dash");},60);
   });
 }
