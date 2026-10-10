@@ -1618,15 +1618,16 @@ function renderAgExp(){
   var e2=el("ag-exp-list");if(e2)e2.innerHTML=html;
 }
 
+// pay-paid values: null=pendiente, "cash"=efectivo, "credits"=créditos
 function renderPayOrder(){
   var all=state.perExp.concat(state.fitExp).concat(state.agExp).filter(function(i){return i.val>0;});
-  if(!all.length){var e=el("pay-order-list");if(e)e.innerHTML='<div class="empty-st"><p>Agrega gastos primero</p></div>';return;}
+  var e=el("pay-order-list");
+  if(!all.length){if(e)e.innerHTML='<div class="empty-st"><p>Agrega gastos primero</p></div>';return;}
   var saved=lsGet("pay-order",null);
   var paid=lsGet("pay-paid",{});
-  // Construir lista ordenada
+  var sesPrice=Number(lsGet("session-price",10))||10; // $ por sesión
   var order;
   if(saved&&Array.isArray(saved)){
-    // Merge: mantener orden guardado, añadir nuevos al final
     var existing=saved.filter(function(s){return all.some(function(a){return a.lbl===s;});});
     var newItems=all.filter(function(a){return !existing.includes(a.lbl);}).map(function(a){return a.lbl;});
     order=existing.concat(newItems);
@@ -1635,28 +1636,50 @@ function renderPayOrder(){
   }
   lsSave("pay-order",order);
   var byLbl={};all.forEach(function(i){byLbl[i.lbl]=i;});
-  var html=order.map(function(lbl,idx){
+
+  // Cabecera: tasa de créditos
+  var headerHtml='<div style="display:flex;align-items:center;gap:8px;padding:10px 12px;background:rgba(168,85,247,.07);border-radius:9px;border:1px solid rgba(168,85,247,.2);margin-bottom:12px">'
+    +'<span style="font-size:13px">💳</span>'
+    +'<span style="font-size:12px;opacity:.7;flex:1">1 sesión = 10 créditos · valor sesión:</span>'
+    +'<span style="font-size:12px;font-weight:700;color:#A855F7">$</span>'
+    +'<input id="ses-price-inp" type="number" value="'+sesPrice+'" oninput="saveSesPriceAndRender(this.value)" style="width:60px;background:transparent;border:none;border-bottom:1px solid rgba(168,85,247,.4);color:var(--txt);font-size:12px;font-weight:700;text-align:center;outline:none;padding:2px 4px">'
+    +'</div>';
+
+  var rows=order.map(function(lbl,idx){
     var item=byLbl[lbl];if(!item)return"";
-    var isPaid=paid[lbl];
-    return '<div draggable="true" data-lbl="'+lbl.replace(/"/g,"&quot;")+'" ondragstart="payDragStart(event,'+idx+')" ondragover="event.preventDefault()" ondrop="payDrop(event,'+idx+')" style="display:flex;align-items:center;gap:10px;padding:10px 12px;background:var(--surf);border-radius:10px;margin-bottom:7px;cursor:grab;opacity:'+(isPaid?.45:1)+';transition:opacity .2s">'
-      +'<span style="font-size:13px;font-weight:700;opacity:.35;min-width:20px">'+(idx+1)+'</span>'
-      +'<span style="flex:1;font-size:13px;font-weight:600;text-decoration:'+(isPaid?"line-through":"none")+'">'+(item?item.lbl:"")+'</span>'
-      +(item&&item.type==="unico"?'<span style="font-size:9px;background:rgba(245,158,11,.2);color:#F59E0B;border-radius:4px;padding:2px 5px;font-weight:700">ÚNICO</span>':'<span style="font-size:9px;background:rgba(52,211,153,.12);color:#34D399;border-radius:4px;padding:2px 5px;font-weight:700">/mes</span>')
-      +'<span style="font-family:Rajdhani,sans-serif;font-weight:700;font-size:14px;color:var(--danger)">'+(item?fmtMoney(item.val):"")+'</span>'
-      +'<button onclick="payToggle(\''+lbl.replace(/'/g,"\\'")+'\')" style="background:'+(isPaid?"rgba(52,211,153,.2)":"rgba(52,211,153,.08)")+';border:1px solid rgba(52,211,153,.3);border-radius:7px;color:#34D399;cursor:pointer;padding:4px 10px;font-size:13px;font-weight:700">'+(isPaid?"✓ Pagado":"✓")+'</button>'
+    var state2=paid[lbl]||"pendiente";
+    var isCash=state2==="cash";var isCredit=state2==="credits";var isPaid=isCash||isCredit;
+    var sessions=sesPrice>0?Math.ceil(item.val/sesPrice):0;
+    var credits=sessions*10;
+    var creditTag=isCredit?'<span style="font-size:10px;color:#A855F7;font-weight:700">'+sessions+'s · '+credits+' cr</span>':'';
+    var btnStyle,btnTxt;
+    if(isCash){btnStyle="background:rgba(52,211,153,.2);border:1px solid rgba(52,211,153,.4);color:#34D399";btnTxt="✓ Efectivo";}
+    else if(isCredit){btnStyle="background:rgba(168,85,247,.2);border:1px solid rgba(168,85,247,.4);color:#A855F7";btnTxt="💳 Créditos";}
+    else{btnStyle="background:var(--surf);border:1px solid var(--border);color:var(--txt2)";btnTxt="Pendiente";}
+    return '<div draggable="true" data-lbl="'+lbl.replace(/"/g,"&quot;")+'" ondragstart="payDragStart(event,'+idx+')" ondragover="event.preventDefault()" ondrop="payDrop(event,'+idx+')" style="display:flex;align-items:center;gap:8px;padding:10px 11px;background:var(--surf);border-radius:10px;margin-bottom:7px;cursor:grab;opacity:'+(isPaid?.4:1)+';transition:opacity .2s">'
+      +'<span style="font-size:12px;font-weight:700;opacity:.3;min-width:18px">'+(idx+1)+'</span>'
+      +'<span style="flex:1;font-size:13px;font-weight:600;text-decoration:'+(isPaid?"line-through":"none")+'">'+(item.lbl||"")+'</span>'
+      +creditTag
+      +(item.type==="unico"?'<span style="font-size:9px;background:rgba(245,158,11,.15);color:#F59E0B;border-radius:4px;padding:2px 5px;font-weight:700">ÚNICO</span>':'')
+      +'<span style="font-family:Rajdhani,sans-serif;font-weight:700;font-size:14px;color:var(--danger);white-space:nowrap">'+fmtMoney(item.val)+'</span>'
+      +'<button onclick="payToggle(\''+lbl.replace(/'/g,"\\'")+'\',\''+state2+'\')" style="'+btnStyle+';border-radius:7px;cursor:pointer;padding:4px 9px;font-size:11px;font-weight:700;white-space:nowrap;flex:none">'+btnTxt+'</button>'
       +'</div>';
   }).join("");
-  var e=el("pay-order-list");if(e)e.innerHTML=html;
-  // Mostrar total pagado vs pendiente
-  var totalPaid=order.reduce(function(s,lbl){return s+(paid[lbl]&&byLbl[lbl]?byLbl[lbl].val:0);},0);
-  var totalPend=order.reduce(function(s,lbl){return s+(!paid[lbl]&&byLbl[lbl]?byLbl[lbl].val:0);},0);
-  if(e&&order.length){e.innerHTML+=
-    '<div style="display:flex;gap:8px;margin-top:10px">'
-    +'<div style="flex:1;padding:10px;background:rgba(52,211,153,.08);border-radius:9px;border:1px solid rgba(52,211,153,.2);text-align:center"><div style="font-size:10px;opacity:.6;margin-bottom:3px">Pagado</div><div style="font-family:Rajdhani,sans-serif;font-weight:700;font-size:16px;color:#34D399">'+fmtMoney(totalPaid)+'</div></div>'
-    +'<div style="flex:1;padding:10px;background:rgba(248,113,113,.08);border-radius:9px;border:1px solid rgba(248,113,113,.2);text-align:center"><div style="font-size:10px;opacity:.6;margin-bottom:3px">Pendiente</div><div style="font-family:Rajdhani,sans-serif;font-weight:700;font-size:16px;color:var(--danger)">'+fmtMoney(totalPend)+'</div></div>'
+
+  // Totales por tipo
+  var cashPaid=order.reduce(function(s,l){return s+(paid[l]==="cash"&&byLbl[l]?byLbl[l].val:0);},0);
+  var creditPaid=order.reduce(function(s,l){return s+(paid[l]==="credits"&&byLbl[l]?byLbl[l].val:0);},0);
+  var pend=order.reduce(function(s,l){return s+(!paid[l]&&byLbl[l]?byLbl[l].val:0);},0);
+  var totalCredits=order.reduce(function(s,l){return s+(paid[l]==="credits"&&byLbl[l]?Math.ceil(byLbl[l].val/sesPrice)*10:0);},0);
+  var summaryHtml='<div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:6px;margin-top:12px">'
+    +'<div style="padding:9px;background:rgba(52,211,153,.07);border-radius:9px;border:1px solid rgba(52,211,153,.18);text-align:center"><div style="font-size:9px;opacity:.55;margin-bottom:2px">✓ Efectivo</div><div style="font-family:Rajdhani,sans-serif;font-weight:700;font-size:14px;color:#34D399">'+fmtMoney(cashPaid)+'</div></div>'
+    +'<div style="padding:9px;background:rgba(168,85,247,.07);border-radius:9px;border:1px solid rgba(168,85,247,.18);text-align:center"><div style="font-size:9px;opacity:.55;margin-bottom:2px">💳 Créditos</div><div style="font-family:Rajdhani,sans-serif;font-weight:700;font-size:14px;color:#A855F7">'+totalCredits+' cr</div></div>'
+    +'<div style="padding:9px;background:rgba(248,113,113,.07);border-radius:9px;border:1px solid rgba(248,113,113,.18);text-align:center"><div style="font-size:9px;opacity:.55;margin-bottom:2px">Pendiente</div><div style="font-family:Rajdhani,sans-serif;font-weight:700;font-size:14px;color:var(--danger)">'+fmtMoney(pend)+'</div></div>'
     +'</div>';
-  }
+
+  if(e)e.innerHTML=headerHtml+rows+summaryHtml;
 }
+function saveSesPriceAndRender(v){lsSave("session-price",Number(v)||10);renderPayOrder();}
 var __payDragIdx=null;
 function payDragStart(e,i){__payDragIdx=i;e.dataTransfer.effectAllowed="move";}
 function payDrop(e,toIdx){
@@ -1665,11 +1688,16 @@ function payDrop(e,toIdx){
   var order=lsGet("pay-order",[]);
   var moved=order.splice(__payDragIdx,1)[0];
   order.splice(toIdx,0,moved);
-  lsSave("pay-order",order);
-  __payDragIdx=null;
-  renderPayOrder();
+  lsSave("pay-order",order);__payDragIdx=null;renderPayOrder();
 }
-function payToggle(lbl){var paid=lsGet("pay-paid",{});paid[lbl]=!paid[lbl];lsSave("pay-paid",paid);renderPayOrder();}
+function payToggle(lbl,cur){
+  var paid=lsGet("pay-paid",{});
+  // Ciclo: pendiente → cash → credits → pendiente
+  if(!cur||cur==="pendiente")paid[lbl]="cash";
+  else if(cur==="cash")paid[lbl]="credits";
+  else paid[lbl]=null;
+  lsSave("pay-paid",paid);renderPayOrder();
+}
 function resetPayOrder(){lsSave("pay-paid",{});lsSave("pay-order",null);renderPayOrder();}
 
 function renderPerInc(){
