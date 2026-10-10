@@ -1696,7 +1696,29 @@ function renderPayOrder(){
     +'<div style="padding:9px;background:rgba(248,113,113,.07);border-radius:9px;border:1px solid rgba(248,113,113,.18);text-align:center"><div style="font-size:9px;opacity:.55;margin-bottom:2px">Pendiente</div><div style="font-family:Rajdhani,sans-serif;font-weight:700;font-size:14px;color:var(--danger)">'+fmtMoney(pend)+'</div></div>'
     +'</div>';
 
-  if(e)e.innerHTML=headerHtml+rows+summaryHtml;
+  // Progreso mensualidad
+  var totalMensual=expMonthly(state.perExp)+expMonthly(state.fitExp)+expMonthly(state.agExp);
+  var paidMensual=order.reduce(function(s,l){
+    var item=byLbl[l];if(!item||item.type==="unico")return s;
+    return s+(paid[l]==="cash"||paid[l]==="credits"?getExpVal(item):0);
+  },0);
+  var pct=totalMensual>0?Math.min(100,Math.round(paidMensual/totalMensual*100)):0;
+  var barColor=pct>=100?"#34D399":pct>=60?"#FBBF24":"#7C6AEC";
+  var mensHtml='<div style="margin-top:14px;padding:14px;background:var(--surf);border-radius:12px;border:1px solid var(--border)">'
+    +'<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px">'
+    +'<span style="font-size:12px;font-weight:700">Mensualidad cubierta</span>'
+    +'<span style="font-family:Rajdhani,sans-serif;font-size:20px;font-weight:700;color:'+barColor+'">'+pct+'%</span>'
+    +'</div>'
+    +'<div style="background:var(--border);border-radius:99px;height:10px;overflow:hidden">'
+    +'<div style="width:'+pct+'%;height:100%;background:'+barColor+';border-radius:99px;transition:width .4s"></div>'
+    +'</div>'
+    +'<div style="display:flex;justify-content:space-between;margin-top:8px">'
+    +'<span style="font-size:11px;opacity:.55">Pagado '+fmtMoney(paidMensual)+'</span>'
+    +'<span style="font-size:11px;opacity:.55">Meta '+fmtMoney(totalMensual)+'/mes</span>'
+    +'</div>'
+    +'</div>';
+
+  if(e)e.innerHTML=headerHtml+rows+summaryHtml+mensHtml;
 }
 function saveSesPriceAndRender(v){lsSave("session-price",Number(v)||10);renderPayOrder();}
 var __payDragIdx=null;
@@ -1916,21 +1938,49 @@ function saveMisionText(field,val){
   },800);
 }
 
+var PIPE_STAGES=[
+  {key:"Prospecto",   col:"#7C6AEC",bg:"rgba(124,106,236,.12)"},
+  {key:"Propuesta",   col:"#FBBF24",bg:"rgba(251,191,36,.12)"},
+  {key:"Negociacion", col:"#A855F7",bg:"rgba(168,85,247,.12)"},
+  {key:"Cerrado",     col:"#34D399",bg:"rgba(52,211,153,.12)"}
+];
+function pipeStageIdx(stage){return PIPE_STAGES.findIndex(function(s){return s.key===stage;});}
 function renderPipeline(){
-  var stages=["Prospecto","Propuesta","Negociacion","Cerrado"];
-  var colors=["#7A6A9E","#FBBF24","#A855F7","#34D399"];
   var board=el("pipe-board");if(!board)return;
-  var html=stages.map(function(stage,si){
-    var cards=state.pipeline.filter(function(c){return c.stage===stage;});
-    var cardHtml=cards.map(function(c){
-      var moveOpts=stages.filter(function(s){return s!==stage;}).map(function(s){return '<button class="btn-sm" style="font-size:10px;padding:3px 8px" onclick="movePipe(\''+c.id+'\',\''+s+'\')">'+s.slice(0,4)+'</button>';}).join("");
-      return '<div class="pipe-card"><div class="pipe-card-ttl">'+c.title+'</div><div class="pipe-card-sub">'+(c.client||'')+'</div>'+
-        (c.value?'<div class="pipe-card-val">'+fmtMoney(c.value)+'</div>':'')+
-        '<div style="display:flex;gap:4px;margin-top:6px;flex-wrap:wrap">'+moveOpts+'<button class="btn-icon btn-del" style="margin-left:auto" onclick="deletePipe(\''+c.id+'\')">&#128465;</button></div></div>';
+  var list=state.pipeline;
+  // Contador por etapa en el header
+  var counts=PIPE_STAGES.map(function(s){return list.filter(function(c){return c.stage===s.key;}).length;});
+  // Header resumen
+  var header='<div style="display:flex;gap:8px;margin-bottom:14px;flex-wrap:wrap">'
+    +PIPE_STAGES.map(function(s,i){return '<div style="flex:1;min-width:80px;padding:8px 12px;background:'+s.bg+';border-radius:9px;border:1px solid '+s.col+'33;text-align:center"><div style="font-size:10px;font-weight:700;color:'+s.col+'">'+s.key+'</div><div style="font-family:Rajdhani,sans-serif;font-size:22px;font-weight:700">'+counts[i]+'</div></div>';}).join("")
+    +'</div>';
+  if(!list.length){board.innerHTML=header+'<div class="empty-st"><div class="ico">📋</div><p>Sin prospectos aún</p><button class="btn-sm" onclick="openAddPipe()">+ Agregar prospecto</button></div>';return;}
+  var cards=list.map(function(c){
+    var si=Math.max(0,pipeStageIdx(c.stage));
+    var stageRow=PIPE_STAGES.map(function(s,i){
+      var done=i<si;var cur=i===si;
+      var dot=done?'<svg width="14" height="14" viewBox="0 0 14 14"><circle cx="7" cy="7" r="7" fill="'+s.col+'"/><polyline points="3,7 6,10 11,4" stroke="#fff" stroke-width="1.8" fill="none"/></svg>'
+        :cur?'<svg width="14" height="14" viewBox="0 0 14 14"><circle cx="7" cy="7" r="7" fill="'+s.col+'"/><circle cx="7" cy="7" r="3" fill="#fff"/></svg>'
+        :'<svg width="14" height="14" viewBox="0 0 14 14"><circle cx="7" cy="7" r="6" stroke="var(--border2)" stroke-width="1.5" fill="none"/></svg>';
+      var line=i<PIPE_STAGES.length-1?'<div style="flex:1;height:2px;background:'+(done?s.col:'var(--border)')+';margin:0 3px;align-self:center"></div>':'';
+      return '<div style="display:flex;flex-direction:column;align-items:center;gap:3px">'+dot+'<span style="font-size:9px;font-weight:600;opacity:'+(cur?.9:done?.6:.35)+';color:'+(cur?s.col:'inherit')+'">'+s.key+'</span></div>'+line;
     }).join("");
-    return '<div class="pipe-col"><div class="pipe-col-hd"><span style="color:'+colors[si]+'">'+stage+'</span><span class="badge" style="background:var(--surf);color:var(--txt2)">'+cards.length+'</span></div>'+cardHtml+'<button class="btn-sm" style="width:100%;margin-top:4px" onclick="openAddPipe(\''+stage+'\')">+ Agregar</button></div>';
+    var isClosed=si===PIPE_STAGES.length-1;
+    var nextStage=!isClosed?PIPE_STAGES[si+1]:null;
+    return '<div style="background:var(--card);border:1px solid var(--border);border-radius:12px;padding:14px;margin-bottom:10px">'
+      +'<div style="display:flex;align-items:flex-start;gap:10px;margin-bottom:11px">'
+      +'<div style="flex:1"><div style="font-weight:700;font-size:14px">'+c.title+'</div>'+(c.client?'<div style="font-size:11px;opacity:.6;margin-top:1px">'+c.client+'</div>':'')+(c.note?'<div style="font-size:11px;opacity:.5;margin-top:3px;font-style:italic">'+c.note+'</div>':'')+'</div>'
+      +(c.value?'<div style="font-family:Rajdhani,sans-serif;font-weight:700;font-size:18px;color:var(--acc)">'+fmtMoney(c.value)+'</div>':'')
+      +'</div>'
+      +'<div style="display:flex;align-items:center;margin-bottom:10px">'+stageRow+'</div>'
+      +'<div style="display:flex;gap:6px;align-items:center">'
+      +(nextStage?'<button class="btn-sm" onclick="movePipe(\''+c.id+'\',\''+nextStage.key+'\')" style="background:'+nextStage.bg+';color:'+nextStage.col+';border:1px solid '+nextStage.col+'55">→ '+nextStage.key+'</button>':'<span style="font-size:11px;font-weight:700;color:#34D399">✓ Cerrado</span>')
+      +'<button class="btn-sm" onclick="openEditPipe(\''+c.id+'\')" style="margin-left:auto">✏</button>'
+      +'<button class="btn-icon btn-del" onclick="deletePipe(\''+c.id+'\')">🗑</button>'
+      +'</div>'
+      +'</div>';
   }).join("");
-  board.innerHTML=html;
+  board.innerHTML=header+cards+'<button class="btn-sm" style="width:100%;margin-top:6px" onclick="openAddPipe()">+ Agregar prospecto</button>';
 }
 
 // === CRUD MODALS ===
@@ -3218,14 +3268,27 @@ function refreshPipeline(){
   state.pipeline=lsGet("pipeline",[]);
   renderPipeline();
 }
-function openAddPipe(stage){
-  var html='<div class="form-g"><label>Titulo / empresa</label><input id="p-title" class="fi" placeholder="Nombre del prospecto"></div>'+
-    '<div class="form-r"><div class="form-g"><label>Contacto</label><input id="p-client" class="fi" placeholder="Nombre contacto"></div>'+
-    '<div class="form-g"><label>Valor estimado ($)</label><input id="p-val" type="number" class="fi" placeholder="0"></div></div>'+
-    '<div class="form-g"><label>Nota</label><input id="p-note" class="fi" placeholder="Breve descripcion..."></div>';
-  openModal("Agregar a "+stage,html,function(){
+function pipeForm(data){
+  data=data||{};
+  return '<div class="form-g"><label>Empresa / prospecto</label><input id="p-title" class="fi" placeholder="Nombre del prospecto" value="'+(data.title||"")+'"></div>'+
+    '<div class="form-r"><div class="form-g"><label>Contacto</label><input id="p-client" class="fi" placeholder="Nombre contacto" value="'+(data.client||"")+'"></div>'+
+    '<div class="form-g"><label>Valor estimado ($)</label><input id="p-val" type="number" class="fi" placeholder="0" value="'+(data.value||"")+'"></div></div>'+
+    '<div class="form-g"><label>Nota</label><input id="p-note" class="fi" placeholder="Breve descripción..." value="'+(data.note||"")+'"></div>';
+}
+function openAddPipe(){
+  openModal("Nuevo prospecto",pipeForm(),function(){
     var title=el("p-title").value.trim();if(!title)return;
-    lsAdd("pipeline",{title:title,client:el("p-client").value.trim(),value:parseInt(el("p-val").value)||0,note:el("p-note").value.trim(),stage:stage});
+    lsAdd("pipeline",{title:title,client:el("p-client").value.trim(),value:parseInt(el("p-val").value)||0,note:el("p-note").value.trim(),stage:"Prospecto"});
+    refreshPipeline();
+  });
+}
+function openEditPipe(id){
+  var arr=lsGet("pipeline",[]);
+  var c=arr.find(function(x){return x.id===id;});if(!c)return;
+  openModal("Editar prospecto",pipeForm(c),function(){
+    var title=el("p-title").value.trim();if(!title)return;
+    var i=arr.findIndex(function(x){return x.id===id;});
+    if(i>=0){arr[i].title=title;arr[i].client=el("p-client").value.trim();arr[i].value=parseInt(el("p-val").value)||0;arr[i].note=el("p-note").value.trim();lsSave("pipeline",arr);}
     refreshPipeline();
   });
 }
