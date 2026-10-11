@@ -1681,8 +1681,9 @@ function renderPayOrder(){
   var e=el("pay-order-list");
   if(!all.length){if(e)e.innerHTML='<div class="empty-st"><p>Agrega gastos primero</p></div>';return;}
 
-  // Separar mensuales/×cliente de únicos
-  var recurring=all.filter(function(i){return i.type!=="unico";});
+  // Separar en 3 grupos
+  var recurring=all.filter(function(i){return i.type==="mensual"||i.type==="por-cliente";});
+  var membs=all.filter(function(i){return i.type==="membresia";});
   var unicos=all.filter(function(i){return i.type==="unico";});
 
   var saved=lsGet("pay-order",null);
@@ -1759,6 +1760,32 @@ function renderPayOrder(){
     +'<span style="font-size:11px;opacity:.55">Meta '+fmtMoney(totalMensual)+'/mes</span>'
     +'</div></div>';
 
+  // Sección Membresías / Suscripciones
+  var membsHtml='';
+  if(membs.length){
+    var totalMemb2=membs.reduce(function(s,i){return s+i.val;},0);
+    var membRows=membs.map(function(item){
+      var state3=paid[item.lbl]||"pendiente";
+      var isCash2=state3==="cash";var isCredit2=state3==="credits";var isPaid2=isCash2||isCredit2;
+      var btnStyle2,btnTxt2;
+      if(isCash2){btnStyle2="background:rgba(52,211,153,.2);border:1px solid rgba(52,211,153,.4);color:#34D399";btnTxt2="✓ Efectivo";}
+      else if(isCredit2){btnStyle2="background:rgba(168,85,247,.2);border:1px solid rgba(168,85,247,.4);color:#A855F7";btnTxt2="💳 Créditos";}
+      else{btnStyle2="background:var(--surf);border:1px solid var(--border);color:var(--txt2)";btnTxt2="Pendiente";}
+      return '<div style="display:flex;align-items:center;gap:8px;padding:10px 11px;background:var(--surf);border-radius:10px;margin-bottom:7px;opacity:'+(isPaid2?.4:1)+';transition:opacity .2s">'
+        +'<span style="flex:1;font-size:13px;font-weight:600;text-decoration:'+(isPaid2?"line-through":"none")+'">'+item.lbl+'</span>'
+        +'<span style="font-family:Rajdhani,sans-serif;font-weight:700;font-size:14px;color:#A855F7;white-space:nowrap">'+fmtMoney(item.val)+'</span>'
+        +'<button onclick="payToggle(\''+item.lbl.replace(/'/g,"\\'")+'\',\''+state3+'\')" style="'+btnStyle2+';border-radius:7px;cursor:pointer;padding:4px 9px;font-size:11px;font-weight:700;white-space:nowrap;flex:none">'+btnTxt2+'</button>'
+        +'</div>';
+    }).join("");
+    membsHtml='<div style="margin-top:18px">'
+      +'<div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:10px">'
+      +'<span style="font-size:13px;font-weight:700;color:#A855F7">🔄 Membresías / Suscripciones</span>'
+      +'<span style="font-size:11px;opacity:.5">'+fmtMoney(totalMemb2)+'/mes</span>'
+      +'</div>'
+      +membRows
+      +'</div>';
+  }
+
   // Sección Únicos — objetivos / necesidades
   var unicosHtml='';
   if(unicos.length){
@@ -1783,7 +1810,7 @@ function renderPayOrder(){
       +'</div>';
   }
 
-  if(e)e.innerHTML=headerHtml+rows+summaryHtml+mensHtml+unicosHtml;
+  if(e)e.innerHTML=headerHtml+rows+summaryHtml+mensHtml+membsHtml+unicosHtml;
 }
 function unicoToggle(lbl){
   var done=lsGet("unico-done",{});
@@ -1823,49 +1850,97 @@ function renderPerInc(){
   var e2=el("per-inc-list");if(e2)e2.innerHTML=html;
 }
 
+function avgRevenue(rev){
+  var vals=(rev&&rev.vals)||[];
+  var nonZero=vals.filter(function(v){return Number(v)>0;});
+  return nonZero.length?Math.round(nonZero.reduce(function(s,v){return s+Number(v);},0)/nonZero.length):0;
+}
 function renderPerExp(){
-  var perItems=state.perExp;
-  var perTotal=perItems.reduce(function(s,i){return s+(i.val||0);},0);
-  var agItems=state.agExp;
-  var agTotal=agItems.reduce(function(s,i){return s+(i.val||0);},0);
-  var fitItems=state.fitExp;
-  var fitTotal=fitItems.reduce(function(s,i){return s+(i.val||0);},0);
-  var allItems=perItems.concat(fitItems).concat(agItems);
-  var monthlyTotal=expMonthly(perItems)+expMonthly(fitItems)+expMonthly(agItems);
-  var onceTotal=expOnce(perItems)+expOnce(fitItems)+expOnce(agItems);
-  var grandTotal=monthlyTotal+onceTotal;
+  var allItems=state.perExp.concat(state.fitExp).concat(state.agExp).filter(function(i){return i.val>0;});
   var nc2=activeClientsCount();
-  function badge(type){
-    if(type==="unico")return'<span style="font-size:9px;background:rgba(245,158,11,.2);color:#F59E0B;border-radius:4px;padding:2px 5px;font-weight:700;margin-left:5px">ÚNICO</span>';
-    if(type==="por-cliente")return'<span style="font-size:9px;background:rgba(59,130,246,.2);color:#3B82F6;border-radius:4px;padding:2px 5px;font-weight:700;margin-left:5px">×cli</span>';
-    return'<span style="font-size:9px;background:rgba(52,211,153,.15);color:#34D399;border-radius:4px;padding:2px 5px;font-weight:700;margin-left:5px">/mes</span>';
-  }
-  function rowHtml(i){
+
+  // Separar en 3 grupos
+  var mensuales=allItems.filter(function(i){return i.type==="mensual"||i.type==="por-cliente";});
+  var membs=allItems.filter(function(i){return i.type==="membresia";});
+  var unicos=allItems.filter(function(i){return i.type==="unico";});
+
+  function row(i,color){
+    color=color||"var(--danger)";
     var eff=getExpVal(i);
-    var detail=i.type==="por-cliente"?'<span style="font-size:10px;opacity:.45;margin-left:5px">'+fmtMoney(i.val)+'×'+nc2+'</span>':'';
-    return '<div style="display:flex;justify-content:space-between;align-items:center;padding:9px 11px;background:var(--surf);border-radius:9px;margin-bottom:6px"><span style="font-size:13px;font-weight:600">'+i.lbl+badge(i.type)+detail+'</span><span style="font-family:Rajdhani,sans-serif;font-weight:700;font-size:15px;color:var(--danger)">'+fmtMoney(eff)+'</span></div>';
+    var detail=i.type==="por-cliente"?'<span style="font-size:10px;opacity:.4;margin-left:4px">'+fmtMoney(i.val)+'×'+nc2+'</span>':'';
+    return '<div style="display:flex;justify-content:space-between;align-items:center;padding:9px 11px;background:var(--surf);border-radius:9px;margin-bottom:6px">'
+      +'<span style="font-size:13px;font-weight:600">'+i.lbl+detail+'</span>'
+      +'<span style="font-family:Rajdhani,sans-serif;font-weight:700;font-size:15px;color:'+color+'">'+fmtMoney(eff)+'</span>'
+      +'</div>';
   }
-  function secLabel(txt,fn){return '<div style="font-size:10px;font-weight:700;letter-spacing:.07em;text-transform:uppercase;opacity:.45;margin:12px 0 6px">'+txt+' <button class="btn-sm" onclick="'+fn+'" style="font-size:10px">✏</button></div>';}
+  function zoneHdr(emoji,title,total,color,btns){
+    return '<div style="display:flex;align-items:center;gap:8px;margin:16px 0 8px">'
+      +'<span style="font-size:14px">'+emoji+'</span>'
+      +'<span style="font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.07em;opacity:.5;flex:1">'+title+'</span>'
+      +(total?'<span style="font-family:Rajdhani,sans-serif;font-weight:700;font-size:13px;color:'+color+'">'+fmtMoney(total)+'</span>':'')
+      +btns
+      +'</div>';
+  }
+  function editBtns(fns){
+    return fns.map(function(f){return'<button class="btn-sm" onclick="'+f.fn+'" style="font-size:10px;margin-left:3px">'+f.lbl+'</button>';}).join("");
+  }
+
+  var totalMensual=mensuales.reduce(function(s,i){return s+getExpVal(i);},0);
+  var totalMemb=membs.reduce(function(s,i){return s+getExpVal(i);},0);
+  var totalUnico=unicos.reduce(function(s,i){return s+getExpVal(i);},0);
+  var grandTotal=totalMensual+totalMemb+totalUnico;
+
   var html="";
-  if(grandTotal===0){
+  if(!allItems.length){
     html='<div class="empty-st"><div class="ico">&#128690;</div><p>Registra tus gastos</p><button class="btn-sm" onclick="editPerExp()">+ Personal</button> <button class="btn-sm" onclick="editFitExp()" style="margin-left:4px">+ Coach</button> <button class="btn-sm" onclick="editAgExp()" style="margin-left:4px">+ Agencia</button></div>';
   } else {
-    if(perTotal>0){html+=secLabel("Personales","editPerExp()");html+=perItems.filter(function(i){return i.val>0;}).map(rowHtml).join("");}
-    if(fitTotal>0){html+=secLabel("FitCoach","editFitExp()");html+=fitItems.filter(function(i){return i.val>0;}).map(rowHtml).join("");}
-    if(agTotal>0){html+=secLabel("Agencia","editAgExp()");html+=agItems.filter(function(i){return i.val>0;}).map(rowHtml).join("");}
-    // Totales separados por tipo
-    html+='<div style="margin-top:10px;display:flex;flex-direction:column;gap:6px">';
-    if(monthlyTotal>0)html+='<div style="display:flex;justify-content:space-between;align-items:center;padding:10px 13px;background:rgba(52,211,153,.08);border-radius:9px;border:1px solid rgba(52,211,153,.2)"><span style="font-size:12px;font-weight:700;color:#34D399">Mensuales</span><span style="font-family:Rajdhani,sans-serif;font-weight:700;font-size:18px;color:#34D399">'+fmtMoney(monthlyTotal)+'/mes</span></div>';
-    if(onceTotal>0)html+='<div style="display:flex;justify-content:space-between;align-items:center;padding:10px 13px;background:rgba(245,158,11,.08);border-radius:9px;border:1px solid rgba(245,158,11,.2)"><span style="font-size:12px;font-weight:700;color:#F59E0B">Únicos / eventuales</span><span style="font-family:Rajdhani,sans-serif;font-weight:700;font-size:18px;color:#F59E0B">'+fmtMoney(onceTotal)+'</span></div>';
-    html+='<div style="display:flex;justify-content:space-between;align-items:center;padding:12px 13px;background:var(--danger-d);border-radius:9px;border:1px solid rgba(248,113,113,.2)"><span style="font-weight:700;font-size:14px">Total gastos</span><span style="font-family:Rajdhani,sans-serif;font-weight:700;font-size:22px;color:var(--danger)">'+fmtMoney(grandTotal)+'</span></div>';
+    // ZONA 1 — Mensuales
+    if(mensuales.length){
+      html+=zoneHdr("💰","Gastos mensuales",totalMensual,"var(--danger)",editBtns([{fn:"editPerExp()",lbl:"✏ P"},{fn:"editFitExp()",lbl:"✏ F"},{fn:"editAgExp()",lbl:"✏ A"}]));
+      html+=mensuales.map(function(i){return row(i,"var(--danger)");}).join("");
+    }
+
+    // ZONA 2 — Membresías / Suscripciones
+    if(membs.length){
+      html+=zoneHdr("🔄","Membresías / Suscripciones",totalMemb,"#A855F7",editBtns([{fn:"editPerExp()",lbl:"✏ P"},{fn:"editFitExp()",lbl:"✏ F"},{fn:"editAgExp()",lbl:"✏ A"}]));
+      html+=membs.map(function(i){return row(i,"#A855F7");}).join("");
+    }
+
+    // ZONA 3 — Objetivos / Únicos
+    if(unicos.length){
+      html+=zoneHdr("🎯","Objetivos / Necesidades",totalUnico,"#FBBF24","");
+      html+=unicos.map(function(i){return row(i,"#FBBF24");}).join("");
+    }
+
+    // Resumen total
+    html+='<div style="margin-top:14px;display:flex;flex-direction:column;gap:6px">';
+    if(totalMensual>0)html+='<div style="display:flex;justify-content:space-between;padding:9px 13px;background:rgba(248,113,113,.08);border-radius:9px;border:1px solid rgba(248,113,113,.18)"><span style="font-size:12px;font-weight:700;opacity:.8">Mensuales</span><span style="font-family:Rajdhani,sans-serif;font-weight:700;font-size:16px;color:var(--danger)">'+fmtMoney(totalMensual)+'/mes</span></div>';
+    if(totalMemb>0)html+='<div style="display:flex;justify-content:space-between;padding:9px 13px;background:rgba(168,85,247,.08);border-radius:9px;border:1px solid rgba(168,85,247,.18)"><span style="font-size:12px;font-weight:700;opacity:.8">Membresías</span><span style="font-family:Rajdhani,sans-serif;font-weight:700;font-size:16px;color:#A855F7">'+fmtMoney(totalMemb)+'/mes</span></div>';
+    if(totalUnico>0)html+='<div style="display:flex;justify-content:space-between;padding:9px 13px;background:rgba(245,158,11,.08);border-radius:9px;border:1px solid rgba(245,158,11,.18)"><span style="font-size:12px;font-weight:700;opacity:.8">Objetivos</span><span style="font-family:Rajdhani,sans-serif;font-weight:700;font-size:16px;color:#FBBF24">'+fmtMoney(totalUnico)+'</span></div>';
+    html+='<div style="display:flex;justify-content:space-between;padding:12px 13px;background:var(--danger-d);border-radius:9px;border:1px solid rgba(248,113,113,.2)"><span style="font-weight:700;font-size:14px">Total</span><span style="font-family:Rajdhani,sans-serif;font-weight:700;font-size:22px;color:var(--danger)">'+fmtMoney(grandTotal)+'</span></div>';
     html+='</div>';
-    if(monthlyTotal>0){
-      var meta1=Math.round(monthlyTotal/0.7);var meta2=Math.round(monthlyTotal/0.5);
-      html+='<div style="margin-top:12px;padding:14px;background:linear-gradient(135deg,rgba(168,85,247,.1),rgba(59,130,246,.08));border-radius:10px;border:1px solid rgba(168,85,247,.25)">';
-      html+='<div style="font-size:11px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;opacity:.55;margin-bottom:10px">¿Cuánto deberías ganar? <span style="opacity:.6;font-weight:400">(basado en mensuales)</span></div>';
+
+    // Promedios de ingresos por negocio
+    var fitAvg=avgRevenue(state.fitRev);
+    var agAvg=avgRevenue(state.agRev);
+    if(fitAvg>0||agAvg>0){
+      html+='<div style="margin-top:14px;padding:14px;background:linear-gradient(135deg,rgba(168,85,247,.08),rgba(52,211,153,.06));border-radius:10px;border:1px solid rgba(168,85,247,.2)">';
+      html+='<div style="font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.07em;opacity:.45;margin-bottom:10px">Promedio ingresos por negocio</div>';
+      if(fitAvg>0)html+='<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px"><span style="font-size:12px;opacity:.75">💪 FitCoach</span><span style="font-family:Rajdhani,sans-serif;font-weight:700;font-size:16px;color:#A855F7">'+fmtMoney(fitAvg)+'/mes</span></div>';
+      if(agAvg>0)html+='<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px"><span style="font-size:12px;opacity:.75">📣 Agencia</span><span style="font-family:Rajdhani,sans-serif;font-weight:700;font-size:16px;color:#EF4444">'+fmtMoney(agAvg)+'/mes</span></div>';
+      if(fitAvg>0&&agAvg>0)html+='<div style="display:flex;justify-content:space-between;align-items:center;padding-top:8px;border-top:1px solid var(--border)"><span style="font-size:12px;font-weight:700">Total promedio</span><span style="font-family:Rajdhani,sans-serif;font-weight:700;font-size:18px;background:var(--grad);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text">'+fmtMoney(fitAvg+agAvg)+'/mes</span></div>';
+      html+='</div>';
+    }
+
+    // Ingreso sugerido
+    var recMonthly=totalMensual+totalMemb;
+    if(recMonthly>0){
+      var meta1=Math.round(recMonthly/0.7);var meta2=Math.round(recMonthly/0.5);
+      html+='<div style="margin-top:10px;padding:14px;background:linear-gradient(135deg,rgba(168,85,247,.1),rgba(59,130,246,.08));border-radius:10px;border:1px solid rgba(168,85,247,.25)">';
+      html+='<div style="font-size:11px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;opacity:.55;margin-bottom:10px">¿Cuánto deberías ganar?</div>';
       html+='<div style="display:flex;flex-direction:column;gap:8px">';
-      html+='<div style="display:flex;justify-content:space-between;align-items:center"><span style="font-size:12px;opacity:.75">Mínimo (30% ahorro)</span><span style="font-family:Rajdhani,sans-serif;font-weight:700;font-size:15px;color:#A855F7">'+fmtMoney(meta1)+'/mes</span></div>';
-      html+='<div style="display:flex;justify-content:space-between;align-items:center"><span style="font-size:12px;opacity:.75">Cómodo (50% ahorro)</span><span style="font-family:Rajdhani,sans-serif;font-weight:700;font-size:15px;color:#3B82F6">'+fmtMoney(meta2)+'/mes</span></div>';
+      html+='<div style="display:flex;justify-content:space-between"><span style="font-size:12px;opacity:.75">Mínimo (30% ahorro)</span><span style="font-family:Rajdhani,sans-serif;font-weight:700;font-size:15px;color:#A855F7">'+fmtMoney(meta1)+'/mes</span></div>';
+      html+='<div style="display:flex;justify-content:space-between"><span style="font-size:12px;opacity:.75">Cómodo (50% ahorro)</span><span style="font-family:Rajdhani,sans-serif;font-weight:700;font-size:15px;color:#3B82F6">'+fmtMoney(meta2)+'/mes</span></div>';
       html+='</div></div>';
     }
   }
@@ -3658,6 +3733,7 @@ function editExpenses(title, stateProp, saveKey, onSave){
         +'<input class="fi" style="width:90px;flex:none" type="number" placeholder="$ 0" value="'+(r.val||"")+'" oninput="__expRows['+i+'].val=parseInt(this.value)||0">'
         +'<select onchange="__expRows['+i+'].type=this.value" style="background:var(--surf);border:1px solid var(--border);color:var(--txt);border-radius:7px;padding:6px 4px;font-size:11px;font-weight:600;cursor:pointer;flex:none">'
         +'<option value="mensual"'+(r.type==="mensual"?" selected":"")+'>Mensual</option>'
+        +'<option value="membresia"'+(r.type==="membresia"?" selected":"")+'>Membresía</option>'
         +'<option value="unico"'+(r.type==="unico"?" selected":"")+'>Único</option>'
         +'<option value="por-cliente"'+(r.type==="por-cliente"?" selected":"")+'>× cliente</option>'
         +'</select>'
