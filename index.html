@@ -1710,25 +1710,49 @@ function renderPayOrder(){
     +'<input id="ses-price-inp" type="number" value="'+sesPrice+'" oninput="saveSesPriceAndRender(this.value)" style="width:60px;background:transparent;border:none;border-bottom:1px solid rgba(168,85,247,.4);color:var(--txt);font-size:12px;font-weight:700;text-align:center;outline:none;padding:2px 4px">'
     +'</div>';
 
+  var xcliDone=lsGet("xcli-done",{});
+  var activeClients=(state.clients||[]).filter(function(c){return c.status==="Activo";});
+
   // Filas recurrentes (drag & drop)
   var rows=order.map(function(lbl,idx){
     var item=byLbl[lbl];if(!item)return"";
     var state2=paid[lbl]||"pendiente";
     var isCash=state2==="cash";var isCredit=state2==="credits";var isPaid=isCash||isCredit;
-    var sessions=sesPrice>0?Math.ceil(getExpVal(item)/sesPrice):0;
+    var eff=getExpVal(item);
+    var sessions=sesPrice>0?Math.ceil(eff/sesPrice):0;
     var creditTag=isCredit?'<span style="font-size:10px;color:#A855F7;font-weight:700">'+sessions+'s · '+(sessions*10)+' cr</span>':'';
     var btnStyle,btnTxt;
     if(isCash){btnStyle="background:rgba(52,211,153,.2);border:1px solid rgba(52,211,153,.4);color:#34D399";btnTxt="✓ Efectivo";}
     else if(isCredit){btnStyle="background:rgba(168,85,247,.2);border:1px solid rgba(168,85,247,.4);color:#A855F7";btnTxt="💳 Créditos";}
     else{btnStyle="background:var(--surf);border:1px solid var(--border);color:var(--txt2)";btnTxt="Pendiente";}
-    return '<div draggable="true" data-lbl="'+lbl.replace(/"/g,"&quot;")+'" ondragstart="payDragStart(event,'+idx+')" ondragover="event.preventDefault()" ondrop="payDrop(event,'+idx+')" style="display:flex;align-items:center;gap:8px;padding:10px 11px;background:var(--surf);border-radius:10px;margin-bottom:7px;cursor:grab;opacity:'+(isPaid?.4:1)+';transition:opacity .2s">'
+    var mainRow='<div draggable="true" data-lbl="'+lbl.replace(/"/g,"&quot;")+'" ondragstart="payDragStart(event,'+idx+')" ondragover="event.preventDefault()" ondrop="payDrop(event,'+idx+')" style="display:flex;align-items:center;gap:8px;padding:10px 11px;background:var(--surf);border-radius:10px;margin-bottom:'+(item.type==="por-cliente"?"4px":"7px")+';cursor:grab;opacity:'+(isPaid?.4:1)+';transition:opacity .2s">'
       +'<span style="font-size:12px;font-weight:700;opacity:.3;min-width:18px">'+(idx+1)+'</span>'
       +'<span style="flex:1;font-size:13px;font-weight:600;text-decoration:'+(isPaid?"line-through":"none")+'">'+lbl+'</span>'
       +creditTag
-      +(item.type==="por-cliente"?'<span style="font-size:9px;background:rgba(59,130,246,.15);color:#3B82F6;border-radius:4px;padding:2px 5px;font-weight:700">×cli</span>':'')
-      +'<span style="font-family:Rajdhani,sans-serif;font-weight:700;font-size:14px;color:var(--danger);white-space:nowrap">'+fmtMoney(getExpVal(item))+'</span>'
+      +(item.type==="por-cliente"?'<span style="font-size:9px;background:rgba(59,130,246,.15);color:#3B82F6;border-radius:4px;padding:2px 5px;font-weight:700">×'+activeClients.length+'cli</span>':'')
+      +'<span style="font-family:Rajdhani,sans-serif;font-weight:700;font-size:14px;color:var(--danger);white-space:nowrap">'+fmtMoney(eff)+'</span>'
       +'<button onclick="payToggle(\''+lbl.replace(/'/g,"\\'")+'\',\''+state2+'\')" style="'+btnStyle+';border-radius:7px;cursor:pointer;padding:4px 9px;font-size:11px;font-weight:700;white-space:nowrap;flex:none">'+btnTxt+'</button>'
       +'</div>';
+    // Para ítems ×cliente: checklist por cliente
+    var cliRows="";
+    if(item.type==="por-cliente"&&activeClients.length){
+      var entregados=activeClients.filter(function(c){return xcliDone[lbl+"||"+c.id];}).length;
+      cliRows='<div style="background:rgba(59,130,246,.05);border:1px solid rgba(59,130,246,.15);border-radius:10px;padding:10px 12px;margin-bottom:10px">'
+        +'<div style="font-size:10px;font-weight:700;opacity:.45;text-transform:uppercase;letter-spacing:.06em;margin-bottom:8px">Entrega por cliente — '+entregados+'/'+activeClients.length+'</div>'
+        +activeClients.map(function(c){
+          var k=lbl+"||"+c.id;var done=!!xcliDone[k];
+          return '<div style="display:flex;align-items:center;gap:8px;padding:6px 0;border-bottom:1px solid rgba(255,255,255,.04)">'
+            +'<div onclick="xcliToggle(\''+lbl.replace(/'/g,"\\'")+'\',\''+c.id+'\')" style="width:18px;height:18px;border-radius:5px;border:2px solid '+(done?"#34D399":"rgba(59,130,246,.4)")+';background:'+(done?"#34D399":"transparent")+';cursor:pointer;display:flex;align-items:center;justify-content:center;flex-shrink:0;transition:all .15s">'
+            +(done?'<svg width="10" height="10" viewBox="0 0 10 10"><polyline points="1.5,5 4,7.5 8.5,2" stroke="#fff" stroke-width="1.8" fill="none"/></svg>':'')
+            +'</div>'
+            +'<span style="flex:1;font-size:12px;font-weight:600;text-decoration:'+(done?"line-through":"none")+';opacity:'+(done?.5:1)+'">'+c.name+'</span>'
+            +(item.val>0?'<span style="font-family:Rajdhani,sans-serif;font-size:12px;font-weight:700;color:'+(done?"#34D399":"rgba(59,130,246,.7)")+'">'+fmtMoney(item.val)+'</span>':'')
+            +'<span style="font-size:9px;font-weight:700;padding:2px 6px;border-radius:4px;background:'+(done?"rgba(52,211,153,.15)":"rgba(248,113,113,.15)")+';color:'+(done?"#34D399":"var(--danger)")+'">'+( done?"✓ Listo":"Falta")+'</span>'
+            +'</div>';
+        }).join("")
+        +'</div>';
+    }
+    return mainRow+cliRows;
   }).join("");
 
   // Totales mensuales
@@ -1816,6 +1840,13 @@ function unicoToggle(lbl){
   var done=lsGet("unico-done",{});
   done[lbl]=!done[lbl];
   lsSave("unico-done",done);
+  renderPayOrder();
+}
+function xcliToggle(lbl,clientId){
+  var done=lsGet("xcli-done",{});
+  var k=lbl+"||"+clientId;
+  done[k]=!done[k];
+  lsSave("xcli-done",done);
   renderPayOrder();
 }
 function saveSesPriceAndRender(v){lsSave("session-price",Number(v)||10);renderPayOrder();}
