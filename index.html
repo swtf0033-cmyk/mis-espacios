@@ -1502,8 +1502,15 @@ var currentStudentId=null,currentWinId=null,currentWinProfile=null;
 function mkInitials(name){if(!name)return "?";var parts=name.trim().split(" ");return(parts[0][0]+(parts[1]?parts[1][0]:"")).toUpperCase();}
 function fmtMoney(n){return"$"+(Number(n)||0).toLocaleString("en-US");}
 function activeClientsCount(){return(state.clients||[]).filter(function(c){return c.status==="Activo";}).length;}
-function getExpVal(i){if(i.type==="por-cliente")return(Number(i.val)||0)*activeClientsCount();return Number(i.val)||0;}
-function expMonthly(arr){return(arr||[]).reduce(function(s,i){return s+(i.type!=="unico"?getExpVal(i):0);},0);}
+function activeStudentsCount(){return(state.students||[]).filter(function(s){return s.payStatus!=="Inactivo";}).length;}
+function getExpVal(i,src){
+  if(i.type==="por-cliente"){
+    var n=src==="fit"?activeStudentsCount():activeClientsCount();
+    return(Number(i.val)||0)*n;
+  }
+  return Number(i.val)||0;
+}
+function expMonthly(arr,src){return(arr||[]).reduce(function(s,i){return s+(i.type!=="unico"?getExpVal(i,src):0);},0);}
 function expOnce(arr){return(arr||[]).reduce(function(s,i){return s+(i.type==="unico"?getExpVal(i):0);},0);}
 function expTotal(arr){return(arr||[]).reduce(function(s,i){return s+getExpVal(i);},0);}
 function el(id){return document.getElementById(id);}
@@ -1527,11 +1534,24 @@ function renderFitStats(){
   var pnb=el("pagos-nb");var pnbCount=overdue.length;if(pnb){pnb.textContent=pnbCount;pnb.style.display=pnbCount>0?"inline":"none";}
 }
 
+function callerasToggle(id){
+  var done=lsGet("calleras-done",[]);
+  var idx=done.indexOf(id);
+  if(idx===-1)done.push(id);else done.splice(idx,1);
+  lsSave("calleras-done",done);
+  renderFitAlerts();
+}
 function renderFitAlerts(){
   var overdue=state.students.filter(function(s){return s.payStatus==="Vencido";});
   var attn=state.students.filter(function(s){return s.payStatus==="Atencion";});
   var items=overdue.map(function(s){return '<div class="ai"><div class="aico" style="background:var(--danger-d)">&#128179;</div><div><div class="aim">'+s.name+' &mdash; pago vencido</div><div class="ais">'+fmtMoney(s.fee)+'/mes</div></div></div>';});
   items=items.concat(attn.map(function(s){return '<div class="ai"><div class="aico" style="background:var(--warn-d)">&#9888;</div><div><div class="aim">'+s.name+' &mdash; atencion</div><div class="ais">Seguimiento pendiente</div></div></div>';}));
+  // Calleras: alumnos con 2+ meses sin recibirlas
+  var callerasDone=lsGet("calleras-done",[]);
+  state.students.filter(function(s){return(Number(s.months)||0)>=2&&callerasDone.indexOf(s.id)===-1;}).forEach(function(s){
+    items.push('<div class="ai" style="border-left:2px solid #A855F7"><div class="aico" style="background:rgba(168,85,247,.15);font-size:18px">🧤</div><div style="flex:1"><div class="aim" style="color:#A855F7">Calleras para '+s.name+'</div><div class="ais">Lleva '+(s.months||2)+' '+(s.months===1?'mes':'meses')+' entrenando</div></div>'
+      +'<button onclick="callerasToggle(\''+s.id+'\')" style="background:rgba(168,85,247,.2);border:1px solid rgba(168,85,247,.4);color:#A855F7;border-radius:8px;padding:4px 10px;font-size:11px;font-weight:700;cursor:pointer;white-space:nowrap;flex-shrink:0">✓ Entregadas</button></div>');
+  });
   // Cumpleaños: hoy y próximos 7 días
   var now=new Date();var todayY=now.getFullYear();
   state.students.forEach(function(s){
@@ -1640,7 +1660,7 @@ function renderClients(){
 function renderAgStats(){
   var active=state.clients.filter(function(c){return c.status==="Activo";}).length;
   var billing=state.clients.filter(function(c){return c.status==="Activo";}).reduce(function(s,c){return s+(Number(c.monthly)||0);},0);
-  var totalExp=expMonthly(state.agExp);
+  var totalExp=expMonthly(state.agExp,"ag");
   var net=billing-totalExp;
   el("ag-st-cli").textContent=active||"0";
   el("ag-st-bil").textContent=billing>0?fmtMoney(billing):"$0";
@@ -1659,7 +1679,7 @@ function renderAgExp(){
     return'<span style="font-size:9px;background:rgba(52,211,153,.15);color:#34D399;border-radius:4px;padding:2px 5px;font-weight:700;margin-left:5px">/mes</span>';
   }
   var rows=items.filter(function(i){return i.val>0;}).map(function(i){
-    var eff=getExpVal(i);
+    var eff=getExpVal(i,"ag");
     var detail=i.type==="por-cliente"?'<span style="font-size:10px;opacity:.45;margin-left:5px">'+fmtMoney(i.val)+'×'+nc+'</span>':'';
     return '<div style="display:flex;justify-content:space-between;align-items:center;padding:10px 11px;background:var(--surf);border-radius:9px;margin-bottom:6px"><span style="font-size:13px;font-weight:600">'+i.lbl+badge(i.type)+detail+'</span><span style="font-family:Rajdhani,sans-serif;font-weight:700;font-size:15px;color:var(--danger)">'+fmtMoney(eff)+'</span></div>';
   }).join("");
@@ -1677,7 +1697,10 @@ function renderAgExp(){
 
 // pay-paid: null=pendiente, "cash"=efectivo, "credits"=créditos  |  unico-done: {lbl: true/false}
 function renderPayOrder(){
-  var all=state.perExp.concat(state.fitExp).concat(state.agExp).filter(function(i){return i.val>0;});
+  var all=state.perExp.map(function(i){return Object.assign({},i,{_src:"per"});})
+    .concat(state.fitExp.map(function(i){return Object.assign({},i,{_src:"fit"});}))
+    .concat(state.agExp.map(function(i){return Object.assign({},i,{_src:"ag"});}))
+    .filter(function(i){return i.val>0;});
   var e=el("pay-order-list");
   if(!all.length){if(e)e.innerHTML='<div class="empty-st"><p>Agrega gastos primero</p></div>';return;}
 
@@ -1718,7 +1741,7 @@ function renderPayOrder(){
     var item=byLbl[lbl];if(!item)return"";
     var state2=paid[lbl]||"pendiente";
     var isCash=state2==="cash";var isCredit=state2==="credits";var isPaid=isCash||isCredit;
-    var eff=getExpVal(item);
+    var eff=getExpVal(item,item._src);
     var sessions=sesPrice>0?Math.ceil(eff/sesPrice):0;
     var creditTag=isCredit?'<span style="font-size:10px;color:#A855F7;font-weight:700">'+sessions+'s · '+(sessions*10)+' cr</span>':'';
     var btnStyle,btnTxt;
@@ -1733,33 +1756,38 @@ function renderPayOrder(){
       +'<span style="font-family:Rajdhani,sans-serif;font-weight:700;font-size:14px;color:var(--danger);white-space:nowrap">'+fmtMoney(eff)+'</span>'
       +'<button onclick="payToggle(\''+lbl.replace(/'/g,"\\'")+'\',\''+state2+'\')" style="'+btnStyle+';border-radius:7px;cursor:pointer;padding:4px 9px;font-size:11px;font-weight:700;white-space:nowrap;flex:none">'+btnTxt+'</button>'
       +'</div>';
-    // Para ítems ×cliente: checklist por cliente
+    // Para ítems ×cliente: checklist por cliente (alumnos si es fit, clientes si es ag/per)
     var cliRows="";
-    if(item.type==="por-cliente"&&activeClients.length){
-      var entregados=activeClients.filter(function(c){return xcliDone[lbl+"||"+c.id];}).length;
-      cliRows='<div style="background:rgba(59,130,246,.05);border:1px solid rgba(59,130,246,.15);border-radius:10px;padding:10px 12px;margin-bottom:10px">'
-        +'<div style="font-size:10px;font-weight:700;opacity:.45;text-transform:uppercase;letter-spacing:.06em;margin-bottom:8px">Entrega por cliente — '+entregados+'/'+activeClients.length+'</div>'
-        +activeClients.map(function(c){
-          var k=lbl+"||"+c.id;var done=!!xcliDone[k];
-          return '<div style="display:flex;align-items:center;gap:8px;padding:6px 0;border-bottom:1px solid rgba(255,255,255,.04)">'
-            +'<div onclick="xcliToggle(\''+lbl.replace(/'/g,"\\'")+'\',\''+c.id+'\')" style="width:18px;height:18px;border-radius:5px;border:2px solid '+(done?"#34D399":"rgba(59,130,246,.4)")+';background:'+(done?"#34D399":"transparent")+';cursor:pointer;display:flex;align-items:center;justify-content:center;flex-shrink:0;transition:all .15s">'
-            +(done?'<svg width="10" height="10" viewBox="0 0 10 10"><polyline points="1.5,5 4,7.5 8.5,2" stroke="#fff" stroke-width="1.8" fill="none"/></svg>':'')
-            +'</div>'
-            +'<span style="flex:1;font-size:12px;font-weight:600;text-decoration:'+(done?"line-through":"none")+';opacity:'+(done?.5:1)+'">'+c.name+'</span>'
-            +(item.val>0?'<span style="font-family:Rajdhani,sans-serif;font-size:12px;font-weight:700;color:'+(done?"#34D399":"rgba(59,130,246,.7)")+'">'+fmtMoney(item.val)+'</span>':'')
-            +'<span style="font-size:9px;font-weight:700;padding:2px 6px;border-radius:4px;background:'+(done?"rgba(52,211,153,.15)":"rgba(248,113,113,.15)")+';color:'+(done?"#34D399":"var(--danger)")+'">'+( done?"✓ Listo":"Falta")+'</span>'
-            +'</div>';
-        }).join("")
-        +'</div>';
+    if(item.type==="por-cliente"){
+      var cliList=item._src==="fit"
+        ?(state.students||[]).filter(function(s){return s.payStatus!=="Inactivo";}).map(function(s){return{id:s.id,name:s.name};})
+        :activeClients.map(function(c){return{id:c.id,name:c.name};});
+      if(cliList.length){
+        var entregados=cliList.filter(function(c){return xcliDone[lbl+"||"+c.id];}).length;
+        cliRows='<div style="background:rgba(59,130,246,.05);border:1px solid rgba(59,130,246,.15);border-radius:10px;padding:10px 12px;margin-bottom:10px">'
+          +'<div style="font-size:10px;font-weight:700;opacity:.45;text-transform:uppercase;letter-spacing:.06em;margin-bottom:8px">Entrega — '+entregados+'/'+cliList.length+'</div>'
+          +cliList.map(function(c){
+            var k=lbl+"||"+c.id;var done=!!xcliDone[k];
+            return '<div style="display:flex;align-items:center;gap:8px;padding:6px 0;border-bottom:1px solid rgba(255,255,255,.04)">'
+              +'<div onclick="xcliToggle(\''+lbl.replace(/'/g,"\\'")+'\',\''+c.id+'\')" style="width:18px;height:18px;border-radius:5px;border:2px solid '+(done?"#34D399":"rgba(59,130,246,.4)")+';background:'+(done?"#34D399":"transparent")+';cursor:pointer;display:flex;align-items:center;justify-content:center;flex-shrink:0;transition:all .15s">'
+              +(done?'<svg width="10" height="10" viewBox="0 0 10 10"><polyline points="1.5,5 4,7.5 8.5,2" stroke="#fff" stroke-width="1.8" fill="none"/></svg>':'')
+              +'</div>'
+              +'<span style="flex:1;font-size:12px;font-weight:600;text-decoration:'+(done?"line-through":"none")+';opacity:'+(done?.5:1)+'">'+c.name+'</span>'
+              +(item.val>0?'<span style="font-family:Rajdhani,sans-serif;font-size:12px;font-weight:700;color:'+(done?"#34D399":"rgba(59,130,246,.7)")+'">'+fmtMoney(Number(item.val))+'</span>':'')
+              +'<span style="font-size:9px;font-weight:700;padding:2px 6px;border-radius:4px;background:'+(done?"rgba(52,211,153,.15)":"rgba(248,113,113,.15)")+';color:'+(done?"#34D399":"var(--danger)")+'">'+( done?"✓ Listo":"Falta")+'</span>'
+              +'</div>';
+          }).join("")
+          +'</div>';
+      }
     }
     return mainRow+cliRows;
   }).join("");
 
   // Totales mensuales
-  var cashPaid=order.reduce(function(s,l){return s+(paid[l]==="cash"&&byLbl[l]?getExpVal(byLbl[l]):0);},0);
-  var creditPaid=order.reduce(function(s,l){return s+(paid[l]==="credits"&&byLbl[l]?getExpVal(byLbl[l]):0);},0);
-  var pend=order.reduce(function(s,l){return s+(!paid[l]&&byLbl[l]?getExpVal(byLbl[l]):0);},0);
-  var totalCredits=order.reduce(function(s,l){return s+(paid[l]==="credits"&&byLbl[l]?Math.ceil(getExpVal(byLbl[l])/sesPrice)*10:0);},0);
+  var cashPaid=order.reduce(function(s,l){return s+(paid[l]==="cash"&&byLbl[l]?getExpVal(byLbl[l],byLbl[l]._src):0);},0);
+  var creditPaid=order.reduce(function(s,l){return s+(paid[l]==="credits"&&byLbl[l]?getExpVal(byLbl[l],byLbl[l]._src):0);},0);
+  var pend=order.reduce(function(s,l){return s+(!paid[l]&&byLbl[l]?getExpVal(byLbl[l],byLbl[l]._src):0);},0);
+  var totalCredits=order.reduce(function(s,l){return s+(paid[l]==="credits"&&byLbl[l]?Math.ceil(getExpVal(byLbl[l],byLbl[l]._src)/sesPrice)*10:0);},0);
   var summaryHtml='<div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:6px;margin-top:12px">'
     +'<div style="padding:9px;background:rgba(52,211,153,.07);border-radius:9px;border:1px solid rgba(52,211,153,.18);text-align:center"><div style="font-size:9px;opacity:.55;margin-bottom:2px">✓ Efectivo</div><div style="font-family:Rajdhani,sans-serif;font-weight:700;font-size:14px;color:#34D399">'+fmtMoney(cashPaid)+'</div></div>'
     +'<div style="padding:9px;background:rgba(168,85,247,.07);border-radius:9px;border:1px solid rgba(168,85,247,.18);text-align:center"><div style="font-size:9px;opacity:.55;margin-bottom:2px">💳 Créditos</div><div style="font-family:Rajdhani,sans-serif;font-weight:700;font-size:14px;color:#A855F7">'+totalCredits+' cr</div></div>'
@@ -1767,7 +1795,7 @@ function renderPayOrder(){
     +'</div>';
 
   // Progreso mensualidad
-  var totalMensual=expMonthly(state.perExp)+expMonthly(state.fitExp)+expMonthly(state.agExp);
+  var totalMensual=expMonthly(state.perExp,"per")+expMonthly(state.fitExp,"fit")+expMonthly(state.agExp,"ag");
   var paidMensual=cashPaid+creditPaid;
   var pct=totalMensual>0?Math.min(100,Math.round(paidMensual/totalMensual*100)):0;
   var barColor=pct>=100?"#34D399":pct>=60?"#FBBF24":"#7C6AEC";
@@ -1887,18 +1915,21 @@ function avgRevenue(rev){
   return nonZero.length?Math.round(nonZero.reduce(function(s,v){return s+Number(v);},0)/nonZero.length):0;
 }
 function renderPerExp(){
-  var allItems=state.perExp.concat(state.fitExp).concat(state.agExp).filter(function(i){return i.val>0;});
   var nc2=activeClientsCount();
 
   // Separar en 3 grupos
+  var allItems=state.perExp.map(function(i){return Object.assign({},i,{_src:"per"});})
+    .concat(state.fitExp.map(function(i){return Object.assign({},i,{_src:"fit"});}))
+    .concat(state.agExp.map(function(i){return Object.assign({},i,{_src:"ag"});}))
+    .filter(function(i){return i.val>0;});
   var mensuales=allItems.filter(function(i){return i.type==="mensual"||i.type==="por-cliente";});
   var membs=allItems.filter(function(i){return i.type==="membresia";});
   var unicos=allItems.filter(function(i){return i.type==="unico";});
 
   function row(i,color){
     color=color||"var(--danger)";
-    var eff=getExpVal(i);
-    var detail=i.type==="por-cliente"?'<span style="font-size:10px;opacity:.4;margin-left:4px">'+fmtMoney(i.val)+'×'+nc2+'</span>':'';
+    var eff=getExpVal(i,i._src);
+    var detail=i.type==="por-cliente"?'<span style="font-size:10px;opacity:.4;margin-left:4px">'+fmtMoney(i.val)+'×'+(i._src==="fit"?activeStudentsCount():nc2)+'</span>':'';
     return '<div style="display:flex;justify-content:space-between;align-items:center;padding:9px 11px;background:var(--surf);border-radius:9px;margin-bottom:6px">'
       +'<span style="font-size:13px;font-weight:600">'+i.lbl+detail+'</span>'
       +'<span style="font-family:Rajdhani,sans-serif;font-weight:700;font-size:15px;color:'+color+'">'+fmtMoney(eff)+'</span>'
@@ -1916,9 +1947,9 @@ function renderPerExp(){
     return fns.map(function(f){return'<button class="btn-sm" onclick="'+f.fn+'" style="font-size:10px;margin-left:3px">'+f.lbl+'</button>';}).join("");
   }
 
-  var totalMensual=mensuales.reduce(function(s,i){return s+getExpVal(i);},0);
-  var totalMemb=membs.reduce(function(s,i){return s+getExpVal(i);},0);
-  var totalUnico=unicos.reduce(function(s,i){return s+getExpVal(i);},0);
+  var totalMensual=mensuales.reduce(function(s,i){return s+getExpVal(i,i._src);},0);
+  var totalMemb=membs.reduce(function(s,i){return s+getExpVal(i,i._src);},0);
+  var totalUnico=unicos.reduce(function(s,i){return s+getExpVal(i,i._src);},0);
   var grandTotal=totalMensual+totalMemb+totalUnico;
 
   var html="";
@@ -1980,7 +2011,7 @@ function renderPerExp(){
 
 function renderPerStats(){
   var inc=(Number(state.perInc.fit)||0)+(Number(state.perInc.agency)||0);
-  var exp=expMonthly(state.perExp)+expMonthly(state.agExp)+expMonthly(state.fitExp);
+  var exp=expMonthly(state.perExp,"per")+expMonthly(state.agExp,"ag")+expMonthly(state.fitExp,"fit");
   var bal=inc-exp;
   var lastSav=state.savings.vals&&state.savings.vals.length?Number(state.savings.vals[state.savings.vals.length-1])||0:0;
   el("per-st-inc").textContent=inc>0?fmtMoney(inc):"$0";
@@ -3809,7 +3840,7 @@ function renderFitFinSummary(){
   var fr=state.fitRev||{vals:[0,0,0,0,0,0]};
   var lastVal=0;for(var i=fr.vals.length-1;i>=0;i--){if(fr.vals[i]>0){lastVal=fr.vals[i];break;}}
   var inc=lastVal||Number(state.perInc&&state.perInc.fit)||0;
-  var totalExp=expMonthly(state.fitExp);
+  var totalExp=expMonthly(state.fitExp,"fit");
   var net=inc-totalExp;
   var html='<div style="display:flex;flex-direction:column;gap:10px;margin-top:4px">'
     +'<div style="display:flex;justify-content:space-between;align-items:center;padding:14px;background:var(--green-d);border-radius:10px;border:1px solid rgba(52,211,153,.2)"><span style="font-size:13px;font-weight:600;color:var(--green)">Ingresos mes</span><span style="font-family:Rajdhani,sans-serif;font-weight:700;font-size:22px;color:var(--green)">'+fmtMoney(inc)+'</span></div>'
@@ -3827,7 +3858,7 @@ function renderFitExpList(){
     return'<span style="font-size:9px;background:rgba(52,211,153,.15);color:#34D399;border-radius:4px;padding:2px 5px;font-weight:700;margin-left:5px">/mes</span>';
   }
   var rows=items.filter(function(i){return i.val>0;}).map(function(i){
-    return '<div style="display:flex;justify-content:space-between;align-items:center;padding:10px 11px;background:var(--surf);border-radius:9px;margin-bottom:6px"><span style="font-size:13px;font-weight:600">'+i.lbl+badge(i.type)+'</span><span style="font-family:Rajdhani,sans-serif;font-weight:700;font-size:15px;color:var(--danger)">'+fmtMoney(getExpVal(i))+'</span></div>';
+    return '<div style="display:flex;justify-content:space-between;align-items:center;padding:10px 11px;background:var(--surf);border-radius:9px;margin-bottom:6px"><span style="font-size:13px;font-weight:600">'+i.lbl+badge(i.type)+'</span><span style="font-family:Rajdhani,sans-serif;font-weight:700;font-size:15px;color:var(--danger)">'+fmtMoney(getExpVal(i,"fit"))+'</span></div>';
   }).join("");
   var html;
   if(!rows){html='<div class="empty-st"><div class="ico">&#128184;</div><p>Sin gastos registrados</p><button class="btn-sm" onclick="editFitExp()">+ Agregar</button></div>';}
@@ -3844,7 +3875,7 @@ function renderFitExpList(){
 // AGENCIA FIN SUMMARY
 function renderAgFinSummary(){
   var billing=state.clients.filter(function(c){return c.status==="Activo";}).reduce(function(s,c){return s+(Number(c.monthly)||0);},0);
-  var totalExp=expMonthly(state.agExp);
+  var totalExp=expMonthly(state.agExp,"ag");
   var net=billing-totalExp;
   var html='<div style="display:flex;flex-direction:column;gap:10px;margin-top:4px">'+
     '<div style="display:flex;justify-content:space-between;align-items:center;padding:14px;background:var(--green-d);border-radius:10px;border:1px solid rgba(52,211,153,.2)"><span style="font-size:13px;font-weight:600;color:var(--green)">Facturacion bruta</span><span style="font-family:Rajdhani,sans-serif;font-weight:700;font-size:22px;color:var(--green)">'+fmtMoney(billing)+'</span></div>'+
@@ -3904,7 +3935,7 @@ function initCharts(app,view){
   }
   if(app==="fit"&&view==="finanzas"){
     var fr2=state.fitRev||{months:["Ene","Feb","Mar","Abr","May","Jun"],vals:[0,0,0,0,0,0]};
-    var fitExpSum=expMonthly(state.fitExp);
+    var fitExpSum=expMonthly(state.fitExp,"fit");
     var expData2=fr2.vals?fr2.vals.map(function(){return fitExpSum;}):[];
     lineA("fit-ivg",fr2.months||[],
       [{label:"Ingresos",data:fr2.vals||[],color:"#34D399",f0:"rgba(52,211,153,.4)",f1:"rgba(52,211,153,.02)"},
@@ -3914,7 +3945,7 @@ function initCharts(app,view){
   if(app==="fit"&&view==="gastos"){
     renderFitExpList();
     var expLabels2=state.fitExp.map(function(i){return i.lbl;});
-    var expVals4=state.fitExp.map(function(i){return getExpVal(i)||0;});
+    var expVals4=state.fitExp.map(function(i){return getExpVal(i,"fit")||0;});
     if(expVals4.some(function(v){return v>0;}))donutC("fit-gastos-chart",expLabels2,expVals4,["#A855F7","#7C3AED","#6D28D9","#5B21B6","#4C1D95","#EC4899"]);
     else dc("fit-gastos-chart");
   }
@@ -3931,7 +3962,7 @@ function initCharts(app,view){
     }
     if(view==="finanzas"){
       var ar2=state.agRev;
-      var expArr=ar2.vals?ar2.vals.map(function(){return expMonthly(state.agExp);}):[];
+      var expArr=ar2.vals?ar2.vals.map(function(){return expMonthly(state.agExp,"ag");}):[];
       lineA("ag-ivg",ar2.months||[],
         [{label:"Ingresos",data:ar2.vals||[],color:"#34D399",f0:"rgba(52,211,153,.4)",f1:"rgba(52,211,153,.02)"},
          {label:"Gastos",data:expArr,color:"#EF4444",f0:"rgba(239,68,68,.4)",f1:"rgba(239,68,68,.02)"}],agTC);
@@ -3948,7 +3979,7 @@ function initCharts(app,view){
     if(!view||view==="dash"){
       var sr=state.savings;
       var perInc2=(Number(state.perInc.fit)||0)+(Number(state.perInc.agency)||0);
-      var perExpSum=expMonthly(state.perExp)+expMonthly(state.fitExp)+expMonthly(state.agExp);
+      var perExpSum=expMonthly(state.perExp,"per")+expMonthly(state.fitExp,"fit")+expMonthly(state.agExp,"ag");
       var incData=sr.months?sr.months.map(function(){return perInc2;}):[];
       var expData=sr.months?sr.months.map(function(){return perExpSum;}):[];
       lineA("per-ivg",sr.months||[],
