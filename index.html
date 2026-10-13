@@ -1568,6 +1568,10 @@ function renderFitAlerts(){
       items.push('<div class="ai"><div class="aico" style="background:rgba(168,85,247,.12);font-size:18px">&#127874;</div><div><div class="aim">Cumpleanos de '+s.name+' en '+diff+' dia'+(diff===1?"":"s")+'</div><div class="ais">'+d+'/'+(m<10?"0"+m:m)+'</div></div></div>');
     }
   });
+  // Alertas de pago próximo (todos los apps)
+  items=items.concat(getPaymentAlerts(state.fitExp,"fit"));
+  items=items.concat(getPaymentAlerts(state.agExp,"ag"));
+  items=items.concat(getPaymentAlerts(state.perExp,"per"));
   var html=items.length?items.join(""):'<div class="empty-st"><div class="ico">&#9989;</div><p>Sin alertas pendientes</p></div>';
   el("fit-alerts").innerHTML=html;
 }
@@ -1725,50 +1729,167 @@ function openEditAgTool(id){
     lsSave("agency-tools",state.agTools);renderAgExp();
   });
 }
-// PERFILES DE GASTOS — metadata por ítem (desc, nextPay, cuotas, notas)
+// PERFILES DE GASTOS
 function expProfileKey(lbl,src){return"exp-profile||"+(src||"")+"||"+lbl;}
 function getExpProfile(lbl,src){return lsGet(expProfileKey(lbl,src),{});}
 function saveExpProfile(lbl,src,data){lsSave(expProfileKey(lbl,src),data);}
-function openExpProfile(lbl,src,amount){
+function expMonthlyCost(val,freq){if(freq==="Anual")return val/12;if(freq==="Trimestral")return val/3;return val;}
+function calcMonthsToTarget(dateStr){
+  if(!dateStr)return 0;
+  var p=dateStr.split("-");if(p.length!==2)return 0;
+  var t=new Date(parseInt(p[0]),parseInt(p[1])-1,1);var n=new Date();
+  var m=(t.getFullYear()-n.getFullYear())*12+(t.getMonth()-n.getMonth());
+  return Math.max(m,0);
+}
+function daysUntilPayDay(day){
+  if(!day)return -1;
+  var n=new Date();var d=parseInt(day);
+  var diff=d-n.getDate();
+  if(diff<0)diff+=30;
+  return diff;
+}
+function getPaymentAlerts(expArr,src){
+  var alerts=[];
+  expArr.forEach(function(i){
+    if(i.type==="unico")return;
+    var p=getExpProfile(i.lbl,src);
+    if(!p.payDay)return;
+    var d=daysUntilPayDay(p.payDay);
+    if(d>=0&&d<=3){
+      var color=src==="fit"?"#A855F7":src==="ag"?"#EF4444":"#7C6AEC";
+      var msg=d===0?"hoy":"en "+d+" día"+(d===1?"":"s");
+      alerts.push('<div class="ai" style="border-left:2px solid '+color+'"><div class="aico" style="background:rgba('+( src==="fit"?"168,85,247":src==="ag"?"239,68,68":"124,106,236")+',.15);font-size:18px">📅</div><div><div class="aim" style="color:'+color+'">Pago de '+i.lbl+' — '+msg+'</div><div class="ais">'+fmtMoney(getExpVal(i,src))+' · '+( src==="ag"?"Agencia":src==="fit"?"FitCoach":"Personal")+'</div></div></div>');
+    }
+  });
+  return alerts;
+}
+function openExpProfile(lbl,src,amount,type){
   var p=getExpProfile(lbl,src);
-  var color=src==="fit"?"#A855F7":src==="ag"?"#EF4444":"#7C6AEC";
-  var html='<div style="display:flex;align-items:center;gap:8px;margin-bottom:14px;padding-bottom:12px;border-bottom:1px solid var(--border)">'
-    +'<div style="width:36px;height:36px;border-radius:10px;background:rgba('+( src==="fit"?"168,85,247":src==="ag"?"239,68,68":"124,106,236")+', .15);display:flex;align-items:center;justify-content:center;font-size:18px">💳</div>'
-    +'<div><div style="font-size:15px;font-weight:700">'+lbl+'</div>'
-    +(amount?'<div style="font-size:12px;opacity:.5">'+fmtMoney(amount)+'/mes</div>':'')
-    +'</div></div>'
-    +'<div class="form-g"><label>Descripción</label><input id="ep-desc" class="fi" placeholder="¿Para qué se usa?" value="'+(p.desc||"").replace(/"/g,"&quot;")+'"></div>'
+  var isObj=type==="unico";
+  var srcRgb=src==="fit"?"168,85,247":src==="ag"?"239,68,68":"124,106,236";
+  var srcColor=src==="fit"?"#A855F7":src==="ag"?"#EF4444":"#7C6AEC";
+  var srcLabel=src==="ag"?"Agencia":src==="fit"?"FitCoach":"Personal";
+  var statusOpts=["Activo","Por renovar","Pausado","Cancelar pronto"];
+  var statusCol={Activo:"#34D399","Por renovar":"#FBBF24",Pausado:"rgba(255,255,255,.35)","Cancelar pronto":"#F87171"};
+  var impactOpts=["Esencial","Importante","Prescindible"];
+  var freqOpts=["Mensual","Anual","Trimestral"];
+  // Calcular equivalente mensual y cuota recomendada
+  var savedAmt=Number(p.savedAmount)||0;var targetAmt=Number(p.targetAmount)||0;
+  var pctDone=targetAmt>0?Math.round(savedAmt/targetAmt*100):0;
+  var months=calcMonthsToTarget(p.targetDate||"");
+  var recommended=months>0&&targetAmt>savedAmt?Math.ceil((targetAmt-savedAmt)/months):0;
+  var freq=p.freq||"Mensual";
+  var monthlyEquiv=expMonthlyCost(amount||0,freq);
+
+  var header='<div style="display:flex;align-items:center;gap:10px;margin-bottom:14px;padding-bottom:12px;border-bottom:1px solid var(--border)">'
+    +'<div style="width:40px;height:40px;border-radius:12px;background:rgba('+srcRgb+',.15);display:flex;align-items:center;justify-content:center;font-size:20px">'+(isObj?"🎯":"💳")+'</div>'
+    +'<div style="flex:1"><div style="font-size:15px;font-weight:700">'+lbl+'</div>'
+    +'<div style="font-size:11px;opacity:.45">'+srcLabel+(amount?' · '+fmtMoney(amount):'')+'</div></div>'
+    +(p.status?'<span style="font-size:10px;font-weight:700;padding:3px 8px;border-radius:6px;background:rgba(0,0,0,.2);color:'+(statusCol[p.status]||"#fff")+'">'+p.status+'</span>':'')
+    +'</div>';
+
+  var commonFields='<div class="form-g"><label>Descripción</label><input id="ep-desc" class="fi" placeholder="¿Para qué sirve?" value="'+(p.desc||"").replace(/"/g,"&quot;")+'"></div>'
     +'<div class="form-r">'
-    +'<div class="form-g"><label>Próximo pago</label><input id="ep-next" class="fi" placeholder="1 Nov 2026" value="'+(p.nextPay||"")+'"></div>'
-    +'<div class="form-g"><label>Día de pago</label><input id="ep-day" type="number" class="fi" placeholder="día del mes" min="1" max="31" value="'+(p.payDay||"")+'"></div>'
+    +'<div class="form-g"><label>Estado</label><select id="ep-status" class="fi">'
+    +statusOpts.map(function(s){return'<option value="'+s+'"'+(p.status===s?" selected":"")+'>'+s+'</option>';}).join("")
+    +'</select></div>'
+    +'<div class="form-g"><label>Impacto</label><select id="ep-impact" class="fi">'
+    +impactOpts.map(function(s){return'<option value="'+s+'"'+((p.impact||"Importante")===s?" selected":"")+'>'+s+'</option>';}).join("")
+    +'</select></div>'
+    +'</div>';
+
+  var subFields='<div style="margin:10px 0 6px;font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.08em;opacity:.4">Suscripción</div>'
+    +'<div class="form-r">'
+    +'<div class="form-g"><label>Plan actual</label><input id="ep-cur" class="fi" placeholder="Pro, Basic..." value="'+(p.currentPlan||"").replace(/"/g,"&quot;")+'"></div>'
+    +'<div class="form-g"><label>🚀 Próxima mejora</label><input id="ep-next" class="fi" placeholder="Max Fable, Pro..." value="'+(p.nextLevel||"").replace(/"/g,"&quot;")+'"></div>'
     +'</div>'
     +'<div class="form-r">'
-    +'<div class="form-g"><label>Cuotas pagadas</label><input id="ep-paid" type="number" class="fi" placeholder="0" min="0" value="'+(p.installPaid||0)+'"></div>'
-    +'<div class="form-g"><label>Total cuotas</label><input id="ep-total" type="number" class="fi" placeholder="12" min="0" value="'+(p.installTotal||"")+'"></div>'
+    +'<div class="form-g"><label>Frecuencia</label><select id="ep-freq" class="fi" onchange="var v=parseFloat(document.getElementById(\'ep-amount-val\').textContent)||0;var f=this.value;var eq=f===\'Anual\'?v/12:f===\'Trimestral\'?v/3:v;document.getElementById(\'ep-equiv\').textContent=eq>0?\'≈ \'+\'$\'+Math.round(eq).toLocaleString()+\'/mes\':\'\'">'
+    +freqOpts.map(function(s){return'<option value="'+s+'"'+(freq===s?" selected":"")+'>'+s+'</option>';}).join("")
+    +'</select></div>'
+    +'<div class="form-g"><label>Día de pago</label><input id="ep-day" type="number" class="fi" placeholder="1-31" min="1" max="31" value="'+(p.payDay||"")+'"></div>'
     +'</div>'
-    +'<div class="form-g"><label>Notas</label><textarea id="ep-notes" class="fi" rows="2" placeholder="Detalles adicionales..." style="resize:vertical">'+(p.notes||"")+'</textarea></div>';
+    +(freq!=="Mensual"&&monthlyEquiv>0?'<div style="font-size:11px;color:'+srcColor+';margin-bottom:8px" id="ep-equiv">≈ '+fmtMoney(Math.round(monthlyEquiv))+'/mes</div>':'<div id="ep-equiv" style="font-size:11px;color:'+srcColor+';margin-bottom:8px"></div>')
+    +'<span id="ep-amount-val" style="display:none">'+amount+'</span>';
+
+  var objFields='<div style="margin:10px 0 6px;font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.08em;opacity:.4">Objetivo de inversión</div>'
+    +'<div class="form-r">'
+    +'<div class="form-g"><label>Valor objetivo ($)</label><input id="ep-target" type="number" class="fi" placeholder="2000" value="'+(p.targetAmount||"")+'"></div>'
+    +'<div class="form-g"><label>Ahorrado hasta hoy ($)</label><input id="ep-saved" type="number" class="fi" placeholder="0" value="'+(p.savedAmount||"")+'"></div>'
+    +'</div>'
+    +(targetAmt>0?'<div style="margin-bottom:10px"><div style="display:flex;justify-content:space-between;font-size:11px;opacity:.6;margin-bottom:4px"><span>Progreso</span><span>'+pctDone+'%</span></div><div style="height:6px;background:rgba(255,255,255,.08);border-radius:3px"><div style="height:100%;width:'+Math.min(pctDone,100)+'%;background:'+srcColor+';border-radius:3px;transition:width .3s"></div></div></div>':'')
+    +'<div class="form-r">'
+    +'<div class="form-g"><label>Fecha meta (YYYY-MM)</label><input id="ep-tdate" class="fi" placeholder="2027-03" value="'+(p.targetDate||"")+'"></div>'
+    +'<div class="form-g"><label>% a apartar/mes</label><input id="ep-savepct" type="number" class="fi" placeholder="10" min="0" max="100" value="'+(p.savePct||"")+'"></div>'
+    +'</div>'
+    +(recommended>0?'<div style="font-size:11px;color:'+srcColor+';margin-bottom:8px">💡 Necesitas apartar ~'+fmtMoney(recommended)+'/mes para llegar a tiempo</div>':'')
+    +'<div class="form-r">'
+    +'<div class="form-g"><label>Cuotas pagadas</label><input id="ep-paid" type="number" class="fi" placeholder="0" value="'+(p.installPaid||"")+'"></div>'
+    +'<div class="form-g"><label>Total cuotas</label><input id="ep-total" type="number" class="fi" placeholder="12" value="'+(p.installTotal||"")+'"></div>'
+    +'</div>'
+    +'<div class="form-g"><label>💡 Fuente de ahorro</label><select id="ep-source" class="fi">'
+    +'<option value="ag"'+(p.source==="ag"||!p.source?" selected":"")+'>Agencia</option>'
+    +'<option value="fit"'+(p.source==="fit"?" selected":"")+'>FitCoach</option>'
+    +'<option value="per"'+(p.source==="per"?" selected":"")+'>Personal</option>'
+    +'<option value="mix"'+(p.source==="mix"?" selected":"")+'>Mixto</option>'
+    +'</select></div>'
+    +'<div class="form-g"><label>🚀 Próxima mejora / versión</label><input id="ep-next2" class="fi" placeholder="RTX 4090, SSD 2TB..." value="'+(p.nextLevel||"").replace(/"/g,"&quot;")+'"></div>';
+
+  var notesField='<div class="form-g" style="margin-top:4px"><label>Notas</label><textarea id="ep-notes" class="fi" rows="2" placeholder="Detalles adicionales..." style="resize:vertical">'+(p.notes||"")+'</textarea></div>';
+
+  var html=header+commonFields+(isObj?objFields:subFields)+notesField;
+
   openModal("Perfil: "+lbl,html,function(){
-    var paid=parseInt((el("ep-paid")||{}).value)||0;
-    var total=parseInt((el("ep-total")||{}).value)||0;
-    saveExpProfile(lbl,src,{
+    var data={
       desc:(el("ep-desc")||{}).value.trim(),
-      nextPay:(el("ep-next")||{}).value.trim(),
-      payDay:parseInt((el("ep-day")||{}).value)||0,
-      installPaid:paid,
-      installTotal:total,
+      status:(el("ep-status")||{}).value||"Activo",
+      impact:(el("ep-impact")||{}).value||"Importante",
       notes:(el("ep-notes")||{}).value.trim()
-    });
-    if(src==="ag")renderAgExp();
-    else if(src==="fit")renderFitExpList();
+    };
+    if(isObj){
+      data.targetAmount=parseFloat((el("ep-target")||{}).value)||0;
+      data.savedAmount=parseFloat((el("ep-saved")||{}).value)||0;
+      data.targetDate=(el("ep-tdate")||{}).value.trim();
+      data.savePct=parseFloat((el("ep-savepct")||{}).value)||0;
+      data.installPaid=parseInt((el("ep-paid")||{}).value)||0;
+      data.installTotal=parseInt((el("ep-total")||{}).value)||0;
+      data.source=(el("ep-source")||{}).value||"ag";
+      data.nextLevel=(el("ep-next2")||{}).value.trim();
+    } else {
+      data.currentPlan=(el("ep-cur")||{}).value.trim();
+      data.nextLevel=(el("ep-next")||{}).value.trim();
+      data.freq=(el("ep-freq")||{}).value||"Mensual";
+      data.payDay=parseInt((el("ep-day")||{}).value)||0;
+    }
+    saveExpProfile(lbl,src,data);
+    if(src==="ag"){renderAgExp();renderAgStats();}
+    else if(src==="fit"){renderFitExpList();renderFitFinSummary();}
+    else{renderPerExp();}
+    if(typeof renderFitAlerts==="function")renderFitAlerts();
   });
 }
-function expProfileBadge(lbl,src){
-  var p=getExpProfile(lbl,src);
-  var parts=[];
-  if(p.nextPay)parts.push(p.nextPay);
-  if(p.installPaid&&p.installTotal)parts.push(p.installPaid+'/'+p.installTotal+' cuotas');
-  else if(p.installPaid)parts.push(p.installPaid+' cuotas');
-  return parts.length?'<div style="font-size:10px;opacity:.45;margin-top:2px">'+parts.join(' · ')+'</div>':'';
+var _STATUS_COLOR={Activo:"#34D399","Por renovar":"#FBBF24",Pausado:"rgba(255,255,255,.3)","Cancelar pronto":"#F87171"};
+var _IMPACT_COLOR={Esencial:"#34D399",Importante:"#FBBF24",Prescindible:"rgba(255,255,255,.3)"};
+function expProfileBadge(lbl,src,type){
+  var p=getExpProfile(lbl,src);if(!p||!Object.keys(p).length)return'';
+  var parts=[];var extra='';
+  if(type==="unico"){
+    var tgt=Number(p.targetAmount)||0;var sav=Number(p.savedAmount)||0;
+    var pct=tgt>0?Math.round(sav/tgt*100):0;
+    if(tgt>0){
+      var srcColor=src==="fit"?"#A855F7":src==="ag"?"#EF4444":"#7C6AEC";
+      extra='<div style="margin-top:4px"><div style="height:4px;background:rgba(255,255,255,.08);border-radius:2px;width:120px"><div style="height:100%;width:'+Math.min(pct,100)+'%;background:'+srcColor+';border-radius:2px"></div></div>'
+        +'<div style="font-size:10px;opacity:.45;margin-top:2px">'+fmtMoney(sav)+' / '+fmtMoney(tgt)+' ('+pct+'%)'+(p.installPaid&&p.installTotal?' · '+p.installPaid+'/'+p.installTotal+' cuotas':'')+'</div></div>';
+    }
+  } else {
+    if(p.payDay){var d=daysUntilPayDay(p.payDay);parts.push(d===0?'⚡ Hoy':d<=3?'📅 En '+d+' días':'Día '+p.payDay);}
+    if(p.currentPlan)parts.push(p.currentPlan);
+    if(p.nextLevel)parts.push('→ '+p.nextLevel);
+  }
+  var statusBadge=p.status&&p.status!=="Activo"?'<span style="font-size:9px;font-weight:700;padding:1px 5px;border-radius:4px;background:rgba(0,0,0,.2);color:'+(_STATUS_COLOR[p.status]||"#fff")+'">'+p.status+'</span> ':'';
+  var impactBadge=p.impact&&p.impact!=="Importante"?'<span style="font-size:9px;font-weight:700;padding:1px 5px;border-radius:4px;background:rgba(0,0,0,.2);color:'+(_IMPACT_COLOR[p.impact]||"#fff")+'">'+p.impact+'</span> ':'';
+  var line=(statusBadge||impactBadge||parts.length)?'<div style="font-size:10px;opacity:.55;margin-top:3px">'+statusBadge+impactBadge+parts.join(' · ')+'</div>':'';
+  return line+extra;
 }
 function renderAgExp(){
   var items=state.agExp;
@@ -1784,9 +1905,9 @@ function renderAgExp(){
     var detail=i.type==="por-cliente"?'<span style="font-size:10px;opacity:.45;margin-left:5px">'+fmtMoney(i.val)+'×'+nc+'</span>':'';
     var lbl=i.lbl.replace(/'/g,"\\'");
     return '<div style="background:var(--surf);border-radius:9px;margin-bottom:6px;overflow:hidden">'
-      +'<div style="display:flex;justify-content:space-between;align-items:flex-start;padding:10px 11px;cursor:pointer" onclick="openExpProfile(\''+lbl+'\',\'ag\','+eff+')">'
+      +'<div style="display:flex;justify-content:space-between;align-items:flex-start;padding:10px 11px;cursor:pointer" onclick="openExpProfile(\''+lbl+'\',\'ag\','+eff+',\''+i.type+'\')">'
       +'<div><span style="font-size:13px;font-weight:600">'+i.lbl+badge(i.type)+detail+'</span>'
-      +expProfileBadge(i.lbl,"ag")
+      +expProfileBadge(i.lbl,"ag",i.type)
       +'</div>'
       +'<span style="font-family:Rajdhani,sans-serif;font-weight:700;font-size:15px;color:var(--danger);flex-shrink:0;margin-left:8px">'+fmtMoney(eff)+'</span></div></div>';
   }).join("");
@@ -2073,10 +2194,13 @@ function renderPerExp(){
     color=color||"var(--danger)";
     var eff=getExpVal(i,i._src);
     var detail=i.type==="por-cliente"?'<span style="font-size:10px;opacity:.4;margin-left:4px">'+fmtMoney(i.val)+'×'+(i._src==="fit"?activeStudentsCount():nc2)+'</span>':'';
-    return '<div style="display:flex;justify-content:space-between;align-items:center;padding:9px 11px;background:var(--surf);border-radius:9px;margin-bottom:6px">'
-      +'<span style="font-size:13px;font-weight:600">'+i.lbl+detail+'</span>'
-      +'<span style="font-family:Rajdhani,sans-serif;font-weight:700;font-size:15px;color:'+color+'">'+fmtMoney(eff)+'</span>'
-      +'</div>';
+    var lbl2=i.lbl.replace(/'/g,"\\'");
+    return '<div style="background:var(--surf);border-radius:9px;margin-bottom:6px;overflow:hidden">'
+      +'<div style="display:flex;justify-content:space-between;align-items:flex-start;padding:9px 11px;cursor:pointer" onclick="openExpProfile(\''+lbl2+'\',\''+i._src+'\','+eff+',\''+i.type+'\')">'
+      +'<div><span style="font-size:13px;font-weight:600">'+i.lbl+detail+'</span>'
+      +expProfileBadge(i.lbl,i._src,i.type)+'</div>'
+      +'<span style="font-family:Rajdhani,sans-serif;font-weight:700;font-size:15px;color:'+color+';flex-shrink:0;margin-left:8px">'+fmtMoney(eff)+'</span>'
+      +'</div></div>';
   }
   function zoneHdr(emoji,title,total,color,btns){
     return '<div style="display:flex;align-items:center;gap:8px;margin:16px 0 8px">'
@@ -4004,9 +4128,9 @@ function renderFitExpList(){
     var eff=getExpVal(i,"fit");
     var lbl=i.lbl.replace(/'/g,"\\'");
     return '<div style="background:var(--surf);border-radius:9px;margin-bottom:6px;overflow:hidden">'
-      +'<div style="display:flex;justify-content:space-between;align-items:flex-start;padding:10px 11px;cursor:pointer" onclick="openExpProfile(\''+lbl+'\',\'fit\','+eff+')">'
+      +'<div style="display:flex;justify-content:space-between;align-items:flex-start;padding:10px 11px;cursor:pointer" onclick="openExpProfile(\''+lbl+'\',\'fit\','+eff+',\''+i.type+'\')">'
       +'<div><span style="font-size:13px;font-weight:600">'+i.lbl+badge(i.type)+'</span>'
-      +expProfileBadge(i.lbl,"fit")
+      +expProfileBadge(i.lbl,"fit",i.type)
       +'</div>'
       +'<span style="font-family:Rajdhani,sans-serif;font-weight:700;font-size:15px;color:var(--danger);flex-shrink:0;margin-left:8px">'+fmtMoney(eff)+'</span></div></div>';
   }).join("");
