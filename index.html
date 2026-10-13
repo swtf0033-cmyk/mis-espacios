@@ -1414,6 +1414,7 @@ function loadState(){
   function migrateExp(raw,defs){if(Array.isArray(raw))return raw;if(raw&&typeof raw==="object"){return defs.filter(function(d){return(Number(raw[d.k])||0)>0;}).map(function(d){return{lbl:d.l,val:Number(raw[d.k])||0};});}return[];}
   state.agExp=migrateExp(lsGet("settings/agency-expenses",null),[{k:"tools",l:"Herramientas digitales"},{k:"freelancers",l:"Freelancers fijos"},{k:"office",l:"Oficina / coworking"},{k:"ownAds",l:"Publicidad propia"},{k:"others",l:"Otros"}]);
   state.agKpis=lsGet("agency-kpis",[]);
+  state.agTools=lsGet("agency-tools",[]);
   state.fitExp=migrateExp(lsGet("settings/fit-expenses",null),[{k:"space",l:"Espacio / gimnasio"},{k:"equip",l:"Equipos"},{k:"platform",l:"Plataforma / software"},{k:"ads",l:"Publicidad coach"},{k:"others",l:"Otros"}]);
   state.perInc=lsGet("settings/personal-income",state.perInc);
   state.perExp=migrateExp(lsGet("settings/personal-expenses",null),[{k:"rent",l:"Renta / vivienda"},{k:"food",l:"Alimentacion"},{k:"transport",l:"Transporte"},{k:"subs",l:"Suscripciones"},{k:"health",l:"Salud / seguros"},{k:"entertain",l:"Entretenimiento"}]);
@@ -1429,7 +1430,7 @@ var state={
   winsFit:[],winsAgency:[],winsPersonal:[],lifeGoals:[],
   fitRev:{months:["Ene","Feb","Mar","Abr","May","Jun"],vals:[0,0,0,0,0,0]},
   agRev:{months:["Ene","Feb","Mar","Abr","May","Jun"],vals:[0,0,0,0,0,0]},
-  agExp:[],agKpis:[],
+  agExp:[],agKpis:[],agTools:[],
   fitExp:[],
   perInc:{fit:0,agency:0},
   perExp:[],
@@ -1669,9 +1670,109 @@ function renderAgStats(){
   el("ag-st-net").style.color=net>=0?"var(--green)":"var(--danger)";
 }
 
+// HERRAMIENTAS / MEJORAS AGENCIA
+function agToolToggle(id){
+  var t=state.agTools.find(function(x){return x.id===id;});
+  if(!t)return;
+  t.done=!t.done;
+  lsSave("agency-tools",state.agTools);
+  renderAgExp();
+}
+function deleteAgTool(id){
+  if(!confirm("Eliminar esta herramienta?"))return;
+  state.agTools=state.agTools.filter(function(x){return x.id!==id;});
+  lsSave("agency-tools",state.agTools);
+  renderAgExp();
+}
+function agToolForm(t){
+  t=t||{};
+  return '<div class="form-g"><label>Nombre</label><input id="at-name" class="fi" placeholder="Claude, APIMart, PC..." value="'+(t.name||"")+'"></div>'
+    +'<div class="form-r">'
+    +'<div class="form-g"><label>Tipo</label><select id="at-type" class="fi">'
+    +'<option value="sub"'+(t.type==="sub"||!t.type?" selected":"")+'>📦 Suscripción</option>'
+    +'<option value="hw"'+(t.type==="hw"?" selected":"")+'>🖥️ Equipo / Hardware</option>'
+    +'</select></div>'
+    +'<div class="form-g"><label>Costo mensual ($)</label><input id="at-cost" type="number" class="fi" placeholder="0" value="'+(t.cost||"")+'"></div>'
+    +'</div>'
+    +'<div class="form-r">'
+    +'<div class="form-g"><label>Nivel actual</label><input id="at-cur" class="fi" placeholder="Pro, Basic, i5 16GB..." value="'+(t.current||"")+'"></div>'
+    +'<div class="form-g"><label>🎯 Próxima mejora</label><input id="at-next" class="fi" placeholder="Max Fable, Xfield, 32GB..." value="'+(t.nextLevel||"")+'"></div>'
+    +'</div>'
+    +'<div class="form-r">'
+    +'<div class="form-g"><label>Último pago</label><input id="at-pay" class="fi" placeholder="Oct 2026" value="'+(t.lastPay||"")+'"></div>'
+    +'<div class="form-g"><label>Prioridad</label><select id="at-pri" class="fi">'
+    +'<option value="Alta"'+(t.priority==="Alta"?" selected":"")+'>🔴 Alta</option>'
+    +'<option value="Media"'+((!t.priority||t.priority==="Media")?" selected":"")+'>🟡 Media</option>'
+    +'<option value="Baja"'+(t.priority==="Baja"?" selected":"")+'>🟢 Baja</option>'
+    +'</select></div>'
+    +'</div>';
+}
+function getAgToolData(id){
+  return{id:id||Date.now().toString(36),name:(el("at-name")||{}).value.trim(),type:(el("at-type")||{}).value||"sub",cost:parseInt((el("at-cost")||{}).value)||0,current:(el("at-cur")||{}).value.trim(),nextLevel:(el("at-next")||{}).value.trim(),lastPay:(el("at-pay")||{}).value.trim(),priority:(el("at-pri")||{}).value||"Media",done:false};
+}
+function openAddAgTool(){
+  openModal("Agregar herramienta",agToolForm(null),function(){
+    var d=getAgToolData();if(!d.name)return;
+    state.agTools.push(d);lsSave("agency-tools",state.agTools);renderAgExp();
+  });
+}
+function openEditAgTool(id){
+  var t=state.agTools.find(function(x){return x.id===id;});if(!t)return;
+  openModal("Editar herramienta",agToolForm(t),function(){
+    var d=getAgToolData(id);if(!d.name)return;
+    var idx=state.agTools.findIndex(function(x){return x.id===id;});
+    if(idx>=0)state.agTools[idx]=Object.assign({},t,d,{done:t.done});
+    lsSave("agency-tools",state.agTools);renderAgExp();
+  });
+}
+// PERFILES DE GASTOS — metadata por ítem (desc, nextPay, cuotas, notas)
+function expProfileKey(lbl,src){return"exp-profile||"+(src||"")+"||"+lbl;}
+function getExpProfile(lbl,src){return lsGet(expProfileKey(lbl,src),{});}
+function saveExpProfile(lbl,src,data){lsSave(expProfileKey(lbl,src),data);}
+function openExpProfile(lbl,src,amount){
+  var p=getExpProfile(lbl,src);
+  var color=src==="fit"?"#A855F7":src==="ag"?"#EF4444":"#7C6AEC";
+  var html='<div style="display:flex;align-items:center;gap:8px;margin-bottom:14px;padding-bottom:12px;border-bottom:1px solid var(--border)">'
+    +'<div style="width:36px;height:36px;border-radius:10px;background:rgba('+( src==="fit"?"168,85,247":src==="ag"?"239,68,68":"124,106,236")+', .15);display:flex;align-items:center;justify-content:center;font-size:18px">💳</div>'
+    +'<div><div style="font-size:15px;font-weight:700">'+lbl+'</div>'
+    +(amount?'<div style="font-size:12px;opacity:.5">'+fmtMoney(amount)+'/mes</div>':'')
+    +'</div></div>'
+    +'<div class="form-g"><label>Descripción</label><input id="ep-desc" class="fi" placeholder="¿Para qué se usa?" value="'+(p.desc||"").replace(/"/g,"&quot;")+'"></div>'
+    +'<div class="form-r">'
+    +'<div class="form-g"><label>Próximo pago</label><input id="ep-next" class="fi" placeholder="1 Nov 2026" value="'+(p.nextPay||"")+'"></div>'
+    +'<div class="form-g"><label>Día de pago</label><input id="ep-day" type="number" class="fi" placeholder="día del mes" min="1" max="31" value="'+(p.payDay||"")+'"></div>'
+    +'</div>'
+    +'<div class="form-r">'
+    +'<div class="form-g"><label>Cuotas pagadas</label><input id="ep-paid" type="number" class="fi" placeholder="0" min="0" value="'+(p.installPaid||0)+'"></div>'
+    +'<div class="form-g"><label>Total cuotas</label><input id="ep-total" type="number" class="fi" placeholder="12" min="0" value="'+(p.installTotal||"")+'"></div>'
+    +'</div>'
+    +'<div class="form-g"><label>Notas</label><textarea id="ep-notes" class="fi" rows="2" placeholder="Detalles adicionales..." style="resize:vertical">'+(p.notes||"")+'</textarea></div>';
+  openModal("Perfil: "+lbl,html,function(){
+    var paid=parseInt((el("ep-paid")||{}).value)||0;
+    var total=parseInt((el("ep-total")||{}).value)||0;
+    saveExpProfile(lbl,src,{
+      desc:(el("ep-desc")||{}).value.trim(),
+      nextPay:(el("ep-next")||{}).value.trim(),
+      payDay:parseInt((el("ep-day")||{}).value)||0,
+      installPaid:paid,
+      installTotal:total,
+      notes:(el("ep-notes")||{}).value.trim()
+    });
+    if(src==="ag")renderAgExp();
+    else if(src==="fit")renderFitExpList();
+  });
+}
+function expProfileBadge(lbl,src){
+  var p=getExpProfile(lbl,src);
+  var parts=[];
+  if(p.nextPay)parts.push(p.nextPay);
+  if(p.installPaid&&p.installTotal)parts.push(p.installPaid+'/'+p.installTotal+' cuotas');
+  else if(p.installPaid)parts.push(p.installPaid+' cuotas');
+  return parts.length?'<div style="font-size:10px;opacity:.45;margin-top:2px">'+parts.join(' · ')+'</div>':'';
+}
 function renderAgExp(){
   var items=state.agExp;
-  var monthly=expMonthly(items);var once=expOnce(items);var total=monthly+once;
+  var monthly=expMonthly(items,"ag");var once=expOnce(items);var total=monthly+once;
   var nc=activeClientsCount();
   function badge(type){
     if(type==="unico")return'<span style="font-size:9px;background:rgba(245,158,11,.2);color:#F59E0B;border-radius:4px;padding:2px 5px;font-weight:700;margin-left:5px">ÚNICO</span>';
@@ -1681,7 +1782,13 @@ function renderAgExp(){
   var rows=items.filter(function(i){return i.val>0;}).map(function(i){
     var eff=getExpVal(i,"ag");
     var detail=i.type==="por-cliente"?'<span style="font-size:10px;opacity:.45;margin-left:5px">'+fmtMoney(i.val)+'×'+nc+'</span>':'';
-    return '<div style="display:flex;justify-content:space-between;align-items:center;padding:10px 11px;background:var(--surf);border-radius:9px;margin-bottom:6px"><span style="font-size:13px;font-weight:600">'+i.lbl+badge(i.type)+detail+'</span><span style="font-family:Rajdhani,sans-serif;font-weight:700;font-size:15px;color:var(--danger)">'+fmtMoney(eff)+'</span></div>';
+    var lbl=i.lbl.replace(/'/g,"\\'");
+    return '<div style="background:var(--surf);border-radius:9px;margin-bottom:6px;overflow:hidden">'
+      +'<div style="display:flex;justify-content:space-between;align-items:flex-start;padding:10px 11px;cursor:pointer" onclick="openExpProfile(\''+lbl+'\',\'ag\','+eff+')">'
+      +'<div><span style="font-size:13px;font-weight:600">'+i.lbl+badge(i.type)+detail+'</span>'
+      +expProfileBadge(i.lbl,"ag")
+      +'</div>'
+      +'<span style="font-family:Rajdhani,sans-serif;font-weight:700;font-size:15px;color:var(--danger);flex-shrink:0;margin-left:8px">'+fmtMoney(eff)+'</span></div></div>';
   }).join("");
   var html;
   if(!rows){html='<div class="empty-st"><div class="ico">&#128184;</div><p>Sin gastos registrados</p><button class="btn-sm" onclick="editAgExp()">+ Agregar</button></div>';}
@@ -1692,6 +1799,42 @@ function renderAgExp(){
     html+='<div style="display:flex;justify-content:space-between;align-items:center;padding:11px 13px;background:var(--danger-d);border-radius:9px;border:1px solid rgba(248,113,113,.2)"><span style="font-weight:700;font-size:14px">Total gastos</span><span style="font-family:Rajdhani,sans-serif;font-weight:700;font-size:22px;color:var(--danger)">'+fmtMoney(total)+'</span></div>';
     html+='</div>';
   }
+  // Herramientas / Mejoras
+  var priColor={Alta:"#F87171",Media:"#FBBF24",Baja:"#34D399"};
+  var priDot={Alta:"🔴",Media:"🟡",Baja:"🟢"};
+  var toolsHtml='<div style="margin-top:16px">'
+    +'<div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:10px">'
+    +'<span style="font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.08em;opacity:.45">🛠️ Herramientas / Mejoras</span>'
+    +'<button onclick="openAddAgTool()" class="btn-sm" style="padding:4px 10px;font-size:11px">+ Agregar</button>'
+    +'</div>';
+  if(state.agTools.length){
+    toolsHtml+=state.agTools.slice().sort(function(a,b){
+      var o={Alta:0,Media:1,Baja:2};return(o[a.priority]||1)-(o[b.priority]||1);
+    }).map(function(t){
+      var col=priColor[t.priority]||"#FBBF24";
+      var typeIcon=t.type==="hw"?"🖥️":"📦";
+      var hasUpgrade=t.nextLevel&&t.nextLevel.trim();
+      return '<div style="background:var(--surf);border-radius:12px;margin-bottom:8px;border-left:3px solid '+(t.done?"rgba(52,211,153,.35)":col)+';overflow:hidden">'
+        +'<div style="display:flex;align-items:center;gap:10px;padding:11px 13px">'
+        +'<div onclick="agToolToggle(\''+t.id+'\')" style="width:20px;height:20px;border-radius:6px;border:2px solid '+(t.done?"#34D399":col)+';background:'+(t.done?"#34D399":"transparent")+';cursor:pointer;display:flex;align-items:center;justify-content:center;flex-shrink:0">'
+        +(t.done?'<svg width="11" height="11" viewBox="0 0 11 11"><polyline points="1.5,5.5 4.5,8.5 9.5,2" stroke="#fff" stroke-width="2" fill="none"/></svg>':'')+'</div>'
+        +'<span style="font-size:14px">'+typeIcon+'</span>'
+        +'<div style="flex:1;min-width:0">'
+        +'<div style="font-size:13px;font-weight:700;text-decoration:'+(t.done?"line-through":"none")+';opacity:'+(t.done?.5:1)+'">'+t.name+(t.current?'<span style="font-size:10px;font-weight:600;background:rgba(255,255,255,.08);border-radius:4px;padding:1px 6px;margin-left:6px;opacity:.8">'+t.current+'</span>':'')+'</div>'
+        +(hasUpgrade?'<div style="font-size:11px;color:'+col+';margin-top:2px">🎯 Mejora: <strong>'+t.nextLevel+'</strong></div>':'')
+        +(t.lastPay?'<div style="font-size:10px;opacity:.4;margin-top:1px">Último pago: '+t.lastPay+'</div>':'')
+        +'</div>'
+        +(t.cost>0?'<span style="font-family:Rajdhani,sans-serif;font-size:13px;font-weight:700;color:'+col+';white-space:nowrap">'+fmtMoney(t.cost)+'/mes</span>':'')
+        +'<span style="font-size:10px;margin-left:4px">'+(priDot[t.priority]||"🟡")+'</span>'
+        +'<button onclick="openEditAgTool(\''+t.id+'\')" style="background:none;border:none;color:var(--txt2);cursor:pointer;font-size:13px;padding:0 3px">✏️</button>'
+        +'<button onclick="deleteAgTool(\''+t.id+'\')" style="background:none;border:none;color:var(--danger);cursor:pointer;font-size:13px;opacity:.5;padding:0 3px">🗑</button>'
+        +'</div></div>';
+    }).join("");
+  } else {
+    toolsHtml+='<div style="text-align:center;padding:14px;opacity:.4;font-size:12px">Sin herramientas agregadas</div>';
+  }
+  toolsHtml+='</div>';
+  html+=toolsHtml;
   var e2=el("ag-exp-list");if(e2)e2.innerHTML=html;
 }
 
@@ -3851,14 +3994,21 @@ function renderFitFinSummary(){
 }
 function renderFitExpList(){
   var items=state.fitExp;
-  var monthly=expMonthly(items);var once=expOnce(items);var total=monthly+once;
+  var monthly=expMonthly(items,"fit");var once=expOnce(items);var total=monthly+once;
   function badge(type){
     if(type==="unico")return'<span style="font-size:9px;background:rgba(245,158,11,.2);color:#F59E0B;border-radius:4px;padding:2px 5px;font-weight:700;margin-left:5px">ÚNICO</span>';
     if(type==="por-cliente")return'<span style="font-size:9px;background:rgba(59,130,246,.2);color:#3B82F6;border-radius:4px;padding:2px 5px;font-weight:700;margin-left:5px">×cli</span>';
     return'<span style="font-size:9px;background:rgba(52,211,153,.15);color:#34D399;border-radius:4px;padding:2px 5px;font-weight:700;margin-left:5px">/mes</span>';
   }
   var rows=items.filter(function(i){return i.val>0;}).map(function(i){
-    return '<div style="display:flex;justify-content:space-between;align-items:center;padding:10px 11px;background:var(--surf);border-radius:9px;margin-bottom:6px"><span style="font-size:13px;font-weight:600">'+i.lbl+badge(i.type)+'</span><span style="font-family:Rajdhani,sans-serif;font-weight:700;font-size:15px;color:var(--danger)">'+fmtMoney(getExpVal(i,"fit"))+'</span></div>';
+    var eff=getExpVal(i,"fit");
+    var lbl=i.lbl.replace(/'/g,"\\'");
+    return '<div style="background:var(--surf);border-radius:9px;margin-bottom:6px;overflow:hidden">'
+      +'<div style="display:flex;justify-content:space-between;align-items:flex-start;padding:10px 11px;cursor:pointer" onclick="openExpProfile(\''+lbl+'\',\'fit\','+eff+')">'
+      +'<div><span style="font-size:13px;font-weight:600">'+i.lbl+badge(i.type)+'</span>'
+      +expProfileBadge(i.lbl,"fit")
+      +'</div>'
+      +'<span style="font-family:Rajdhani,sans-serif;font-weight:700;font-size:15px;color:var(--danger);flex-shrink:0;margin-left:8px">'+fmtMoney(eff)+'</span></div></div>';
   }).join("");
   var html;
   if(!rows){html='<div class="empty-st"><div class="ico">&#128184;</div><p>Sin gastos registrados</p><button class="btn-sm" onclick="editFitExp()">+ Agregar</button></div>';}
