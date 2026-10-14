@@ -850,6 +850,7 @@ label.switch-btn:hover{background:var(--acc-d2);color:var(--txt)}
     <button class="eval-tab on" onclick="setEvalTab(0)">① Composición</button>
     <button class="eval-tab" onclick="setEvalTab(1)">② Tests físicos</button>
     <button class="eval-tab" onclick="setEvalTab(2)">③ Historial</button>
+    <button class="eval-tab" onclick="setEvalTab(3)">④ Nutrición</button>
   </div>
   <div class="eval-body">
 
@@ -1008,6 +1009,35 @@ label.switch-btn:hover{background:var(--acc-d2);color:var(--txt)}
         <button class="btn btn-p" style="font-size:11px;padding:6px 14px" onclick="setEvalTab(0)">+ Nueva evaluación</button>
       </div>
       <div id="eval-hist-list"><div style="text-align:center;padding:30px;color:var(--txt2);font-size:13px">No hay evaluaciones aún. Completa la pestaña de Composición y guarda.</div></div>
+    </div>
+
+    <!-- TAB 3: NUTRICIÓN -->
+    <div class="eval-panel" id="etab3">
+      <div class="eval-section" style="margin-bottom:14px">
+        <div style="font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.08em;opacity:.4;margin-bottom:12px">Configuración</div>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:12px">
+          <div>
+            <label style="font-size:11px;font-weight:600;color:var(--txt2);display:block;margin-bottom:5px">Objetivo</label>
+            <select id="nut-obj" class="fi" style="font-size:12px" onchange="renderNutricion()">
+              <option value="def">🔥 Definición (−20% kcal)</option>
+              <option value="mant" selected>⚖️ Mantenimiento</option>
+              <option value="vol">💪 Volumen (+15% kcal)</option>
+              <option value="recomp">🔄 Recomposición</option>
+            </select>
+          </div>
+          <div>
+            <label style="font-size:11px;font-weight:600;color:var(--txt2);display:block;margin-bottom:5px">Comidas por día</label>
+            <div style="display:flex;gap:6px">
+              <button onclick="setNutMeals(3)" id="nm-3" class="btn-sm" style="flex:1;justify-content:center;padding:6px 0">3</button>
+              <button onclick="setNutMeals(4)" id="nm-4" class="btn-sm" style="flex:1;justify-content:center;padding:6px 0">4</button>
+              <button onclick="setNutMeals(5)" id="nm-5" class="btn-sm" style="flex:1;justify-content:center;padding:6px 0;background:var(--acc-d);border-color:var(--acc);color:var(--acc)">5</button>
+              <button onclick="setNutMeals(6)" id="nm-6" class="btn-sm" style="flex:1;justify-content:center;padding:6px 0">6</button>
+            </div>
+          </div>
+        </div>
+        <div id="nut-summary" style="display:flex;gap:8px;flex-wrap:wrap"></div>
+      </div>
+      <div id="nut-plates" style="display:flex;gap:10px;flex-wrap:wrap;justify-content:center"></div>
     </div>
 
   </div><!-- /eval-body -->
@@ -3478,9 +3508,80 @@ function loadEvalForEdit(idx){
 }
 function setEvalTab(n){
   document.querySelectorAll(".eval-tab").forEach(function(t,i){t.classList.toggle("on",i===n);});
-  for(var i=0;i<3;i++){var p=el("etab"+i);if(p)p.classList.toggle("on",i===n);}
-  var sb=el("eval-save-btn");if(sb)sb.style.display=n===2?"none":"inline-flex";
+  for(var i=0;i<4;i++){var p=el("etab"+i);if(p)p.classList.toggle("on",i===n);}
+  var sb=el("eval-save-btn");if(sb)sb.style.display=(n===2||n===3)?"none":"inline-flex";
   var pb=el("eval-pdf-btn");if(pb){var evs=lsGet("evals-"+(evalStudentId||""),[]);pb.style.display=(n===2&&evs.length)?"inline-flex":"none";}
+  if(n===3)renderNutricion();
+}
+var _nutMeals=5;
+function setNutMeals(n){
+  _nutMeals=n;
+  [3,4,5,6].forEach(function(m){
+    var b=el("nm-"+m);if(!b)return;
+    var on=m===n;
+    b.style.background=on?"var(--acc-d)":"";
+    b.style.borderColor=on?"var(--acc)":"";
+    b.style.color=on?"var(--acc)":"";
+  });
+  renderNutricion();
+}
+function renderNutricion(){
+  var sp=el("nut-plates");var ss=el("nut-summary");
+  if(!sp||!ss)return;
+  var evs=lsGet("evals-"+(evalStudentId||""),[]);
+  var last=evs.length?evs[evs.length-1]:{};
+  var tdee=last.tdee||last.tmb||0;
+  if(!tdee){
+    sp.innerHTML='<div style="text-align:center;padding:30px;color:var(--txt2);font-size:13px;width:100%">Guarda una evaluación con TMB/TDEE para ver el plan nutricional.</div>';
+    ss.innerHTML='';return;
+  }
+  var obj=el("nut-obj")?el("nut-obj").value:"mant";
+  var OBJS={def:{label:"Definición",mod:.8,p:35,c:40,f:25},mant:{label:"Mantenimiento",mod:1,p:25,c:50,f:25},vol:{label:"Volumen",mod:1.15,p:25,c:55,f:20},recomp:{label:"Recomposición",mod:1,p:35,c:40,f:25}};
+  var cfg=OBJS[obj]||OBJS.mant;
+  var kcal=Math.round(tdee*cfg.mod);
+  var pG=Math.round(kcal*cfg.p/100/4);
+  var cG=Math.round(kcal*cfg.c/100/4);
+  var fG=Math.round(kcal*cfg.f/100/9);
+  ss.innerHTML='<div style="display:flex;gap:8px;flex-wrap:wrap;width:100%">'
+    +'<span style="background:var(--bg2);border-radius:8px;padding:6px 12px;font-size:12px;font-weight:600">🔥 '+kcal+' kcal</span>'
+    +'<span style="background:rgba(239,68,68,.15);color:#f87171;border-radius:8px;padding:6px 12px;font-size:12px;font-weight:600">Proteína '+pG+'g ('+cfg.p+'%)</span>'
+    +'<span style="background:rgba(251,191,36,.15);color:#fbbf24;border-radius:8px;padding:6px 12px;font-size:12px;font-weight:600">Carbos '+cG+'g ('+cfg.c+'%)</span>'
+    +'<span style="background:rgba(167,139,250,.15);color:#a78bfa;border-radius:8px;padding:6px 12px;font-size:12px;font-weight:600">Grasas '+fG+'g ('+cfg.f+'%)</span>'
+    +'</div>';
+  var DIST={3:[30,35,35],4:[25,30,30,15],5:[20,25,30,15,10],6:[15,20,25,20,12,8]};
+  var NAMES={3:["Desayuno","Almuerzo","Cena"],4:["Desayuno","Almuerzo","Merienda","Cena"],5:["Desayuno","Media mañana","Almuerzo","Merienda","Cena"],6:["Desayuno","Media mañana","Almuerzo","Merienda","Cena","Colación"]};
+  var dist=DIST[_nutMeals]||DIST[5];
+  var names=NAMES[_nutMeals]||NAMES[5];
+  var html='';
+  dist.forEach(function(pct,idx){
+    var mk=Math.round(kcal*pct/100);
+    var mp=Math.round(pG*pct/100);var mc=Math.round(cG*pct/100);var mf=Math.round(fG*pct/100);
+    var svgSize=100;var r=36;var cx=50;var cy=50;
+    function arc(start,sweep,color){
+      var s=start*(Math.PI/180);var e=(start+sweep)*(Math.PI/180);
+      var x1=cx+r*Math.cos(s);var y1=cy+r*Math.sin(s);
+      var x2=cx+r*Math.cos(e);var y2=cy+r*Math.sin(e);
+      var large=sweep>180?1:0;
+      return '<path d="M '+cx+' '+cy+' L '+x1.toFixed(1)+' '+y1.toFixed(1)+' A '+r+' '+r+' 0 '+large+' 1 '+x2.toFixed(1)+' '+y2.toFixed(1)+' Z" fill="'+color+'"/>';
+    }
+    var pSweep=cfg.p*3.6;var cSweep=cfg.c*3.6;var fSweep=cfg.f*3.6;
+    var svg='<svg width="'+svgSize+'" height="'+svgSize+'" viewBox="0 0 100 100">'
+      +'<circle cx="50" cy="50" r="40" fill="#1e293b"/>'
+      +arc(-90,pSweep,"#ef4444")
+      +arc(-90+pSweep,cSweep,"#fbbf24")
+      +arc(-90+pSweep+cSweep,fSweep,"#a78bfa")
+      +'<circle cx="50" cy="50" r="22" fill="var(--bg1)"/>'
+      +'<text x="50" y="46" text-anchor="middle" fill="var(--txt1)" font-size="9" font-weight="700">'+mk+'</text>'
+      +'<text x="50" y="57" text-anchor="middle" fill="var(--txt2)" font-size="7">kcal</text>'
+      +'</svg>';
+    html+='<div style="display:flex;flex-direction:column;align-items:center;gap:6px;min-width:90px">'
+      +svg
+      +'<div style="font-size:11px;font-weight:700;color:var(--txt1);text-align:center">'+names[idx]+'</div>'
+      +'<div style="font-size:10px;color:var(--txt2);text-align:center">'+pct+'% del total</div>'
+      +'<div style="font-size:9px;color:var(--txt2);text-align:center;line-height:1.4">P:'+mp+'g · C:'+mc+'g<br>G:'+mf+'g</div>'
+      +'</div>';
+  });
+  sp.innerHTML=html;
 }
 function printEval(){
   if(!evalStudentId)return;
