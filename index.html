@@ -856,7 +856,7 @@ label.switch-btn:hover{background:var(--acc-d2);color:var(--txt)}
     <!-- TAB 0: COMPOSICIÓN -->
     <div class="eval-panel on" id="etab0">
       <div class="calc-banner" id="eval-calc-banner">
-        <div class="cb-item"><div class="cb-lbl">IMC</div><div class="cb-val" id="e-imc">—</div><div class="cb-cat" id="e-imc-cat">—</div></div>
+        <div class="cb-item"><div class="cb-lbl">IMC</div><div class="cb-val" id="e-imc">—</div><div class="cb-cat" id="e-imc-cat">—</div><div id="e-imc-range" style="margin-top:6px;width:100%"></div></div>
         <div class="cb-item"><div class="cb-lbl">ICC</div><div class="cb-val" id="e-icc">—</div><div class="cb-cat" id="e-icc-cat">—</div></div>
         <div class="cb-item"><div class="cb-lbl">Masa muscular</div><div class="cb-val" id="e-mm">—</div><div class="cb-cat" id="e-mm-cat">kg estimados</div></div>
         <div class="cb-item"><div class="cb-lbl">TMB (Mifflin)</div><div class="cb-val" id="e-tmb">—</div><div class="cb-cat" style="color:var(--txt2)">kcal reposo</div></div>
@@ -929,6 +929,7 @@ label.switch-btn:hover{background:var(--acc-d2);color:var(--txt)}
               <div><div style="font-size:10px;font-weight:700;color:var(--txt2)">% Grasa corporal (J-P 7)</div><div style="font-size:10px;color:var(--acc);font-weight:700;margin-top:2px" id="e-grasa-cat">Ingresa los 7 pliegues</div></div>
               <div class="e-rbox-val" id="e-grasa-val">—</div>
             </div>
+            <div id="e-grasa-range" style="margin-top:8px"></div>
           </div>
           <div class="mfc-e">
             <div style="font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.07em;color:var(--txt2);margin-bottom:10px">Frecuencia cardíaca</div>
@@ -3530,6 +3531,52 @@ function pAvg(n){
   var vals=["a","b","c"].map(function(t){return parseFloat((el("ep"+n+t)||{}).value)||0;}).filter(function(v){return v>0;});
   return vals.length?vals.reduce(function(a,b){return a+b;},0)/vals.length:0;
 }
+// Barras de rango IMC y grasa
+var IMC_RANGES=[
+  {label:"Bajo peso",min:0,max:18.5,col:"#38BDF8"},
+  {label:"Normal",min:18.5,max:25,col:"#34D399"},
+  {label:"Sobrepeso",min:25,max:30,col:"#FBBF24"},
+  {label:"Obesidad I",min:30,max:35,col:"#F97316"},
+  {label:"Obesidad II",min:35,max:999,col:"#EF4444"}
+];
+var FAT_M=[
+  {label:"Esencial",min:0,max:6,col:"#38BDF8"},
+  {label:"Atleta",min:6,max:14,col:"#34D399"},
+  {label:"Fitness",min:14,max:18,col:"#A3E635"},
+  {label:"Normal",min:18,max:25,col:"#FBBF24"},
+  {label:"Alto",min:25,max:999,col:"#EF4444"}
+];
+var FAT_F=[
+  {label:"Esencial",min:0,max:14,col:"#38BDF8"},
+  {label:"Atleta",min:14,max:21,col:"#34D399"},
+  {label:"Fitness",min:21,max:25,col:"#A3E635"},
+  {label:"Normal",min:25,max:32,col:"#FBBF24"},
+  {label:"Alto",min:32,max:999,col:"#EF4444"}
+];
+function renderRangeBar(containerId,value,ranges,unit){
+  var c=el(containerId);if(!c)return;
+  var curIdx=ranges.findIndex(function(r,i){return value>=r.min&&(i===ranges.length-1||value<ranges[i+1].min);});
+  if(curIdx<0)curIdx=ranges.length-1;
+  var cur=ranges[curIdx];var next=ranges[curIdx+1];
+  var bar='<div style="display:flex;gap:2px;margin-bottom:3px">';
+  ranges.forEach(function(r,i){
+    var on=i===curIdx;
+    bar+='<div style="flex:1;height:5px;border-radius:2px;background:'+(on?r.col:r.col+"33")+'"></div>';
+  });
+  bar+='</div><div style="display:flex;gap:2px">';
+  ranges.forEach(function(r,i){
+    var on=i===curIdx;
+    bar+='<div style="flex:1;font-size:8px;text-align:center;font-weight:'+(on?"800":"400")+';color:'+(on?cur.col:"rgba(255,255,255,.25)")+'">'+r.label+'</div>';
+  });
+  bar+='</div>';
+  if(next&&next.min<999){
+    var dist=Math.round((next.min-value)*10)/10;
+    if(dist>0)bar+='<div style="font-size:10px;color:rgba(255,255,255,.4);margin-top:5px">→ A <strong style="color:rgba(255,255,255,.65)">'+dist+unit+'</strong> de '+next.label+'</div>';
+  } else if(!next){
+    bar+='<div style="font-size:10px;color:'+cur.col+';margin-top:5px;font-weight:700">Nivel más alto</div>';
+  }
+  c.innerHTML=bar;
+}
 // Jackson-Pollock 7 pliegues
 function eCalcGrasa(){
   var s=state.students.find(function(x){return x.id===evalStudentId;});
@@ -3550,6 +3597,7 @@ function eCalcGrasa(){
   el("e-grasa-cat").style.color=col;el("e-grasa-cat").textContent=cat;
   var w=parseFloat((el("e-peso")||{}).value)||0;
   if(w>0){var mm=Math.round((w*(1-fat/100))*10)/10;el("e-mm").textContent=mm;el("e-mm-cat").textContent="kg masa magra";}
+  renderRangeBar("e-grasa-range",fat,sex==="F"?FAT_F:FAT_M,"%");
   return fat;
 }
 // IMC, ICC, TMB, TDEE
@@ -3567,6 +3615,7 @@ function eCalcAuto(){
     var imcCat=imc<18.5?"Bajo peso":imc<25?"Normal":imc<30?"Sobrepeso":imc<35?"Obesidad I":"Obesidad II";
     var imcCol=imc<18.5?"var(--warn)":imc<25?"var(--green)":imc<30?"var(--warn)":"var(--danger)";
     el("e-imc-cat").textContent=imcCat;el("e-imc-cat").style.color=imcCol;
+    renderRangeBar("e-imc-range",imc,IMC_RANGES," pts");
   }
   // ICC
   if(cin>0&&cad>0){
