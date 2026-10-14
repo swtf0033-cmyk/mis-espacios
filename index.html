@@ -3530,9 +3530,12 @@ function renderNutricion(){
   if(!sp||!ss)return;
   var evs=lsGet("evals-"+(evalStudentId||""),[]);
   var last=evs.length?evs[evs.length-1]:{};
-  var tdee=last.tdee||last.tmb||0;
+  // leer TDEE del DOM si el overlay está abierto (sin necesidad de eval guardada)
+  var domTdee=parseInt(((el("e-tdee")||{}).textContent||"").replace(/[^0-9]/g,""))||0;
+  var domTmb=parseInt(((el("e-tmb")||{}).textContent||"").replace(/[^0-9]/g,""))||0;
+  var tdee=last.tdee||domTdee||last.tmb||domTmb||0;
   if(!tdee){
-    sp.innerHTML='<div style="text-align:center;padding:30px;color:var(--txt2);font-size:13px;width:100%">Guarda una evaluación con TMB/TDEE para ver el plan nutricional.</div>';
+    sp.innerHTML='<div style="text-align:center;padding:30px;color:var(--txt2);font-size:13px;width:100%">Completa Peso, Altura y Edad en la pestaña ① Composición para calcular el TDEE.</div>';
     ss.innerHTML='';return;
   }
   var obj=el("nut-obj")?el("nut-obj").value:"mant";
@@ -3859,7 +3862,9 @@ function saveCurrentEval(){
     testPush:parseInt((el("e-push")||{}).value)||null,
     testSit:parseInt((el("e-sit")||{}).value)||null,
     testSq:parseInt((el("e-sq")||{}).value)||null,
-    testStep:parseInt((el("e-step")||{}).value)||null
+    testStep:parseInt((el("e-step")||{}).value)||null,
+    tmb:parseInt(((el("e-tmb")||{}).textContent||"").replace(/[^0-9]/g,""))||null,
+    tdee:parseInt(((el("e-tdee")||{}).textContent||"").replace(/[^0-9]/g,""))||null
   };
   // update student fields from eval (merge, no reemplazar)
   var upd={};
