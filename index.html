@@ -1165,7 +1165,17 @@ label.switch-btn:hover{background:var(--acc-d2);color:var(--txt)}
             <option value="superavit">Superávit — Ganancia muscular (+300 kcal)</option>
           </select></div>
         </div>
+        <div style="margin-bottom:14px">
+          <div class="bm-l" style="margin-bottom:6px">Comidas por día</div>
+          <div style="display:flex;gap:6px">
+            <button onclick="setNutMealsProf(3)" id="pnm-3" class="btn-sm" style="flex:1;justify-content:center;padding:6px 0">3</button>
+            <button onclick="setNutMealsProf(4)" id="pnm-4" class="btn-sm" style="flex:1;justify-content:center;padding:6px 0">4</button>
+            <button onclick="setNutMealsProf(5)" id="pnm-5" class="btn-sm" style="flex:1;justify-content:center;padding:6px 0;background:var(--acc);color:#fff">5</button>
+            <button onclick="setNutMealsProf(6)" id="pnm-6" class="btn-sm" style="flex:1;justify-content:center;padding:6px 0">6</button>
+          </div>
+        </div>
         <div id="nut-result"></div>
+        <div id="nut-plates-prof" style="display:flex;gap:10px;flex-wrap:wrap;justify-content:center;margin-top:14px"></div>
         <div style="margin-top:12px"><div style="font-size:11px;font-weight:700;color:var(--txt2);margin-bottom:6px;text-transform:uppercase;letter-spacing:.05em">Notas de nutrición</div><textarea id="nut-notes" placeholder="Restricciones alimentarias, preferencias, suplementos..." style="width:100%;background:var(--surf);border:1px solid var(--border);border-radius:8px;padding:10px 12px;color:var(--txt);font-size:12px;font-family:'Inter',sans-serif;resize:vertical;min-height:70px;outline:none" oninput="saveNutNotes()"></textarea></div>
       </div>
       <!-- Sección 1: Protocolo Metabólico -->
@@ -3285,6 +3295,28 @@ function renderNutrition(){
   (protG<minProt?'<div style="margin-top:10px;background:rgba(248,113,113,.1);border:1px solid rgba(248,113,113,.3);border-radius:8px;padding:8px 12px;font-size:11px;color:var(--danger)">⚠ Proteína calculada ('+protG+'g) está por debajo del mínimo recomendado de '+minProt+'g (1.8g/kg). Considera ajustar el reparto calórico.</div>':"")+
   '<div style="margin-top:10px;font-size:10px;color:var(--txt2)">Hidratación recomendada: '+(Math.round(peso*0.033*10)/10)+'–'+(Math.round(peso*0.040*10)/10)+' L/día</div>';
   el("nut-result").innerHTML=html;
+  // platos por comida
+  var DIST={3:[30,35,35],4:[25,30,30,15],5:[20,25,30,15,10],6:[15,20,25,20,12,8]};
+  var NAMES={3:["Desayuno","Almuerzo","Cena"],4:["Desayuno","Almuerzo","Merienda","Cena"],5:["Desayuno","Media mañana","Almuerzo","Merienda","Cena"],6:["Desayuno","Media mañana","Almuerzo","Merienda","Cena","Colación"]};
+  var dist=DIST[_nutMealsProf]||DIST[5];
+  var names=NAMES[_nutMealsProf]||NAMES[5];
+  var platesHtml=dist.map(function(pct,idx){
+    var pG2=Math.round(protG*pct/100),cG2=Math.round(carbG*pct/100),fG2=Math.round(fatG*pct/100);
+    return'<div style="display:flex;flex-direction:column;align-items:center;gap:4px;min-width:88px">'
+      +makeNutSvg(kcal,pPct,cPct,fPct,pct)
+      +'<div style="font-size:11px;font-weight:700;color:var(--txt1);text-align:center">'+names[idx]+'</div>'
+      +'<div style="font-size:9px;color:var(--txt2);text-align:center">'+pct+'% · '+Math.round(kcal*pct/100)+' kcal</div>'
+      +'<div style="font-size:9px;color:var(--txt2);text-align:center;line-height:1.5">P:'+pG2+'g · C:'+cG2+'g<br>G:'+fG2+'g</div>'
+      +'</div>';
+  }).join('');
+  var pp=el("nut-plates-prof");if(pp)pp.innerHTML=platesHtml;
+  // leyenda
+  var leg='<div style="display:flex;gap:10px;justify-content:center;margin-top:10px;font-size:10px;color:var(--txt2);flex-wrap:wrap">'
+    +'<span><span style="color:#ef4444">●</span> Proteína</span>'
+    +'<span><span style="color:#fbbf24">●</span> Carbos</span>'
+    +'<span><span style="color:#a78bfa">●</span> Grasas</span>'
+    +'</div>';
+  if(pp)pp.innerHTML=platesHtml+leg;
   // cargar notas guardadas
   var nd=lsGet("nutrition-"+profileStudentId,{});
   if(nd.notes&&el("nut-notes"))el("nut-notes").value=nd.notes;
@@ -3296,6 +3328,36 @@ function macroRow(name,grams,pct,color,sub){
     '<div class="nut-bar-wrap"><div class="nut-fill" style="width:'+pct+'%;background:'+color+'"></div></div>'+
     '<span class="nut-val">'+grams+'g <span style="font-size:10px;color:var(--txt2)">'+pct+'%</span></span>'+
   '</div><div style="font-size:9px;color:var(--txt2);margin:-6px 0 8px 100px">'+sub+'</div>';
+}
+var _nutMealsProf=5;
+function setNutMealsProf(n){
+  _nutMealsProf=n;
+  [3,4,5,6].forEach(function(m){
+    var b=el("pnm-"+m);if(!b)return;
+    b.style.background=m===n?"var(--acc)":"";
+    b.style.color=m===n?"#fff":"";
+    b.style.borderColor=m===n?"var(--acc)":"";
+  });
+  renderNutrition();
+}
+function makeNutSvg(kcalTotal,pPct,cPct,fPct,mealPct){
+  var mk=Math.round(kcalTotal*mealPct/100);
+  var r=36,cx=50,cy=50;
+  var arcFn=function(start,sweep,color){
+    if(sweep<=0)return'';
+    var s=start*(Math.PI/180),e=(start+sweep)*(Math.PI/180);
+    var x1=cx+r*Math.cos(s),y1=cy+r*Math.sin(s);
+    var x2=cx+r*Math.cos(e),y2=cy+r*Math.sin(e);
+    return'<path d="M '+cx+' '+cy+' L '+x1.toFixed(1)+' '+y1.toFixed(1)+' A '+r+' '+r+' 0 '+(sweep>180?1:0)+' 1 '+x2.toFixed(1)+' '+y2.toFixed(1)+' Z" fill="'+color+'"/>';
+  };
+  var pS=pPct*3.6,cS=cPct*3.6,fS=fPct*3.6;
+  return'<svg width="100" height="100" viewBox="0 0 100 100">'
+    +'<circle cx="50" cy="50" r="40" fill="#1e293b"/>'
+    +arcFn(-90,pS,"#ef4444")+arcFn(-90+pS,cS,"#fbbf24")+arcFn(-90+pS+cS,fS,"#a78bfa")
+    +'<circle cx="50" cy="50" r="22" fill="var(--bg1)"/>'
+    +'<text x="50" y="46" text-anchor="middle" fill="var(--txt1)" font-size="9" font-weight="700">'+mk+'</text>'
+    +'<text x="50" y="57" text-anchor="middle" fill="var(--txt2)" font-size="7">kcal</text>'
+    +'</svg>';
 }
 function saveNutNotes(){
   var nd=lsGet("nutrition-"+profileStudentId,{});
