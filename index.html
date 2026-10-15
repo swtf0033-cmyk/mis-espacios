@@ -3555,24 +3555,24 @@ function renderNutricion(){
   var NAMES={3:["Desayuno","Almuerzo","Cena"],4:["Desayuno","Almuerzo","Merienda","Cena"],5:["Desayuno","Media mañana","Almuerzo","Merienda","Cena"],6:["Desayuno","Media mañana","Almuerzo","Merienda","Cena","Colación"]};
   var dist=DIST[_nutMeals]||DIST[5];
   var names=NAMES[_nutMeals]||NAMES[5];
+  var nutR=36,nutCx=50,nutCy=50;
+  var nutArc=function(start,sweep,color){
+    var s=start*(Math.PI/180);var e=(start+sweep)*(Math.PI/180);
+    var x1=nutCx+nutR*Math.cos(s);var y1=nutCy+nutR*Math.sin(s);
+    var x2=nutCx+nutR*Math.cos(e);var y2=nutCy+nutR*Math.sin(e);
+    var large=sweep>180?1:0;
+    return '<path d="M '+nutCx+' '+nutCy+' L '+x1.toFixed(1)+' '+y1.toFixed(1)+' A '+nutR+' '+nutR+' 0 '+large+' 1 '+x2.toFixed(1)+' '+y2.toFixed(1)+' Z" fill="'+color+'"/>';
+  };
   var html='';
   dist.forEach(function(pct,idx){
     var mk=Math.round(kcal*pct/100);
     var mp=Math.round(pG*pct/100);var mc=Math.round(cG*pct/100);var mf=Math.round(fG*pct/100);
-    var svgSize=100;var r=36;var cx=50;var cy=50;
-    function arc(start,sweep,color){
-      var s=start*(Math.PI/180);var e=(start+sweep)*(Math.PI/180);
-      var x1=cx+r*Math.cos(s);var y1=cy+r*Math.sin(s);
-      var x2=cx+r*Math.cos(e);var y2=cy+r*Math.sin(e);
-      var large=sweep>180?1:0;
-      return '<path d="M '+cx+' '+cy+' L '+x1.toFixed(1)+' '+y1.toFixed(1)+' A '+r+' '+r+' 0 '+large+' 1 '+x2.toFixed(1)+' '+y2.toFixed(1)+' Z" fill="'+color+'"/>';
-    }
     var pSweep=cfg.p*3.6;var cSweep=cfg.c*3.6;var fSweep=cfg.f*3.6;
     var svg='<svg width="'+svgSize+'" height="'+svgSize+'" viewBox="0 0 100 100">'
       +'<circle cx="50" cy="50" r="40" fill="#1e293b"/>'
-      +arc(-90,pSweep,"#ef4444")
-      +arc(-90+pSweep,cSweep,"#fbbf24")
-      +arc(-90+pSweep+cSweep,fSweep,"#a78bfa")
+      +nutArc(-90,pSweep,"#ef4444")
+      +nutArc(-90+pSweep,cSweep,"#fbbf24")
+      +nutArc(-90+pSweep+cSweep,fSweep,"#a78bfa")
       +'<circle cx="50" cy="50" r="22" fill="var(--bg1)"/>'
       +'<text x="50" y="46" text-anchor="middle" fill="var(--txt1)" font-size="9" font-weight="700">'+mk+'</text>'
       +'<text x="50" y="57" text-anchor="middle" fill="var(--txt2)" font-size="7">kcal</text>'
