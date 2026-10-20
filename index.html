@@ -3316,7 +3316,30 @@ function renderNutrition(){
     +'<span><span style="color:#fbbf24">●</span> Carbos</span>'
     +'<span><span style="color:#a78bfa">●</span> Grasas</span>'
     +'</div>';
-  if(pp)pp.innerHTML=platesHtml+leg;
+  // Alimentos recomendados por macro (base científica)
+  var foodsHtml='<div style="margin-top:16px;background:var(--card);border:1px solid var(--border);border-radius:10px;padding:14px">'
+    +'<div style="font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.07em;color:var(--txt2);margin-bottom:12px">📋 Fuentes de alimentos recomendadas</div>'
+    +'<div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:10px">'
+    +'<div>'
+      +'<div style="font-size:11px;font-weight:700;color:#ef4444;margin-bottom:6px">🥩 Proteínas</div>'
+      +'<div style="font-size:10px;color:var(--txt2);line-height:1.7">Pollo/pavo sin piel<br>Atún y salmón<br>Claras de huevo<br>Res magra (>95%)<br>Yogur griego 0%<br>Queso cottage<br>Tofu y tempeh<br>Legumbres (lentejas)</div>'
+    +'</div>'
+    +'<div>'
+      +'<div style="font-size:11px;font-weight:700;color:#fbbf24;margin-bottom:6px">🍚 Carbohidratos</div>'
+      +'<div style="font-size:10px;color:var(--txt2);line-height:1.7">Arroz integral<br>Avena en hojuelas<br>Batata / papa<br>Quinoa<br>Pan integral (>3g fibra)<br>Frutas enteras<br>Plátano verde<br>Maíz / arepa</div>'
+    +'</div>'
+    +'<div>'
+      +'<div style="font-size:11px;font-weight:700;color:#a78bfa;margin-bottom:6px">🥑 Grasas saludables</div>'
+      +'<div style="font-size:10px;color:var(--txt2);line-height:1.7">Aguacate (½ unidad)<br>Aceite de oliva extra virgen<br>Nueces / almendras<br>Semillas de chía<br>Semillas de linaza<br>Salmón / sardinas<br>Huevo entero<br>Mantequilla de maní nat.</div>'
+    +'</div>'
+    +'</div>'
+  +'</div>';
+  // Disclaimer legal
+  var disclaimer='<div style="margin-top:12px;background:rgba(251,191,36,.08);border:1px solid rgba(251,191,36,.25);border-radius:8px;padding:10px 13px;display:flex;gap:8px;align-items:flex-start">'
+    +'<span style="font-size:14px;flex-shrink:0">⚠️</span>'
+    +'<div style="font-size:10px;color:var(--txt2);line-height:1.6"><strong style="color:var(--warn)">Aviso importante:</strong> Estos valores son orientativos y se calculan con la fórmula de Mifflin-St Jeor (2005), validada científicamente para estimación del metabolismo basal. <strong>No reemplazan la consulta con un nutricionista certificado.</strong> Condiciones de salud, medicamentos o metas específicas pueden requerir ajustes profesionales. Siempre consulta un especialista antes de hacer cambios significativos en tu alimentación.</div>'
+  +'</div>';
+  if(pp)pp.innerHTML=platesHtml+leg+foodsHtml+disclaimer;
   // cargar notas guardadas
   var nd=lsGet("nutrition-"+profileStudentId,{});
   if(nd.notes&&el("nut-notes"))el("nut-notes").value=nd.notes;
