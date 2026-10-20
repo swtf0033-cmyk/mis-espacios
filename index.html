@@ -1060,7 +1060,10 @@ label.switch-btn:hover{background:var(--acc-d2);color:var(--txt)}
       </div>
       <div class="eval-hd-sub" id="prof-sub">Perfil completo</div>
     </div>
-    <button style="background:none;border:none;color:var(--txt2);cursor:pointer;font-size:22px;padding:4px 8px;border-radius:6px;line-height:1" onclick="closeProfile()">✕</button>
+    <div style="display:flex;gap:6px;align-items:center">
+      <button class="btn-sm" onclick="exportPerfil()" style="font-size:11px;padding:5px 10px">📄 Exportar</button>
+      <button style="background:none;border:none;color:var(--txt2);cursor:pointer;font-size:22px;padding:4px 8px;border-radius:6px;line-height:1" onclick="closeProfile()">✕</button>
+    </div>
   </div>
   <div class="eval-tabs" style="flex-wrap:wrap">
     <button class="eval-tab on" onclick="setProfTab(0)">① Dashboard</button>
@@ -3725,6 +3728,128 @@ function renderNutricion(){
       +'</div>';
   });
   sp.innerHTML=html;
+}
+function exportPerfil(){
+  if(!profileStudentId)return;
+  var s=state.students.find(function(x){return x.id===profileStudentId;})||{};
+  var evs=lsGet("evals-"+profileStudentId,[]);
+  var ev=evs.length?evs[0]:{};
+  var nd=lsGet("nutrition-"+profileStudentId,{});
+  var tg=lsGet("train-goal-"+profileStudentId,{});
+  // Calcular IMC
+  var peso=ev.peso||parseFloat(s.weight)||0;
+  var alt=ev.altura||parseFloat(s.height)||0;
+  if(alt>0&&alt<3)alt=Math.round(alt*100);
+  var imc=alt>0&&peso>0?Math.round(peso/(alt/100)/(alt/100)*10)/10:null;
+  var imcCat=!imc?"—":imc<18.5?"Bajo peso":imc<25?"Normal":imc<30?"Sobrepeso":imc<35?"Obesidad I":"Obesidad II";
+  // ICC
+  var cin=ev.cin||0,cad=ev.cad||0;
+  var icc=cin>0&&cad>0?Math.round(cin/cad*100)/100:null;
+  // % grasa y masa magra
+  var grasa=ev.grasa||parseFloat(s.bodyFat)||null;
+  var mm=grasa&&peso?Math.round(peso*(1-grasa/100)*10)/10:null;
+  // TMB y TDEE
+  var age=parseInt(s.age)||25,sex=s.sex||"M";
+  var tmb=0,tdee=0;
+  if(alt>0&&peso>0){
+    tmb=sex==="M"?Math.round((10*peso)+(6.25*alt)-(5*age)+5):Math.round((10*peso)+(6.25*alt)-(5*age)-161);
+    var act=parseFloat(nd.activity)||1.55;
+    tdee=Math.round(tmb*act);
+  }
+  // Nutrición
+  var goalMap={deficit:"Déficit (pérdida de grasa)",mant:"Mantenimiento",superavit:"Superávit (ganancia muscular)"};
+  var nutGoal=goalMap[nd.goal||"mant"]||"Mantenimiento";
+  var kcal=nd.goal==="deficit"?tdee-300:nd.goal==="superavit"?tdee+300:tdee;
+  var pPct=sex==="M"?30:28,cPct=nd.goal==="superavit"?45:nd.goal==="deficit"?35:40,fPct=100-pPct-cPct;
+  var protG=tdee?Math.round((kcal*pPct/100)/4):null;
+  var carbG=tdee?Math.round((kcal*cPct/100)/4):null;
+  var fatG=tdee?Math.round((kcal*fPct/100)/9):null;
+  // Pliegues
+  var PLNM=["Pectoral","Axilar","Tríceps","Subescapular","Abdominal","Suprailiaco","Muslo"];
+  var plieguesHtml=PLNM.map(function(p,i){
+    var n=i+1;
+    var a=parseFloat(ev["p"+n+"a"])||0,b2=parseFloat(ev["p"+n+"b"])||0,c=parseFloat(ev["p"+n+"c"])||0;
+    var vals=[a,b2,c].filter(function(v){return v>0;});
+    var avg=vals.length?Math.round(vals.reduce(function(x,y){return x+y;},0)/vals.length*10)/10:null;
+    return avg?'<tr><td style="padding:4px 10px 4px 0;color:#555;font-size:12px">'+p+'</td><td style="padding:4px 0;font-weight:700;font-size:13px">'+avg+' mm</td></tr>':'';
+  }).join("");
+  // Medidas circumferenciales
+  var CIRC=[["Cintura",ev.cin],["Cadera",ev.cad],["Pecho",ev.pecho],["Bícep",ev.bicep],["Muslo",ev.muslo],["Glúteo",ev.glut],["Pantorrilla",ev.pant]];
+  var circHtml=CIRC.filter(function(c){return c[1];}).map(function(c){
+    return'<tr><td style="padding:4px 10px 4px 0;color:#555;font-size:12px">'+c[0]+'</td><td style="padding:4px 0;font-weight:700;font-size:13px">'+c[1]+' cm</td></tr>';
+  }).join("");
+  // Plan de comidas
+  var DIST={3:[30,35,35],4:[25,30,30,15],5:[20,25,30,15,10],6:[15,20,25,20,12,8]};
+  var NAMES={3:["Desayuno","Almuerzo","Cena"],4:["Desayuno","Almuerzo","Merienda","Cena"],5:["Desayuno","Media mañana","Almuerzo","Merienda","Cena"],6:["Desayuno","Media mañana","Almuerzo","Merienda","Cena","Colación"]};
+  var meals=_nutMealsProf||5;
+  var dist=DIST[meals]||DIST[5];var names=NAMES[meals]||NAMES[5];
+  var mealHtml=kcal&&protG?dist.map(function(pct,i){
+    return'<tr><td style="padding:5px 10px 5px 0;font-size:12px;color:#333">'+names[i]+'</td>'
+      +'<td style="padding:5px 6px;text-align:center;font-weight:700;font-size:13px">'+Math.round(kcal*pct/100)+' kcal</td>'
+      +'<td style="padding:5px 6px;text-align:center;font-size:12px;color:#e53e3e">'+Math.round(protG*pct/100)+'g P</td>'
+      +'<td style="padding:5px 6px;text-align:center;font-size:12px;color:#d69e2e">'+Math.round(carbG*pct/100)+'g C</td>'
+      +'<td style="padding:5px 6px;text-align:center;font-size:12px;color:#805ad5">'+Math.round(fatG*pct/100)+'g G</td>'
+      +'</tr>';
+  }).join(""):"";
+
+  var html='<!DOCTYPE html><html lang="es"><head><meta charset="UTF-8"><title>Reporte — '+s.name+'</title><style>'
+    +'*{margin:0;padding:0;box-sizing:border-box}body{font-family:Arial,sans-serif;color:#1a1a1a;background:#fff;padding:30px 40px}'
+    +'h1{font-size:22px;font-weight:800;margin-bottom:2px}h2{font-size:13px;font-weight:700;color:#6b21a8;text-transform:uppercase;letter-spacing:.06em;margin:20px 0 8px;border-bottom:2px solid #6b21a8;padding-bottom:4px}'
+    +'.sub{font-size:12px;color:#666;margin-bottom:20px}.grid{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-bottom:4px}'
+    +'.box{background:#f8f4ff;border-radius:8px;padding:10px;text-align:center}.box-val{font-size:20px;font-weight:800;color:#6b21a8}.box-lbl{font-size:10px;color:#888;margin-top:2px;text-transform:uppercase}'
+    +'table{border-collapse:collapse;width:100%}td{vertical-align:top}'
+    +'.warn{background:#fffbeb;border:1px solid #fcd34d;border-radius:6px;padding:8px 12px;font-size:10px;color:#92400e;margin-top:16px;line-height:1.5}'
+    +'.footer{margin-top:30px;font-size:9px;color:#aaa;text-align:center;border-top:1px solid #eee;padding-top:12px}'
+    +'@media print{body{padding:15px 20px}}'
+    +'</style></head><body>'
+    +'<h1>'+s.name+'</h1>'
+    +'<div class="sub">'+(ev.date||new Date().toLocaleDateString("es-CR"))+(s.age?' &nbsp;·&nbsp; '+s.age+' años':'')+(s.sex?' &nbsp;·&nbsp; '+(s.sex==="M"?"Masculino":"Femenino"):'')+(tg.type?' &nbsp;·&nbsp; Objetivo: '+tg.type:'')+'</div>'
+    // Composición
+    +'<h2>Composición corporal</h2>'
+    +'<div class="grid">'
+    +(peso?'<div class="box"><div class="box-val">'+peso+'</div><div class="box-lbl">Peso (kg)</div></div>':'')
+    +(alt?'<div class="box"><div class="box-val">'+alt+'</div><div class="box-lbl">Altura (cm)</div></div>':'')
+    +(grasa?'<div class="box"><div class="box-val">'+grasa+'%</div><div class="box-lbl">% Grasa corporal</div></div>':'')
+    +(mm?'<div class="box"><div class="box-val">'+mm+'</div><div class="box-lbl">Masa magra (kg)</div></div>':'')
+    +(imc?'<div class="box"><div class="box-val">'+imc+'</div><div class="box-lbl">IMC · '+imcCat+'</div></div>':'')
+    +(icc?'<div class="box"><div class="box-val">'+icc+'</div><div class="box-lbl">ICC (cintura/cadera)</div></div>':'')
+    +(tmb?'<div class="box"><div class="box-val">'+tmb+'</div><div class="box-lbl">TMB (kcal/día)</div></div>':'')
+    +(tdee?'<div class="box"><div class="box-val">'+tdee+'</div><div class="box-lbl">TDEE (kcal/día)</div></div>':'')
+    +'</div>'
+    // Medidas circunferenciales + pliegues lado a lado
+    +(circHtml||plieguesHtml?
+      '<div style="display:grid;grid-template-columns:1fr 1fr;gap:20px;margin-top:4px">'
+      +(circHtml?'<div><h2>Medidas circunferenciales</h2><table>'+circHtml+'</table></div>':'')
+      +(plieguesHtml?'<div><h2>Pliegues cutáneos</h2><table>'+plieguesHtml+'</table></div>':'')
+      +'</div>':'')
+    // Nutrición
+    +(kcal?
+      '<h2>Plan nutricional — '+nutGoal+'</h2>'
+      +'<div class="grid" style="margin-bottom:8px">'
+      +'<div class="box"><div class="box-val">'+kcal+'</div><div class="box-lbl">kcal/día</div></div>'
+      +(protG?'<div class="box"><div class="box-val" style="color:#e53e3e">'+protG+'g</div><div class="box-lbl">Proteína ('+pPct+'%)</div></div>':'')
+      +(carbG?'<div class="box"><div class="box-val" style="color:#d69e2e">'+carbG+'g</div><div class="box-lbl">Carbohidratos ('+cPct+'%)</div></div>':'')
+      +(fatG?'<div class="box"><div class="box-val" style="color:#805ad5">'+fatG+'g</div><div class="box-lbl">Grasas ('+fPct+'%)</div></div>':'')
+      +'</div>'
+      +(mealHtml?
+        '<h2>Distribución por comida ('+meals+' comidas/día)</h2>'
+        +'<table><thead><tr style="background:#f3e8ff">'
+        +'<th style="padding:6px 10px 6px 0;text-align:left;font-size:11px;color:#6b21a8">Comida</th>'
+        +'<th style="padding:6px;text-align:center;font-size:11px;color:#6b21a8">kcal</th>'
+        +'<th style="padding:6px;text-align:center;font-size:11px;color:#e53e3e">Proteína</th>'
+        +'<th style="padding:6px;text-align:center;font-size:11px;color:#d69e2e">Carbos</th>'
+        +'<th style="padding:6px;text-align:center;font-size:11px;color:#805ad5">Grasas</th>'
+        +'</tr></thead><tbody>'+mealHtml+'</tbody></table>':'')
+      :'')
+    +'<div class="warn">⚠ Este reporte es orientativo y se basa en fórmulas científicas validadas (Mifflin-St Jeor, 2005). No reemplaza la consulta con un nutricionista o médico certificado.</div>'
+    +'<div class="footer">Generado por Mis Espacios · '+new Date().toLocaleDateString("es-CR")+'</div>'
+    +'</body></html>';
+
+  var w=window.open("","_blank","width=800,height=900");
+  if(!w){alert("Permite ventanas emergentes para exportar");return;}
+  w.document.write(html);
+  w.document.close();
+  setTimeout(function(){w.print();},600);
 }
 function printEval(){
   if(!evalStudentId)return;
