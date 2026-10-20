@@ -3795,57 +3795,79 @@ function exportPerfil(){
       +'</tr>';
   }).join(""):"";
 
+  var headerHtml='<div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:6px">'
+    +'<div><div style="font-size:24px;font-weight:800;color:#1a1a1a">'+s.name+'</div>'
+    +'<div style="font-size:11px;color:#888;margin-top:3px">'+(ev.date||new Date().toLocaleDateString("es-CR"))+(s.age?' · '+s.age+' años':'')+(s.sex?' · '+(s.sex==="M"?"Masculino":"Femenino"):'')+'</div></div>'
+    +'<div style="text-align:right;font-size:10px;color:#aaa">Mis Espacios<br>'+new Date().toLocaleDateString("es-CR")+'</div>'
+    +'</div><hr style="border:none;border-top:2px solid #6b21a8;margin-bottom:16px">';
+
   var html='<!DOCTYPE html><html lang="es"><head><meta charset="UTF-8"><title>Reporte — '+s.name+'</title><style>'
-    +'*{margin:0;padding:0;box-sizing:border-box}body{font-family:Arial,sans-serif;color:#1a1a1a;background:#fff;padding:30px 40px}'
-    +'h1{font-size:22px;font-weight:800;margin-bottom:2px}h2{font-size:13px;font-weight:700;color:#6b21a8;text-transform:uppercase;letter-spacing:.06em;margin:20px 0 8px;border-bottom:2px solid #6b21a8;padding-bottom:4px}'
-    +'.sub{font-size:12px;color:#666;margin-bottom:20px}.grid{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-bottom:4px}'
-    +'.box{background:#f8f4ff;border-radius:8px;padding:10px;text-align:center}.box-val{font-size:20px;font-weight:800;color:#6b21a8}.box-lbl{font-size:10px;color:#888;margin-top:2px;text-transform:uppercase}'
-    +'table{border-collapse:collapse;width:100%}td{vertical-align:top}'
-    +'.warn{background:#fffbeb;border:1px solid #fcd34d;border-radius:6px;padding:8px 12px;font-size:10px;color:#92400e;margin-top:16px;line-height:1.5}'
-    +'.footer{margin-top:30px;font-size:9px;color:#aaa;text-align:center;border-top:1px solid #eee;padding-top:12px}'
-    +'@media print{body{padding:15px 20px}}'
+    +'@page{size:A4;margin:18mm 20mm}'
+    +'*{margin:0;padding:0;box-sizing:border-box}'
+    +'body{font-family:Arial,sans-serif;color:#1a1a1a;background:#fff;font-size:12px}'
+    +'.page{width:100%;page-break-after:always}'
+    +'.page:last-child{page-break-after:avoid}'
+    +'h2{font-size:11px;font-weight:800;color:#6b21a8;text-transform:uppercase;letter-spacing:.07em;margin:14px 0 7px;border-bottom:1.5px solid #e9d5ff;padding-bottom:3px}'
+    +'.grid4{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin-bottom:10px}'
+    +'.grid2{display:grid;grid-template-columns:1fr 1fr;gap:18px}'
+    +'.box{background:#f8f4ff;border-radius:6px;padding:9px 8px;text-align:center}'
+    +'.bv{font-size:18px;font-weight:800;color:#6b21a8;line-height:1}'
+    +'.bl{font-size:9px;color:#888;margin-top:3px;text-transform:uppercase;letter-spacing:.04em}'
+    +'table{border-collapse:collapse;width:100%}'
+    +'td,th{padding:5px 8px;font-size:11px;vertical-align:middle}'
+    +'thead tr{background:#f3e8ff}'
+    +'tbody tr:nth-child(even){background:#faf5ff}'
+    +'tbody td{border-bottom:1px solid #f0e6ff}'
+    +'.tval{font-size:13px;font-weight:700;color:#1a1a1a}'
+    +'.tlbl{color:#666}'
+    +'.warn{background:#fffbeb;border-left:3px solid #f59e0b;padding:8px 12px;font-size:9.5px;color:#78350f;margin-top:14px;line-height:1.6}'
+    +'@media screen{body{padding:20px;max-width:210mm;margin:0 auto}}'
     +'</style></head><body>'
-    +'<h1>'+s.name+'</h1>'
-    +'<div class="sub">'+(ev.date||new Date().toLocaleDateString("es-CR"))+(s.age?' &nbsp;·&nbsp; '+s.age+' años':'')+(s.sex?' &nbsp;·&nbsp; '+(s.sex==="M"?"Masculino":"Femenino"):'')+(tg.type?' &nbsp;·&nbsp; Objetivo: '+tg.type:'')+'</div>'
-    // Composición
+
+    // ── PÁGINA 1 ──
+    +'<div class="page">'
+    +headerHtml
     +'<h2>Composición corporal</h2>'
-    +'<div class="grid">'
-    +(peso?'<div class="box"><div class="box-val">'+peso+'</div><div class="box-lbl">Peso (kg)</div></div>':'')
-    +(alt?'<div class="box"><div class="box-val">'+alt+'</div><div class="box-lbl">Altura (cm)</div></div>':'')
-    +(grasa?'<div class="box"><div class="box-val">'+grasa+'%</div><div class="box-lbl">% Grasa corporal</div></div>':'')
-    +(mm?'<div class="box"><div class="box-val">'+mm+'</div><div class="box-lbl">Masa magra (kg)</div></div>':'')
-    +(imc?'<div class="box"><div class="box-val">'+imc+'</div><div class="box-lbl">IMC · '+imcCat+'</div></div>':'')
-    +(icc?'<div class="box"><div class="box-val">'+icc+'</div><div class="box-lbl">ICC (cintura/cadera)</div></div>':'')
-    +(tmb?'<div class="box"><div class="box-val">'+tmb+'</div><div class="box-lbl">TMB (kcal/día)</div></div>':'')
-    +(tdee?'<div class="box"><div class="box-val">'+tdee+'</div><div class="box-lbl">TDEE (kcal/día)</div></div>':'')
+    +'<div class="grid4">'
+    +(peso?'<div class="box"><div class="bv">'+peso+'</div><div class="bl">Peso (kg)</div></div>':'')
+    +(alt?'<div class="box"><div class="bv">'+alt+'</div><div class="bl">Altura (cm)</div></div>':'')
+    +(grasa?'<div class="box"><div class="bv">'+grasa+'%</div><div class="bl">% Grasa</div></div>':'')
+    +(mm?'<div class="box"><div class="bv">'+mm+'</div><div class="bl">Masa magra (kg)</div></div>':'')
+    +(imc?'<div class="box"><div class="bv">'+imc+'</div><div class="bl">IMC · '+imcCat+'</div></div>':'')
+    +(icc?'<div class="box"><div class="bv">'+icc+'</div><div class="bl">ICC</div></div>':'')
+    +(tmb?'<div class="box"><div class="bv">'+tmb+'</div><div class="bl">TMB kcal/día</div></div>':'')
+    +(tdee?'<div class="box"><div class="bv">'+tdee+'</div><div class="bl">TDEE kcal/día</div></div>':'')
     +'</div>'
-    // Medidas circunferenciales + pliegues lado a lado
     +(circHtml||plieguesHtml?
-      '<div style="display:grid;grid-template-columns:1fr 1fr;gap:20px;margin-top:4px">'
-      +(circHtml?'<div><h2>Medidas circunferenciales</h2><table>'+circHtml+'</table></div>':'')
-      +(plieguesHtml?'<div><h2>Pliegues cutáneos</h2><table>'+plieguesHtml+'</table></div>':'')
+      '<div class="grid2">'
+      +(circHtml?'<div><h2>Medidas circunferenciales</h2><table><tbody>'+circHtml+'</tbody></table></div>':'')
+      +(plieguesHtml?'<div><h2>Pliegues cutáneos</h2><table><tbody>'+plieguesHtml+'</tbody></table></div>':'<div></div>')
       +'</div>':'')
-    // Nutrición
+    +'</div>'
+
+    // ── PÁGINA 2 ──
     +(kcal?
-      '<h2>Plan nutricional — '+nutGoal+'</h2>'
-      +'<div class="grid" style="margin-bottom:8px">'
-      +'<div class="box"><div class="box-val">'+kcal+'</div><div class="box-lbl">kcal/día</div></div>'
-      +(protG?'<div class="box"><div class="box-val" style="color:#e53e3e">'+protG+'g</div><div class="box-lbl">Proteína ('+pPct+'%)</div></div>':'')
-      +(carbG?'<div class="box"><div class="box-val" style="color:#d69e2e">'+carbG+'g</div><div class="box-lbl">Carbohidratos ('+cPct+'%)</div></div>':'')
-      +(fatG?'<div class="box"><div class="box-val" style="color:#805ad5">'+fatG+'g</div><div class="box-lbl">Grasas ('+fPct+'%)</div></div>':'')
+      '<div class="page">'
+      +headerHtml
+      +'<h2>Plan nutricional — '+nutGoal+'</h2>'
+      +'<div class="grid4" style="margin-bottom:14px">'
+      +'<div class="box"><div class="bv">'+kcal+'</div><div class="bl">kcal / día</div></div>'
+      +(protG?'<div class="box"><div class="bv" style="color:#c53030">'+protG+'g</div><div class="bl">Proteína ('+pPct+'%)</div></div>':'')
+      +(carbG?'<div class="box"><div class="bv" style="color:#b7791f">'+carbG+'g</div><div class="bl">Carbohidratos ('+cPct+'%)</div></div>':'')
+      +(fatG?'<div class="box"><div class="bv" style="color:#6b21a8">'+fatG+'g</div><div class="bl">Grasas ('+fPct+'%)</div></div>':'')
       +'</div>'
       +(mealHtml?
-        '<h2>Distribución por comida ('+meals+' comidas/día)</h2>'
-        +'<table><thead><tr style="background:#f3e8ff">'
-        +'<th style="padding:6px 10px 6px 0;text-align:left;font-size:11px;color:#6b21a8">Comida</th>'
-        +'<th style="padding:6px;text-align:center;font-size:11px;color:#6b21a8">kcal</th>'
-        +'<th style="padding:6px;text-align:center;font-size:11px;color:#e53e3e">Proteína</th>'
-        +'<th style="padding:6px;text-align:center;font-size:11px;color:#d69e2e">Carbos</th>'
-        +'<th style="padding:6px;text-align:center;font-size:11px;color:#805ad5">Grasas</th>'
+        '<h2>Distribución por comida ('+meals+' comidas / día)</h2>'
+        +'<table><thead><tr>'
+        +'<th style="text-align:left;color:#6b21a8">Comida</th>'
+        +'<th style="text-align:center;color:#6b21a8">kcal</th>'
+        +'<th style="text-align:center;color:#c53030">Proteína</th>'
+        +'<th style="text-align:center;color:#b7791f">Carbos</th>'
+        +'<th style="text-align:center;color:#6b21a8">Grasas</th>'
         +'</tr></thead><tbody>'+mealHtml+'</tbody></table>':'')
-      :'')
-    +'<div class="warn">⚠ Este reporte es orientativo y se basa en fórmulas científicas validadas (Mifflin-St Jeor, 2005). No reemplaza la consulta con un nutricionista o médico certificado.</div>'
-    +'<div class="footer">Generado por Mis Espacios · '+new Date().toLocaleDateString("es-CR")+'</div>'
+      +'<div class="warn">⚠ Este reporte es orientativo. Calculado con fórmula Mifflin-St Jeor (2005). No reemplaza la consulta con un nutricionista o médico certificado.</div>'
+      +'</div>'
+    :'')
     +'</body></html>';
 
   var w=window.open("","_blank","width=800,height=900");
