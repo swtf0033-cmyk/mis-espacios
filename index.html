@@ -1186,6 +1186,34 @@ label.switch-btn:hover{background:var(--acc-d2);color:var(--txt)}
 
     <!-- TAB 3: METAS -->
     <div class="eval-panel" id="ptab3">
+      <!-- Objetivo de entrenamiento -->
+      <div class="eval-section" style="margin-bottom:14px">
+        <div style="font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.08em;opacity:.4;margin-bottom:10px">🏆 Objetivo de entrenamiento</div>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:10px">
+          <div>
+            <div style="font-size:11px;font-weight:600;color:var(--txt2);margin-bottom:5px">Tipo de objetivo</div>
+            <select id="train-goal-type" class="fi" style="font-size:12px" onchange="saveTrainGoal()">
+              <option value="">— Sin definir —</option>
+              <option value="fuerza">💪 Fuerza / PRs</option>
+              <option value="hipertrofia">📈 Hipertrofia / Masa muscular</option>
+              <option value="definicion">🔥 Definición / Bajar grasa</option>
+              <option value="resistencia">🏃 Resistencia / Cardio</option>
+              <option value="perdida">⚖️ Pérdida de peso</option>
+              <option value="ganancia">🍖 Ganancia de peso</option>
+              <option value="hibrido">🔄 Híbrido (fuerza + definición)</option>
+              <option value="salud">🌿 Salud general / Bienestar</option>
+            </select>
+          </div>
+          <div>
+            <div style="font-size:11px;font-weight:600;color:var(--txt2);margin-bottom:5px">Meta específica</div>
+            <input type="text" id="train-goal-specific" class="fi" style="font-size:12px" placeholder="Ej: Correr 10K en menos de 60 min" oninput="saveTrainGoal()">
+          </div>
+        </div>
+        <div>
+          <div style="font-size:11px;font-weight:600;color:var(--txt2);margin-bottom:5px">Notas del entrenador</div>
+          <textarea id="train-goal-notes" class="fi fita" style="font-size:12px;min-height:55px" placeholder="Limitaciones físicas, observaciones, ejercicios a evitar..." oninput="saveTrainGoal()"></textarea>
+        </div>
+      </div>
       <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:14px">
         <div class="goal-card">
           <div style="font-size:12px;font-weight:700;margin-bottom:10px">🎯 Meta de peso</div>
@@ -2876,13 +2904,12 @@ function addMesociclo(){
 
 // ── Test de 1RM ────────────────────────
 var RM_EXERCISES=[
-  {key:"squat",   name:"Péndulo",          icon:"🏋️", pattern:"Tren inferior — Rodilla"},
-  {key:"deadlift",name:"Buenos días",      icon:"⚡",  pattern:"Tren inferior — Cadera"},
-  {key:"hipthrust",name:"Hip thrust",      icon:"🍑",  pattern:"Tren inferior — Glúteo"},
-  {key:"bench",   name:"Flexiones",        icon:"💪",  pattern:"Tren superior — Empuje horizontal"},
-  {key:"ohp",     name:"Press inclinado",  icon:"🔝",  pattern:"Tren superior — Empuje vertical"},
-  {key:"row",     name:"Polea / Remo T",   icon:"🚣",  pattern:"Tren superior — Jalón horizontal"},
-  {key:"pulldown",name:"Dominadas",        icon:"📌",  pattern:"Tren superior — Jalón vertical"}
+  {key:"squat",    name:"Sentadilla / Péndulo", icon:"🏋️", pattern:"Tren inferior — Rodilla"},
+  {key:"hipthrust",name:"Hip thrust",           icon:"🍑",  pattern:"Tren inferior — Glúteo"},
+  {key:"bench",    name:"Flexiones",            icon:"💪",  pattern:"Tren superior — Empuje horizontal"},
+  {key:"ohp",      name:"Press inclinado",      icon:"🔝",  pattern:"Tren superior — Empuje vertical", menOnly:true},
+  {key:"row",      name:"Polea",                icon:"🚣",  pattern:"Tren superior — Jalón horizontal"},
+  {key:"pulldown", name:"Dominadas",            icon:"📌",  pattern:"Tren superior — Jalón vertical"}
 ];
 var RM_WEEKS=[
   {label:"S1 PR",   pctLo:85,pctHi:100,cls:"mw-pr"},
@@ -2899,37 +2926,51 @@ function toggleRmProtocol(){
   if(b)b.textContent=on?"📋 Ocultar protocolo":"📋 Ver protocolo de calentamiento";
 }
 
+function rmDisabledKey(){return"rm-disabled-"+profileStudentId;}
+function toggleRmExercise(key){
+  var dis=lsGet(rmDisabledKey(),[]);
+  var idx=dis.indexOf(key);
+  if(idx===-1)dis.push(key);else dis.splice(idx,1);
+  lsSave(rmDisabledKey(),dis);
+  renderRmGrid();
+}
 function renderRmGrid(){
   var rms=lsGet("rm-"+profileStudentId,{});
-  var html='<div class="rm-grid">';
+  var dis=lsGet(rmDisabledKey(),[]);
+  var s=state.students.find(function(x){return x.id===profileStudentId;})||{};
+  // auto-suggest: press inclinado desactivado por defecto para mujeres si no tiene 1RM
+  var html='<div style="font-size:10px;color:var(--txt2);margin-bottom:10px">Usa el botón <strong>✓/✗</strong> para activar o desactivar ejercicios para este alumno.</div>';
+  html+='<div class="rm-grid">';
   RM_EXERCISES.forEach(function(ex){
+    var disabled=dis.indexOf(ex.key)!==-1;
     var stored=rms[ex.key]||{};
     var hasRm=stored.rm>0;
     var rm3=stored.rm3||null;
-    html+='<div class="rm-card'+(hasRm?" has-rm":"")+'" id="rmcard-'+ex.key+'">';
-    // head: nombre + valores actuales
+    var cardStyle=disabled?"opacity:.45;filter:grayscale(.7)":"";
+    html+='<div class="rm-card'+(hasRm&&!disabled?" has-rm":"")+'" id="rmcard-'+ex.key+'" style="'+cardStyle+'">';
     html+='<div class="rm-card-head">'+
-      '<div><div class="rm-card-name">'+ex.icon+' '+ex.name+'</div><div class="rm-card-pattern">'+ex.pattern+'</div></div>'+
-      '<div style="text-align:right">'+
-        (hasRm?
+      '<div style="flex:1;min-width:0">'+
+        '<div class="rm-card-name">'+ex.icon+' '+ex.name+(ex.menOnly?'<span style="font-size:9px;color:var(--txt2);margin-left:4px">(hombres)</span>':'')+'</div>'+
+        '<div class="rm-card-pattern">'+ex.pattern+'</div>'+
+      '</div>'+
+      '<div style="display:flex;flex-direction:column;align-items:flex-end;gap:4px">'+
+        '<button onclick="toggleRmExercise(\''+ex.key+'\')" style="font-size:10px;padding:3px 8px;border-radius:5px;border:1px solid var(--border2);background:'+(disabled?'rgba(248,113,113,.15)':'rgba(52,211,153,.15)')+';color:'+(disabled?'var(--danger)':'var(--green)')+';cursor:pointer;font-weight:700">'+(disabled?'✗ Inactivo':'✓ Activo')+'</button>'+
+        (!disabled&&hasRm?
           '<div style="font-size:9px;color:var(--txt2)">3RM: <strong style="color:var(--txt)">'+(rm3||"—")+'kg</strong></div>'+
           '<div class="rm-current-val">'+stored.rm+'kg</div>'+
           '<div class="rm-current-lbl">1RM estimado</div>'+
           '<div class="rm-current-date">'+stored.date+'</div>'
-        :'<div style="font-size:11px;color:var(--txt2);margin-top:4px">Sin test</div>')+
+        :(!disabled?'<div style="font-size:11px;color:var(--txt2);margin-top:4px">Sin test</div>':''))+
       '</div></div>';
-    // input 3RM
-    html+='<div class="rm-input-row" style="margin-top:8px">'+
-      '<span class="rm-i-lbl" style="white-space:nowrap;font-weight:700">Peso con 3 reps</span>'+
-      '<input class="rm-i" type="number" id="rm-3-'+ex.key+'" placeholder="kg" min="0" max="500"'+(rm3?' value="'+rm3+'"':'')+'>'+
-      '<span class="rm-i-lbl">kg</span>'+
-      '<button class="btn btn-p" style="font-size:11px;padding:5px 12px;flex-shrink:0" onclick="saveRm3(\''+ex.key+'\')">Guardar</button>'+
-    '</div>';
-    // pesos de trabajo
-    if(hasRm){
-      html+=rmWeeksHtml(stored.rm);
-    } else {
-      html+='<div style="font-size:10px;color:var(--txt2);margin-top:8px;text-align:center;padding:6px">Ingresa el peso para ver los rangos de trabajo</div>';
+    if(!disabled){
+      html+='<div class="rm-input-row" style="margin-top:8px">'+
+        '<span class="rm-i-lbl" style="white-space:nowrap;font-weight:700">Peso con 3 reps</span>'+
+        '<input class="rm-i" type="number" id="rm-3-'+ex.key+'" placeholder="kg" min="0" max="500"'+(rm3?' value="'+rm3+'"':'')+'>'+
+        '<span class="rm-i-lbl">kg</span>'+
+        '<button class="btn btn-p" style="font-size:11px;padding:5px 12px;flex-shrink:0" onclick="saveRm3(\''+ex.key+'\')">Guardar</button>'+
+      '</div>';
+      if(hasRm){html+=rmWeeksHtml(stored.rm);}
+      else{html+='<div style="font-size:10px;color:var(--txt2);margin-top:8px;text-align:center;padding:6px">Ingresa el peso para ver los rangos de trabajo</div>';}
     }
     html+='</div>';
   });
@@ -3399,7 +3440,21 @@ function saveGoals(){
     fatGoalDate:(el("goal-fat-date")||{}).value||null
   });
 }
+function saveTrainGoal(){
+  lsSave("train-goal-"+profileStudentId,{
+    type:(el("train-goal-type")||{}).value||"",
+    specific:(el("train-goal-specific")||{}).value||"",
+    notes:(el("train-goal-notes")||{}).value||""
+  });
+}
+function loadTrainGoal(){
+  var g=lsGet("train-goal-"+profileStudentId,{});
+  if(el("train-goal-type"))el("train-goal-type").value=g.type||"";
+  if(el("train-goal-specific"))el("train-goal-specific").value=g.specific||"";
+  if(el("train-goal-notes"))el("train-goal-notes").value=g.notes||"";
+}
 function renderGoals(){
+  loadTrainGoal();
   var g=lsGet("goals-"+profileStudentId,{});
   var evs=lsGet("evals-"+profileStudentId,[]);
   var s=state.students.find(function(x){return x.id===profileStudentId;})||{};
