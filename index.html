@@ -3063,7 +3063,7 @@ function nuevoCiclo(){
     if(s.payStatus!=="Inactivo"){lsDocSet("students",s.id,{payStatus:"Pendiente"});}
   });
   state.students=lsGet("students",[]).sort(function(a,b){return(a.name||"").localeCompare(b.name||"");});
-  refreshStudents();renderFitStats();renderFitAlerts();renderPerInc();renderPerStats();renderPerExp();updateCentroBadge();
+  refreshStudents();renderFitStats();renderFitAlerts();renderPerInc();renderPerStats();renderPerExp();renderCentro();updateCentroBadge();
 }
 function pagarHoyClient(id){
   var iso=new Date().toISOString().slice(0,10);
