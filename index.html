@@ -4871,15 +4871,65 @@ function renderFitExpList(){
 }
 
 // AGENCIA FIN SUMMARY
+function saveAgDistrib(field,val){
+  var d=lsGet("ag-distrib",{pago:45,sost:30,ahorro:40,metas:30});
+  d[field]=Math.max(0,Math.min(100,Number(val)||0));
+  lsSave("ag-distrib",d);
+  renderAgFinSummary();
+}
 function renderAgFinSummary(){
   var billing=state.clients.filter(function(c){return c.status==="Activo";}).reduce(function(s,c){return s+(Number(c.monthly)||0);},0);
-  var totalExp=expMonthly(state.agExp,"ag");
-  var net=billing-totalExp;
-  var html='<div style="display:flex;flex-direction:column;gap:10px;margin-top:4px">'+
-    '<div style="display:flex;justify-content:space-between;align-items:center;padding:14px;background:var(--green-d);border-radius:10px;border:1px solid rgba(52,211,153,.2)"><span style="font-size:13px;font-weight:600;color:var(--green)">Facturacion bruta</span><span style="font-family:Rajdhani,sans-serif;font-weight:700;font-size:22px;color:var(--green)">'+fmtMoney(billing)+'</span></div>'+
-    '<div style="display:flex;justify-content:space-between;align-items:center;padding:14px;background:var(--danger-d);border-radius:10px;border:1px solid rgba(248,113,113,.2)"><span style="font-size:13px;font-weight:600;color:var(--danger)">Gastos fijos</span><span style="font-family:Rajdhani,sans-serif;font-weight:700;font-size:22px;color:var(--danger)">&minus; '+fmtMoney(totalExp)+'</span></div>'+
-    '<div style="display:flex;justify-content:space-between;align-items:center;padding:14px;background:var(--acc-d);border-radius:10px;border:1px solid var(--border2)"><span style="font-size:13px;font-weight:600;color:var(--acc)">Utilidad neta</span><span style="font-family:Rajdhani,sans-serif;font-weight:700;font-size:28px;background:var(--grad);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text">'+fmtMoney(net)+'</span></div>'+
-    '</div>';
+  var _nc=activeClientsCount();
+  var varTools=(state.agTools||[]).filter(function(t){return !t.done&&t.perClient&&t.cost>0;});
+  var varCosts=varTools.reduce(function(s,t){return s+(Number(t.cost)||0)*_nc;},0);
+  var recurringTypes={sub:1,hw:1,credits:1,ads:1};
+  var fixedToolsCost=(state.agTools||[]).filter(function(t){return !t.done&&!t.perClient&&recurringTypes[t.type]&&t.cost>0;}).reduce(function(s,t){return s+(Number(t.cost)||0);},0);
+  var fixedCosts=expMonthly(state.agExp,"ag")+fixedToolsCost;
+  var margen=billing-varCosts-fixedCosts;
+  var d=lsGet("ag-distrib",{pago:45,sost:30,ahorro:40,metas:30});
+  var pago=margen*(d.pago/100);
+  var flujo=margen-pago;
+  var sost=flujo*(d.sost/100);
+  var ahorro=flujo*(d.ahorro/100);
+  var metas=flujo*(d.metas/100);
+  var distTotal=d.sost+d.ahorro+d.metas;
+  var remainder=flujo-sost-ahorro-metas;
+
+  function row(icon,label,val,bg,border,col,size,prefix){
+    size=size||"18px";prefix=prefix===undefined?"":prefix;
+    return'<div style="display:flex;justify-content:space-between;align-items:center;padding:12px 14px;background:'+bg+';border-radius:10px;border:1px solid '+border+'">'
+      +'<span style="font-size:13px;font-weight:600;color:'+col+'">'+icon+' '+label+'</span>'
+      +'<span style="font-family:Rajdhani,sans-serif;font-weight:700;font-size:'+size+';color:'+col+'">'+prefix+fmtMoney(val)+'</span></div>';
+  }
+  function pctRow(icon,label,field,pct,amount,col,bg){
+    return'<div style="display:flex;align-items:center;gap:10px;padding:10px 14px;background:'+bg+';border-radius:10px;border:1px solid rgba(255,255,255,.06)">'
+      +'<span style="font-size:13px;font-weight:600;color:'+col+';flex:1">'+icon+' '+label+'</span>'
+      +'<div style="display:flex;align-items:center;gap:6px">'
+      +'<input type="number" min="0" max="100" value="'+pct+'" oninput="saveAgDistrib(\''+field+'\',this.value)" style="width:46px;background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.12);border-radius:6px;color:'+col+';font-size:13px;font-weight:700;text-align:center;padding:3px 4px;outline:none">%'
+      +'</div>'
+      +'<span style="font-family:Rajdhani,sans-serif;font-weight:700;font-size:16px;color:'+col+';min-width:80px;text-align:right">'+fmtMoney(amount)+'</span></div>';
+  }
+
+  var varDetail=varTools.length?'<div style="font-size:10px;opacity:.5;margin-top:2px;padding-left:2px">'+varTools.map(function(t){return t.name+': '+fmtMoney(t.cost)+'×'+_nc;}).join(' · ')+'</div>':'';
+
+  var html='<div style="display:flex;flex-direction:column;gap:8px;margin-top:4px">'
+    +row('💰','Ingresos brutos',billing,'var(--green-d)','rgba(52,211,153,.2)','var(--green)','22px')
+    +(varCosts>0?'<div style="background:rgba(251,191,36,.07);border-radius:10px;border:1px solid rgba(251,191,36,.18);padding:12px 14px"><div style="display:flex;justify-content:space-between;align-items:center"><span style="font-size:13px;font-weight:600;color:#FBBF24">📦 Gastos por cliente</span><span style="font-family:Rajdhani,sans-serif;font-weight:700;font-size:18px;color:#FBBF24">− '+fmtMoney(varCosts)+'</span></div>'+varDetail+'</div>':'')
+    +row('🔩','Gastos fijos',fixedCosts,'var(--danger-d)','rgba(248,113,113,.2)','var(--danger)','18px','− ')
+    +'<div style="display:flex;justify-content:space-between;align-items:center;padding:13px 14px;background:rgba(139,92,246,.1);border-radius:10px;border:1px solid rgba(139,92,246,.25)"><span style="font-size:13px;font-weight:700;color:#A78BFA">= Margen operativo</span><span style="font-family:Rajdhani,sans-serif;font-weight:700;font-size:22px;color:#A78BFA">'+fmtMoney(margen)+'</span></div>'
+    +'<div style="background:rgba(255,255,255,.03);border-radius:10px;border:1px solid rgba(255,255,255,.07);overflow:hidden">'
+    +'<div style="padding:10px 14px 6px;font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.07em;opacity:.4">Tu pago</div>'
+    +pctRow('🤑','Pago personal','pago',d.pago,pago,'#34D399','transparent')
+    +'</div>'
+    +'<div style="display:flex;justify-content:space-between;align-items:center;padding:13px 14px;background:rgba(56,189,248,.09);border-radius:10px;border:1px solid rgba(56,189,248,.2)"><span style="font-size:13px;font-weight:700;color:#38BDF8">= Flujo libre</span><span style="font-family:Rajdhani,sans-serif;font-weight:700;font-size:22px;color:#38BDF8">'+fmtMoney(flujo)+'</span></div>'
+    +'<div style="background:rgba(255,255,255,.03);border-radius:10px;border:1px solid rgba(255,255,255,.07);overflow:hidden">'
+    +'<div style="padding:10px 14px 4px;display:flex;justify-content:space-between;align-items:center"><span style="font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.07em;opacity:.4">Distribución del flujo libre</span><span style="font-size:10px;color:'+(distTotal>100?"var(--danger)":distTotal===100?"var(--green)":"var(--warn)")+';font-weight:700">'+distTotal+'% asignado</span></div>'
+    +pctRow('🏗️','Sostenimiento','sost',d.sost,sost,'#60A5FA','transparent')
+    +pctRow('💾','Ahorro','ahorro',d.ahorro,ahorro,'#34D399','transparent')
+    +pctRow('🎯','Metas','metas',d.metas,metas,'#FBBF24','transparent')
+    +(Math.abs(remainder)>1?'<div style="display:flex;justify-content:space-between;padding:8px 14px 10px;opacity:.5;font-size:12px"><span>Sin asignar</span><span style="font-family:Rajdhani,sans-serif;font-weight:700">'+fmtMoney(remainder)+'</span></div>':'')
+    +'</div>'
+    +'</div>';
   var e2=el("ag-fin-summary");if(e2)e2.innerHTML=html;
 }
 
