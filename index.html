@@ -770,7 +770,7 @@ label.switch-btn:hover{background:var(--acc-d2);color:var(--txt)}
       <div class="view" id="personal-ingresos">
         <div class="g2">
           <div class="card">
-            <div class="ct">Fuentes de ingreso<button class="btn-sm" onclick="editPerInc()">&#9999; Editar</button></div>
+            <div class="ct">Fuentes de ingreso</div>
             <div id="per-inc-list"></div>
           </div>
           <div class="card">
@@ -2404,7 +2404,7 @@ function renderCentro(){
   var fitRiesgo=state.students.filter(function(s){return s.payStatus==="Vencido"||s.payStatus==="Atencion";}).reduce(function(sum,s){return sum+(Number(s.fee)||0);},0);
   var fitInc=fitCobrado; // ingreso real = solo los al día
   // Agencia: promedio del historial o valor manual
-  var agInc=avgRevenue(state.agRev)||Number(state.perInc.agency)||0;
+  var agInc=calcAgCascade().pago||avgRevenue(state.agRev)||0;
   var totalInc=fitInc+agInc;
   var fitExp=expMonthly(state.fitExp,"fit");
   var agExp=expMonthly(state.agExp,"ag");
@@ -2522,14 +2522,67 @@ function renderCentro(){
   }
   updateCentroBadge();
 }
+function calcPerInc(){
+  var fitBruto=state.students.filter(function(s){return s.payStatus!=="Inactivo";}).reduce(function(sum,s){return sum+(Number(s.fee)||0);},0);
+  var callerasDone=lsGet("calleras-done",[]);
+  var calleraCost=Number(lsGet("callera-cost",15))||15;
+  var callerasPending=state.students.filter(function(s){return s.payStatus!=="Inactivo"&&(Number(s.months)||0)>=2&&callerasDone.indexOf(s.id)===-1;});
+  var calleraCut=callerasPending.length*calleraCost;
+  var fitNeto=Math.max(0,fitBruto-calleraCut);
+  var cas=calcAgCascade();
+  var agPago=Math.max(0,cas.pago);
+  return{fitBruto:fitBruto,calleraCut:calleraCut,calleraCount:callerasPending.length,calleraCost:calleraCost,fitNeto:fitNeto,agPago:agPago,total:fitNeto+agPago};
+}
+function saveCalleraCost(v){lsSave("callera-cost",Math.max(0,Number(v)||0));renderPerInc();renderPerStats();updateCentroBadge();}
 function renderPerInc(){
-  var inc=state.perInc;
-  var total=(Number(inc.fit)||0)+(Number(inc.agency)||0);
-  var html="";
-  if(Number(inc.fit)>0)html+='<div style="display:flex;align-items:center;gap:12px;padding:14px;background:var(--surf);border-radius:10px;margin-bottom:8px"><div style="width:36px;height:36px;border-radius:9px;background:linear-gradient(135deg,#A855F7,#EC4899);display:flex;align-items:center;justify-content:center;font-size:15px;flex-shrink:0">&#128170;</div><div style="flex:1"><div style="font-weight:600;font-size:13px">FitCoach Pro</div></div><div style="text-align:right"><div style="font-family:Rajdhani,sans-serif;font-size:20px;font-weight:700;color:var(--acc)">'+fmtMoney(inc.fit)+'</div><div style="font-size:10px;color:var(--txt2)">ingreso neto</div></div></div>';
-  if(Number(inc.agency)>0)html+='<div style="display:flex;align-items:center;gap:12px;padding:14px;background:var(--surf);border-radius:10px;margin-bottom:8px"><div style="width:36px;height:36px;border-radius:9px;background:linear-gradient(135deg,#EF4444,#7F1D1D);display:flex;align-items:center;justify-content:center;font-size:15px;flex-shrink:0">&#128226;</div><div style="flex:1"><div style="font-weight:600;font-size:13px">Agencia</div></div><div style="text-align:right"><div style="font-family:Rajdhani,sans-serif;font-size:20px;font-weight:700;color:var(--acc2)">'+fmtMoney(inc.agency)+'</div><div style="font-size:10px;color:var(--txt2)">dividendo</div></div></div>';
-  if(!html)html='<div class="empty-st"><div class="ico">&#128176;</div><p>Ingresa tus fuentes de ingreso</p><button class="btn-sm" onclick="editPerInc()">+ Registrar</button></div>';
-  else html+='<div style="border-top:1px solid var(--border);padding-top:12px;display:flex;justify-content:space-between"><span style="font-weight:700;font-size:14px">Total</span><span style="font-family:Rajdhani,sans-serif;font-weight:700;font-size:22px;background:var(--grad);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text">'+fmtMoney(total)+'</span></div>';
+  var pi=calcPerInc();
+  var cas=calcAgCascade();
+  var nc=state.students.filter(function(s){return s.payStatus!=="Inactivo";}).length;
+  function irow(icon,grad,title,sub,val,col){
+    return'<div style="display:flex;align-items:center;gap:12px;padding:12px 14px;background:var(--surf);border-radius:12px">'
+      +'<div style="width:36px;height:36px;border-radius:9px;background:'+grad+';display:flex;align-items:center;justify-content:center;font-size:15px;flex-shrink:0">'+icon+'</div>'
+      +'<div style="flex:1"><div style="font-weight:600;font-size:13px">'+title+'</div><div style="font-size:10px;opacity:.5">'+sub+'</div></div>'
+      +'<span style="font-family:Rajdhani,sans-serif;font-size:20px;font-weight:700;color:'+col+'">'+fmtMoney(val)+'</span></div>';
+  }
+  var html='<div style="display:flex;flex-direction:column;gap:8px;margin-top:4px">';
+  // FitCoach block
+  html+='<div style="background:rgba(168,85,247,.06);border-radius:12px;border:1px solid rgba(168,85,247,.15);overflow:hidden">';
+  html+='<div style="display:flex;justify-content:space-between;align-items:center;padding:12px 14px">'
+    +'<div style="display:flex;align-items:center;gap:10px">'
+    +'<div style="width:34px;height:34px;border-radius:9px;background:linear-gradient(135deg,#A855F7,#EC4899);display:flex;align-items:center;justify-content:center;font-size:14px">💪</div>'
+    +'<div><div style="font-weight:600;font-size:13px">FitCoach Pro</div><div style="font-size:10px;opacity:.5">'+nc+' alumnos activos</div></div></div>'
+    +'<span style="font-family:Rajdhani,sans-serif;font-size:20px;font-weight:700;color:#A855F7">'+fmtMoney(pi.fitBruto)+'</span></div>';
+  if(pi.calleraCut>0){
+    html+='<div style="display:flex;justify-content:space-between;align-items:center;padding:8px 14px;background:rgba(245,158,11,.07);border-top:1px solid rgba(255,255,255,.05)">'
+      +'<span style="font-size:11px;opacity:.7">🧤 Calleras pendientes ('+pi.calleraCount+'× <input type="number" value="'+pi.calleraCost+'" oninput="saveCalleraCost(this.value)" style="width:38px;background:transparent;border:none;border-bottom:1px solid rgba(245,158,11,.4);color:#FBBF24;font-size:11px;font-weight:700;text-align:center;outline:none;padding:0 2px"> c/u)</span>'
+      +'<span style="font-family:Rajdhani,sans-serif;font-size:14px;font-weight:700;color:#FBBF24">− '+fmtMoney(pi.calleraCut)+'</span></div>';
+    html+='<div style="display:flex;justify-content:space-between;padding:8px 14px 12px">'
+      +'<span style="font-size:12px;font-weight:700;opacity:.7">Neto FitCoach</span>'
+      +'<span style="font-family:Rajdhani,sans-serif;font-size:16px;font-weight:700;color:#A855F7">'+fmtMoney(pi.fitNeto)+'</span></div>';
+  } else if(nc===0){
+    html+='<div style="padding:8px 14px 12px;font-size:11px;opacity:.4">Sin alumnos activos aún</div>';
+  }
+  html+='</div>';
+  // Agency block
+  html+='<div style="background:rgba(239,68,68,.06);border-radius:12px;border:1px solid rgba(239,68,68,.15);overflow:hidden">';
+  html+='<div style="display:flex;justify-content:space-between;align-items:center;padding:12px 14px">'
+    +'<div style="display:flex;align-items:center;gap:10px">'
+    +'<div style="width:34px;height:34px;border-radius:9px;background:linear-gradient(135deg,#EF4444,#7F1D1D);display:flex;align-items:center;justify-content:center;font-size:14px">📣</div>'
+    +'<div><div style="font-weight:600;font-size:13px">Mi pago — Agencia</div><div style="font-size:10px;opacity:.5">'+cas.distrib.pago+'% del margen ('+fmtMoney(cas.margen)+' margen)</div></div></div>'
+    +'<span style="font-family:Rajdhani,sans-serif;font-size:20px;font-weight:700;color:#EF4444">'+fmtMoney(pi.agPago)+'</span></div>';
+  if(cas.margen<=0)html+='<div style="padding:8px 14px 12px;font-size:11px;color:var(--danger);opacity:.7">⚠️ Margen operativo negativo — ajusta gastos o clientes</div>';
+  html+='</div>';
+  // Total
+  html+='<div style="display:flex;justify-content:space-between;align-items:center;padding:14px;background:var(--acc-d);border-radius:12px;border:1px solid var(--border2)">'
+    +'<span style="font-weight:700;font-size:14px">Total personal /mes</span>'
+    +'<span style="font-family:Rajdhani,sans-serif;font-weight:700;font-size:26px;background:var(--grad);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text">'+fmtMoney(pi.total)+'</span></div>';
+  // Callera setting when no pending
+  if(pi.calleraCount===0&&nc>0){
+    html+='<div style="display:flex;align-items:center;gap:8px;padding:8px 12px;opacity:.5;font-size:11px">'
+      +'<span>🧤 Costo calleras por alumno: $</span>'
+      +'<input type="number" value="'+pi.calleraCost+'" oninput="saveCalleraCost(this.value)" style="width:42px;background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.12);border-radius:5px;color:var(--txt);font-size:11px;text-align:center;padding:2px 4px;outline:none"></div>';
+  }
+  html+='</div>';
   var e2=el("per-inc-list");if(e2)e2.innerHTML=html;
 }
 
@@ -2637,7 +2690,7 @@ function renderPerExp(){
 }
 
 function renderPerStats(){
-  var inc=(Number(state.perInc.fit)||0)+(Number(state.perInc.agency)||0);
+  var inc=calcPerInc().total;
   var exp=expMonthly(state.perExp,"per")+expMonthly(state.agExp,"ag")+expMonthly(state.fitExp,"fit");
   var bal=inc-exp;
   var lastSav=state.savings.vals&&state.savings.vals.length?Number(state.savings.vals[state.savings.vals.length-1])||0:0;
@@ -5083,7 +5136,7 @@ function initCharts(app,view){
   if(app==="personal"){
     if(!view||view==="dash"){
       var sr=state.savings;
-      var perInc2=(Number(state.perInc.fit)||0)+(Number(state.perInc.agency)||0);
+      var perInc2=calcPerInc().total;
       var perExpSum=expMonthly(state.perExp,"per")+expMonthly(state.fitExp,"fit")+expMonthly(state.agExp,"ag");
       var incData=sr.months?sr.months.map(function(){return perInc2;}):[];
       var expData=sr.months?sr.months.map(function(){return perExpSum;}):[];
@@ -5097,8 +5150,7 @@ function initCharts(app,view){
     }
     if(view==="ingresos"){
       var sr2=state.savings;
-      var fitInc=Number(state.perInc.fit)||0;
-      var agInc=Number(state.perInc.agency)||0;
+      var _pi2=calcPerInc();var fitInc=_pi2.fitNeto;var agInc=_pi2.agPago;
       var fitData2=sr2.months?sr2.months.map(function(){return fitInc;}):[];
       var agData2=sr2.months?sr2.months.map(function(){return agInc;}):[];
       lineA("per-ing",sr2.months||[],
