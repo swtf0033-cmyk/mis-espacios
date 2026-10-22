@@ -1826,28 +1826,48 @@ function deleteAgTool(id){
   lsSave("agency-tools",state.agTools);
   renderAgExp();
 }
+function agToolTypeChanged(){
+  var t=(el("at-type")||{}).value||"sub";
+  var cfg={
+    sub:  {percli:1,cur:1,next:1,pay:1,costLbl:"Costo /mes ($)"},
+    credits:{percli:1,cur:0,next:0,pay:1,costLbl:"Costo por recarga ($)"},
+    ads:  {percli:1,cur:0,next:0,pay:1,costLbl:"Presupuesto /mes ($)"},
+    hw:   {percli:0,cur:1,next:1,pay:1,costLbl:"Precio total ($)"},
+    once: {percli:0,cur:0,next:0,pay:1,costLbl:"Precio total ($)"},
+    mejora:{percli:0,cur:1,next:0,pay:0,costLbl:"Costo estimado ($)"},
+    meta: {percli:0,cur:0,next:0,pay:0,costLbl:"Costo objetivo ($)"}
+  };
+  var c=cfg[t]||cfg.sub;
+  function tog(id,show){var e=el(id);if(e)e.style.display=show?"":"none";}
+  tog("at-percli-row",c.percli);
+  tog("at-cur-row",c.cur);
+  tog("at-next-row",c.next);
+  tog("at-pay-row",c.pay);
+  var lbl=el("at-cost-lbl");if(lbl)lbl.textContent=c.costLbl;
+}
 function agToolForm(t){
   t=t||{};
+  var typ=t.type||"sub";
   return '<div class="form-g"><label>Nombre</label><input id="at-name" class="fi" placeholder="Claude, APIMart, PC..." value="'+(t.name||"")+'"></div>'
     +'<div class="form-r">'
-    +'<div class="form-g"><label>Tipo</label><select id="at-type" class="fi">'
-    +'<option value="sub"'+(t.type==="sub"||!t.type?" selected":"")+'>📦 Suscripción</option>'
-    +'<option value="credits"'+(t.type==="credits"?" selected":"")+'>🪙 Créditos</option>'
-    +'<option value="ads"'+(t.type==="ads"?" selected":"")+'>📣 Pauta / Ads</option>'
-    +'<option value="hw"'+(t.type==="hw"?" selected":"")+'>🖥️ Equipo / Hardware</option>'
-    +'<option value="once"'+(t.type==="once"?" selected":"")+'>💳 Pago único</option>'
-    +'<option value="mejora"'+(t.type==="mejora"?" selected":"")+'>🎯 Mejora</option>'
-    +'<option value="meta"'+(t.type==="meta"?" selected":"")+'>⭐ Meta</option>'
+    +'<div class="form-g"><label>Tipo</label><select id="at-type" class="fi" onchange="agToolTypeChanged()">'
+    +'<option value="sub"'+(typ==="sub"?" selected":"")+'>📦 Suscripción</option>'
+    +'<option value="credits"'+(typ==="credits"?" selected":"")+'>🪙 Créditos</option>'
+    +'<option value="ads"'+(typ==="ads"?" selected":"")+'>📣 Pauta / Ads</option>'
+    +'<option value="hw"'+(typ==="hw"?" selected":"")+'>🖥️ Equipo / Hardware</option>'
+    +'<option value="once"'+(typ==="once"?" selected":"")+'>💳 Pago único</option>'
+    +'<option value="mejora"'+(typ==="mejora"?" selected":"")+'>🎯 Mejora</option>'
+    +'<option value="meta"'+(typ==="meta"?" selected":"")+'>⭐ Meta</option>'
     +'</select></div>'
-    +'<div class="form-g"><label>Costo mensual ($)</label><input id="at-cost" type="number" class="fi" placeholder="0" value="'+(t.cost||"")+'"></div>'
-    +'<div class="form-g" style="display:flex;align-items:center;gap:8px;padding:8px 0"><label style="margin:0;display:flex;align-items:center;gap:6px;cursor:pointer"><input id="at-percli" type="checkbox"'+(t.perClient?" checked":"")+' style="width:15px;height:15px;accent-color:var(--acc)"> <span style="font-size:13px">Por cliente (costo × nº clientes activos)</span></label></div>'
+    +'<div class="form-g"><label id="at-cost-lbl">Costo /mes ($)</label><input id="at-cost" type="number" class="fi" placeholder="0" value="'+(t.cost||"")+'"></div>'
+    +'</div>'
+    +'<div id="at-percli-row" class="form-g" style="display:flex;align-items:center;gap:8px;padding:8px 0"><label style="margin:0;display:flex;align-items:center;gap:6px;cursor:pointer"><input id="at-percli" type="checkbox"'+(t.perClient?" checked":"")+' style="width:15px;height:15px;accent-color:var(--acc)"> <span style="font-size:13px">Por cliente (costo × nº clientes activos)</span></label></div>'
+    +'<div class="form-r">'
+    +'<div id="at-cur-row" class="form-g"><label>Nivel actual</label><input id="at-cur" class="fi" placeholder="Pro, Basic, i5 16GB..." value="'+(t.current||"")+'"></div>'
+    +'<div id="at-next-row" class="form-g"><label>Próxima mejora</label><input id="at-next" class="fi" placeholder="Max, 32GB, RTX..." value="'+(t.nextLevel||"")+'"></div>'
     +'</div>'
     +'<div class="form-r">'
-    +'<div class="form-g"><label>Nivel actual</label><input id="at-cur" class="fi" placeholder="Pro, Basic, i5 16GB..." value="'+(t.current||"")+'"></div>'
-    +'<div class="form-g"><label>🎯 Próxima mejora</label><input id="at-next" class="fi" placeholder="Max Fable, Xfield, 32GB..." value="'+(t.nextLevel||"")+'"></div>'
-    +'</div>'
-    +'<div class="form-r">'
-    +'<div class="form-g"><label>Último pago</label><input id="at-pay" type="date" class="fi" value="'+(t.lastPay||"")+'"></div>'
+    +'<div id="at-pay-row" class="form-g"><label>Último pago</label><input id="at-pay" type="date" class="fi" value="'+(t.lastPay||"")+'"></div>'
     +'<div class="form-g"><label>Prioridad</label><select id="at-pri" class="fi">'
     +'<option value="Alta"'+(t.priority==="Alta"?" selected":"")+'>🔴 Alta</option>'
     +'<option value="Media"'+((!t.priority||t.priority==="Media")?" selected":"")+'>🟡 Media</option>'
@@ -1863,6 +1883,7 @@ function openAddAgTool(){
     var d=getAgToolData();if(!d.name)return;
     state.agTools.push(d);lsSave("agency-tools",state.agTools);renderAgExp();
   });
+  setTimeout(agToolTypeChanged,0);
 }
 function openEditAgTool(id){
   var t=state.agTools.find(function(x){return x.id===id;});if(!t)return;
@@ -1872,6 +1893,7 @@ function openEditAgTool(id){
     if(idx>=0)state.agTools[idx]=Object.assign({},t,d,{done:t.done});
     lsSave("agency-tools",state.agTools);renderAgExp();
   });
+  setTimeout(agToolTypeChanged,0);
 }
 // PERFILES DE GASTOS
 function expProfileKey(lbl,src){return"exp-profile||"+(src||"")+"||"+lbl;}
