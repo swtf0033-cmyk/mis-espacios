@@ -1726,19 +1726,24 @@ function renderStudents(){
   el("students-list").querySelectorAll(".s-del").forEach(function(b){b.addEventListener("click",function(){currentStudentId=this.getAttribute("data-id");deleteStudent(currentStudentId);});});
 
   var todayP=new Date();todayP.setHours(0,0,0,0);
+  var fmtDate=function(iso){if(!iso)return'—';var d=new Date(iso);return d.toLocaleDateString("es-CO",{day:"2-digit",month:"short"});};
   var pagosHtml=state.students.map(function(s){
     var pc=s.payStatus==="Al dia"?"bg":s.payStatus==="Vencido"?"bd":"bw";
+    // Calcular próximo pago = último pago + 1 mes
     var nextCell='<span style="color:var(--txt2)">—</span>';
-    if(s.nextPayment){
-      var nd=new Date(s.nextPayment);nd.setHours(0,0,0,0);
+    if(s.lastPayment){
+      var ld=new Date(s.lastPayment);
+      var nd=new Date(ld.getFullYear(),ld.getMonth()+1,ld.getDate());
+      nd.setHours(0,0,0,0);
       var diff=Math.round((nd-todayP)/86400000);
       var label=nd.toLocaleDateString("es-CO",{day:"2-digit",month:"short"});
-      var col=diff<0?"var(--danger)":diff<=7?"var(--warn)":"var(--green)";
-      var tag=diff<0?"Vencido":diff===0?"Hoy":diff<=7?"En "+diff+"d":"";
-      nextCell='<span style="color:'+col+';font-weight:600">'+label+'</span>'+(tag?'<br><span style="font-size:10px;color:'+col+';opacity:.8">'+tag+'</span>':'');
+      var col=diff<0?"var(--danger)":diff<=3?"#f97316":diff<=7?"var(--warn)":"var(--green)";
+      var tag=diff<0?"Vencido hace "+Math.abs(diff)+"d":diff===0?"Hoy":diff<=7?"En "+diff+"d":"";
+      nextCell='<span style="color:'+col+';font-weight:600">'+label+'</span>'+(tag?'<br><span style="font-size:10px;color:'+col+'">'+tag+'</span>':'');
     }
+    var lastLabel=s.lastPayment?fmtDate(s.lastPayment):(s.lastPayment||'—');
     return '<tr><td><div class="cc"><div class="cap" style="background:var(--acc-d);color:var(--acc)">'+mkInitials(s.name)+'</div><div class="cn">'+s.name+'</div></div></td>'+
-      '<td>'+fmtMoney(s.fee)+'</td><td>'+(s.lastPayment||'&mdash;')+'</td><td>'+nextCell+'</td><td><span class="badge '+pc+'">'+s.payStatus+'</span></td>'+
+      '<td>'+fmtMoney(s.fee)+'</td><td>'+lastLabel+'</td><td>'+nextCell+'</td><td><span class="badge '+pc+'">'+s.payStatus+'</span></td>'+
       '<td><button class="btn-icon p-edit" data-id="'+s.id+'">&#9999;</button></td></tr>';
   }).join("");
   var pBadge=el("pagos-badge");var ov=state.students.filter(function(s){return s.payStatus==="Vencido";}).length;
@@ -2301,13 +2306,16 @@ function renderCentro(){
   state.students.filter(function(s){return(Number(s.months)||0)>=2&&callerasDone.indexOf(s.id)===-1;}).forEach(function(s){
     alerts.push({icon:"🧤",label:s.name+" — Calleras pendientes",src:"FitCoach",color:"var(--acc)",action:'callerasToggle("'+s.id+'")',btn:"✓ Entregar"});
   });
-  // Vencimientos de pago alumnos (próximos 7 días)
+  // Vencimientos de pago alumnos (próximos 7 días, calculado desde lastPayment+1mes)
   var today=new Date();today.setHours(0,0,0,0);
-  state.students.filter(function(s){return s.payStatus!=="Inactivo"&&s.nextPayment;}).forEach(function(s){
-    var d=new Date(s.nextPayment);d.setHours(0,0,0,0);
-    var diff=Math.round((d-today)/86400000);
-    if(diff>=0&&diff<=7){
-      alerts.push({icon:"💰",label:s.name+" — Pago en "+diff+" días ("+d.toLocaleDateString("es-CR",{day:"2-digit",month:"short"})+")",src:"FitCoach",color:"var(--warn)"});
+  state.students.filter(function(s){return s.payStatus!=="Inactivo"&&s.lastPayment;}).forEach(function(s){
+    var ld=new Date(s.lastPayment);
+    var nd=new Date(ld.getFullYear(),ld.getMonth()+1,ld.getDate());
+    nd.setHours(0,0,0,0);
+    var diff=Math.round((nd-today)/86400000);
+    if(diff<=7){
+      var tag=diff<0?"Vencido hace "+Math.abs(diff)+"d":diff===0?"Hoy":"En "+diff+"d";
+      alerts.push({icon:"💰",label:s.name+" — "+tag+" ("+nd.toLocaleDateString("es-CO",{day:"2-digit",month:"short"})+")",src:"FitCoach",color:diff<0?"var(--danger)":"var(--warn)"});
     }
   });
   // Vencimientos de gastos (3 apps)
@@ -2757,9 +2765,7 @@ function studentForm(s){
     '<div class="form-g"><label>Estado pago</label><select id="f-pay" class="fi"><option value="Al dia"'+(v.payStatus==="Al dia"?" selected":"")+'>Al dia</option><option value="Vencido"'+(v.payStatus==="Vencido"?" selected":"")+'>Vencido</option><option value="Atencion"'+(v.payStatus==="Atencion"?" selected":"")+'>Atencion</option></select></div>'+
     '<div class="form-g"><label>Dieta</label><select id="f-diet" class="fi"><option value="Omnivoro"'+(v.diet==="Omnivoro"?" selected":"")+'>Omnivoro</option><option value="Vegetariana"'+(v.diet==="Vegetariana"?" selected":"")+'>Vegetariana</option><option value="Vegana"'+(v.diet==="Vegana"?" selected":"")+'>Vegana</option><option value="Keto"'+(v.diet==="Keto"?" selected":"")+'>Keto</option></select></div>'+
     '</div><div class="form-r">'+
-    '<div class="form-g"><label>Ultimo pago (ej: 01 oct)</label><input id="f-lastpay" class="fi" value="'+(v.lastPayment||"")+'"></div>'+
-    '<div class="form-g"><label>Proximo pago</label><input id="f-nextpay" type="date" class="fi" value="'+(v.nextPayment||"")+'"></div>'+
-    '</div><div class="form-r">'+
+    '<div class="form-g"><label>Ultimo pago</label><input id="f-lastpay" type="date" class="fi" value="'+(v.lastPayment||"")+'"></div>'+
     '<div class="form-g"><label>Cumpleanos (DD/MM)</label><input id="f-bday" class="fi" placeholder="ej: 15/03" value="'+(v.birthday||"")+'"></div>'+
     '</div>'+
     '<div class="form-g" style="margin-top:8px"><label>Lesiones / condiciones medicas</label><textarea id="f-injuries" class="fi" rows="2" placeholder="Ej: rodilla derecha, hernia lumbar...">'+(v.injuries||"")+'</textarea></div>'+
@@ -2783,8 +2789,7 @@ function getStudentData(){
     payStatus:el("f-pay").value,
     diet:el("f-diet").value,
     tel:(el("f-tel")||{}).value?el("f-tel").value.trim():"",
-    lastPayment:el("f-lastpay").value.trim(),
-    nextPayment:(el("f-nextpay")||{}).value||"",
+    lastPayment:el("f-lastpay").value||"",
     birthday:el("f-bday").value.trim(),
     injuries:el("f-injuries").value.trim(),
     notes:el("f-notes").value.trim()
