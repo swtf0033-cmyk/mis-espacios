@@ -1842,6 +1842,7 @@ function agToolTypeChanged(){
   tog("at-percli-row",c.percli);
   tog("at-cur-row",c.cur);
   tog("at-next-row",c.next);
+  tog("at-upcost-row",c.next);
   tog("at-pay-row",c.pay);
   var lbl=el("at-cost-lbl");if(lbl)lbl.textContent=c.costLbl;
 }
@@ -1866,6 +1867,7 @@ function agToolForm(t){
     +'<div id="at-cur-row" class="form-g"><label>Nivel actual</label><input id="at-cur" class="fi" placeholder="Pro, Basic, i5 16GB..." value="'+(t.current||"")+'"></div>'
     +'<div id="at-next-row" class="form-g"><label>Próxima mejora</label><input id="at-next" class="fi" placeholder="Max, 32GB, RTX..." value="'+(t.nextLevel||"")+'"></div>'
     +'</div>'
+    +'<div id="at-upcost-row" class="form-g"><label>💰 Costo del upgrade ($/mes)</label><input id="at-upcost" type="number" class="fi" placeholder="Ej: 100 si Max vale $100/mes" value="'+(t.upgradeCost||"")+'"></div>'
     +'<div class="form-r">'
     +'<div id="at-pay-row" class="form-g"><label>Último pago</label><input id="at-pay" type="date" class="fi" value="'+(t.lastPay||"")+'"></div>'
     +'<div class="form-g"><label>Prioridad</label><select id="at-pri" class="fi">'
@@ -1876,7 +1878,7 @@ function agToolForm(t){
     +'</div>';
 }
 function getAgToolData(id){
-  return{id:id||Date.now().toString(36),name:(el("at-name")||{}).value.trim(),type:(el("at-type")||{}).value||"sub",cost:parseInt((el("at-cost")||{}).value)||0,perClient:!!(el("at-percli")||{}).checked,current:(el("at-cur")||{}).value.trim(),nextLevel:(el("at-next")||{}).value.trim(),lastPay:(el("at-pay")||{}).value.trim(),priority:(el("at-pri")||{}).value||"Media",done:false};
+  return{id:id||Date.now().toString(36),name:(el("at-name")||{}).value.trim(),type:(el("at-type")||{}).value||"sub",cost:parseInt((el("at-cost")||{}).value)||0,perClient:!!(el("at-percli")||{}).checked,current:(el("at-cur")||{}).value.trim(),nextLevel:(el("at-next")||{}).value.trim(),upgradeCost:parseInt((el("at-upcost")||{}).value)||0,lastPay:(el("at-pay")||{}).value.trim(),priority:(el("at-pri")||{}).value||"Media",done:false};
 }
 function openAddAgTool(){
   openModal("Agregar herramienta",agToolForm(null),function(){
@@ -2111,11 +2113,12 @@ function renderAgExp(){
         :'<div onclick="agToolToggle(\''+t.id+'\')" style="width:20px;height:20px;border-radius:6px;border:2px solid '+(t.done?"#34D399":col)+';background:'+(t.done?"#34D399":"transparent")+';cursor:pointer;display:flex;align-items:center;justify-content:center;flex-shrink:0">'
         +(t.done?'<svg width="11" height="11" viewBox="0 0 11 11"><polyline points="1.5,5.5 4.5,8.5 9.5,2" stroke="#fff" stroke-width="2" fill="none"/></svg>':'')+'</div>'
         +'<span style="font-size:14px">'+typeIcon+'</span>';
-      // Barra de progreso para mejoras
+      // Barra de progreso: tipo mejora con cost, O cualquier item con nextLevel + upgradeCost
       var mejorBar='';
-      if(t.type==="mejora"&&(t.cost||0)>0){
+      var upgradeTarget=(t.type==="mejora"&&t.cost>0)?Number(t.cost):(t.nextLevel&&t.upgradeCost>0?Number(t.upgradeCost):0);
+      if(upgradeTarget>0){
         var flujo=cas.flujo;
-        var need=Number(t.cost)||0;
+        var need=upgradeTarget;
         var safeTarget=need*1.5;// 150% del costo = sostenible
         var pct=Math.min(100,Math.round((flujo/safeTarget)*100));
         var barCol=pct>=100?"#34D399":pct>=67?"#FBBF24":pct>=33?"#f97316":"#EF4444";
