@@ -1732,9 +1732,8 @@ function renderStudents(){
     var nextCell='<span style="color:var(--txt2)">—</span>';
     var lastLabel=s.lastPayment||'—';
     var statusBadge,pagarBtn;
-    var pagarBtnHtml='<button class="btn-sm p-pagar" data-id="'+s.id+'" style="font-size:10px;padding:3px 9px;background:rgba(52,211,153,.12);color:var(--green);border:1px solid rgba(52,211,153,.3);border-radius:5px;cursor:pointer;font-weight:700">✓ Pagó</button>';
+    var pagarBtnHtml='';
     if(isIsoDate(s.lastPayment)){
-      // Usar T12:00 para evitar desfase de zona horaria
       var ld=new Date(s.lastPayment+'T12:00:00');
       lastLabel=ld.toLocaleDateString("es-CO",{day:"2-digit",month:"short"});
       var nd=new Date(ld.getFullYear(),ld.getMonth()+1,ld.getDate());
@@ -1744,12 +1743,13 @@ function renderStudents(){
       var col=diff<0?"var(--danger)":diff<=3?"#f97316":diff<=7?"var(--warn)":"var(--green)";
       var tag=diff<0?"Vencido hace "+Math.abs(diff)+"d":diff===0?"Hoy":diff<=7?"En "+diff+"d":"";
       nextCell='<span style="color:'+col+';font-weight:600">'+nlabel+'</span>'+(tag?'<br><span style="font-size:10px;color:'+col+'">'+tag+'</span>':'');
-      if(diff<0){statusBadge='<span class="badge bd">Vencido</span>';}
-      else if(diff<=7){statusBadge='<span class="badge bw" style="color:#f97316;border-color:#f97316">Por vencer</span>';}
+      if(diff<0){statusBadge='<span class="badge bd">Vencido</span>';pagarBtnHtml='<button class="btn-sm p-pagar" data-id="'+s.id+'" style="font-size:10px;padding:3px 9px;background:rgba(52,211,153,.12);color:var(--green);border:1px solid rgba(52,211,153,.3);border-radius:5px;cursor:pointer;font-weight:700">✓ Pagó</button>';}
+      else if(diff<=7){statusBadge='<span class="badge bw" style="color:#f97316;border-color:#f97316">Por vencer</span>';pagarBtnHtml='<button class="btn-sm p-pagar" data-id="'+s.id+'" style="font-size:10px;padding:3px 9px;background:rgba(52,211,153,.12);color:var(--green);border:1px solid rgba(52,211,153,.3);border-radius:5px;cursor:pointer;font-weight:700">✓ Pagó</button>';}
       else{statusBadge='<span class="badge bg">Al día</span>';}
     } else {
       var pc=s.payStatus==="Al dia"?"bg":s.payStatus==="Vencido"?"bd":"bw";
       statusBadge='<span class="badge '+pc+'">'+s.payStatus+'</span>';
+      if(s.payStatus==="Vencido")pagarBtnHtml='<button class="btn-sm p-pagar" data-id="'+s.id+'" style="font-size:10px;padding:3px 9px;background:rgba(52,211,153,.12);color:var(--green);border:1px solid rgba(52,211,153,.3);border-radius:5px;cursor:pointer;font-weight:700">✓ Pagó</button>';
     }
     return '<tr><td><div class="cc"><div class="cap" style="background:var(--acc-d);color:var(--acc)">'+mkInitials(s.name)+'</div><div class="cn">'+s.name+'</div></div></td>'+
       '<td>'+fmtMoney(s.fee)+'</td><td>'+lastLabel+'</td><td>'+nextCell+'</td>'+
