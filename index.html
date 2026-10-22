@@ -3060,7 +3060,7 @@ function pagarHoy(id){
 function nuevoCiclo(){
   if(!confirm("¿Iniciar nuevo ciclo de cobro?\n\nTodos los alumnos quedarán como 'Pendiente'. Cuando cada uno pague, tocá '✓ Pagó'."))return;
   state.students.forEach(function(s){
-    if(s.payStatus!=="Inactivo"){lsDocSet("students",s.id,{payStatus:"Pendiente",lastPayment:""});}
+    if(s.payStatus!=="Inactivo"){lsDocSet("students",s.id,{payStatus:"Pendiente"});}
   });
   state.students=lsGet("students",[]).sort(function(a,b){return(a.name||"").localeCompare(b.name||"");});
   refreshStudents();renderFitStats();renderFitAlerts();renderPerInc();renderPerStats();renderPerExp();updateCentroBadge();
