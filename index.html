@@ -1841,7 +1841,7 @@ function agToolForm(t){
     +'<div class="form-g"><label>🎯 Próxima mejora</label><input id="at-next" class="fi" placeholder="Max Fable, Xfield, 32GB..." value="'+(t.nextLevel||"")+'"></div>'
     +'</div>'
     +'<div class="form-r">'
-    +'<div class="form-g"><label>Último pago</label><input id="at-pay" class="fi" placeholder="Oct 2026" value="'+(t.lastPay||"")+'"></div>'
+    +'<div class="form-g"><label>Último pago</label><input id="at-pay" type="date" class="fi" value="'+(t.lastPay||"")+'"></div>'
     +'<div class="form-g"><label>Prioridad</label><select id="at-pri" class="fi">'
     +'<option value="Alta"'+(t.priority==="Alta"?" selected":"")+'>🔴 Alta</option>'
     +'<option value="Media"'+((!t.priority||t.priority==="Media")?" selected":"")+'>🟡 Media</option>'
@@ -2081,7 +2081,17 @@ function renderAgExp(){
         +'<div style="flex:1;min-width:0">'
         +'<div style="font-size:13px;font-weight:700;text-decoration:'+(t.done?"line-through":"none")+';opacity:'+(t.done?.5:1)+'">'+t.name+(t.current?'<span style="font-size:10px;font-weight:600;background:rgba(255,255,255,.08);border-radius:4px;padding:1px 6px;margin-left:6px;opacity:.8">'+t.current+'</span>':'')+'</div>'
         +(hasUpgrade?'<div style="font-size:11px;color:'+col+';margin-top:2px">🎯 Mejora: <strong>'+t.nextLevel+'</strong></div>':'')
-        +(t.lastPay?'<div style="font-size:10px;opacity:.4;margin-top:1px">Último pago: '+t.lastPay+'</div>':'')
+        +(function(){
+          if(!t.lastPay||!/^\d{4}-\d{2}-\d{2}$/.test(t.lastPay))return t.lastPay?'<div style="font-size:10px;opacity:.4;margin-top:1px">Pago: '+t.lastPay+'</div>':'';
+          var ld=new Date(t.lastPay+'T12:00:00');
+          var nd=new Date(ld.getFullYear(),ld.getMonth()+1,ld.getDate());nd.setHours(0,0,0,0);
+          var now=new Date();now.setHours(0,0,0,0);
+          var diff=Math.round((nd-now)/86400000);
+          var lbl=nd.toLocaleDateString("es-CO",{day:"2-digit",month:"short"});
+          var c2=diff<0?"var(--danger)":diff<=3?"#f97316":diff<=7?"var(--warn)":"var(--green)";
+          var tag=diff<0?"Vencido hace "+Math.abs(diff)+"d":diff===0?"Hoy":diff<=7?"En "+diff+"d":"";
+          return'<div style="font-size:10px;color:'+c2+';font-weight:600;margin-top:2px">🔄 Renueva '+lbl+(tag?' · '+tag:'')+'</div>';
+        })()
         +'</div>'
         +(t.cost>0?'<span style="font-family:Rajdhani,sans-serif;font-size:13px;font-weight:700;color:'+col+';white-space:nowrap">'+fmtMoney(t.cost)+'/mes</span>':'')
         +'<span style="font-size:10px;margin-left:4px">'+(priDot[t.priority]||"🟡")+'</span>'
