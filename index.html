@@ -1727,10 +1727,12 @@ function renderStudents(){
 
   var todayP=new Date();todayP.setHours(0,0,0,0);
   var isIsoDate=function(v){return v&&/^\d{4}-\d{2}-\d{2}$/.test(v);};
+  var todayIso=todayP.toISOString().slice(0,10);
   var pagosHtml=state.students.map(function(s){
-    var pc=s.payStatus==="Al dia"?"bg":s.payStatus==="Vencido"?"bd":"bw";
     var nextCell='<span style="color:var(--txt2)">—</span>';
     var lastLabel=s.lastPayment||'—';
+    var statusBadge='<span class="badge bw">'+s.payStatus+'</span>';
+    var pagarBtn='';
     if(isIsoDate(s.lastPayment)){
       var ld=new Date(s.lastPayment);
       lastLabel=ld.toLocaleDateString("es-CO",{day:"2-digit",month:"short"});
@@ -1741,15 +1743,25 @@ function renderStudents(){
       var col=diff<0?"var(--danger)":diff<=3?"#f97316":diff<=7?"var(--warn)":"var(--green)";
       var tag=diff<0?"Vencido hace "+Math.abs(diff)+"d":diff===0?"Hoy":diff<=7?"En "+diff+"d":"";
       nextCell='<span style="color:'+col+';font-weight:600">'+nlabel+'</span>'+(tag?'<br><span style="font-size:10px;color:'+col+'">'+tag+'</span>':'');
+      // Estado automático por fecha
+      if(diff<0){statusBadge='<span class="badge bd">Vencido</span>';}
+      else if(diff<=7){statusBadge='<span class="badge bw" style="color:var(--warn);border-color:var(--warn)">Por vencer</span>';}
+      else{statusBadge='<span class="badge bg">Al día</span>';}
+      // Botón pagar: aparece si vencido o por vencer
+      if(diff<=7){pagarBtn='<button class="btn-sm p-pagar" data-id="'+s.id+'" style="font-size:10px;padding:3px 9px;background:rgba(52,211,153,.12);color:var(--green);border:1px solid rgba(52,211,153,.3);border-radius:5px;cursor:pointer;font-weight:700">✓ Pagó</button>';}
+    } else {
+      var pc=s.payStatus==="Al dia"?"bg":s.payStatus==="Vencido"?"bd":"bw";
+      statusBadge='<span class="badge '+pc+'">'+s.payStatus+'</span>';
     }
     return '<tr><td><div class="cc"><div class="cap" style="background:var(--acc-d);color:var(--acc)">'+mkInitials(s.name)+'</div><div class="cn">'+s.name+'</div></div></td>'+
-      '<td>'+fmtMoney(s.fee)+'</td><td>'+lastLabel+'</td><td>'+nextCell+'</td><td><span class="badge '+pc+'">'+s.payStatus+'</span></td>'+
-      '<td><button class="btn-icon p-edit" data-id="'+s.id+'">&#9999;</button></td></tr>';
+      '<td>'+fmtMoney(s.fee)+'</td><td>'+lastLabel+'</td><td>'+nextCell+'</td><td>'+statusBadge+'</td>'+
+      '<td style="display:flex;gap:4px;align-items:center">'+pagarBtn+'<button class="btn-icon p-edit" data-id="'+s.id+'">&#9999;</button></td></tr>';
   }).join("");
   var pBadge=el("pagos-badge");var ov=state.students.filter(function(s){return s.payStatus==="Vencido";}).length;
   if(pBadge){pBadge.textContent=ov+" vencidos";pBadge.style.display=ov>0?"inline-flex":"none";}
   el("pagos-table").innerHTML=pagosHtml?'<table class="rt"><thead><tr><th>Alumno</th><th>Mensualidad</th><th>Ultimo pago</th><th>Proximo pago</th><th>Estado</th><th></th></tr></thead><tbody>'+pagosHtml+'</tbody></table>':'<div class="empty-st"><div class="ico">&#128179;</div><p>Sin alumnos registrados</p></div>';
   el("pagos-table").querySelectorAll(".p-edit").forEach(function(b){b.addEventListener("click",function(){currentStudentId=this.getAttribute("data-id");openEditStudent(currentStudentId);});});
+  el("pagos-table").querySelectorAll(".p-pagar").forEach(function(b){b.addEventListener("click",function(){pagarHoy(this.getAttribute("data-id"));});});
 }
 
 function renderClients(){
@@ -2811,6 +2823,12 @@ function openAddStudent(){
     var data=getStudentData();if(!data){alert("Ingresa el nombre");return;}
     lsAdd("students",data);refreshStudents();
   });
+}
+function pagarHoy(id){
+  var today=new Date();
+  var iso=today.toISOString().slice(0,10);
+  lsDocSet("students",id,{lastPayment:iso,payStatus:"Al dia"});
+  refreshStudents();
 }
 function openEditStudent(id){
   var s=state.students.find(function(x){return x.id===id;});if(!s)return;
