@@ -716,7 +716,7 @@ label.switch-btn:hover{background:var(--acc-d2);color:var(--txt)}
     <div class="sb-logo"><div class="logo-icon">&#127919;</div><div class="logo-name">Personal</div><div class="logo-sub">Finanzas personales</div></div>
     <nav class="sb-nav">
       <div class="ni on" onclick="sv('personal','dash',this)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7" rx="1.5"/><rect x="14" y="3" width="7" height="7" rx="1.5"/><rect x="3" y="14" width="7" height="7" rx="1.5"/><rect x="14" y="14" width="7" height="7" rx="1.5"/></svg>Dashboard</div>
-      <div class="ni" onclick="sv('personal','centro',this);renderCentro()"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M12 1v4M12 19v4M4.22 4.22l2.83 2.83M16.95 16.95l2.83 2.83M1 12h4M19 12h4M4.22 19.78l2.83-2.83M16.95 7.05l2.83-2.83"/></svg>Centro</div>
+      <div class="ni" onclick="sv('personal','centro',this);renderCentro()"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M12 1v4M12 19v4M4.22 4.22l2.83 2.83M16.95 16.95l2.83 2.83M1 12h4M19 12h4M4.22 19.78l2.83-2.83M16.95 7.05l2.83-2.83"/></svg>Centro<span id="centro-badge" class="badge bd" style="display:none;margin-left:4px;font-size:9px;padding:1px 5px"></span></div>
       <div class="ni" onclick="sv('personal','ingresos',this)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="23 6 13.5 15.5 8.5 10.5 1 18"/><polyline points="17 6 23 6 23 12"/></svg>Ingresos</div>
       <div class="ni" onclick="sv('personal','gastos',this)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="5" width="20" height="14" rx="2"/><line x1="2" y1="10" x2="22" y2="10"/></svg>Gastos</div>
       <div class="ni" onclick="sv('personal','libertad',this)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 2L11 13"/><path d="M22 2L15 22 11 13 2 9l20-7z"/></svg>Libertad</div>
@@ -1536,6 +1536,7 @@ function initDB(){
   renderFitStats();renderFitAlerts();renderFitRanking();renderStudents();
   renderAgStats();renderAgExp();renderClients();renderPipeline();renderAgKpis();
   renderPerStats();renderPerInc();renderPerExp();renderLifeGoals();
+  updateCentroBadge();
 }
 
 // Radio change events — fire when label is clicked, navegación CSS ya hizo el show/hide
@@ -2278,6 +2279,37 @@ function payToggle(lbl,cur){
 }
 function resetPayOrder(){lsSave("pay-paid",{});lsSave("pay-order",null);renderPayOrder();}
 
+function updateCentroBadge(){
+  var count=0;
+  var todayB=new Date();todayB.setHours(0,0,0,0);
+  // Pagos vencidos o por vencer (7 días)
+  state.students.filter(function(s){return s.payStatus!=="Inactivo"&&s.lastPayment&&/^\d{4}-\d{2}-\d{2}$/.test(s.lastPayment);}).forEach(function(s){
+    var ld=new Date(s.lastPayment+'T12:00:00');
+    var nd=new Date(ld.getFullYear(),ld.getMonth()+1,ld.getDate());nd.setHours(0,0,0,0);
+    if(Math.round((nd-todayB)/86400000)<=7)count++;
+  });
+  // Calleras pendientes
+  var callerasDone=lsGet("calleras-done",[]);
+  count+=state.students.filter(function(s){return(Number(s.months)||0)>=2&&callerasDone.indexOf(s.id)===-1;}).length;
+  // Alumnos sin % grasa o sin medidas
+  var fourWk=Date.now()-(28*86400000);
+  state.students.filter(function(s){return s.payStatus!=="Inactivo";}).forEach(function(s){
+    var evs=lsGet("evals-"+s.id,[]);var ev=evs.length?evs[0]:null;
+    if(!ev||!ev.grasa)count++;
+    if(!ev||(!ev.cin&&!ev.cad))count++;
+    if(ev&&ev.ts&&ev.ts<fourWk)count++;
+  });
+  // Gastos próximos (3 días)
+  function expCount(arr){var n=0;(arr||[]).forEach(function(e){if(!e.date)return;var d=new Date(e.date+'T12:00:00');var diff=Math.round((d-todayB)/86400000);if(diff>=0&&diff<=3)n++;});return n;}
+  count+=expCount(state.fitExp)+expCount(state.agExp)+expCount(state.perExp);
+  // Clientes agencia con pago vencido o sin fecha
+  (state.clients||[]).filter(function(c){return c.status==="Activo";}).forEach(function(c){
+    if(!c.nextPayment){count++;}
+    else{var d=new Date(c.nextPayment+'T12:00:00');if(Math.round((d-todayB)/86400000)<0)count++;}
+  });
+  var badge=el("centro-badge");
+  if(badge){badge.textContent=count;badge.style.display=count>0?"inline-flex":"none";}
+}
 function renderCentro(){
   // ── Finanzas consolidadas ──
   // FitCoach: separar cobrado (Al día) vs en riesgo (Vencido/Atención)
@@ -2401,6 +2433,8 @@ function renderCentro(){
       }).join("");
     }
   }
+}
+  updateCentroBadge();
 }
 function renderPerInc(){
   var inc=state.perInc;
@@ -2813,6 +2847,7 @@ function refreshStudents(){
     if(typeof renderStudents==="function")renderStudents();else{alert("renderStudents no existe. Bloque JS no cargo.");}
     if(typeof renderFitStats==="function")renderFitStats();
     if(typeof renderFitAlerts==="function")renderFitAlerts();
+    if(typeof updateCentroBadge==="function")updateCentroBadge();
     if(typeof renderFitRanking==="function")renderFitRanking();
     if(currentApp==="fit")setTimeout(function(){try{initCharts("fit",currentView("fit"));}catch(e){}},60);
   }catch(e){alert("Error en refreshStudents: "+e.message);}
