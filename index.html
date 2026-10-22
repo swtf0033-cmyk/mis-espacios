@@ -5039,9 +5039,14 @@ function initCharts(app,view){
       renderAgFinSummary();
     }
     if(view==="gastos"){
-      var expLabels=state.agExp.map(function(i){return i.lbl;});
-      var expVals3=state.agExp.map(function(i){return i.val||0;});
-      if(expVals3.some(function(v){return v>0;}))donutC("ag-gastos",expLabels,expVals3,["#EF4444","#DC2626","#B91C1C","#991B1B","#7F1D1D"]);
+      var _ncG=activeClientsCount();
+      var chartItems=[];
+      state.agExp.forEach(function(i){if((i.val||0)>0)chartItems.push({lbl:i.lbl,val:i.type==="por-cliente"?(i.val||0)*_ncG:(i.val||0)});});
+      (state.agTools||[]).filter(function(t){return !t.done&&t.cost>0&&t.type!=="mejora"&&t.type!=="meta";}).forEach(function(t){chartItems.push({lbl:t.name,val:t.perClient?(t.cost||0)*_ncG:(t.cost||0)});});
+      if(chartItems.length){
+        var palette=["#EF4444","#F97316","#FBBF24","#34D399","#60A5FA","#A78BFA","#F472B6","#DC2626","#2DD4BF"];
+        donutC("ag-gastos",chartItems.map(function(i){return i.lbl;}),chartItems.map(function(i){return i.val;}),palette.slice(0,chartItems.length));
+      }
     }
   }
 
