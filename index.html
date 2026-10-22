@@ -1725,15 +1725,25 @@ function renderStudents(){
   el("students-list").querySelectorAll(".s-edit").forEach(function(b){b.addEventListener("click",function(){currentStudentId=this.getAttribute("data-id");openEditStudent(currentStudentId);});});
   el("students-list").querySelectorAll(".s-del").forEach(function(b){b.addEventListener("click",function(){currentStudentId=this.getAttribute("data-id");deleteStudent(currentStudentId);});});
 
+  var todayP=new Date();todayP.setHours(0,0,0,0);
   var pagosHtml=state.students.map(function(s){
     var pc=s.payStatus==="Al dia"?"bg":s.payStatus==="Vencido"?"bd":"bw";
+    var nextCell='<span style="color:var(--txt2)">—</span>';
+    if(s.nextPayment){
+      var nd=new Date(s.nextPayment);nd.setHours(0,0,0,0);
+      var diff=Math.round((nd-todayP)/86400000);
+      var label=nd.toLocaleDateString("es-CO",{day:"2-digit",month:"short"});
+      var col=diff<0?"var(--danger)":diff<=7?"var(--warn)":"var(--green)";
+      var tag=diff<0?"Vencido":diff===0?"Hoy":diff<=7?"En "+diff+"d":"";
+      nextCell='<span style="color:'+col+';font-weight:600">'+label+'</span>'+(tag?'<br><span style="font-size:10px;color:'+col+';opacity:.8">'+tag+'</span>':'');
+    }
     return '<tr><td><div class="cc"><div class="cap" style="background:var(--acc-d);color:var(--acc)">'+mkInitials(s.name)+'</div><div class="cn">'+s.name+'</div></div></td>'+
-      '<td>'+fmtMoney(s.fee)+'</td><td>'+(s.lastPayment||'&mdash;')+'</td><td><span class="badge '+pc+'">'+s.payStatus+'</span></td>'+
+      '<td>'+fmtMoney(s.fee)+'</td><td>'+(s.lastPayment||'&mdash;')+'</td><td>'+nextCell+'</td><td><span class="badge '+pc+'">'+s.payStatus+'</span></td>'+
       '<td><button class="btn-icon p-edit" data-id="'+s.id+'">&#9999;</button></td></tr>';
   }).join("");
   var pBadge=el("pagos-badge");var ov=state.students.filter(function(s){return s.payStatus==="Vencido";}).length;
   if(pBadge){pBadge.textContent=ov+" vencidos";pBadge.style.display=ov>0?"inline-flex":"none";}
-  el("pagos-table").innerHTML=pagosHtml?'<table class="rt"><thead><tr><th>Alumno</th><th>Mensualidad</th><th>Ultimo pago</th><th>Estado</th><th></th></tr></thead><tbody>'+pagosHtml+'</tbody></table>':'<div class="empty-st"><div class="ico">&#128179;</div><p>Sin alumnos registrados</p></div>';
+  el("pagos-table").innerHTML=pagosHtml?'<table class="rt"><thead><tr><th>Alumno</th><th>Mensualidad</th><th>Ultimo pago</th><th>Proximo pago</th><th>Estado</th><th></th></tr></thead><tbody>'+pagosHtml+'</tbody></table>':'<div class="empty-st"><div class="ico">&#128179;</div><p>Sin alumnos registrados</p></div>';
   el("pagos-table").querySelectorAll(".p-edit").forEach(function(b){b.addEventListener("click",function(){currentStudentId=this.getAttribute("data-id");openEditStudent(currentStudentId);});});
 }
 
@@ -2254,10 +2264,10 @@ function resetPayOrder(){lsSave("pay-paid",{});lsSave("pay-order",null);renderPa
 
 function renderCentro(){
   // ── Finanzas consolidadas ──
-  // FitCoach: suma de mensualidades de alumnos activos
-  var fitInc=state.students.filter(function(s){return s.payStatus!=="Inactivo";}).reduce(function(sum,s){return sum+(Number(s.fee)||0);},0);
-  // Si no hay alumnos con fee, caer a perInc manual o avgRevenue
-  if(fitInc===0) fitInc=Number(state.perInc.fit)||avgRevenue(state.fitRev)||0;
+  // FitCoach: separar cobrado (Al día) vs en riesgo (Vencido/Atención)
+  var fitCobrado=state.students.filter(function(s){return s.payStatus==="Al dia";}).reduce(function(sum,s){return sum+(Number(s.fee)||0);},0);
+  var fitRiesgo=state.students.filter(function(s){return s.payStatus==="Vencido"||s.payStatus==="Atencion";}).reduce(function(sum,s){return sum+(Number(s.fee)||0);},0);
+  var fitInc=fitCobrado; // ingreso real = solo los al día
   // Agencia: promedio del historial o valor manual
   var agInc=avgRevenue(state.agRev)||Number(state.perInc.agency)||0;
   var totalInc=fitInc+agInc;
@@ -2268,6 +2278,7 @@ function renderCentro(){
   var balance=totalInc-totalExp;
   var actAlumnos=activeStudentsCount();
   var actClients=activeClientsCount();
+  var riesgoCount=state.students.filter(function(s){return s.payStatus==="Vencido"||s.payStatus==="Atencion";}).length;
   var statsEl=el("centro-stats");
   if(statsEl){
     var sc=function(lbl,val,col,sub){
@@ -2275,11 +2286,12 @@ function renderCentro(){
         +'<div class="sv" style="color:'+(col||"var(--txt)")+'">'+(typeof val==="number"?fmtMoney(val):val)+'</div>'
         +'<div class="ss">'+(sub||"")+'</div></div>';
     };
+    var fitLabel="💪 FitCoach"+(fitRiesgo>0?" · <span style='color:var(--danger);font-size:10px'>"+fmtMoney(fitRiesgo)+" en riesgo ("+riesgoCount+")</span>":"");
     statsEl.innerHTML=
-      sc("Ingresos totales",totalInc,"var(--green)","FitCoach + Agencia")
+      sc("FitCoach cobrado",fitCobrado,"var(--green)",fitLabel)
+      +sc("Agencia",agInc,"var(--acc)","promedio histórico")
       +sc("Gastos fijos",totalExp,"var(--danger)","3 espacios")
-      +sc("Balance neto",balance,balance>=0?"var(--green)":"var(--danger)","mensual")
-      +sc("Alumnos activos",actAlumnos+" · "+actClients+" clientes","var(--acc)","fit · agencia");
+      +sc("Balance neto",balance,balance>=0?"var(--green)":"var(--danger)","mensual estimado");
   }
 
   // ── Alertas unificadas ──
@@ -2746,6 +2758,8 @@ function studentForm(s){
     '<div class="form-g"><label>Dieta</label><select id="f-diet" class="fi"><option value="Omnivoro"'+(v.diet==="Omnivoro"?" selected":"")+'>Omnivoro</option><option value="Vegetariana"'+(v.diet==="Vegetariana"?" selected":"")+'>Vegetariana</option><option value="Vegana"'+(v.diet==="Vegana"?" selected":"")+'>Vegana</option><option value="Keto"'+(v.diet==="Keto"?" selected":"")+'>Keto</option></select></div>'+
     '</div><div class="form-r">'+
     '<div class="form-g"><label>Ultimo pago (ej: 01 oct)</label><input id="f-lastpay" class="fi" value="'+(v.lastPayment||"")+'"></div>'+
+    '<div class="form-g"><label>Proximo pago</label><input id="f-nextpay" type="date" class="fi" value="'+(v.nextPayment||"")+'"></div>'+
+    '</div><div class="form-r">'+
     '<div class="form-g"><label>Cumpleanos (DD/MM)</label><input id="f-bday" class="fi" placeholder="ej: 15/03" value="'+(v.birthday||"")+'"></div>'+
     '</div>'+
     '<div class="form-g" style="margin-top:8px"><label>Lesiones / condiciones medicas</label><textarea id="f-injuries" class="fi" rows="2" placeholder="Ej: rodilla derecha, hernia lumbar...">'+(v.injuries||"")+'</textarea></div>'+
@@ -2770,6 +2784,7 @@ function getStudentData(){
     diet:el("f-diet").value,
     tel:(el("f-tel")||{}).value?el("f-tel").value.trim():"",
     lastPayment:el("f-lastpay").value.trim(),
+    nextPayment:(el("f-nextpay")||{}).value||"",
     birthday:el("f-bday").value.trim(),
     injuries:el("f-injuries").value.trim(),
     notes:el("f-notes").value.trim()
