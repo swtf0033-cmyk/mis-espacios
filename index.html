@@ -5156,8 +5156,8 @@ function markRmDone(sid){lsSave("rm-"+sid,Date.now());renderCentro();}
 function calcFitCascade(){
   var callerasDone=lsGet("calleras-done",[]);
   var calleraCost=Number(lsGet("callera-cost",15))||15;
-  var bruto=state.students.filter(function(s){return s.payStatus!=="Inactivo";}).reduce(function(s,st){return s+(Number(st.fee)||0);},0);
-  var pending=state.students.filter(function(s){return s.payStatus!=="Inactivo"&&(Number(s.months)||0)>=2&&callerasDone.indexOf(s.id)===-1;});
+  var bruto=state.students.filter(function(s){return s.payStatus==="Al dia";}).reduce(function(s,st){return s+(Number(st.fee)||0);},0);
+  var pending=state.students.filter(function(s){return s.payStatus==="Al dia"&&(Number(s.months)||0)>=2&&callerasDone.indexOf(s.id)===-1;});
   var calleraCut=pending.length*calleraCost;
   var gastosFit=expMonthly(state.fitExp,"fit");
   var margen=bruto-calleraCut-gastosFit;
