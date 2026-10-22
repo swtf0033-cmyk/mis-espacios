@@ -674,7 +674,7 @@ label.switch-btn:hover{background:var(--acc-d2);color:var(--txt)}
       <div class="view" id="agency-gastos">
         <div class="g2">
           <div class="card">
-            <div class="ct">Gastos<button class="btn-sm" onclick="editAgExp()">&#9999; Editar</button></div>
+            <div class="ct">Gastos<button class="btn-sm" onclick="editAgExp()">&#9999; Editar</button><button class="btn-sm" onclick="openAddAgTool()" style="margin-left:4px">+ Agregar</button></div>
             <div id="ag-exp-list"></div>
           </div>
           <div class="card">
@@ -1832,7 +1832,12 @@ function agToolForm(t){
     +'<div class="form-r">'
     +'<div class="form-g"><label>Tipo</label><select id="at-type" class="fi">'
     +'<option value="sub"'+(t.type==="sub"||!t.type?" selected":"")+'>📦 Suscripción</option>'
+    +'<option value="credits"'+(t.type==="credits"?" selected":"")+'>🪙 Créditos</option>'
+    +'<option value="ads"'+(t.type==="ads"?" selected":"")+'>📣 Pauta / Ads</option>'
     +'<option value="hw"'+(t.type==="hw"?" selected":"")+'>🖥️ Equipo / Hardware</option>'
+    +'<option value="once"'+(t.type==="once"?" selected":"")+'>💳 Pago único</option>'
+    +'<option value="mejora"'+(t.type==="mejora"?" selected":"")+'>🎯 Mejora</option>'
+    +'<option value="meta"'+(t.type==="meta"?" selected":"")+'>⭐ Meta</option>'
     +'</select></div>'
     +'<div class="form-g"><label>Costo mensual ($)</label><input id="at-cost" type="number" class="fi" placeholder="0" value="'+(t.cost||"")+'"></div>'
     +'</div>'
@@ -2031,7 +2036,10 @@ function expProfileBadge(lbl,src,type){
 }
 function renderAgExp(){
   var items=state.agExp;
-  var monthly=expMonthly(items,"ag");var once=expOnce(items);var total=monthly+once;
+  var recurringTypes={sub:1,hw:1,credits:1,ads:1};
+  var toolsMonthly=(state.agTools||[]).filter(function(t){return !t.done&&recurringTypes[t.type]&&t.cost>0;}).reduce(function(s,t){return s+(Number(t.cost)||0);},0);
+  var toolsOnce=(state.agTools||[]).filter(function(t){return !t.done&&t.type==="once"&&t.cost>0;}).reduce(function(s,t){return s+(Number(t.cost)||0);},0);
+  var monthly=expMonthly(items,"ag")+toolsMonthly;var once=expOnce(items)+toolsOnce;var total=monthly+once;
   var nc=activeClientsCount();
   function badge(type){
     if(type==="unico")return'<span style="font-size:9px;background:rgba(245,158,11,.2);color:#F59E0B;border-radius:4px;padding:2px 5px;font-weight:700;margin-left:5px">ÚNICO</span>';
@@ -2050,28 +2058,24 @@ function renderAgExp(){
       +'<span style="font-family:Rajdhani,sans-serif;font-weight:700;font-size:15px;color:var(--danger);flex-shrink:0;margin-left:8px">'+fmtMoney(eff)+'</span></div></div>';
   }).join("");
   var html;
-  if(!rows){html='<div class="empty-st"><div class="ico">&#128184;</div><p>Sin gastos registrados</p><button class="btn-sm" onclick="editAgExp()">+ Agregar</button></div>';}
+  if(!rows&&!state.agTools.length){html='<div class="empty-st"><div class="ico">&#128184;</div><p>Sin gastos registrados</p><button class="btn-sm" onclick="openAddAgTool()">+ Agregar</button></div>';}
   else{
     html=rows+'<div style="display:flex;flex-direction:column;gap:6px;margin-top:8px">';
     if(monthly>0)html+='<div style="display:flex;justify-content:space-between;align-items:center;padding:9px 12px;background:rgba(52,211,153,.08);border-radius:9px;border:1px solid rgba(52,211,153,.2)"><span style="font-size:12px;font-weight:700;color:#34D399">Mensuales</span><span style="font-family:Rajdhani,sans-serif;font-weight:700;font-size:16px;color:#34D399">'+fmtMoney(monthly)+'/mes</span></div>';
     if(once>0)html+='<div style="display:flex;justify-content:space-between;align-items:center;padding:9px 12px;background:rgba(245,158,11,.08);border-radius:9px;border:1px solid rgba(245,158,11,.2)"><span style="font-size:12px;font-weight:700;color:#F59E0B">Únicos</span><span style="font-family:Rajdhani,sans-serif;font-weight:700;font-size:16px;color:#F59E0B">'+fmtMoney(once)+'</span></div>';
-    html+='<div style="display:flex;justify-content:space-between;align-items:center;padding:11px 13px;background:var(--danger-d);border-radius:9px;border:1px solid rgba(248,113,113,.2)"><span style="font-weight:700;font-size:14px">Total gastos</span><span style="font-family:Rajdhani,sans-serif;font-weight:700;font-size:22px;color:var(--danger)">'+fmtMoney(total)+'</span></div>';
+    if(total>0)html+='<div style="display:flex;justify-content:space-between;align-items:center;padding:11px 13px;background:var(--danger-d);border-radius:9px;border:1px solid rgba(248,113,113,.2)"><span style="font-weight:700;font-size:14px">Total gastos</span><span style="font-family:Rajdhani,sans-serif;font-weight:700;font-size:22px;color:var(--danger)">'+fmtMoney(total)+'</span></div>';
     html+='</div>';
   }
-  // Herramientas / Mejoras
+  // Herramientas / Mejoras (unificado)
   var priColor={Alta:"#F87171",Media:"#FBBF24",Baja:"#34D399"};
   var priDot={Alta:"🔴",Media:"🟡",Baja:"🟢"};
-  var toolsHtml='<div style="margin-top:16px">'
-    +'<div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:10px">'
-    +'<span style="font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.08em;opacity:.45">🛠️ Herramientas / Mejoras</span>'
-    +'<button onclick="openAddAgTool()" class="btn-sm" style="padding:4px 10px;font-size:11px">+ Agregar</button>'
-    +'</div>';
+  var toolsHtml='<div style="margin-top:12px">';
   if(state.agTools.length){
     toolsHtml+=state.agTools.slice().sort(function(a,b){
       var o={Alta:0,Media:1,Baja:2};return(o[a.priority]||1)-(o[b.priority]||1);
     }).map(function(t){
       var col=priColor[t.priority]||"#FBBF24";
-      var typeIcon=t.type==="hw"?"🖥️":"📦";
+      var typeIcon=t.type==="hw"?"🖥️":t.type==="credits"?"🪙":t.type==="ads"?"📣":t.type==="once"?"💳":t.type==="mejora"?"🎯":t.type==="meta"?"⭐":"📦";
       var hasUpgrade=t.nextLevel&&t.nextLevel.trim();
       return '<div style="background:var(--surf);border-radius:12px;margin-bottom:8px;border-left:3px solid '+(t.done?"rgba(52,211,153,.35)":col)+';overflow:hidden">'
         +'<div style="display:flex;align-items:center;gap:10px;padding:11px 13px">'
