@@ -1840,6 +1840,7 @@ function agToolForm(t){
     +'<option value="meta"'+(t.type==="meta"?" selected":"")+'>⭐ Meta</option>'
     +'</select></div>'
     +'<div class="form-g"><label>Costo mensual ($)</label><input id="at-cost" type="number" class="fi" placeholder="0" value="'+(t.cost||"")+'"></div>'
+    +'<div class="form-g" style="display:flex;align-items:center;gap:8px;padding:8px 0"><label style="margin:0;display:flex;align-items:center;gap:6px;cursor:pointer"><input id="at-percli" type="checkbox"'+(t.perClient?" checked":"")+' style="width:15px;height:15px;accent-color:var(--acc)"> <span style="font-size:13px">Por cliente (costo × nº clientes activos)</span></label></div>'
     +'</div>'
     +'<div class="form-r">'
     +'<div class="form-g"><label>Nivel actual</label><input id="at-cur" class="fi" placeholder="Pro, Basic, i5 16GB..." value="'+(t.current||"")+'"></div>'
@@ -1855,7 +1856,7 @@ function agToolForm(t){
     +'</div>';
 }
 function getAgToolData(id){
-  return{id:id||Date.now().toString(36),name:(el("at-name")||{}).value.trim(),type:(el("at-type")||{}).value||"sub",cost:parseInt((el("at-cost")||{}).value)||0,current:(el("at-cur")||{}).value.trim(),nextLevel:(el("at-next")||{}).value.trim(),lastPay:(el("at-pay")||{}).value.trim(),priority:(el("at-pri")||{}).value||"Media",done:false};
+  return{id:id||Date.now().toString(36),name:(el("at-name")||{}).value.trim(),type:(el("at-type")||{}).value||"sub",cost:parseInt((el("at-cost")||{}).value)||0,perClient:!!(el("at-percli")||{}).checked,current:(el("at-cur")||{}).value.trim(),nextLevel:(el("at-next")||{}).value.trim(),lastPay:(el("at-pay")||{}).value.trim(),priority:(el("at-pri")||{}).value||"Media",done:false};
 }
 function openAddAgTool(){
   openModal("Agregar herramienta",agToolForm(null),function(){
@@ -2037,8 +2038,10 @@ function expProfileBadge(lbl,src,type){
 function renderAgExp(){
   var items=state.agExp;
   var recurringTypes={sub:1,hw:1,credits:1,ads:1};
-  var toolsMonthly=(state.agTools||[]).filter(function(t){return !t.done&&recurringTypes[t.type]&&t.cost>0;}).reduce(function(s,t){return s+(Number(t.cost)||0);},0);
-  var toolsOnce=(state.agTools||[]).filter(function(t){return !t.done&&t.type==="once"&&t.cost>0;}).reduce(function(s,t){return s+(Number(t.cost)||0);},0);
+  var _nc=activeClientsCount();
+  var _eff=function(t){return t.perClient?(Number(t.cost)||0)*_nc:(Number(t.cost)||0);};
+  var toolsMonthly=(state.agTools||[]).filter(function(t){return !t.done&&recurringTypes[t.type]&&t.cost>0;}).reduce(function(s,t){return s+_eff(t);},0);
+  var toolsOnce=(state.agTools||[]).filter(function(t){return !t.done&&t.type==="once"&&t.cost>0;}).reduce(function(s,t){return s+_eff(t);},0);
   var monthly=expMonthly(items,"ag")+toolsMonthly;var once=expOnce(items)+toolsOnce;var total=monthly+once;
   var nc=activeClientsCount();
   function badge(type){
@@ -2076,6 +2079,8 @@ function renderAgExp(){
     }).map(function(t){
       var col=priColor[t.priority]||"#FBBF24";
       var typeIcon=t.type==="hw"?"🖥️":t.type==="credits"?"🪙":t.type==="ads"?"📣":t.type==="once"?"💳":t.type==="mejora"?"🎯":t.type==="meta"?"⭐":"📦";
+      var nc2=activeClientsCount();
+      var effCost=t.perClient?(Number(t.cost)||0)*nc2:(Number(t.cost)||0);
       var hasUpgrade=t.nextLevel&&t.nextLevel.trim();
       return '<div style="background:var(--surf);border-radius:12px;margin-bottom:8px;border-left:3px solid '+(t.done?"rgba(52,211,153,.35)":col)+';overflow:hidden">'
         +'<div style="display:flex;align-items:center;gap:10px;padding:11px 13px">'
@@ -2097,7 +2102,7 @@ function renderAgExp(){
           return'<div style="font-size:10px;color:'+c2+';font-weight:600;margin-top:2px">🔄 Renueva '+lbl+(tag?' · '+tag:'')+'</div>';
         })()
         +'</div>'
-        +(t.cost>0?'<span style="font-family:Rajdhani,sans-serif;font-size:13px;font-weight:700;color:'+col+';white-space:nowrap">'+fmtMoney(t.cost)+'/mes</span>':'')
+        +(effCost>0?'<div style="text-align:right;flex-shrink:0"><span style="font-family:Rajdhani,sans-serif;font-size:13px;font-weight:700;color:'+col+';white-space:nowrap">'+fmtMoney(effCost)+'/mes</span>'+(t.perClient&&nc2?'<div style="font-size:9px;opacity:.5">'+fmtMoney(t.cost)+'×'+nc2+'cli</div>':'')+'</div>':'')
         +'<span style="font-size:10px;margin-left:4px">'+(priDot[t.priority]||"🟡")+'</span>'
         +'<button onclick="openEditAgTool(\''+t.id+'\')" style="background:none;border:none;color:var(--txt2);cursor:pointer;font-size:13px;padding:0 3px">✏️</button>'
         +'<button onclick="deleteAgTool(\''+t.id+'\')" style="background:none;border:none;color:var(--danger);cursor:pointer;font-size:13px;opacity:.5;padding:0 3px">🗑</button>'
