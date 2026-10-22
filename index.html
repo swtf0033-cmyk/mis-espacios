@@ -1622,7 +1622,7 @@ function safediv(a,b){return b?a/b:0;}
 function renderFitStats(){
   var active=state.students.length;
   var overdue=state.students.filter(function(s){return s.payStatus==="Vencido";});
-  var income=state.students.reduce(function(sum,s){return sum+(Number(s.fee)||0);},0);
+  var income=state.students.filter(function(s){return s.payStatus==="Al dia";}).reduce(function(sum,s){return sum+(Number(s.fee)||0);},0);
   var progs=state.students.map(function(s){return Number(s.progress)||0;});
   var prSum=progs.reduce(function(a,b){return a+b;},0);
   var adher=progs.length?Math.round(safediv(prSum,progs.length)):0;
