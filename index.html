@@ -2254,8 +2254,12 @@ function resetPayOrder(){lsSave("pay-paid",{});lsSave("pay-order",null);renderPa
 
 function renderCentro(){
   // ── Finanzas consolidadas ──
-  var fitInc=Number(state.perInc.fit)||0;
-  var agInc=Number(state.perInc.agency)||0;
+  // FitCoach: suma de mensualidades de alumnos activos
+  var fitInc=state.students.filter(function(s){return s.payStatus!=="Inactivo";}).reduce(function(sum,s){return sum+(Number(s.fee)||0);},0);
+  // Si no hay alumnos con fee, caer a perInc manual o avgRevenue
+  if(fitInc===0) fitInc=Number(state.perInc.fit)||avgRevenue(state.fitRev)||0;
+  // Agencia: promedio del historial o valor manual
+  var agInc=avgRevenue(state.agRev)||Number(state.perInc.agency)||0;
   var totalInc=fitInc+agInc;
   var fitExp=expMonthly(state.fitExp,"fit");
   var agExp=expMonthly(state.agExp,"ag");
