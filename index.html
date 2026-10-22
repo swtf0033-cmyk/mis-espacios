@@ -565,7 +565,7 @@ label.switch-btn:hover{background:var(--acc-d2);color:var(--txt)}
       </div>
       <div class="view" id="fit-pagos">
         <div class="card">
-          <div class="ct">Control de pagos<span id="pagos-badge" class="badge bd" style="display:none"></span></div>
+          <div class="ct">Control de pagos<span id="pagos-badge" class="badge bd" style="display:none"></span><button class="btn-sm" onclick="nuevoCiclo()" style="margin-left:auto;background:rgba(168,85,247,.12);border-color:rgba(168,85,247,.3);color:#A855F7">🔄 Nuevo ciclo</button></div>
           <div id="pagos-table"></div>
         </div>
       </div>
@@ -1758,9 +1758,22 @@ function renderStudents(){
       else if(diff<=7){statusBadge='<span class="badge bw" style="color:#f97316;border-color:#f97316">Por vencer</span>';pagarBtnHtml='<button class="btn-sm p-pagar" data-id="'+s.id+'" style="font-size:10px;padding:3px 9px;background:rgba(52,211,153,.12);color:var(--green);border:1px solid rgba(52,211,153,.3);border-radius:5px;cursor:pointer;font-weight:700">✓ Pagó</button>';}
       else{statusBadge='<span class="badge bg">Al día</span>';}
     } else {
-      var pc=s.payStatus==="Al dia"?"bg":s.payStatus==="Vencido"?"bd":"bw";
-      statusBadge='<span class="badge '+pc+'">'+s.payStatus+'</span>';
-      if(s.payStatus==="Vencido")pagarBtnHtml='<button class="btn-sm p-pagar" data-id="'+s.id+'" style="font-size:10px;padding:3px 9px;background:rgba(52,211,153,.12);color:var(--green);border:1px solid rgba(52,211,153,.3);border-radius:5px;cursor:pointer;font-weight:700">✓ Pagó</button>';
+      // Sin lastPayment — usar nextPayDate si existe
+      var pagarBtn2='<button class="btn-sm p-pagar" data-id="'+s.id+'" style="font-size:10px;padding:3px 9px;background:rgba(52,211,153,.12);color:var(--green);border:1px solid rgba(52,211,153,.3);border-radius:5px;cursor:pointer;font-weight:700">✓ Pagó</button>';
+      if(isIsoDate(s.nextPayDate)){
+        var nd2=new Date(s.nextPayDate+'T12:00:00');
+        var diff2=Math.round((nd2-todayP)/86400000);
+        var nd2lbl=nd2.toLocaleDateString("es-CO",{day:"2-digit",month:"short"});
+        nextCell='<span style="color:'+(diff2<0?"var(--danger)":diff2<=7?"#f97316":"var(--green)")+';font-weight:600">'+nd2lbl+'</span>'+(diff2<0?'<br><span style="font-size:10px;color:var(--danger)">Vencido hace '+Math.abs(diff2)+'d</span>':diff2<=7?'<br><span style="font-size:10px;color:#f97316">En '+diff2+'d</span>':'');
+        if(diff2<0){statusBadge='<span class="badge bd">Vencido</span>';}
+        else if(diff2<=7){statusBadge='<span class="badge bw" style="color:#f97316;border-color:#f97316">Por vencer</span>';}
+        else{statusBadge='<span class="badge bw">'+nd2lbl+'</span>';}
+        pagarBtnHtml=pagarBtn2;
+      } else {
+        var pc=s.payStatus==="Al dia"?"bg":s.payStatus==="Vencido"?"bd":"bw";
+        statusBadge='<span class="badge '+pc+'">'+(s.payStatus||"Pendiente")+'</span>';
+        if(s.payStatus!=="Al dia"&&s.payStatus!=="Inactivo")pagarBtnHtml=pagarBtn2;
+      }
     }
     return '<tr><td><div class="cc"><div class="cap" style="background:var(--acc-d);color:var(--acc)">'+mkInitials(s.name)+'</div><div class="cn">'+s.name+'</div></div></td>'+
       '<td>'+fmtMoney(s.fee)+'</td><td>'+lastLabel+'</td><td>'+nextCell+'</td>'+
@@ -2986,10 +2999,11 @@ function studentForm(s){
     '<div class="form-g"><label>Mensualidad ($)</label><input id="f-fee" type="number" class="fi" value="'+(v.fee||0)+'"></div>'+
     '<div class="form-g"><label>Modalidad de pago</label><select id="f-paymode" class="fi"><option value="Mensual"'+(v.payMode==="Mensual"?" selected":"")+'>Mensual</option><option value="Cuotas"'+(v.payMode==="Cuotas"?" selected":"")+'>Cuotas</option><option value="Credito"'+(v.payMode==="Credito"?" selected":"")+'>Credito</option></select></div>'+
     '</div><div class="form-r">'+
-    '<div class="form-g"><label>Estado pago</label><select id="f-pay" class="fi"><option value="Al dia"'+(v.payStatus==="Al dia"?" selected":"")+'>Al dia</option><option value="Vencido"'+(v.payStatus==="Vencido"?" selected":"")+'>Vencido</option><option value="Atencion"'+(v.payStatus==="Atencion"?" selected":"")+'>Atencion</option></select></div>'+
+    '<div class="form-g"><label>Estado pago</label><select id="f-pay" class="fi"><option value="Pendiente"'+((!v.payStatus||v.payStatus==="Pendiente")?" selected":"")+'>Pendiente</option><option value="Al dia"'+(v.payStatus==="Al dia"?" selected":"")+'>Al dia</option><option value="Vencido"'+(v.payStatus==="Vencido"?" selected":"")+'>Vencido</option><option value="Atencion"'+(v.payStatus==="Atencion"?" selected":"")+'>Atencion</option></select></div>'+
     '<div class="form-g"><label>Dieta</label><select id="f-diet" class="fi"><option value="Omnivoro"'+(v.diet==="Omnivoro"?" selected":"")+'>Omnivoro</option><option value="Vegetariana"'+(v.diet==="Vegetariana"?" selected":"")+'>Vegetariana</option><option value="Vegana"'+(v.diet==="Vegana"?" selected":"")+'>Vegana</option><option value="Keto"'+(v.diet==="Keto"?" selected":"")+'>Keto</option></select></div>'+
     '</div><div class="form-r">'+
     '<div class="form-g"><label>Ultimo pago</label><input id="f-lastpay" type="date" class="fi" value="'+(v.lastPayment||"")+'"></div>'+
+    '<div class="form-g"><label>Próx. pago esperado</label><input id="f-nextpay" type="date" class="fi" value="'+(v.nextPayDate||"")+'"></div>'+
     '<div class="form-g"><label>Cumpleanos (DD/MM)</label><input id="f-bday" class="fi" placeholder="ej: 15/03" value="'+(v.birthday||"")+'"></div>'+
     '</div>'+
     '<div class="form-g" style="margin-top:8px"><label>Lesiones / condiciones medicas</label><textarea id="f-injuries" class="fi" rows="2" placeholder="Ej: rodilla derecha, hernia lumbar...">'+(v.injuries||"")+'</textarea></div>'+
@@ -3014,6 +3028,7 @@ function getStudentData(){
     diet:el("f-diet").value,
     tel:(el("f-tel")||{}).value?el("f-tel").value.trim():"",
     lastPayment:el("f-lastpay").value||"",
+    nextPayDate:(el("f-nextpay")||{}).value||"",
     birthday:el("f-bday").value.trim(),
     injuries:el("f-injuries").value.trim(),
     notes:el("f-notes").value.trim()
@@ -3039,8 +3054,16 @@ function openAddStudent(){
 }
 function pagarHoy(id){
   var iso=new Date().toISOString().slice(0,10);
-  lsDocSet("students",id,{lastPayment:iso,payStatus:"Al dia"});
-  refreshStudents();
+  lsDocSet("students",id,{lastPayment:iso,payStatus:"Al dia",nextPayDate:""});
+  refreshStudents();renderFitStats();renderPerInc();renderPerStats();renderPerExp();updateCentroBadge();
+}
+function nuevoCiclo(){
+  if(!confirm("¿Iniciar nuevo ciclo de cobro?\n\nTodos los alumnos quedarán como 'Pendiente'. Cuando cada uno pague, tocá '✓ Pagó'."))return;
+  state.students.forEach(function(s){
+    if(s.payStatus!=="Inactivo"){lsDocSet("students",s.id,{payStatus:"Pendiente",lastPayment:""});}
+  });
+  state.students=lsGet("students",[]).sort(function(a,b){return(a.name||"").localeCompare(b.name||"");});
+  refreshStudents();renderFitStats();renderFitAlerts();renderPerInc();renderPerStats();renderPerExp();updateCentroBadge();
 }
 function pagarHoyClient(id){
   var iso=new Date().toISOString().slice(0,10);
