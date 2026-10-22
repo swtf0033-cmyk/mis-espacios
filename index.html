@@ -1765,18 +1765,39 @@ function renderStudents(){
 }
 
 function renderClients(){
+  var todayC=new Date();todayC.setHours(0,0,0,0);
+  var isIso=function(v){return v&&/^\d{4}-\d{2}-\d{2}$/.test(v);};
   var html=state.clients.map(function(c){
-    var sc=c.status==="Activo"?"bg":c.status==="En pausa"?"bw":"bd";
+    var statusBadge,pagarBtnHtml='',nextInfo='';
+    if(isIso(c.lastPayment)){
+      var ld=new Date(c.lastPayment+'T12:00:00');
+      var nd=new Date(ld.getFullYear(),ld.getMonth()+1,ld.getDate());nd.setHours(0,0,0,0);
+      var diff=Math.round((nd-todayC)/86400000);
+      var nlabel=nd.toLocaleDateString("es-CO",{day:"2-digit",month:"short"});
+      var col=diff<0?"var(--danger)":diff<=3?"#f97316":diff<=7?"var(--warn)":"var(--green)";
+      var tag=diff<0?"Vencido hace "+Math.abs(diff)+"d":diff===0?"Hoy":diff<=7?"En "+diff+"d":"";
+      nextInfo='<div style="text-align:right;margin-right:10px"><div style="font-family:Rajdhani,sans-serif;font-weight:700;font-size:15px;color:'+col+'">'+nlabel+'</div><div style="font-size:10px;color:'+col+'">'+(tag||"Al día")+'</div></div>';
+      if(diff<0){statusBadge='<span class="badge bd">Vencido</span>';pagarBtnHtml='<button class="btn-sm c-pagar" data-id="'+c.id+'" style="font-size:10px;padding:3px 9px;background:rgba(52,211,153,.12);color:var(--green);border:1px solid rgba(52,211,153,.3);border-radius:5px;cursor:pointer;font-weight:700">✓ Pagó</button>';}
+      else if(diff<=7){statusBadge='<span class="badge bw" style="color:#f97316;border-color:#f97316">Por vencer</span>';pagarBtnHtml='<button class="btn-sm c-pagar" data-id="'+c.id+'" style="font-size:10px;padding:3px 9px;background:rgba(52,211,153,.12);color:var(--green);border:1px solid rgba(52,211,153,.3);border-radius:5px;cursor:pointer;font-weight:700">✓ Pagó</button>';}
+      else{statusBadge='<span class="badge bg">Al día</span>';}
+    } else {
+      var sc2=c.status==="Activo"?"bg":c.status==="En pausa"?"bw":"bd";
+      statusBadge='<span class="badge '+sc2+'">'+c.status+'</span>';
+    }
     return '<div class="row-item">'+
       '<div class="cap" style="background:var(--acc-d);color:var(--acc);width:40px;height:40px;font-size:14px">'+mkInitials(c.name)+'</div>'+
       '<div style="flex:1;min-width:0"><div style="font-weight:600;font-size:14px">'+c.name+'</div>'+
       '<div style="font-size:11px;color:var(--txt2);margin-top:2px">'+(c.service||'')+(c.website?' &middot; '+c.website:'')+'</div></div>'+
       '<div style="text-align:right;margin-right:10px"><div style="font-family:Rajdhani,sans-serif;font-weight:700;font-size:18px;color:var(--acc)">'+fmtMoney(c.monthly)+'</div><div style="font-size:10px;color:var(--txt2)">mensual</div></div>'+
-      '<span class="badge '+sc+'">'+c.status+'</span>'+
-      '<div class="row-actions"><button class="btn-icon" onclick="openEditClient(\''+c.id+'\')">&#9999;</button><button class="btn-icon btn-del" onclick="deleteClient(\''+c.id+'\')">&#128465;</button></div></div>';
+      nextInfo+
+      '<div style="display:flex;align-items:center;gap:6px">'+statusBadge+pagarBtnHtml+'</div>'+
+      '<div class="row-actions"><button class="btn-icon c-edit" data-id="'+c.id+'">&#9999;</button><button class="btn-icon btn-del c-del" data-id="'+c.id+'">&#128465;</button></div></div>';
   }).join("");
   if(!html)html='<div class="empty-st"><div class="ico">&#128226;</div><p>Aun no tienes clientes.<br>Agrega tu primero!</p></div>';
   el("clients-list").innerHTML=html;
+  el("clients-list").querySelectorAll(".c-edit").forEach(function(b){b.addEventListener("click",function(){openEditClient(this.getAttribute("data-id"));});});
+  el("clients-list").querySelectorAll(".c-del").forEach(function(b){b.addEventListener("click",function(){deleteClient(this.getAttribute("data-id"));});});
+  el("clients-list").querySelectorAll(".c-pagar").forEach(function(b){b.addEventListener("click",function(){pagarHoyClient(this.getAttribute("data-id"));});});
 }
 
 function renderAgStats(){
@@ -2302,10 +2323,10 @@ function updateCentroBadge(){
   // Gastos próximos (3 días)
   var expCount=function(arr){var n=0;(arr||[]).forEach(function(e){if(!e.dueDate)return;var d=new Date(e.dueDate+'T12:00:00');var diff=Math.round((d-todayB)/86400000);if(diff>=0&&diff<=3)n++;});return n;};
   count+=expCount(state.fitExp)+expCount(state.agExp)+expCount(state.perExp);
-  // Clientes agencia con pago vencido o sin fecha
+  // Clientes agencia con pago vencido o por vencer
   (state.clients||[]).filter(function(c){return c.status==="Activo";}).forEach(function(c){
-    if(!c.nextPayment){count++;}
-    else{var d=new Date(c.nextPayment+'T12:00:00');if(Math.round((d-todayB)/86400000)<0)count++;}
+    if(!c.lastPayment||!/^\d{4}-\d{2}-\d{2}$/.test(c.lastPayment)){count++;}
+    else{var ld=new Date(c.lastPayment+'T12:00:00');var nd=new Date(ld.getFullYear(),ld.getMonth()+1,ld.getDate());nd.setHours(0,0,0,0);if(Math.round((nd-todayB)/86400000)<=7)count++;}
   });
   var badge=el("centro-badge");
   if(badge){badge.textContent=count;badge.style.display=count>0?"inline-flex":"none";}
@@ -2401,16 +2422,16 @@ function renderCentro(){
       tasks.push({icon:"📐",label:s.name+" — Sin medidas circunferenciales",src:"FitCoach",urgency:"media"});
     }
   });
-  // Agencia: clientes activos sin fecha de próximo pago o con pago vencido
+  // Agencia: clientes activos por fecha automática lastPayment+1mes
   (state.clients||[]).filter(function(c){return c.status==="Activo";}).forEach(function(c){
-    if(!c.nextPayment){
-      tasks.push({icon:"📋",label:(c.name||"Cliente")+" — Sin fecha de renovación registrada",src:"Agencia",urgency:"media"});
+    if(!c.lastPayment||!/^\d{4}-\d{2}-\d{2}$/.test(c.lastPayment)){
+      tasks.push({icon:"📋",label:(c.name||"Cliente")+" — Sin fecha de último pago",src:"Agencia",urgency:"media"});
     } else {
-      var d=new Date(c.nextPayment);d.setHours(0,0,0,0);
-      var diff=Math.round((d-today)/86400000);
-      if(diff<0){
-        tasks.push({icon:"⚠️",label:(c.name||"Cliente")+" — Pago vencido hace "+Math.abs(diff)+" días",src:"Agencia",urgency:"alta"});
-      }
+      var ld=new Date(c.lastPayment+'T12:00:00');
+      var nd=new Date(ld.getFullYear(),ld.getMonth()+1,ld.getDate());nd.setHours(0,0,0,0);
+      var diff=Math.round((nd-today)/86400000);
+      if(diff<0){tasks.push({icon:"⚠️",label:(c.name||"Cliente")+" — Pago vencido hace "+Math.abs(diff)+"d",src:"Agencia",urgency:"alta"});}
+      else if(diff<=7){tasks.push({icon:"💰",label:(c.name||"Cliente")+" — Pago en "+diff+"d ("+nd.toLocaleDateString("es-CO",{day:"2-digit",month:"short"})+")",src:"Agencia",urgency:"media"});}
     }
   });
   var urgColor={alta:"var(--danger)",media:"var(--warn)",baja:"var(--txt2)"};
@@ -2858,10 +2879,15 @@ function openAddStudent(){
   });
 }
 function pagarHoy(id){
-  var today=new Date();
-  var iso=today.toISOString().slice(0,10);
+  var iso=new Date().toISOString().slice(0,10);
   lsDocSet("students",id,{lastPayment:iso,payStatus:"Al dia"});
   refreshStudents();
+}
+function pagarHoyClient(id){
+  var iso=new Date().toISOString().slice(0,10);
+  lsDocSet("clients",id,{lastPayment:iso,status:"Activo"});
+  refreshClients();
+  updateCentroBadge();
 }
 function openEditStudent(id){
   var s=state.students.find(function(x){return x.id===id;});if(!s)return;
@@ -4409,23 +4435,27 @@ function renderEvalHistory(){
 function clientForm(c){
   var v=c||{};
   return '<div class="form-r">'+
-    '<div class="form-g"><label>Nombre empresa</label><input id="c-name" class="fi" value="'+((v.name||"").replace(/"/g,"&quot;"))+'" placeholder="Nombre del cliente"></div>'+
+    '<div class="form-g"><label>Nombre empresa / cliente</label><input id="c-name" class="fi" value="'+((v.name||"").replace(/"/g,"&quot;"))+'" placeholder="Nombre del cliente"></div>'+
     '<div class="form-g"><label>Sitio web</label><input id="c-web" class="fi" value="'+(v.website||"")+'" placeholder="empresa.com"></div>'+
     '</div><div class="form-g"><label>Servicio</label><input id="c-svc" class="fi" value="'+((v.service||"").replace(/"/g,"&quot;"))+'" placeholder="Redes sociales, Branding, PPC..."></div>'+
     '<div class="form-r">'+
     '<div class="form-g"><label>Mensualidad ($)</label><input id="c-fee" type="number" class="fi" value="'+(v.monthly||0)+'"></div>'+
+    '<div class="form-g"><label>Ultimo pago</label><input id="c-lastpay" type="date" class="fi" value="'+(v.lastPayment||"")+'"></div>'+
+    '</div><div class="form-r">'+
     '<div class="form-g"><label>Inicio (ej: Ene 2026)</label><input id="c-start" class="fi" value="'+(v.startDate||"")+'"></div>'+
-    '</div><div class="form-g"><label>Estado</label><select id="c-status" class="fi"><option value="Activo"'+(v.status==="Activo"?" selected":"")+'>Activo</option><option value="En pausa"'+(v.status==="En pausa"?" selected":"")+'>En pausa</option><option value="Inactivo"'+(v.status==="Inactivo"?" selected":"")+'>Inactivo</option></select></div>';
+    '<div class="form-g"><label>Estado</label><select id="c-status" class="fi"><option value="Activo"'+(v.status==="Activo"?" selected":"")+'>Activo</option><option value="En pausa"'+(v.status==="En pausa"?" selected":"")+'>En pausa</option><option value="Inactivo"'+(v.status==="Inactivo"?" selected":"")+'>Inactivo</option></select></div>'+
+    '</div>';
 }
 function getClientData(){
   var name=el("c-name").value.trim();if(!name)return null;
   var parts=name.split(" ");
-  return {name:name,initials:(parts[0][0]+(parts[1]?parts[1][0]:"")).toUpperCase(),website:el("c-web").value.trim(),service:el("c-svc").value.trim(),monthly:parseInt(el("c-fee").value)||0,startDate:el("c-start").value.trim(),status:el("c-status").value};
+  return {name:name,initials:(parts[0][0]+(parts[1]?parts[1][0]:"")).toUpperCase(),website:el("c-web").value.trim(),service:el("c-svc").value.trim(),monthly:parseInt(el("c-fee").value)||0,lastPayment:(el("c-lastpay")||{}).value||"",startDate:el("c-start").value.trim(),status:el("c-status").value};
 }
 
 function refreshClients(){
   state.clients=lsGet("clients",[]).sort(function(a,b){return(a.name||"").localeCompare(b.name||"");});
   renderClients();renderAgStats();
+  if(typeof updateCentroBadge==="function")updateCentroBadge();
   if(currentApp==="agency")setTimeout(function(){initCharts("agency",currentView("agency")||"dash");},60);
 }
 function openAddClient(){
