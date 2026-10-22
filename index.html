@@ -1726,22 +1726,22 @@ function renderStudents(){
   el("students-list").querySelectorAll(".s-del").forEach(function(b){b.addEventListener("click",function(){currentStudentId=this.getAttribute("data-id");deleteStudent(currentStudentId);});});
 
   var todayP=new Date();todayP.setHours(0,0,0,0);
-  var fmtDate=function(iso){if(!iso)return'—';var d=new Date(iso);return d.toLocaleDateString("es-CO",{day:"2-digit",month:"short"});};
+  var isIsoDate=function(v){return v&&/^\d{4}-\d{2}-\d{2}$/.test(v);};
   var pagosHtml=state.students.map(function(s){
     var pc=s.payStatus==="Al dia"?"bg":s.payStatus==="Vencido"?"bd":"bw";
-    // Calcular próximo pago = último pago + 1 mes
     var nextCell='<span style="color:var(--txt2)">—</span>';
-    if(s.lastPayment){
+    var lastLabel=s.lastPayment||'—';
+    if(isIsoDate(s.lastPayment)){
       var ld=new Date(s.lastPayment);
+      lastLabel=ld.toLocaleDateString("es-CO",{day:"2-digit",month:"short"});
       var nd=new Date(ld.getFullYear(),ld.getMonth()+1,ld.getDate());
       nd.setHours(0,0,0,0);
       var diff=Math.round((nd-todayP)/86400000);
-      var label=nd.toLocaleDateString("es-CO",{day:"2-digit",month:"short"});
+      var nlabel=nd.toLocaleDateString("es-CO",{day:"2-digit",month:"short"});
       var col=diff<0?"var(--danger)":diff<=3?"#f97316":diff<=7?"var(--warn)":"var(--green)";
       var tag=diff<0?"Vencido hace "+Math.abs(diff)+"d":diff===0?"Hoy":diff<=7?"En "+diff+"d":"";
-      nextCell='<span style="color:'+col+';font-weight:600">'+label+'</span>'+(tag?'<br><span style="font-size:10px;color:'+col+'">'+tag+'</span>':'');
+      nextCell='<span style="color:'+col+';font-weight:600">'+nlabel+'</span>'+(tag?'<br><span style="font-size:10px;color:'+col+'">'+tag+'</span>':'');
     }
-    var lastLabel=s.lastPayment?fmtDate(s.lastPayment):(s.lastPayment||'—');
     return '<tr><td><div class="cc"><div class="cap" style="background:var(--acc-d);color:var(--acc)">'+mkInitials(s.name)+'</div><div class="cn">'+s.name+'</div></div></td>'+
       '<td>'+fmtMoney(s.fee)+'</td><td>'+lastLabel+'</td><td>'+nextCell+'</td><td><span class="badge '+pc+'">'+s.payStatus+'</span></td>'+
       '<td><button class="btn-icon p-edit" data-id="'+s.id+'">&#9999;</button></td></tr>';
@@ -2308,7 +2308,7 @@ function renderCentro(){
   });
   // Vencimientos de pago alumnos (próximos 7 días, calculado desde lastPayment+1mes)
   var today=new Date();today.setHours(0,0,0,0);
-  state.students.filter(function(s){return s.payStatus!=="Inactivo"&&s.lastPayment;}).forEach(function(s){
+  state.students.filter(function(s){return s.payStatus!=="Inactivo"&&s.lastPayment&&/^\d{4}-\d{2}-\d{2}$/.test(s.lastPayment);}).forEach(function(s){
     var ld=new Date(s.lastPayment);
     var nd=new Date(ld.getFullYear(),ld.getMonth()+1,ld.getDate());
     nd.setHours(0,0,0,0);
