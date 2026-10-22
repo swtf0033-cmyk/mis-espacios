@@ -762,8 +762,18 @@ label.switch-btn:hover{background:var(--acc-d2);color:var(--txt)}
             <div id="centro-alerts"><div class="empty-st"><div class="ico">✅</div><p>Sin alertas pendientes</p></div></div>
           </div>
           <div class="card">
-            <div class="ct">📋 Tareas pendientes</div>
+            <div class="ct">📋 Pendientes FitCoach / Agencia</div>
             <div id="centro-tasks"><div class="empty-st"><div class="ico">🎯</div><p>Todo al día</p></div></div>
+          </div>
+        </div>
+        <div class="g2" style="margin-bottom:14px">
+          <div class="card">
+            <div class="ct">📝 Tareas del día<button class="btn-sm" onclick="openAddTarea()" style="margin-left:auto">+ Tarea</button></div>
+            <div id="centro-tareas"></div>
+          </div>
+          <div class="card">
+            <div class="ct">⚡ Gastos rápidos<button class="btn-sm" onclick="openGastoRapido()" style="margin-left:auto">+ Gasto</button></div>
+            <div id="centro-gr"></div>
           </div>
         </div>
       </div>
@@ -2500,38 +2510,48 @@ function renderCentro(){
       else if(diff<=7){tasks.push({icon:"💰",label:(c.name||"Cliente")+" — Pago en "+diff+"d ("+nd.toLocaleDateString("es-CO",{day:"2-digit",month:"short"})+")",src:"Agencia",urgency:"media"});}
     }
   });
+  // RM pendientes (last RM test > 4 semanas o nunca)
+  var fourWkMs=28*86400000;
+  state.students.filter(function(s){return s.payStatus!=="Inactivo";}).forEach(function(s){
+    var lastRm=lsGet("rm-"+s.id,null);
+    if(!lastRm||Date.now()-lastRm>fourWkMs){
+      tasks.push({icon:"🏋️",label:s.name+" — RM sin registrar"+(lastRm?" (hace "+Math.round((Date.now()-lastRm)/604800000)+" sem)":""),src:"FitCoach",urgency:"media"});
+    }
+  });
   var urgColor={alta:"var(--danger)",media:"var(--warn)",baja:"var(--txt2)"};
   var tasksEl=el("centro-tasks");
   if(tasksEl){
     if(!tasks.length){
       tasksEl.innerHTML='<div style="padding:20px;text-align:center;color:var(--txt2);font-size:13px">🎯 Todo al día</div>';
     } else {
-      // ordenar: alta > media > baja
       var order={alta:0,media:1,baja:2};
       tasks.sort(function(a,b){return(order[a.urgency]||2)-(order[b.urgency]||2);});
       tasksEl.innerHTML=tasks.map(function(t){
+        var actionBtn=t.rmId?'<button onclick="markRmDone(\''+t.rmId+'\')" style="font-size:10px;padding:3px 10px;border-radius:5px;border:1px solid var(--border2);background:rgba(52,211,153,.12);color:var(--green);cursor:pointer;font-weight:700">✓ Hecho</button>':'';
         return'<div style="display:flex;align-items:center;gap:10px;padding:9px 12px;background:var(--surf);border-radius:8px;margin-bottom:6px">'
           +'<span style="font-size:15px">'+t.icon+'</span>'
           +'<div style="flex:1;min-width:0">'
             +'<div style="font-size:12px;font-weight:600;color:var(--txt1)">'+t.label+'</div>'
             +'<div style="font-size:10px;color:'+(urgColor[t.urgency]||"var(--txt2)")+'">'+t.src+' · '+t.urgency+'</div>'
-          +'</div>'
-          +'</div>';
+          +'</div>'+actionBtn+'</div>';
       }).join("");
     }
   }
+  renderTareasDia();
+  renderGastosRapidos();
   updateCentroBadge();
 }
 function calcPerInc(){
-  var fitBruto=state.students.filter(function(s){return s.payStatus!=="Inactivo";}).reduce(function(sum,s){return sum+(Number(s.fee)||0);},0);
-  var callerasDone=lsGet("calleras-done",[]);
-  var calleraCost=Number(lsGet("callera-cost",15))||15;
-  var callerasPending=state.students.filter(function(s){return s.payStatus!=="Inactivo"&&(Number(s.months)||0)>=2&&callerasDone.indexOf(s.id)===-1;});
-  var calleraCut=callerasPending.length*calleraCost;
-  var fitNeto=Math.max(0,fitBruto-calleraCut);
-  var cas=calcAgCascade();
-  var agPago=Math.max(0,cas.pago);
-  return{fitBruto:fitBruto,calleraCut:calleraCut,calleraCount:callerasPending.length,calleraCost:calleraCost,fitNeto:fitNeto,agPago:agPago,total:fitNeto+agPago};
+  var fitCas=calcFitCascade();
+  var agCas=calcAgCascade();
+  var fitPago=Math.max(0,fitCas.pago);
+  var agPago=Math.max(0,agCas.pago);
+  return{
+    fitBruto:fitCas.bruto,calleraCut:fitCas.calleraCut,calleraCount:fitCas.calleraCount,
+    calleraCost:Number(lsGet("callera-cost",15))||15,
+    fitNeto:fitPago,agPago:agPago,total:fitPago+agPago,
+    fitMargen:fitCas.margen,fitMarca:fitCas.marca,fitDistrib:fitCas.distrib
+  };
 }
 function saveCalleraCost(v){lsSave("callera-cost",Math.max(0,Number(v)||0));renderPerInc();renderPerStats();updateCentroBadge();}
 function renderPerInc(){
@@ -2550,18 +2570,11 @@ function renderPerInc(){
   html+='<div style="display:flex;justify-content:space-between;align-items:center;padding:12px 14px">'
     +'<div style="display:flex;align-items:center;gap:10px">'
     +'<div style="width:34px;height:34px;border-radius:9px;background:linear-gradient(135deg,#A855F7,#EC4899);display:flex;align-items:center;justify-content:center;font-size:14px">💪</div>'
-    +'<div><div style="font-weight:600;font-size:13px">FitCoach Pro</div><div style="font-size:10px;opacity:.5">'+nc+' alumnos activos</div></div></div>'
-    +'<span style="font-family:Rajdhani,sans-serif;font-size:20px;font-weight:700;color:#A855F7">'+fmtMoney(pi.fitBruto)+'</span></div>';
-  if(pi.calleraCut>0){
-    html+='<div style="display:flex;justify-content:space-between;align-items:center;padding:8px 14px;background:rgba(245,158,11,.07);border-top:1px solid rgba(255,255,255,.05)">'
-      +'<span style="font-size:11px;opacity:.7">🧤 Calleras pendientes ('+pi.calleraCount+'× <input type="number" value="'+pi.calleraCost+'" oninput="saveCalleraCost(this.value)" style="width:38px;background:transparent;border:none;border-bottom:1px solid rgba(245,158,11,.4);color:#FBBF24;font-size:11px;font-weight:700;text-align:center;outline:none;padding:0 2px"> c/u)</span>'
-      +'<span style="font-family:Rajdhani,sans-serif;font-size:14px;font-weight:700;color:#FBBF24">− '+fmtMoney(pi.calleraCut)+'</span></div>';
-    html+='<div style="display:flex;justify-content:space-between;padding:8px 14px 12px">'
-      +'<span style="font-size:12px;font-weight:700;opacity:.7">Neto FitCoach</span>'
-      +'<span style="font-family:Rajdhani,sans-serif;font-size:16px;font-weight:700;color:#A855F7">'+fmtMoney(pi.fitNeto)+'</span></div>';
-  } else if(nc===0){
-    html+='<div style="padding:8px 14px 12px;font-size:11px;opacity:.4">Sin alumnos activos aún</div>';
-  }
+    +'<div><div style="font-weight:600;font-size:13px">FitCoach Pro</div><div style="font-size:10px;opacity:.5">'+nc+' alumnos · bruto '+fmtMoney(pi.fitBruto)+'</div></div></div>'
+    +'<span style="font-family:Rajdhani,sans-serif;font-size:20px;font-weight:700;color:#A855F7">'+fmtMoney(pi.fitNeto)+'</span></div>';
+  var fitD=pi.fitDistrib||{pago:50,marca:20};
+  html+='<div style="padding:6px 14px 10px;font-size:10px;opacity:.55">'+fitD.pago+'% de mi pago sobre margen '+fmtMoney(pi.fitMargen||0)+(pi.calleraCut>0?' · 🧤 calleras −'+fmtMoney(pi.calleraCut):'')+'</div>';
+  if(nc===0)html+='<div style="padding:4px 14px 10px;font-size:11px;opacity:.4">Sin alumnos activos aún</div>';
   html+='</div>';
   // Agency block
   html+='<div style="background:rgba(239,68,68,.06);border-radius:12px;border:1px solid rgba(239,68,68,.15);overflow:hidden">';
@@ -5036,6 +5049,139 @@ function renderAgFinSummary(){
     +'</div>'
     +'</div>';
   var e2=el("ag-fin-summary");if(e2)e2.innerHTML=html;
+}
+
+// ── TAREAS DEL DÍA ──
+function renderTareasDia(){
+  var tareas=lsGet("centro-tareas",[]);
+  var e=el("centro-tareas");if(!e)return;
+  if(!tareas.length){e.innerHTML='<div style="padding:18px;text-align:center;opacity:.4;font-size:12px">Sin tareas — agrega una arriba</div>';return;}
+  var pendientes=tareas.filter(function(t){return !t.done;});
+  var hechas=tareas.filter(function(t){return t.done;});
+  var all=pendientes.concat(hechas);
+  e.innerHTML=all.map(function(t){
+    return'<div style="display:flex;align-items:center;gap:10px;padding:8px 10px;background:var(--surf);border-radius:8px;margin-bottom:5px;opacity:'+(t.done?.45:1)+'">'
+      +'<div onclick="toggleTarea(\''+t.id+'\')" style="width:18px;height:18px;border-radius:5px;border:2px solid '+(t.done?"#34D399":"var(--border2)")+';background:'+(t.done?"#34D399":"transparent")+';cursor:pointer;flex-shrink:0;display:flex;align-items:center;justify-content:center">'
+      +(t.done?'<svg width="10" height="10" viewBox="0 0 10 10"><polyline points="1.5,5 4,7.5 8.5,2" stroke="#fff" stroke-width="2" fill="none"/></svg>':'')+'</div>'
+      +'<span style="flex:1;font-size:12px;font-weight:600;text-decoration:'+(t.done?"line-through":"none")+'">'+t.text+'</span>'
+      +'<button onclick="deleteTarea(\''+t.id+'\')" style="background:none;border:none;color:var(--danger);cursor:pointer;font-size:11px;opacity:.5;padding:0 2px">✕</button>'
+      +'</div>';
+  }).join("");
+}
+function openAddTarea(){
+  var html='<div class="form-g"><label>¿Qué hay que hacer?</label><input id="tarea-txt" class="fi" placeholder="Comprar proteína, llamar a Juan..." autofocus></div>';
+  openModal("Nueva tarea",html,function(){
+    var txt=(el("tarea-txt")||{}).value.trim();if(!txt)return;
+    var tareas=lsGet("centro-tareas",[]);
+    tareas.unshift({id:Date.now().toString(36),text:txt,done:false,createdAt:Date.now()});
+    lsSave("centro-tareas",tareas);renderTareasDia();updateCentroBadge();
+  });
+  setTimeout(function(){var i=el("tarea-txt");if(i)i.focus();},100);
+}
+function toggleTarea(id){
+  var tareas=lsGet("centro-tareas",[]);
+  var t=tareas.find(function(x){return x.id===id;});
+  if(t)t.done=!t.done;
+  lsSave("centro-tareas",tareas);renderTareasDia();updateCentroBadge();
+}
+function deleteTarea(id){
+  var tareas=lsGet("centro-tareas",[]).filter(function(x){return x.id!==id;});
+  lsSave("centro-tareas",tareas);renderTareasDia();updateCentroBadge();
+}
+
+// ── GASTOS RÁPIDOS ──
+function renderGastosRapidos(){
+  var gr=lsGet("gastos-rapidos",[]);
+  var e=el("centro-gr");if(!e)return;
+  if(!gr.length){e.innerHTML='<div style="padding:18px;text-align:center;opacity:.4;font-size:12px">Sin registros aún</div>';return;}
+  var todayStr=new Date().toISOString().slice(0,10);
+  var todayTotal=gr.filter(function(g){return g.date===todayStr;}).reduce(function(s,g){return s+(Number(g.amount)||0);},0);
+  var html='';
+  if(todayTotal>0)html+='<div style="display:flex;justify-content:space-between;padding:8px 10px;background:rgba(248,113,113,.08);border-radius:8px;margin-bottom:8px;border:1px solid rgba(248,113,113,.15)"><span style="font-size:11px;font-weight:700;opacity:.7">Hoy gastaste</span><span style="font-family:Rajdhani,sans-serif;font-weight:700;color:var(--danger)">'+fmtMoney(todayTotal)+'</span></div>';
+  html+=gr.slice(0,10).map(function(g){
+    var isToday=g.date===todayStr;
+    return'<div style="display:flex;align-items:center;gap:8px;padding:7px 10px;background:var(--surf);border-radius:8px;margin-bottom:4px">'
+      +'<div style="flex:1;min-width:0"><div style="font-size:12px;font-weight:600">'+g.desc+'</div>'
+      +'<div style="font-size:10px;opacity:.45">'+(isToday?"Hoy":g.date)+'</div></div>'
+      +'<span style="font-family:Rajdhani,sans-serif;font-weight:700;font-size:14px;color:var(--danger)">'+fmtMoney(g.amount)+'</span>'
+      +'<button onclick="deleteGastoRapido(\''+g.id+'\')" style="background:none;border:none;color:var(--danger);cursor:pointer;font-size:11px;opacity:.4;padding:0 2px">✕</button>'
+      +'</div>';
+  }).join("");
+  e.innerHTML=html;
+}
+function openGastoRapido(){
+  var html='<div class="form-r">'
+    +'<div class="form-g" style="flex:2"><label>¿Qué compraste?</label><input id="gr-desc" class="fi" placeholder="2 cervezas, gasolina..." autofocus></div>'
+    +'<div class="form-g"><label>Cuánto ($)</label><input id="gr-amt" type="number" class="fi" placeholder="0"></div>'
+    +'</div>';
+  openModal("Gasto rápido",html,function(){
+    var desc=(el("gr-desc")||{}).value.trim();
+    var amt=parseFloat((el("gr-amt")||{}).value)||0;
+    if(!desc||!amt)return;
+    var gr=lsGet("gastos-rapidos",[]);
+    gr.unshift({id:Date.now().toString(36),desc:desc,amount:amt,date:new Date().toISOString().slice(0,10)});
+    if(gr.length>50)gr=gr.slice(0,50);
+    lsSave("gastos-rapidos",gr);renderGastosRapidos();
+  });
+  setTimeout(function(){var i=el("gr-desc");if(i)i.focus();},100);
+}
+function deleteGastoRapido(id){
+  var gr=lsGet("gastos-rapidos",[]).filter(function(x){return x.id!==id;});
+  lsSave("gastos-rapidos",gr);renderGastosRapidos();
+}
+
+// ── RM (REP MÁXIMA) ──
+function markRmDone(sid){lsSave("rm-"+sid,Date.now());renderCentro();}
+
+// ── CASCADA FITCOACH ──
+function calcFitCascade(){
+  var callerasDone=lsGet("calleras-done",[]);
+  var calleraCost=Number(lsGet("callera-cost",15))||15;
+  var bruto=state.students.filter(function(s){return s.payStatus!=="Inactivo";}).reduce(function(s,st){return s+(Number(st.fee)||0);},0);
+  var pending=state.students.filter(function(s){return s.payStatus!=="Inactivo"&&(Number(s.months)||0)>=2&&callerasDone.indexOf(s.id)===-1;});
+  var calleraCut=pending.length*calleraCost;
+  var gastosFit=expMonthly(state.fitExp,"fit");
+  var margen=bruto-calleraCut-gastosFit;
+  var d=lsGet("fit-distrib",{marca:20,pago:50});
+  var marca=margen*(d.marca/100);
+  var pago=margen*(d.pago/100);
+  var buffer=margen-marca-pago;
+  return{bruto:bruto,calleraCut:calleraCut,calleraCount:pending.length,gastosFit:gastosFit,margen:margen,marca:marca,pago:pago,buffer:buffer,distrib:d};
+}
+function saveFitDistrib(field,val){
+  var d=lsGet("fit-distrib",{marca:20,pago:50});
+  d[field]=Math.max(0,Math.min(100,Number(val)||0));
+  lsSave("fit-distrib",d);
+  renderFitFinSummary();renderPerInc();renderPerStats();
+}
+function renderFitFinSummary(){
+  var cas=calcFitCascade();
+  function frow(label,val,bg,border,col,size,prefix){
+    size=size||"18px";prefix=prefix===undefined?"":prefix;
+    return'<div style="display:flex;justify-content:space-between;align-items:center;padding:11px 14px;background:'+bg+';border-radius:10px;border:1px solid '+border+'">'
+      +'<span style="font-size:13px;font-weight:600;color:'+col+'">'+label+'</span>'
+      +'<span style="font-family:Rajdhani,sans-serif;font-weight:700;font-size:'+size+';color:'+col+'">'+prefix+fmtMoney(val)+'</span></div>';
+  }
+  function prow(icon,label,field,pct,amount,col){
+    return'<div style="display:flex;align-items:center;gap:10px;padding:9px 14px;border-radius:10px">'
+      +'<span style="font-size:13px;font-weight:600;color:'+col+';flex:1">'+icon+' '+label+'</span>'
+      +'<input type="number" min="0" max="100" value="'+pct+'" oninput="saveFitDistrib(\''+field+'\',this.value)" style="width:44px;background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.12);border-radius:6px;color:'+col+';font-size:13px;font-weight:700;text-align:center;padding:3px 4px;outline:none">%'
+      +'<span style="font-family:Rajdhani,sans-serif;font-weight:700;font-size:16px;color:'+col+';min-width:72px;text-align:right">'+fmtMoney(amount)+'</span></div>';
+  }
+  var distTotal=cas.distrib.marca+cas.distrib.pago;
+  var html='<div style="display:flex;flex-direction:column;gap:8px;margin-top:4px">'
+    +frow('💪 Ingresos brutos',cas.bruto,'var(--green-d)','rgba(52,211,153,.2)','var(--green)','22px')
+    +(cas.calleraCut>0?frow('🧤 Calleras ('+cas.calleraCount+' alumnos)',cas.calleraCut,'rgba(245,158,11,.07)','rgba(245,158,11,.18)','#FBBF24','16px','− '):'')
+    +frow('🔩 Gastos FitCoach',cas.gastosFit,'var(--danger-d)','rgba(248,113,113,.2)','var(--danger)','16px','− ')
+    +'<div style="display:flex;justify-content:space-between;align-items:center;padding:12px 14px;background:rgba(139,92,246,.1);border-radius:10px;border:1px solid rgba(139,92,246,.25)"><span style="font-weight:700;font-size:13px;color:#A78BFA">= Margen FitCoach</span><span style="font-family:Rajdhani,sans-serif;font-weight:700;font-size:22px;color:#A78BFA">'+fmtMoney(cas.margen)+'</span></div>'
+    +'<div style="background:rgba(255,255,255,.03);border-radius:10px;border:1px solid rgba(255,255,255,.07);overflow:hidden">'
+    +'<div style="padding:8px 14px 4px;display:flex;justify-content:space-between"><span style="font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.07em;opacity:.4">Distribución</span><span style="font-size:10px;font-weight:700;color:'+(distTotal>100?"var(--danger)":distTotal===100?"var(--green)":"var(--warn)")+'">'+(distTotal)+'% asignado</span></div>'
+    +prow('🎽','Inversión marca','marca',cas.distrib.marca,cas.marca,'#60A5FA')
+    +prow('🤑','Mi pago personal','pago',cas.distrib.pago,cas.pago,'#34D399')
+    +(cas.buffer>0?'<div style="display:flex;justify-content:space-between;padding:8px 14px 10px;opacity:.5;font-size:12px"><span>Buffer FitCoach</span><span style="font-family:Rajdhani,sans-serif;font-weight:700">'+fmtMoney(cas.buffer)+'</span></div>':'')
+    +'</div>'
+    +'</div>';
+  var e2=el("fit-fin-summary");if(e2)e2.innerHTML=html;
 }
 
 // OFFLINE FALLBACK
