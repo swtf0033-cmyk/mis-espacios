@@ -2300,7 +2300,7 @@ function updateCentroBadge(){
     if(ev&&ev.ts&&ev.ts<fourWk)count++;
   });
   // Gastos próximos (3 días)
-  function expCount(arr){var n=0;(arr||[]).forEach(function(e){if(!e.date)return;var d=new Date(e.date+'T12:00:00');var diff=Math.round((d-todayB)/86400000);if(diff>=0&&diff<=3)n++;});return n;}
+  var expCount=function(arr){var n=0;(arr||[]).forEach(function(e){if(!e.dueDate)return;var d=new Date(e.dueDate+'T12:00:00');var diff=Math.round((d-todayB)/86400000);if(diff>=0&&diff<=3)n++;});return n;};
   count+=expCount(state.fitExp)+expCount(state.agExp)+expCount(state.perExp);
   // Clientes agencia con pago vencido o sin fecha
   (state.clients||[]).filter(function(c){return c.status==="Activo";}).forEach(function(c){
