@@ -716,6 +716,7 @@ label.switch-btn:hover{background:var(--acc-d2);color:var(--txt)}
     <div class="sb-logo"><div class="logo-icon">&#127919;</div><div class="logo-name">Personal</div><div class="logo-sub">Finanzas personales</div></div>
     <nav class="sb-nav">
       <div class="ni on" onclick="sv('personal','dash',this)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7" rx="1.5"/><rect x="14" y="3" width="7" height="7" rx="1.5"/><rect x="3" y="14" width="7" height="7" rx="1.5"/><rect x="14" y="14" width="7" height="7" rx="1.5"/></svg>Dashboard</div>
+      <div class="ni" onclick="sv('personal','centro',this);renderCentro()"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M12 1v4M12 19v4M4.22 4.22l2.83 2.83M16.95 16.95l2.83 2.83M1 12h4M19 12h4M4.22 19.78l2.83-2.83M16.95 7.05l2.83-2.83"/></svg>Centro</div>
       <div class="ni" onclick="sv('personal','ingresos',this)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="23 6 13.5 15.5 8.5 10.5 1 18"/><polyline points="17 6 23 6 23 12"/></svg>Ingresos</div>
       <div class="ni" onclick="sv('personal','gastos',this)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="5" width="20" height="14" rx="2"/><line x1="2" y1="10" x2="22" y2="10"/></svg>Gastos</div>
       <div class="ni" onclick="sv('personal','libertad',this)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 2L11 13"/><path d="M22 2L15 22 11 13 2 9l20-7z"/></svg>Libertad</div>
@@ -751,6 +752,19 @@ label.switch-btn:hover{background:var(--acc-d2);color:var(--txt)}
         <div class="card">
           <div class="ct">Victorias recientes &#127942;<button class="btn-sm" onclick="addWin('personal')">+ Agregar</button></div>
           <div id="wins-personal" class="al"></div>
+        </div>
+      </div>
+      <div class="view" id="personal-centro">
+        <div class="sg" id="centro-stats" style="margin-bottom:14px"></div>
+        <div class="g2" style="margin-bottom:14px">
+          <div class="card" id="centro-alerts-card">
+            <div class="ct">🔔 Alertas activas</div>
+            <div id="centro-alerts"><div class="empty-st"><div class="ico">✅</div><p>Sin alertas pendientes</p></div></div>
+          </div>
+          <div class="card">
+            <div class="ct">📋 Tareas pendientes</div>
+            <div id="centro-tasks"><div class="empty-st"><div class="ico">🎯</div><p>Todo al día</p></div></div>
+          </div>
         </div>
       </div>
       <div class="view" id="personal-ingresos">
@@ -2238,6 +2252,121 @@ function payToggle(lbl,cur){
 }
 function resetPayOrder(){lsSave("pay-paid",{});lsSave("pay-order",null);renderPayOrder();}
 
+function renderCentro(){
+  // ── Finanzas consolidadas ──
+  var fitInc=Number(state.perInc.fit)||0;
+  var agInc=Number(state.perInc.agency)||0;
+  var totalInc=fitInc+agInc;
+  var fitExp=expMonthly(state.fitExp,"fit");
+  var agExp=expMonthly(state.agExp,"ag");
+  var perExp=expMonthly(state.perExp,"per");
+  var totalExp=fitExp+agExp+perExp;
+  var balance=totalInc-totalExp;
+  var actAlumnos=activeStudentsCount();
+  var actClients=activeClientsCount();
+  var statsEl=el("centro-stats");
+  if(statsEl){
+    var sc=function(lbl,val,col,sub){
+      return'<div class="sc"><div class="sc-bar"></div><div class="sl">'+lbl+'</div>'
+        +'<div class="sv" style="color:'+(col||"var(--txt)")+'">'+(typeof val==="number"?fmtMoney(val):val)+'</div>'
+        +'<div class="ss">'+(sub||"")+'</div></div>';
+    };
+    statsEl.innerHTML=
+      sc("Ingresos totales",totalInc,"var(--green)","FitCoach + Agencia")
+      +sc("Gastos fijos",totalExp,"var(--danger)","3 espacios")
+      +sc("Balance neto",balance,balance>=0?"var(--green)":"var(--danger)","mensual")
+      +sc("Alumnos activos",actAlumnos+" · "+actClients+" clientes","var(--acc)","fit · agencia");
+  }
+
+  // ── Alertas unificadas ──
+  var alerts=[];
+  var callerasDone=lsGet("calleras-done",[]);
+  // Calleras FitCoach
+  state.students.filter(function(s){return(Number(s.months)||0)>=2&&callerasDone.indexOf(s.id)===-1;}).forEach(function(s){
+    alerts.push({icon:"🧤",label:s.name+" — Calleras pendientes",src:"FitCoach",color:"var(--acc)",action:'callerasToggle("'+s.id+'")',btn:"✓ Entregar"});
+  });
+  // Vencimientos de pago alumnos (próximos 7 días)
+  var today=new Date();today.setHours(0,0,0,0);
+  state.students.filter(function(s){return s.payStatus!=="Inactivo"&&s.nextPayment;}).forEach(function(s){
+    var d=new Date(s.nextPayment);d.setHours(0,0,0,0);
+    var diff=Math.round((d-today)/86400000);
+    if(diff>=0&&diff<=7){
+      alerts.push({icon:"💰",label:s.name+" — Pago en "+diff+" días ("+d.toLocaleDateString("es-CR",{day:"2-digit",month:"short"})+")",src:"FitCoach",color:"var(--warn)"});
+    }
+  });
+  // Vencimientos de gastos (3 apps)
+  var expAlerts=getPaymentAlerts(state.fitExp,"fit").concat(getPaymentAlerts(state.agExp,"ag")).concat(getPaymentAlerts(state.perExp,"per"));
+  expAlerts.forEach(function(html){alerts.push({raw:html});});
+  var alertsEl=el("centro-alerts");
+  if(alertsEl){
+    if(!alerts.length){
+      alertsEl.innerHTML='<div style="padding:20px;text-align:center;color:var(--txt2);font-size:13px">✅ Sin alertas pendientes</div>';
+    } else {
+      alertsEl.innerHTML=alerts.map(function(a){
+        if(a.raw)return a.raw;
+        return'<div style="display:flex;align-items:center;gap:10px;padding:9px 12px;background:var(--surf);border-radius:8px;margin-bottom:6px">'
+          +'<span style="font-size:16px">'+a.icon+'</span>'
+          +'<div style="flex:1;min-width:0">'
+            +'<div style="font-size:12px;font-weight:600;color:var(--txt1)">'+a.label+'</div>'
+            +'<div style="font-size:10px;color:var(--txt2)">'+a.src+'</div>'
+          +'</div>'
+          +(a.btn?'<button onclick="'+a.action+'" style="font-size:10px;padding:3px 10px;border-radius:5px;border:1px solid var(--border2);background:rgba(52,211,153,.12);color:var(--green);cursor:pointer;font-weight:700">'+a.btn+'</button>':'')
+          +'</div>';
+      }).join("");
+    }
+  }
+
+  // ── Tareas pendientes ──
+  var tasks=[];
+  var fourWeeksAgo=Date.now()-(28*86400000);
+  // FitCoach: alumnos sin % grasa
+  state.students.filter(function(s){return s.payStatus!=="Inactivo";}).forEach(function(s){
+    var evs=lsGet("evals-"+s.id,[]);
+    var lastEv=evs.length?evs[0]:null;
+    if(!lastEv||!lastEv.grasa){
+      tasks.push({icon:"📏",label:s.name+" — Sin % grasa registrado",src:"FitCoach",urgency:"media"});
+    } else if(lastEv.ts&&lastEv.ts<fourWeeksAgo){
+      var weeks=Math.round((Date.now()-lastEv.ts)/604800000);
+      tasks.push({icon:"📅",label:s.name+" — Última evaluación hace "+weeks+" semanas",src:"FitCoach",urgency:"baja"});
+    }
+    // Sin medidas circunferenciales
+    if(!lastEv||(!lastEv.cin&&!lastEv.cad)){
+      tasks.push({icon:"📐",label:s.name+" — Sin medidas circunferenciales",src:"FitCoach",urgency:"media"});
+    }
+  });
+  // Agencia: clientes activos sin fecha de próximo pago o con pago vencido
+  (state.clients||[]).filter(function(c){return c.status==="Activo";}).forEach(function(c){
+    if(!c.nextPayment){
+      tasks.push({icon:"📋",label:(c.name||"Cliente")+" — Sin fecha de renovación registrada",src:"Agencia",urgency:"media"});
+    } else {
+      var d=new Date(c.nextPayment);d.setHours(0,0,0,0);
+      var diff=Math.round((d-today)/86400000);
+      if(diff<0){
+        tasks.push({icon:"⚠️",label:(c.name||"Cliente")+" — Pago vencido hace "+Math.abs(diff)+" días",src:"Agencia",urgency:"alta"});
+      }
+    }
+  });
+  var urgColor={alta:"var(--danger)",media:"var(--warn)",baja:"var(--txt2)"};
+  var tasksEl=el("centro-tasks");
+  if(tasksEl){
+    if(!tasks.length){
+      tasksEl.innerHTML='<div style="padding:20px;text-align:center;color:var(--txt2);font-size:13px">🎯 Todo al día</div>';
+    } else {
+      // ordenar: alta > media > baja
+      var order={alta:0,media:1,baja:2};
+      tasks.sort(function(a,b){return(order[a.urgency]||2)-(order[b.urgency]||2);});
+      tasksEl.innerHTML=tasks.map(function(t){
+        return'<div style="display:flex;align-items:center;gap:10px;padding:9px 12px;background:var(--surf);border-radius:8px;margin-bottom:6px">'
+          +'<span style="font-size:15px">'+t.icon+'</span>'
+          +'<div style="flex:1;min-width:0">'
+            +'<div style="font-size:12px;font-weight:600;color:var(--txt1)">'+t.label+'</div>'
+            +'<div style="font-size:10px;color:'+(urgColor[t.urgency]||"var(--txt2)")+'">'+t.src+' · '+t.urgency+'</div>'
+          +'</div>'
+          +'</div>';
+      }).join("");
+    }
+  }
+}
 function renderPerInc(){
   var inc=state.perInc;
   var total=(Number(inc.fit)||0)+(Number(inc.agency)||0);
