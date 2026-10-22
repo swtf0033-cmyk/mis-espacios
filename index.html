@@ -792,7 +792,7 @@ label.switch-btn:hover{background:var(--acc-d2);color:var(--txt)}
       <div class="view" id="personal-gastos">
         <div class="g2">
           <div class="card">
-            <div class="ct">Gastos totales<button class="btn-sm" onclick="editPerExp()">&#9999; Personal</button><button class="btn-sm" onclick="editFitExp()" style="margin-left:4px">&#9999; Coach</button><button class="btn-sm" onclick="editAgExp()" style="margin-left:4px">&#9999; Agencia</button></div>
+            <div class="ct">Mis finanzas<button class="btn-sm" onclick="editPerExp()">&#9999; Personal</button></div>
             <div id="per-exp-list"></div>
           </div>
           <div class="card">
@@ -1561,7 +1561,7 @@ function initDB(){
       renderFreedom();renderMission();renderDreams();
       if(p==="fit"){renderFitStats();renderFitAlerts();renderFitRanking();renderStudents();}
       if(p==="agency"){renderAgStats();renderAgExp();renderClients();renderPipeline();renderAgKpis();}
-      if(p==="personal"){renderPerStats();renderPerInc();renderPerExp();renderPayOrder();renderLifeGoals();}
+      if(p==="personal"){renderPerStats();renderPerInc();renderPerExp();renderPayOrder();renderLifeGoals();renderCentro();}
     }catch(e){console.warn("nav render",e);}
     setTimeout(function(){try{initCharts(p);}catch(e){}},100);
   });
@@ -2645,19 +2645,38 @@ function renderPerExp(){
   var totalUnico=unicos.reduce(function(s,i){return s+getExpVal(i,i._src);},0);
   var grandTotal=totalMensual+totalMemb+totalUnico;
 
-  var html="";
+  // ── Ingresos reales (cascadas) ──
+  var fitCas2=calcFitCascade();
+  var agCas2=calcAgCascade();
+  var incFit=Math.max(0,fitCas2.pago);
+  var incAg=Math.max(0,agCas2.pago);
+  var incTotal=incFit+incAg;
+  var incHtml='<div style="background:linear-gradient(135deg,rgba(52,211,153,.08),rgba(168,85,247,.06));border-radius:10px;border:1px solid rgba(52,211,153,.15);padding:12px 14px;margin-bottom:12px">'
+    +'<div style="font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.07em;opacity:.45;margin-bottom:10px">Ingresos que te entran este mes</div>'
+    +'<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:7px">'
+      +'<span style="font-size:12px;opacity:.75">💪 FitCoach (tu pago)</span>'
+      +'<span style="font-family:Rajdhani,sans-serif;font-weight:700;font-size:15px;color:#34D399">'+fmtMoney(incFit)+'</span></div>'
+    +'<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:7px">'
+      +'<span style="font-size:12px;opacity:.75">📣 Agencia (tu pago)</span>'
+      +'<span style="font-family:Rajdhani,sans-serif;font-weight:700;font-size:15px;color:#A855F7">'+fmtMoney(incAg)+'</span></div>'
+    +'<div style="display:flex;justify-content:space-between;align-items:center;padding-top:7px;border-top:1px solid var(--border)">'
+      +'<span style="font-size:12px;font-weight:700">Total a tu bolsillo</span>'
+      +'<span style="font-family:Rajdhani,sans-serif;font-weight:700;font-size:18px;background:var(--grad);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text">'+fmtMoney(incTotal)+'</span></div>'
+    +'</div>';
+
+  var html=incHtml;
   if(!allItems.length){
-    html='<div class="empty-st"><div class="ico">&#128690;</div><p>Registra tus gastos</p><button class="btn-sm" onclick="editPerExp()">+ Personal</button> <button class="btn-sm" onclick="editFitExp()" style="margin-left:4px">+ Coach</button> <button class="btn-sm" onclick="editAgExp()" style="margin-left:4px">+ Agencia</button></div>';
+    html+='<div class="empty-st"><div class="ico">&#128690;</div><p>Registra tus gastos personales</p><button class="btn-sm" onclick="editPerExp()">+ Personal</button></div>';
   } else {
     // ZONA 1 — Mensuales
     if(mensuales.length){
-      html+=zoneHdr("💰","Gastos mensuales",totalMensual,"var(--danger)",editBtns([{fn:"editPerExp()",lbl:"✏ P"},{fn:"editFitExp()",lbl:"✏ F"},{fn:"editAgExp()",lbl:"✏ A"}]));
+      html+=zoneHdr("💰","Gastos mensuales",totalMensual,"var(--danger)",editBtns([{fn:"editPerExp()",lbl:"✏ P"}]));
       html+=mensuales.map(function(i){return row(i,"var(--danger)");}).join("");
     }
 
     // ZONA 2 — Membresías / Suscripciones
     if(membs.length){
-      html+=zoneHdr("🔄","Membresías / Suscripciones",totalMemb,"#A855F7",editBtns([{fn:"editPerExp()",lbl:"✏ P"},{fn:"editFitExp()",lbl:"✏ F"},{fn:"editAgExp()",lbl:"✏ A"}]));
+      html+=zoneHdr("🔄","Membresías / Suscripciones",totalMemb,"#A855F7",editBtns([{fn:"editPerExp()",lbl:"✏ P"}]));
       html+=membs.map(function(i){return row(i,"#A855F7");}).join("");
     }
 
@@ -5329,7 +5348,7 @@ function enterApp(profile){
     renderFreedom();renderMission();renderDreams();
     if(profile==="fit"){renderFitStats();renderFitAlerts();renderFitRanking();renderStudents();}
     if(profile==="agency"){renderAgStats();renderAgExp();renderClients();renderPipeline();renderAgKpis();}
-    if(profile==="personal"){renderPerStats();renderPerInc();renderPerExp();renderPayOrder();renderLifeGoals();}
+    if(profile==="personal"){renderPerStats();renderPerInc();renderPerExp();renderPayOrder();renderLifeGoals();renderCentro();}
   }catch(e){console.warn("enterApp render",e);}
   setTimeout(function(){try{initCharts(profile);}catch(e){}},80);
 }
