@@ -2096,6 +2096,7 @@ function renderAgExp(){
   var priDot={Alta:"🔴",Media:"🟡",Baja:"🟢"};
   var toolsHtml='<div style="margin-top:12px">';
   if(state.agTools.length){
+    var cas=calcAgCascade();
     toolsHtml+=state.agTools.slice().sort(function(a,b){
       var o={Alta:0,Media:1,Baja:2};return(o[a.priority]||1)-(o[b.priority]||1);
     }).map(function(t){
@@ -2104,11 +2105,31 @@ function renderAgExp(){
       var nc2=activeClientsCount();
       var effCost=t.perClient?(Number(t.cost)||0)*nc2:(Number(t.cost)||0);
       var hasUpgrade=t.nextLevel&&t.nextLevel.trim();
+      // Tipos recurrentes no tienen checkbox (nunca se "terminan")
+      var isRecurring=t.type==="sub"||t.type==="credits"||t.type==="ads";
+      var checkHtml=isRecurring?'<span style="font-size:14px;flex-shrink:0">'+typeIcon+'</span>'
+        :'<div onclick="agToolToggle(\''+t.id+'\')" style="width:20px;height:20px;border-radius:6px;border:2px solid '+(t.done?"#34D399":col)+';background:'+(t.done?"#34D399":"transparent")+';cursor:pointer;display:flex;align-items:center;justify-content:center;flex-shrink:0">'
+        +(t.done?'<svg width="11" height="11" viewBox="0 0 11 11"><polyline points="1.5,5.5 4.5,8.5 9.5,2" stroke="#fff" stroke-width="2" fill="none"/></svg>':'')+'</div>'
+        +'<span style="font-size:14px">'+typeIcon+'</span>';
+      // Barra de progreso para mejoras
+      var mejorBar='';
+      if(t.type==="mejora"&&(t.cost||0)>0){
+        var flujo=cas.flujo;
+        var need=Number(t.cost)||0;
+        var safeTarget=need*1.5;// 150% del costo = sostenible
+        var pct=Math.min(100,Math.round((flujo/safeTarget)*100));
+        var barCol=pct>=100?"#34D399":pct>=67?"#FBBF24":pct>=33?"#f97316":"#EF4444";
+        var msg=pct>=100?'✅ Sostenible — podés activarla':('Faltan '+fmtMoney(Math.max(0,safeTarget-flujo))+' de flujo libre');
+        mejorBar='<div style="margin-top:8px;padding:0 2px">'
+          +'<div style="display:flex;justify-content:space-between;font-size:10px;opacity:.6;margin-bottom:4px"><span>Progreso hacia sostenibilidad</span><span style="color:'+barCol+';font-weight:700">'+pct+'%</span></div>'
+          +'<div style="background:rgba(255,255,255,.08);border-radius:4px;height:6px;overflow:hidden"><div style="background:'+barCol+';height:100%;width:'+pct+'%;border-radius:4px;transition:width .4s"></div></div>'
+          +'<div style="font-size:10px;color:'+barCol+';margin-top:5px;font-weight:600">'+msg+'</div>'
+          +(pct>=100?'<button onclick="agToolToggle(\''+t.id+'\')" style="margin-top:7px;background:rgba(52,211,153,.15);border:1px solid rgba(52,211,153,.4);color:#34D399;border-radius:7px;font-size:11px;font-weight:700;padding:4px 12px;cursor:pointer">✅ Activar mejora</button>':'')
+          +'</div>';
+      }
       return '<div style="background:var(--surf);border-radius:12px;margin-bottom:8px;border-left:3px solid '+(t.done?"rgba(52,211,153,.35)":col)+';overflow:hidden">'
         +'<div style="display:flex;align-items:center;gap:10px;padding:11px 13px">'
-        +'<div onclick="agToolToggle(\''+t.id+'\')" style="width:20px;height:20px;border-radius:6px;border:2px solid '+(t.done?"#34D399":col)+';background:'+(t.done?"#34D399":"transparent")+';cursor:pointer;display:flex;align-items:center;justify-content:center;flex-shrink:0">'
-        +(t.done?'<svg width="11" height="11" viewBox="0 0 11 11"><polyline points="1.5,5.5 4.5,8.5 9.5,2" stroke="#fff" stroke-width="2" fill="none"/></svg>':'')+'</div>'
-        +'<span style="font-size:14px">'+typeIcon+'</span>'
+        +checkHtml
         +'<div style="flex:1;min-width:0">'
         +'<div style="font-size:13px;font-weight:700;text-decoration:'+(t.done?"line-through":"none")+';opacity:'+(t.done?.5:1)+'">'+t.name+(t.current?'<span style="font-size:10px;font-weight:600;background:rgba(255,255,255,.08);border-radius:4px;padding:1px 6px;margin-left:6px;opacity:.8">'+t.current+'</span>':'')+'</div>'
         +(hasUpgrade?'<div style="font-size:11px;color:'+col+';margin-top:2px">🎯 Mejora: <strong>'+t.nextLevel+'</strong></div>':'')
@@ -2123,9 +2144,10 @@ function renderAgExp(){
           var tag=diff<0?"Vencido hace "+Math.abs(diff)+"d":diff===0?"Hoy":diff<=7?"En "+diff+"d":"";
           return'<div style="font-size:10px;color:'+c2+';font-weight:600;margin-top:2px">🔄 Renueva '+lbl+(tag?' · '+tag:'')+'</div>';
         })()
+        +mejorBar
         +'</div>'
-        +(effCost>0?'<div style="text-align:right;flex-shrink:0"><span style="font-family:Rajdhani,sans-serif;font-size:13px;font-weight:700;color:'+col+';white-space:nowrap">'+fmtMoney(effCost)+'/mes</span>'+(t.perClient&&nc2?'<div style="font-size:9px;opacity:.5">'+fmtMoney(t.cost)+'×'+nc2+'cli</div>':'')+'</div>':'')
-        +'<span style="font-size:10px;margin-left:4px">'+(priDot[t.priority]||"🟡")+'</span>'
+        +(effCost>0&&t.type!=="mejora"?'<div style="text-align:right;flex-shrink:0"><span style="font-family:Rajdhani,sans-serif;font-size:13px;font-weight:700;color:'+col+';white-space:nowrap">'+fmtMoney(effCost)+'/mes</span>'+(t.perClient&&nc2?'<div style="font-size:9px;opacity:.5">'+fmtMoney(t.cost)+'×'+nc2+'cli</div>':'')+'</div>':'')
+        +(t.type!=="sub"&&t.type!=="credits"&&t.type!=="ads"?'<span style="font-size:10px;margin-left:4px">'+(priDot[t.priority]||"🟡")+'</span>':'<span style="font-size:10px;margin-left:4px">'+(priDot[t.priority]||"🟡")+'</span>')
         +'<button onclick="openEditAgTool(\''+t.id+'\')" style="background:none;border:none;color:var(--txt2);cursor:pointer;font-size:13px;padding:0 3px">✏️</button>'
         +'<button onclick="deleteAgTool(\''+t.id+'\')" style="background:none;border:none;color:var(--danger);cursor:pointer;font-size:13px;opacity:.5;padding:0 3px">🗑</button>'
         +'</div></div>';
@@ -4893,13 +4915,7 @@ function renderFitExpList(){
 }
 
 // AGENCIA FIN SUMMARY
-function saveAgDistrib(field,val){
-  var d=lsGet("ag-distrib",{pago:45,sost:30,ahorro:40,metas:30});
-  d[field]=Math.max(0,Math.min(100,Number(val)||0));
-  lsSave("ag-distrib",d);
-  renderAgFinSummary();
-}
-function renderAgFinSummary(){
+function calcAgCascade(){
   var billing=state.clients.filter(function(c){return c.status==="Activo";}).reduce(function(s,c){return s+(Number(c.monthly)||0);},0);
   var _nc=activeClientsCount();
   var varTools=(state.agTools||[]).filter(function(t){return !t.done&&t.perClient&&t.cost>0;});
@@ -4911,6 +4927,17 @@ function renderAgFinSummary(){
   var d=lsGet("ag-distrib",{pago:45,sost:30,ahorro:40,metas:30});
   var pago=margen*(d.pago/100);
   var flujo=margen-pago;
+  return{billing:billing,varCosts:varCosts,varTools:varTools,fixedCosts:fixedCosts,margen:margen,pago:pago,flujo:flujo,distrib:d,nc:_nc};
+}
+function saveAgDistrib(field,val){
+  var d=lsGet("ag-distrib",{pago:45,sost:30,ahorro:40,metas:30});
+  d[field]=Math.max(0,Math.min(100,Number(val)||0));
+  lsSave("ag-distrib",d);
+  renderAgFinSummary();
+}
+function renderAgFinSummary(){
+  var cas=calcAgCascade();
+  var billing=cas.billing,varCosts=cas.varCosts,varTools=cas.varTools,fixedCosts=cas.fixedCosts,margen=cas.margen,pago=cas.pago,flujo=cas.flujo,d=cas.distrib,_nc=cas.nc;
   var sost=flujo*(d.sost/100);
   var ahorro=flujo*(d.ahorro/100);
   var metas=flujo*(d.metas/100);
