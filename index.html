@@ -3417,7 +3417,15 @@ function renderRmGrid(){
             '<div class="rm-current-val">'+fmtTime(stored.rm)+'</div>'+
             '<div class="rm-current-lbl">tiempo máx</div>'
           ))+
-          '<div class="rm-current-date">'+stored.date+'</div>'
+          '<div class="rm-current-date">'+stored.date+'</div>'+
+          (function(){
+            if(!stored.isoDate)return'';
+            var days=Math.floor((Date.now()-new Date(stored.isoDate))/(86400000));
+            var nextDays=60-days;
+            if(days>60)return'<div style="font-size:9px;font-weight:700;color:#EF4444;margin-top:2px">⚠ Test vencido ('+days+'d)</div>';
+            if(days>45)return'<div style="font-size:9px;font-weight:700;color:#FBBF24;margin-top:2px">⏳ Test en '+nextDays+'d</div>';
+            return'<div style="font-size:9px;color:var(--green);margin-top:2px">✓ Vigente</div>';
+          }())
         :(!disabled?'<div style="font-size:11px;color:var(--txt2);margin-top:4px">Sin test</div>':''))+
       '</div></div>';
     if(!disabled){
@@ -3492,7 +3500,7 @@ function storeRm(key,rm,rm3){
   var prev=rms[key]||{};
   var hist=prev.history||[];
   if(prev.rm)hist.unshift({rm:prev.rm,rm3:prev.rm3,date:prev.date});
-  rms[key]={rm:rm,rm3:rm3||null,date:new Date().toLocaleDateString("es-CR",{day:"2-digit",month:"short",year:"numeric"}),history:hist.slice(0,20)};
+  rms[key]={rm:rm,rm3:rm3||null,date:new Date().toLocaleDateString("es-CR",{day:"2-digit",month:"short",year:"numeric"}),isoDate:new Date().toISOString().slice(0,10),history:hist.slice(0,20)};
   lsSave("rm-"+profileStudentId,rms);
   renderRmGrid();
 }
