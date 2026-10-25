@@ -3352,11 +3352,11 @@ function addMesociclo(){
 var RM_EXERCISES=[
   {key:"squat",    name:"Sentadilla / Péndulo", icon:"🏋️", pattern:"Tren inferior — Rodilla"},
   {key:"hipthrust",name:"Hip thrust",           icon:"🍑",  pattern:"Tren inferior — Glúteo"},
-  {key:"bench",    name:"Flexiones",            icon:"💪",  pattern:"Tren superior — Empuje horizontal", trackType:"reps"},
+  {key:"bench",    name:"Flexiones",            icon:"💪",  pattern:"Tren superior — Empuje horizontal", trackType:"reps", modLabel:"Arrodilladas"},
   {key:"ohp",      name:"Press inclinado",      icon:"🔝",  pattern:"Tren superior — Empuje vertical",
    womenName:"Plancha brazos extendidos", womenTrackType:"time"},
   {key:"row",      name:"Polea",                icon:"🚣",  pattern:"Tren superior — Jalón horizontal"},
-  {key:"pulldown", name:"Dominadas",            icon:"📌",  pattern:"Tren superior — Jalón vertical", trackType:"reps"}
+  {key:"pulldown", name:"Dominadas",            icon:"📌",  pattern:"Tren superior — Jalón vertical", trackType:"reps", modLabel:"Con banda"}
 ];
 var RM_WEEKS=[
   {label:"S1 PR",   pctLo:85,pctHi:100,cls:"mw-pr"},
@@ -3429,12 +3429,18 @@ function renderRmGrid(){
           '<button class="btn btn-p" style="font-size:11px;padding:5px 12px;flex-shrink:0" onclick="saveRm(\''+ex.key+'\',\'weight\')">Guardar</button>'+
         '</div>';
       } else if(isReps){
+        var conBanda=!!stored.conBanda;
         html+='<div class="rm-input-row" style="margin-top:8px">'+
           '<span class="rm-i-lbl" style="white-space:nowrap;font-weight:700">Reps máximas</span>'+
           '<input class="rm-i" type="number" id="rm-3-'+ex.key+'" placeholder="reps" min="1" max="100"'+(hasRm?' value="'+stored.rm+'"':'')+'>'+
           '<span class="rm-i-lbl">reps</span>'+
           '<button class="btn btn-p" style="font-size:11px;padding:5px 12px;flex-shrink:0" onclick="saveRm(\''+ex.key+'\',\'reps\')">Guardar</button>'+
-        '</div>';
+        '</div>'+
+        (ex.modLabel?
+          '<button id="banda-'+ex.key+'" onclick="toggleBanda(\''+ex.key+'\')" style="margin-top:6px;font-size:11px;padding:4px 10px;border-radius:6px;border:1px solid '+(conBanda?'rgba(251,191,36,.4)':'var(--border2)')+';background:'+(conBanda?'rgba(251,191,36,.12)':'transparent')+';color:'+(conBanda?'#FBBF24':'var(--txt2)')+';cursor:pointer;font-weight:600">'+
+            (conBanda?'🎗 '+ex.modLabel:'⚪ '+ex.modLabel)+
+          '</button>'
+        :'');
       } else {
         var sMin=stored.rm?Math.floor(stored.rm/60):0, sSec=stored.rm?stored.rm%60:0;
         html+='<div class="rm-input-row" style="margin-top:8px;gap:4px">'+
@@ -3455,6 +3461,14 @@ function renderRmGrid(){
   el("rm-grid").innerHTML=html;
 }
 
+function toggleBanda(key){
+  var rms=lsGet("rm-"+profileStudentId,{});
+  var stored=rms[key]||{};
+  stored.conBanda=!stored.conBanda;
+  rms[key]=stored;
+  lsSave("rm-"+profileStudentId,rms);
+  renderRmGrid();
+}
 function saveRm3(key){saveRm(key,"weight");}
 function saveRm(key,trackType){
   if(trackType==="weight"){
