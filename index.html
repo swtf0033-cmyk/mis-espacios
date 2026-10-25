@@ -2741,8 +2741,78 @@ function renderPerExp(){
       +'</div></div>';
   }
 
-  var html=incHtml+catHtml+extHtml+sumHtml+sugHtml;
+  // ── Gastos urgentes ──
+  var urgItems=lsGet("per-urgente",[]);
+  var urgHtml='';
+  if(urgItems.length||true){
+    urgHtml='<div style="margin-bottom:14px">'
+      +'<div style="display:flex;align-items:center;gap:6px;margin-bottom:8px">'
+        +'<span style="font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.07em;color:#EF4444;flex:1">⚡ Gastos urgentes</span>'
+        +'<button onclick="openAddUrgente()" class="btn-sm" style="border-color:rgba(239,68,68,.3);color:#EF4444">+ Agregar</button>'
+      +'</div>';
+    if(!urgItems.length){
+      urgHtml+='<div style="font-size:11px;opacity:.35;text-align:center;padding:8px">Sin gastos urgentes pendientes</div>';
+    }
+    urgItems.forEach(function(u){
+      var rem=Math.max(0,u.total-u.paid);
+      var pct=u.total>0?Math.min(100,Math.round(u.paid/u.total*100)):0;
+      var done=rem===0;
+      urgHtml+='<div style="background:var(--surf);border-radius:10px;border-left:3px solid '+(done?'#34D399':'#EF4444')+';padding:10px 12px;margin-bottom:6px">'
+        +'<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:6px">'
+          +'<span style="font-size:13px;font-weight:700">'+(done?'✅ ':'')+u.lbl+'</span>'
+          +'<span style="font-family:Rajdhani,sans-serif;font-weight:700;font-size:13px;color:'+(done?'#34D399':'#EF4444')+'">'+fmtMoney(rem)+' pendiente</span>'
+        +'</div>'
+        +'<div style="height:5px;background:rgba(255,255,255,.07);border-radius:3px;overflow:hidden;margin-bottom:6px">'
+          +'<div style="height:100%;width:'+pct+'%;background:'+(done?'#34D399':'#EF4444')+';border-radius:3px;transition:width .3s"></div>'
+        +'</div>'
+        +'<div style="display:flex;justify-content:space-between;align-items:center">'
+          +'<span style="font-size:10px;opacity:.5">'+fmtMoney(u.paid)+' de '+fmtMoney(u.total)+' pagado ('+pct+'%)</span>'
+          +'<div style="display:flex;gap:5px">'
+            +(!done?'<button onclick="openAbonarUrgente(\''+u.id+'\')" style="font-size:10px;padding:3px 9px;border-radius:5px;background:rgba(239,68,68,.15);border:1px solid rgba(239,68,68,.3);color:#EF4444;cursor:pointer;font-weight:700">💳 Abonar</button>':'')
+            +'<button onclick="deleteUrgente(\''+u.id+'\')" style="font-size:10px;padding:3px 7px;border-radius:5px;background:transparent;border:1px solid var(--border2);color:var(--txt2);cursor:pointer">✕</button>'
+          +'</div>'
+        +'</div>'
+      +'</div>';
+    });
+    urgHtml+='</div>';
+  }
+
+  var html=incHtml+urgHtml+catHtml+extHtml+sumHtml+sugHtml;
   var e2=el("per-exp-list");if(e2)e2.innerHTML=html;
+}
+function openAddUrgente(){
+  openModal("Gasto urgente",
+    '<div class="form-g"><label>¿Qué compraste / debes?</label><input id="urg-lbl" class="fi" placeholder="Ej: Celular Samsung"></div>'+
+    '<div class="form-g"><label>Monto total ($)</label><input id="urg-total" type="number" class="fi" placeholder="Ej: 300"></div>'+
+    '<div class="form-g"><label>Ya abonado ($) — si es nuevo pon 0</label><input id="urg-paid" type="number" class="fi" value="0"></div>',
+  function(){
+    var lbl=(el("urg-lbl")||{}).value.trim();
+    var total=parseFloat((el("urg-total")||{}).value)||0;
+    var paid=parseFloat((el("urg-paid")||{}).value)||0;
+    if(!lbl||!total)return;
+    var items=lsGet("per-urgente",[]);
+    items.push({id:"u"+Date.now(),lbl:lbl,total:total,paid:Math.min(paid,total),date:new Date().toISOString().slice(0,10)});
+    lsSave("per-urgente",items);renderPerExp();
+  });
+}
+function openAbonarUrgente(id){
+  openModal("Registrar abono",
+    '<div class="form-g"><label>¿Cuánto abonaste? ($)</label><input id="urg-abono" type="number" class="fi" placeholder="Ej: 50"></div>',
+  function(){
+    var abono=parseFloat((el("urg-abono")||{}).value)||0;
+    if(!abono)return;
+    var items=lsGet("per-urgente",[]);
+    items=items.map(function(u){
+      if(u.id===id){u.paid=Math.min(u.total,u.paid+abono);}
+      return u;
+    });
+    lsSave("per-urgente",items);renderPerExp();
+  });
+}
+function deleteUrgente(id){
+  if(!confirm("¿Eliminar este gasto urgente?"))return;
+  var items=lsGet("per-urgente",[]).filter(function(u){return u.id!==id;});
+  lsSave("per-urgente",items);renderPerExp();
 }
 function openPerCatMeta(catKey,catLbl){
   var metas=lsGet("per-cat-metas",{});
