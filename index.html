@@ -1603,6 +1603,7 @@ var currentStudentId=null,currentWinId=null,currentWinProfile=null;
 <script>
 function mkInitials(name){if(!name)return "?";var parts=name.trim().split(" ");return(parts[0][0]+(parts[1]?parts[1][0]:"")).toUpperCase();}
 function fmtMoney(n){return"$"+(Number(n)||0).toLocaleString("en-US");}
+function fmtTime(s){var m=Math.floor((s||0)/60),sec=(s||0)%60;return m+":"+(sec<10?"0":"")+sec;}
 function activeClientsCount(){return(state.clients||[]).filter(function(c){return c.status==="Activo";}).length;}
 function activeStudentsCount(){return(state.students||[]).filter(function(s){return s.payStatus!=="Inactivo";}).length;}
 function getExpVal(i,src){
@@ -3352,9 +3353,10 @@ var RM_EXERCISES=[
   {key:"squat",    name:"Sentadilla / Péndulo", icon:"🏋️", pattern:"Tren inferior — Rodilla"},
   {key:"hipthrust",name:"Hip thrust",           icon:"🍑",  pattern:"Tren inferior — Glúteo"},
   {key:"bench",    name:"Flexiones",            icon:"💪",  pattern:"Tren superior — Empuje horizontal"},
-  {key:"ohp",      name:"Press inclinado",      icon:"🔝",  pattern:"Tren superior — Empuje vertical", menOnly:true},
+  {key:"ohp",      name:"Press inclinado",      icon:"🔝",  pattern:"Tren superior — Empuje vertical",
+   womenName:"Plancha brazos extendidos", womenTrackType:"time"},
   {key:"row",      name:"Polea",                icon:"🚣",  pattern:"Tren superior — Jalón horizontal"},
-  {key:"pulldown", name:"Dominadas",            icon:"📌",  pattern:"Tren superior — Jalón vertical"}
+  {key:"pulldown", name:"Dominadas",            icon:"📌",  pattern:"Tren superior — Jalón vertical", trackType:"reps"}
 ];
 var RM_WEEKS=[
   {label:"S1 PR",   pctLo:85,pctHi:100,cls:"mw-pr"},
@@ -3383,10 +3385,13 @@ function renderRmGrid(){
   var rms=lsGet("rm-"+profileStudentId,{});
   var dis=lsGet(rmDisabledKey(),[]);
   var s=state.students.find(function(x){return x.id===profileStudentId;})||{};
-  // auto-suggest: press inclinado desactivado por defecto para mujeres si no tiene 1RM
+  var sex=s.sex||"M";
   var html='<div style="font-size:10px;color:var(--txt2);margin-bottom:10px">Usa el botón <strong>✓/✗</strong> para activar o desactivar ejercicios para este alumno.</div>';
   html+='<div class="rm-grid">';
   RM_EXERCISES.forEach(function(ex){
+    var effTrack=(sex==="F"&&ex.womenTrackType)?ex.womenTrackType:(ex.trackType||"weight");
+    var effName=(sex==="F"&&ex.womenName)?ex.womenName:ex.name;
+    var isWeight=effTrack==="weight", isReps=effTrack==="reps", isTime=effTrack==="time";
     var disabled=dis.indexOf(ex.key)!==-1;
     var stored=rms[ex.key]||{};
     var hasRm=stored.rm>0;
@@ -3395,27 +3400,54 @@ function renderRmGrid(){
     html+='<div class="rm-card'+(hasRm&&!disabled?" has-rm":"")+'" id="rmcard-'+ex.key+'" style="'+cardStyle+'">';
     html+='<div class="rm-card-head">'+
       '<div style="flex:1;min-width:0">'+
-        '<div class="rm-card-name">'+ex.icon+' '+ex.name+(ex.menOnly?'<span style="font-size:9px;color:var(--txt2);margin-left:4px">(hombres)</span>':'')+'</div>'+
+        '<div class="rm-card-name">'+ex.icon+' '+effName+'</div>'+
         '<div class="rm-card-pattern">'+ex.pattern+'</div>'+
       '</div>'+
       '<div style="display:flex;flex-direction:column;align-items:flex-end;gap:4px">'+
         '<button onclick="toggleRmExercise(\''+ex.key+'\')" style="font-size:10px;padding:3px 8px;border-radius:5px;border:1px solid var(--border2);background:'+(disabled?'rgba(248,113,113,.15)':'rgba(52,211,153,.15)')+';color:'+(disabled?'var(--danger)':'var(--green)')+';cursor:pointer;font-weight:700">'+(disabled?'✗ Inactivo':'✓ Activo')+'</button>'+
-        (!disabled&&hasRm?
-          '<div style="font-size:9px;color:var(--txt2)">3RM: <strong style="color:var(--txt)">'+(rm3||"—")+'kg</strong></div>'+
-          '<div class="rm-current-val">'+stored.rm+'kg</div>'+
-          '<div class="rm-current-lbl">1RM estimado</div>'+
+        (!disabled&&hasRm?(
+          isWeight?(
+            '<div style="font-size:9px;color:var(--txt2)">3RM: <strong style="color:var(--txt)">'+(rm3||"—")+'kg</strong></div>'+
+            '<div class="rm-current-val">'+stored.rm+'kg</div>'+
+            '<div class="rm-current-lbl">1RM estimado</div>'
+          ):isReps?(
+            '<div class="rm-current-val">'+stored.rm+'</div>'+
+            '<div class="rm-current-lbl">reps máximas</div>'
+          ):(/* time */
+            '<div class="rm-current-val">'+fmtTime(stored.rm)+'</div>'+
+            '<div class="rm-current-lbl">tiempo máx</div>'
+          ))+
           '<div class="rm-current-date">'+stored.date+'</div>'
         :(!disabled?'<div style="font-size:11px;color:var(--txt2);margin-top:4px">Sin test</div>':''))+
       '</div></div>';
     if(!disabled){
-      html+='<div class="rm-input-row" style="margin-top:8px">'+
-        '<span class="rm-i-lbl" style="white-space:nowrap;font-weight:700">Peso con 3 reps</span>'+
-        '<input class="rm-i" type="number" id="rm-3-'+ex.key+'" placeholder="kg" min="0" max="500"'+(rm3?' value="'+rm3+'"':'')+'>'+
-        '<span class="rm-i-lbl">kg</span>'+
-        '<button class="btn btn-p" style="font-size:11px;padding:5px 12px;flex-shrink:0" onclick="saveRm3(\''+ex.key+'\')">Guardar</button>'+
-      '</div>';
-      if(hasRm){html+=rmWeeksHtml(stored.rm);}
-      else{html+='<div style="font-size:10px;color:var(--txt2);margin-top:8px;text-align:center;padding:6px">Ingresa el peso para ver los rangos de trabajo</div>';}
+      if(isWeight){
+        html+='<div class="rm-input-row" style="margin-top:8px">'+
+          '<span class="rm-i-lbl" style="white-space:nowrap;font-weight:700">Peso con 3 reps</span>'+
+          '<input class="rm-i" type="number" id="rm-3-'+ex.key+'" placeholder="kg" min="0" max="500"'+(rm3?' value="'+rm3+'"':'')+'>'+
+          '<span class="rm-i-lbl">kg</span>'+
+          '<button class="btn btn-p" style="font-size:11px;padding:5px 12px;flex-shrink:0" onclick="saveRm(\''+ex.key+'\',\'weight\')">Guardar</button>'+
+        '</div>';
+      } else if(isReps){
+        html+='<div class="rm-input-row" style="margin-top:8px">'+
+          '<span class="rm-i-lbl" style="white-space:nowrap;font-weight:700">Reps máximas</span>'+
+          '<input class="rm-i" type="number" id="rm-3-'+ex.key+'" placeholder="reps" min="1" max="100"'+(hasRm?' value="'+stored.rm+'"':'')+'>'+
+          '<span class="rm-i-lbl">reps</span>'+
+          '<button class="btn btn-p" style="font-size:11px;padding:5px 12px;flex-shrink:0" onclick="saveRm(\''+ex.key+'\',\'reps\')">Guardar</button>'+
+        '</div>';
+      } else {
+        var sMin=stored.rm?Math.floor(stored.rm/60):0, sSec=stored.rm?stored.rm%60:0;
+        html+='<div class="rm-input-row" style="margin-top:8px;gap:4px">'+
+          '<span class="rm-i-lbl" style="white-space:nowrap;font-weight:700">Tiempo máx</span>'+
+          '<input class="rm-i" type="number" id="rm-min-'+ex.key+'" placeholder="min" min="0" max="60" style="width:44px" value="'+sMin+'">'+
+          '<span class="rm-i-lbl" style="font-size:15px;font-weight:700">:</span>'+
+          '<input class="rm-i" type="number" id="rm-sec-'+ex.key+'" placeholder="seg" min="0" max="59" style="width:44px" value="'+sSec+'">'+
+          '<span class="rm-i-lbl">min:seg</span>'+
+          '<button class="btn btn-p" style="font-size:11px;padding:5px 12px;flex-shrink:0" onclick="saveRm(\''+ex.key+'\',\'time\')">Guardar</button>'+
+        '</div>';
+      }
+      if(hasRm){html+=rmWeeksHtml(stored.rm,effTrack);}
+      else{html+='<div style="font-size:10px;color:var(--txt2);margin-top:8px;text-align:center;padding:6px">Ingresa '+(isTime?'el tiempo máximo':isReps?'las reps máximas':'el peso')+' para ver los rangos de trabajo</div>';}
     }
     html+='</div>';
   });
@@ -3423,11 +3455,23 @@ function renderRmGrid(){
   el("rm-grid").innerHTML=html;
 }
 
-function saveRm3(key){
-  var w=parseFloat((el("rm-3-"+key)||{}).value)||0;
-  if(!w){alert("Ingresa el peso con el que hizo 3 reps");return;}
-  var rm=Math.round(w/0.93); // NSCA: 3RM = 93% del 1RM → 1RM = peso ÷ 0.93
-  storeRm(key,rm,w);
+function saveRm3(key){saveRm(key,"weight");}
+function saveRm(key,trackType){
+  if(trackType==="weight"){
+    var w=parseFloat((el("rm-3-"+key)||{}).value)||0;
+    if(!w){alert("Ingresa el peso con el que hizo 3 reps");return;}
+    storeRm(key,Math.round(w/0.93),w);
+  } else if(trackType==="reps"){
+    var r=parseInt((el("rm-3-"+key)||{}).value)||0;
+    if(!r){alert("Ingresa las reps máximas");return;}
+    storeRm(key,r,null);
+  } else {
+    var min=parseInt((el("rm-min-"+key)||{}).value)||0;
+    var sec=parseInt((el("rm-sec-"+key)||{}).value)||0;
+    var total=min*60+sec;
+    if(!total){alert("Ingresa el tiempo máximo");return;}
+    storeRm(key,total,null);
+  }
 }
 function storeRm(key,rm,rm3){
   var rms=lsGet("rm-"+profileStudentId,{});
@@ -3438,12 +3482,13 @@ function storeRm(key,rm,rm3){
   lsSave("rm-"+profileStudentId,rms);
   renderRmGrid();
 }
-function rmWeeksHtml(rm){
+function rmWeeksHtml(rm,trackType){
   var html='<div class="rm-weeks">';
   RM_WEEKS.forEach(function(w){
-    var lo=Math.round(rm*w.pctLo/100),hi=Math.round(rm*w.pctHi/100);
-    html+='<div class="rm-week-box"><div class="rm-week-lbl '+w.cls.replace("mw-","mw-")+'">'+w.label+'</div>'+
-      '<div class="rm-week-range">'+lo+'–'+hi+'</div>'+
+    var lo=Math.max(1,Math.round(rm*w.pctLo/100)),hi=Math.max(lo,Math.round(rm*w.pctHi/100));
+    var rangeStr=trackType==="time"?(fmtTime(lo)+" – "+fmtTime(hi)):(lo+"–"+hi+(trackType==="reps"?" reps":" kg"));
+    html+='<div class="rm-week-box"><div class="rm-week-lbl '+w.cls+'">'+w.label+'</div>'+
+      '<div class="rm-week-range">'+rangeStr+'</div>'+
       '<div class="rm-week-pct">'+w.pctLo+'–'+w.pctHi+'%</div></div>';
   });
   return html+'</div>';
