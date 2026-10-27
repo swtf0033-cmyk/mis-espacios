@@ -525,7 +525,7 @@ label.switch-btn:hover{background:var(--acc-d2);color:var(--txt)}
     <div class="sb-foot"><div class="av"><div class="av-pic">FC</div><div><div class="av-name">FitCoach Pro</div><div class="av-role">Entrenador</div></div></div></div>
   </div>
   <div class="main">
-    <div class="topbar"><div class="tb-title" id="fit-title">Dashboard</div><div id="sync-status" class="show syncing" onclick="pullAndRefresh()" title="Toca para sincronizar ahora" style="cursor:pointer"><span class="sync-dot"></span><span id="sync-status-txt">Conectando...</span></div><button class="btn btn-p" id="fit-btn-add">+ Alumno</button></div>
+    <div class="topbar"><div class="tb-title" id="fit-title">Dashboard</div><div id="sync-status" class="show syncing" onclick="pullAndRefresh()" title="Toca para sincronizar ahora" style="cursor:pointer"><span class="sync-dot"></span><span id="sync-status-txt">Conectando...</span></div><button class="btn btn-c" onclick="syncAllToSupabase()" title="Subir todos los datos locales a Supabase" style="font-size:11px;padding:6px 12px">☁ Subir todo</button><button class="btn btn-p" id="fit-btn-add">+ Alumno</button></div>
     <div class="content">
       <div class="view on" id="fit-dash">
         <div class="sg" id="fit-stats-grid">
@@ -1086,6 +1086,7 @@ label.switch-btn:hover{background:var(--acc-d2);color:var(--txt)}
     </div>
     <div style="display:flex;gap:6px;align-items:center">
       <button class="btn-sm" onclick="exportPerfil()" style="font-size:11px;padding:5px 10px">📄 Exportar</button>
+      <button class="btn-sm" onclick="openPortalAccess(profileStudentId)" style="font-size:11px;padding:5px 10px;background:var(--acc-d);color:var(--acc);border-color:var(--acc)">🔑 Portal</button>
       <button style="background:none;border:none;color:var(--txt2);cursor:pointer;font-size:22px;padding:4px 8px;border-radius:6px;line-height:1" onclick="closeProfile()">✕</button>
     </div>
   </div>
@@ -1483,6 +1484,34 @@ var LSK="misEsp_";
 function lsGet(k,d){try{var v=JSON.parse(localStorage.getItem(LSK+k));return v!==null?v:d;}catch(e){return d;}}
 function lsSave(k,v){try{localStorage.setItem(LSK+k,JSON.stringify(v));sbPush(LSK+k,v);}catch(e){}}
 function genId(){return Date.now().toString(36)+Math.random().toString(36).slice(2,7);}
+
+// ── Sincronizar TODO el localStorage a Supabase (migración histórica) ──
+function syncAllToSupabase(){
+  var keys=[];
+  for(var i=0;i<localStorage.length;i++){var k=localStorage.key(i);if(k&&k.startsWith(LSK))keys.push(k);}
+  if(!keys.length){alert("No hay datos locales para sincronizar.");return;}
+  setSyncStatus("syncing","Subiendo "+keys.length+" entradas...");
+  var done=0,errs=0;
+  keys.forEach(function(k){
+    var val;try{val=JSON.parse(localStorage.getItem(k));}catch(e){done++;return;}
+    fetch(SB_URL+"/rest/v1/app_data",{
+      method:"POST",
+      headers:Object.assign({},SB_H,{"Prefer":"resolution=merge-duplicates"}),
+      body:JSON.stringify({key:k,value:val,updated_at:new Date().toISOString()})
+    }).then(function(r){if(!r.ok)errs++;}).catch(function(){errs++;}).finally(function(){
+      done++;
+      if(done===keys.length){
+        setSyncStatus("ok","✓ Subidas "+(keys.length-errs)+" entradas"+(errs?" ("+errs+" errores)":""));
+      }
+    });
+  });
+}
+
+// ── SHA-256 (para portales) ──
+function sha256(msg){
+  return crypto.subtle.digest('SHA-256',new TextEncoder().encode(msg))
+    .then(function(buf){return Array.from(new Uint8Array(buf)).map(function(b){return b.toString(16).padStart(2,'0');}).join('');});
+}
 
 function lsAdd(col,data){
   var arr=lsGet(col,[]);
@@ -3267,6 +3296,58 @@ function closeProfile(){
   if(profChartW){profChartW.destroy();profChartW=null;}
   if(profChartF){profChartF.destroy();profChartF=null;}
 }
+
+// ── Gestión acceso portal ──────────────────────────────────────────
+function openPortalAccess(id){
+  if(!id)return;
+  var portales=lsGet("portales",[]);
+  var ex=portales.find(function(p){return p.studentId===id;})||{};
+  var s=state.students.find(function(x){return x.id===id;})||{};
+  openModal("🔑 Acceso al portal — "+s.name,
+    '<div class="form-r">'+
+    '<div class="form-g"><label>Usuario</label><input id="portal-uname" class="fi" value="'+(ex.username||"")+'" placeholder="ej: juanperez" autocomplete="off" autocorrect="off" autocapitalize="off"></div>'+
+    '<div class="form-g"><label>Contraseña '+(ex.pwdHash?'<span style="font-size:10px;color:var(--txt2)">(vacío = no cambiar)</span>':'')+'</label><input id="portal-pwd" class="fi" type="password" placeholder="mínimo 6 caracteres" autocomplete="new-password"></div>'+
+    (ex.username?'<div style="font-size:11px;color:var(--green);margin-bottom:10px">✓ Ya tiene acceso creado como <strong>'+ex.username+'</strong></div>':'')+
+    '<div id="portal-msg" style="font-size:11px;min-height:16px;margin-bottom:8px"></div>'+
+    '<button class="btn btn-p" style="width:100%;justify-content:center" onclick="doSavePortalAccess(\''+id+'\')">💾 Guardar acceso</button>'+
+    (ex.username?'<button class="btn btn-c" style="width:100%;justify-content:center;margin-top:6px" onclick="doDeletePortalAccess(\''+id+'\')">✕ Quitar acceso</button>':'')+
+    '</div>',
+    null
+  );
+}
+function doSavePortalAccess(sid){
+  var uname=(el("portal-uname").value||"").trim().toLowerCase();
+  var pass=el("portal-pwd").value||"";
+  var msg=el("portal-msg");
+  function setMsg(txt,ok){if(msg){msg.textContent=txt;msg.style.color=ok?"var(--green)":"var(--danger)";}}
+  if(!uname){setMsg("El usuario no puede estar vacío");return;}
+  if(uname.length<3){setMsg("Mínimo 3 caracteres en el usuario");return;}
+  if(!/^[a-z0-9._-]+$/.test(uname)){setMsg("Solo letras, números, . _ -");return;}
+  var portales=lsGet("portales",[]);
+  var conflict=portales.find(function(p){return p.username===uname&&p.studentId!==sid;});
+  if(conflict){setMsg("Ese usuario ya está en uso");return;}
+  var existing=portales.find(function(p){return p.studentId===sid;});
+  if(!pass&&!existing){setMsg("Debes ingresar una contraseña");return;}
+  if(pass&&pass.length<6){setMsg("La contraseña debe tener al menos 6 caracteres");return;}
+  var saveEntry=function(pwdHash){
+    if(existing){existing.username=uname;existing.pwdHash=pwdHash;}
+    else portales.push({studentId:sid,username:uname,pwdHash:pwdHash,createdAt:new Date().toISOString()});
+    lsSave("portales",portales);
+    setMsg("✓ Acceso guardado",true);
+    setTimeout(function(){closeModal();},1100);
+  };
+  if(pass){
+    sha256(pass).then(saveEntry).catch(function(){setMsg("Error al procesar contraseña");});
+  } else {
+    saveEntry(existing.pwdHash);
+  }
+}
+function doDeletePortalAccess(sid){
+  if(!confirm("¿Quitar acceso al portal de este estudiante?"))return;
+  lsSave("portales",lsGet("portales",[]).filter(function(p){return p.studentId!==sid;}));
+  closeModal();
+}
+
 function setProfTab(n){
   document.querySelectorAll("#prof-overlay .eval-tab").forEach(function(t,i){t.classList.toggle("on",i===n);});
   for(var i=0;i<7;i++){var p=el("ptab"+i);if(p)p.classList.toggle("on",i===n);}
