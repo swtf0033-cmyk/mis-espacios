@@ -1632,6 +1632,7 @@ var currentStudentId=null,currentWinId=null,currentWinProfile=null;
 <script>
 function mkInitials(name){if(!name)return "?";var parts=name.trim().split(" ");return(parts[0][0]+(parts[1]?parts[1][0]:"")).toUpperCase();}
 function fmtMoney(n){return"$"+(Number(n)||0).toLocaleString("en-US");}
+function fmtCOP(n){return"$"+(Number(n)||0).toLocaleString("es-CO")+" COP";}
 function fmtTime(s){var m=Math.floor((s||0)/60),sec=(s||0)%60;return m+":"+(sec<10?"0":"")+sec;}
 function activeClientsCount(){return(state.clients||[]).filter(function(c){return c.status==="Activo";}).length;}
 function activeStudentsCount(){return(state.students||[]).filter(function(s){return s.payStatus!=="Inactivo";}).length;}
@@ -1676,7 +1677,7 @@ function callerasToggle(id){
 function renderFitAlerts(){
   var overdue=state.students.filter(function(s){return s.payStatus==="Vencido";});
   var attn=state.students.filter(function(s){return s.payStatus==="Atencion";});
-  var items=overdue.map(function(s){return '<div class="ai"><div class="aico" style="background:var(--danger-d)">&#128179;</div><div><div class="aim">'+s.name+' &mdash; pago vencido</div><div class="ais">'+fmtMoney(s.fee)+'/mes</div></div></div>';});
+  var items=overdue.map(function(s){return '<div class="ai"><div class="aico" style="background:var(--danger-d)">&#128179;</div><div><div class="aim">'+s.name+' &mdash; pago vencido</div><div class="ais">'+fmtCOP(s.fee)+'/mes</div></div></div>';});
   items=items.concat(attn.map(function(s){return '<div class="ai"><div class="aico" style="background:var(--warn-d)">&#9888;</div><div><div class="aim">'+s.name+' &mdash; atencion</div><div class="ais">Seguimiento pendiente</div></div></div>';}));
   // Calleras: alumnos con 2+ meses sin recibirlas
   var callerasDone=lsGet("calleras-done",[]);
@@ -1806,7 +1807,7 @@ function renderStudents(){
       }
     }
     return '<tr><td><div class="cc"><div class="cap" style="background:var(--acc-d);color:var(--acc)">'+mkInitials(s.name)+'</div><div class="cn">'+s.name+'</div></div></td>'+
-      '<td>'+fmtMoney(s.fee)+'</td><td>'+lastLabel+'</td><td>'+nextCell+'</td>'+
+      '<td>'+fmtCOP(s.fee)+'</td><td>'+lastLabel+'</td><td>'+nextCell+'</td>'+
       '<td><div style="display:flex;align-items:center;gap:6px">'+statusBadge+pagarBtnHtml+'</div></td>'+
       '<td><button class="btn-icon p-edit" data-id="'+s.id+'">&#9999;</button></td></tr>';
   }).join("");
@@ -2474,9 +2475,9 @@ function renderCentro(){
         +'<div class="sv" style="color:'+(col||"var(--txt)")+'">'+(typeof val==="number"?fmtMoney(val):val)+'</div>'
         +'<div class="ss">'+(sub||"")+'</div></div>';
     };
-    var fitLabel="💪 FitCoach"+(fitRiesgo>0?" · <span style='color:var(--danger);font-size:10px'>"+fmtMoney(fitRiesgo)+" en riesgo ("+riesgoCount+")</span>":"");
+    var fitLabel="💪 FitCoach"+(fitRiesgo>0?" · <span style='color:var(--danger);font-size:10px'>"+fmtCOP(fitRiesgo)+" en riesgo ("+riesgoCount+")</span>":"");
     statsEl.innerHTML=
-      sc("FitCoach cobrado",fitCobrado,"var(--green)",fitLabel)
+      sc("FitCoach cobrado",fmtCOP(fitCobrado),"var(--green)",fitLabel)
       +sc("Agencia",agInc,"var(--acc)","promedio histórico")
       +sc("Gastos fijos",totalExp,"var(--danger)","3 espacios")
       +sc("Balance neto",balance,balance>=0?"var(--green)":"var(--danger)","mensual estimado");
@@ -2613,10 +2614,10 @@ function renderPerInc(){
   html+='<div style="display:flex;justify-content:space-between;align-items:center;padding:12px 14px">'
     +'<div style="display:flex;align-items:center;gap:10px">'
     +'<div style="width:34px;height:34px;border-radius:9px;background:linear-gradient(135deg,#A855F7,#EC4899);display:flex;align-items:center;justify-content:center;font-size:14px">💪</div>'
-    +'<div><div style="font-weight:600;font-size:13px">FitCoach Pro</div><div style="font-size:10px;opacity:.5">'+nc+' alumnos · bruto '+fmtMoney(pi.fitBruto)+'</div></div></div>'
-    +'<span style="font-family:Rajdhani,sans-serif;font-size:20px;font-weight:700;color:#A855F7">'+fmtMoney(pi.fitNeto)+'</span></div>';
+    +'<div><div style="font-weight:600;font-size:13px">FitCoach Pro</div><div style="font-size:10px;opacity:.5">'+nc+' alumnos · bruto '+fmtCOP(pi.fitBruto)+'</div></div></div>'
+    +'<span style="font-family:Rajdhani,sans-serif;font-size:20px;font-weight:700;color:#A855F7">'+fmtCOP(pi.fitNeto)+'</span></div>';
   var fitD=pi.fitDistrib||{pago:50,marca:20};
-  html+='<div style="padding:6px 14px 10px;font-size:10px;opacity:.55">'+fitD.pago+'% de mi pago sobre margen '+fmtMoney(pi.fitMargen||0)+(pi.calleraCut>0?' · 🧤 calleras −'+fmtMoney(pi.calleraCut):'')+'</div>';
+  html+='<div style="padding:6px 14px 10px;font-size:10px;opacity:.55">'+fitD.pago+'% de mi pago sobre margen '+fmtCOP(pi.fitMargen||0)+(pi.calleraCut>0?' · 🧤 calleras −'+fmtCOP(pi.calleraCut):'')+'</div>';
   if(nc===0)html+='<div style="padding:4px 14px 10px;font-size:11px;opacity:.4">Sin alumnos activos aún</div>';
   html+='</div>';
   // Agency block
@@ -2635,7 +2636,7 @@ function renderPerInc(){
   // Callera setting when no pending
   if(pi.calleraCount===0&&nc>0){
     html+='<div style="display:flex;align-items:center;gap:8px;padding:8px 12px;opacity:.5;font-size:11px">'
-      +'<span>🧤 Costo calleras por alumno: $</span>'
+      +'<span>🧤 Costo calleras por alumno: COP</span>'
       +'<input type="number" value="'+pi.calleraCost+'" oninput="saveCalleraCost(this.value)" style="width:42px;background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.12);border-radius:5px;color:var(--txt);font-size:11px;text-align:center;padding:2px 4px;outline:none"></div>';
   }
   html+='</div>';
@@ -3123,7 +3124,7 @@ function studentForm(s){
     '<div class="form-g"><label>Meses entrenando</label><input id="f-months" type="number" class="fi" value="'+(v.months||1)+'" min="1"></div>'+
     '<div class="form-g"><label>% Progreso (0-100)</label><input id="f-prog" type="number" class="fi" value="'+(v.progress||0)+'" min="0" max="100"></div>'+
     '</div><div class="form-r">'+
-    '<div class="form-g"><label>Mensualidad ($)</label><input id="f-fee" type="number" class="fi" value="'+(v.fee||0)+'"></div>'+
+    '<div class="form-g"><label>Mensualidad (COP)</label><input id="f-fee" type="number" class="fi" value="'+(v.fee||0)+'"></div>'+
     '<div class="form-g"><label>Modalidad de pago</label><select id="f-paymode" class="fi"><option value="Mensual"'+(v.payMode==="Mensual"?" selected":"")+'>Mensual</option><option value="Cuotas"'+(v.payMode==="Cuotas"?" selected":"")+'>Cuotas</option><option value="Credito"'+(v.payMode==="Credito"?" selected":"")+'>Credito</option></select></div>'+
     '</div><div class="form-r">'+
     '<div class="form-g"><label>Estado pago</label><select id="f-pay" class="fi"><option value="Pendiente"'+((!v.payStatus||v.payStatus==="Pendiente")?" selected":"")+'>Pendiente</option><option value="Al dia"'+(v.payStatus==="Al dia"?" selected":"")+'>Al dia</option><option value="Vencido"'+(v.payStatus==="Vencido"?" selected":"")+'>Vencido</option><option value="Atencion"'+(v.payStatus==="Atencion"?" selected":"")+'>Atencion</option></select></div>'+
