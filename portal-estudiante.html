@@ -404,7 +404,7 @@ function renderDashboard(st,rms,plan,evals,att,nutrition,goals,trainGoal){
   var payStatus=st.payStatus||"Pendiente";
   var payClass=payStatus==="Al dia"?"pay-ok":payStatus==="Vencido"?"pay-err":"pay-warn";
   var memHtml='<div class="mem-row"><span class="mem-key">Estado</span><span class="pay-status '+payClass+'">'+esc(payStatus)+'</span></div>';
-  if(st.fee)memHtml+='<div class="mem-row"><span class="mem-key">Mensualidad</span><span class="mem-val">$'+st.fee+'</span></div>';
+  if(st.fee)memHtml+='<div class="mem-row"><span class="mem-key">Mensualidad</span><span class="mem-val">$'+(Number(st.fee)||0).toLocaleString("es-CO")+' COP</span></div>';
   if(st.payMode)memHtml+='<div class="mem-row"><span class="mem-key">Modalidad</span><span class="mem-val">'+esc(st.payMode)+'</span></div>';
   if(st.lastPayment)memHtml+='<div class="mem-row"><span class="mem-key">Último pago</span><span class="mem-val">'+esc(st.lastPayment)+'</span></div>';
   if(st.nextPayDate){
