@@ -76,7 +76,15 @@ body{font-family:'Inter',system-ui,sans-serif;background:var(--bg);color:var(--t
 .wtype{font-size:12px;font-weight:600}
 .wdetail{font-size:10px;color:var(--txt2);margin-top:1px}
 .wnow{font-size:10px;font-weight:700;color:var(--acc);background:var(--acc-d);padding:2px 8px;border-radius:99px;flex-shrink:0}
-/* STATS */
+/* METRIC CARDS */
+.metric-scroll{display:flex;gap:8px;overflow-x:auto;-webkit-overflow-scrolling:touch;padding-bottom:4px;margin-bottom:10px;scrollbar-width:none}
+.metric-scroll::-webkit-scrollbar{display:none}
+.metric-card{background:var(--surf);border:1px solid var(--border);border-radius:11px;padding:14px 13px;min-width:148px;flex-shrink:0;display:flex;flex-direction:column;gap:3px}
+.metric-card-lbl{font-size:10px;font-weight:700;color:var(--txt2);text-transform:uppercase;letter-spacing:.06em}
+.metric-card-val{font-family:'Rajdhani',sans-serif;font-size:30px;font-weight:700;color:var(--acc);line-height:1;margin:2px 0}
+.metric-card-unit{font-size:11px;color:var(--txt2);font-weight:500}
+.metric-card-desc{font-size:10px;color:var(--txt2);line-height:1.4;margin-top:4px}
+/* STATS GRID (circunferencias) */
 .stats-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-bottom:10px}
 .stat-box{background:var(--surf);border:1px solid var(--border);border-radius:9px;padding:11px;text-align:center}
 .stat-val{font-family:'Rajdhani',sans-serif;font-size:22px;font-weight:700;color:var(--acc);line-height:1}
@@ -481,39 +489,39 @@ function buildNutriHtml(){
   '</div>';
 }
 
-function buildImcScale(imc){
+function buildImcScale(imc,wkg,hcm){
   if(!imc)return'';
+  // Bar flex: Bajo(18.5) Normal(6.5) Sobrepeso(5) Obesidad(10) = 40 total
+  // Zone boundaries in %: 0 → 46.25 → 62.5 → 75 → 100
   var pct=0;
-  if(imc<=18.5)pct=(imc/18.5)*20;
-  else if(imc<=25)pct=20+((imc-18.5)/6.5)*30;
-  else if(imc<=30)pct=50+((imc-25)/5)*25;
-  else pct=Math.min(75+((imc-30)/15)*23,97);
+  if(imc<=18.5) pct=(imc/18.5)*46.25;
+  else if(imc<=25) pct=46.25+((imc-18.5)/6.5)*16.25;
+  else if(imc<=30) pct=62.5+((imc-25)/5)*12.5;
+  else pct=Math.min(75+((imc-30)/15)*22,97);
   pct=Math.max(1,Math.min(97,pct));
   var cls=imc<18.5?"bw":imc<25?"bg":imc<30?"bw":"bd";
   var lbl=imc<18.5?"Bajo peso":imc<25?"Normal":imc<30?"Sobrepeso":"Obesidad";
-  return'<div style="margin:10px 0 8px">'+
-    '<div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:8px">'+
-      '<span style="font-size:10px;color:var(--txt2)">Clasificación IMC · OMS</span>'+
-      '<span class="badge '+cls+'">'+imc+' kg/m² · '+lbl+'</span>'+
-    '</div>'+
-    '<div style="position:relative;padding-bottom:18px">'+
+  var nextZone=imc<18.5?"Normal":imc<25?"Sobrepeso":imc<30?"Obesidad I":null;
+  var nextVal=imc<18.5?18.5:imc<25?25:imc<30?30:null;
+  var distLine=nextVal!=null?'<div style="font-size:10px;color:var(--txt2);margin-top:6px">→ A <strong style="color:var(--txt)">'+(Math.round((nextVal-imc)*10)/10)+' pts</strong> de '+nextZone+'</div>':'';
+  var withLine=(wkg&&hcm)?'<div style="font-size:10px;color:var(--txt2);margin-top:3px">Con '+wkg+'kg y '+hcm+'cm → IMC '+imc+'. Peso en rango <strong style="color:var(--txt)">'+lbl.toLowerCase()+'</strong> para esta altura.</div>':'';
+  return'<div style="margin:0 0 6px">'+
+    '<div style="position:relative;padding-bottom:20px;margin-bottom:2px">'+
       '<div style="display:flex;height:8px;border-radius:99px;overflow:hidden">'+
-        '<div style="flex:18.5;background:#FBBF24;opacity:.5"></div>'+
+        '<div style="flex:18.5;background:#FBBF24;opacity:.45"></div>'+
         '<div style="flex:6.5;background:#34D399"></div>'+
         '<div style="flex:5;background:#FBBF24;opacity:.7"></div>'+
         '<div style="flex:10;background:#F87171"></div>'+
       '</div>'+
-      '<div style="position:absolute;left:'+pct+'%;top:0;transform:translateX(-50%);display:flex;flex-direction:column;align-items:center">'+
+      '<div style="position:absolute;left:'+pct+'%;top:0;transform:translateX(-50%);display:flex;flex-direction:column;align-items:center;pointer-events:none">'+
         '<div style="width:2px;height:8px;background:#fff;border-radius:1px"></div>'+
-        '<div style="font-size:8px;color:#fff;font-weight:700;white-space:nowrap;background:rgba(0,0,0,.5);padding:1px 4px;border-radius:3px;margin-top:2px">Tú</div>'+
+        '<div style="font-size:8px;color:#fff;font-weight:700;white-space:nowrap;background:rgba(0,0,0,.6);padding:1px 4px;border-radius:3px;margin-top:2px">Tú</div>'+
       '</div>'+
-      '<div style="display:flex;justify-content:space-between;font-size:9px;color:var(--txt2);position:absolute;bottom:0;left:0;right:0">'+
-        '<span>Bajo<br/>&lt;18.5</span>'+
-        '<span style="text-align:center">Normal<br/>18.5–25</span>'+
-        '<span style="text-align:center">Sobrepeso<br/>25–30</span>'+
-        '<span style="text-align:right">Obesidad<br/>&gt;30</span>'+
+      '<div style="display:flex;justify-content:space-between;font-size:9px;color:var(--txt3);position:absolute;bottom:0;left:0;right:0">'+
+        '<span>Bajo<br/>&lt;18.5</span><span style="text-align:center">Normal<br/>18.5–25</span><span style="text-align:center">Sobrepeso<br/>25–30</span><span style="text-align:right">Obesidad<br/>&gt;30</span>'+
       '</div>'+
     '</div>'+
+    distLine+withLine+
   '</div>';
 }
 
@@ -590,37 +598,71 @@ function renderDashboard(rms){
   var masaMagra=masaGrasa!=null?Math.round((wkg-masaGrasa)*10)/10:null;
   var icc=ev&&ev.cin&&ev.cad?Math.round((ev.cin/ev.cad)*100)/100:null;
   var statsHtml='';
-  if(ev&&ev.date)statsHtml+='<div class="section-date">Última evaluación: '+esc(ev.date)+'</div>';
-  statsHtml+='<div class="section-lbl">Composición corporal</div><div class="stats-grid">';
-  if(wkg)statsHtml+='<div class="stat-box"><div class="stat-val">'+wkg+'</div><div class="stat-lbl">Peso (kg)</div></div>';
-  if(fat!=null)statsHtml+='<div class="stat-box"><div class="stat-val" style="color:var(--warn)">'+fat+'%</div><div class="stat-lbl">% Grasa</div></div>';
-  if(muscle!=null)statsHtml+='<div class="stat-box"><div class="stat-val" style="color:var(--green)">'+muscle+'%</div><div class="stat-lbl">% Músculo</div></div>';
-  if(masaGrasa!=null)statsHtml+='<div class="stat-box"><div class="stat-val" style="color:var(--warn)">'+masaGrasa+'</div><div class="stat-lbl">Masa grasa kg</div></div>';
-  if(masaMagra!=null)statsHtml+='<div class="stat-box"><div class="stat-val" style="color:var(--green)">'+masaMagra+'</div><div class="stat-lbl">Masa magra kg</div></div>';
-  if(imc!=null)statsHtml+='<div class="stat-box"><div class="stat-val">'+imc+'</div><div class="stat-lbl">IMC</div></div>';
-  statsHtml+='</div>';
-  if(imc)statsHtml+=buildImcScale(imc);
-  if(icc){
-    var iccSano=sex==="M"?icc<0.90:icc<0.85;
-    statsHtml+='<span class="badge '+(iccSano?"bg":"bw")+'" style="margin-bottom:8px;display:inline-flex">ICC '+icc+' · '+(iccSano?"Bajo riesgo":"Riesgo moderado")+'</span>';
+  if(ev&&ev.date)statsHtml+='<div class="section-date" style="margin-bottom:10px">Última evaluación: '+esc(ev.date)+'</div>';
+
+  // Metric cards row
+  var iccSano=icc!=null?(sex==="M"?icc<0.90:icc<0.85):null;
+  statsHtml+='<div class="metric-scroll">';
+
+  if(imc!=null){
+    var imcCls=imc<18.5?"bw":imc<25?"bg":imc<30?"bw":"bd";
+    var imcLbl=imc<18.5?"Bajo peso":imc<25?"Normal":imc<30?"Sobrepeso":"Obesidad";
+    statsHtml+='<div class="metric-card" style="min-width:180px">'+
+      '<div class="metric-card-lbl">IMC</div>'+
+      '<div class="metric-card-val">'+imc+'</div>'+
+      '<span class="badge '+imcCls+'" style="align-self:flex-start">'+imcLbl+'</span>'+
+      '<div class="metric-card-desc">Peso + talla². Rango saludable: 18.5–24.9. No distingue grasa de músculo.</div>'+
+      buildImcScale(imc,wkg,hcm)+
+    '</div>';
   }
-  var MEDIDAS=[["Cintura",ev&&ev.cin],["Cadera",ev&&ev.cad],["Pecho",ev&&ev.pecho],["Bícep",ev&&ev.bicep],["Muslo",ev&&ev.muslo],["Glúteo",ev&&ev.glut],["Pantorrilla",ev&&ev.pant]].filter(function(m){return m[1]!=null&&m[1]!="";});
+
+  if(icc!=null){
+    statsHtml+='<div class="metric-card">'+
+      '<div class="metric-card-lbl">ICC</div>'+
+      '<div class="metric-card-val" style="color:'+(iccSano?"var(--green)":"var(--warn)")+'">'+icc+'</div>'+
+      '<span class="badge '+(iccSano?"bg":"bw")+'" style="align-self:flex-start">'+(iccSano?"Bajo":"Moderado")+'</span>'+
+      '<div class="metric-card-desc">Cintura ÷ cadera. Indica riesgo cardiovascular por acumulación de grasa abdominal.</div>'+
+    '</div>';
+  }
+
+  if(masaMagra!=null){
+    statsHtml+='<div class="metric-card">'+
+      '<div class="metric-card-lbl">Masa muscular</div>'+
+      '<div class="metric-card-val" style="color:var(--green)">'+masaMagra+'</div>'+
+      '<div class="metric-card-unit">kg masa magra</div>'+
+      '<div class="metric-card-desc">Peso corporal menos la grasa estimada. A mayor valor, mejor composición.</div>'+
+    '</div>';
+  }
+
+  if(fat!=null){
+    var fatSano=sex==="M"?fat<=20:fat<=30;
+    statsHtml+='<div class="metric-card">'+
+      '<div class="metric-card-lbl">% Grasa</div>'+
+      '<div class="metric-card-val" style="color:var(--warn)">'+fat+'</div>'+
+      '<div class="metric-card-unit">% del peso total</div>'+
+      '<div class="metric-card-desc">Porcentaje de tu peso que es tejido graso. Ref. saludable: '+(sex==="M"?"10–20%":"20–30%")+'.</div>'+
+    '</div>';
+  }
+
+  if(wkg){
+    statsHtml+='<div class="metric-card">'+
+      '<div class="metric-card-lbl">Peso actual</div>'+
+      '<div class="metric-card-val">'+wkg+'</div>'+
+      '<div class="metric-card-unit">kg</div>'+
+      (hcm?'<div class="metric-card-desc">Estatura: '+hcm+' cm'+(st.age?' · '+st.age+' años':'')+'.</div>':'')+
+    '</div>';
+  }
+
+  statsHtml+='</div>';
+
+  // Circunferencias
+  var MEDIDAS=[["Cintura",ev&&ev.cin,"&lt;94 cm (H) / &lt;80 cm (M)"],["Cadera",ev&&ev.cad,"Referencia para ICC"],["Pecho",ev&&ev.pecho,""],["Bícep",ev&&ev.bicep,""],["Muslo",ev&&ev.muslo,""],["Glúteo",ev&&ev.glut,""],["Pantorrilla",ev&&ev.pant,""]].filter(function(m){return m[1]!=null&&m[1]!="";});
   if(MEDIDAS.length){
-    statsHtml+='<div class="divider"></div><div class="section-lbl">Circunferencias (cm)</div><div class="stats-grid">';
+    statsHtml+='<div class="section-lbl" style="margin-top:4px">Circunferencias (cm)</div><div class="stats-grid">';
     MEDIDAS.forEach(function(m){statsHtml+='<div class="stat-box"><div class="stat-val" style="font-size:18px">'+m[1]+'</div><div class="stat-lbl">'+esc(m[0])+'</div></div>';});
     statsHtml+='</div>';
   }
-  statsHtml+='<button class="info-toggle" onclick="toggleInfo(\'inf-stats\')" style="margin-top:10px">ℹ️ ¿Qué significa cada medida?</button>'+
-  '<div class="info-box" id="inf-stats"><table>'+
-    '<tr><th>Medida</th><th>Qué es</th><th>Ref. saludable</th></tr>'+
-    '<tr><td>IMC</td><td>Índice de Masa Corporal. Relación entre tu peso y tu estatura al cuadrado. Es una referencia general, no considera masa muscular.</td><td>18.5 – 24.9</td></tr>'+
-    '<tr><td>ICC</td><td>Índice Cintura–Cadera. Indica dónde se almacena la grasa. Valores altos señalan mayor riesgo cardiovascular.</td><td>H: &lt;0.90 · M: &lt;0.85</td></tr>'+
-    '<tr><td>% Grasa</td><td>Qué porcentaje de tu peso total es tejido graso. Alto = riesgo metabólico; muy bajo = puede afectar hormonas.</td><td>H: 10–20% · M: 20–30%</td></tr>'+
-    '<tr><td>% Músculo</td><td>Qué porcentaje de tu peso es tejido muscular. A mayor músculo, mejor metabolismo en reposo.</td><td>H: 40–50% · M: 30–40%</td></tr>'+
-    '<tr><td>Masa grasa</td><td>Los kilos totales de grasa que tiene tu cuerpo en este momento.</td><td>Depende del total</td></tr>'+
-    '<tr><td>Masa magra</td><td>Todo lo que NO es grasa: músculo, huesos, agua, órganos. Cuanto mayor, mejor.</td><td>Cuanto más, mejor</td></tr>'+
-    '<tr><td>Cintura</td><td>Circunferencia al nivel del ombligo. Indicador clave de grasa visceral (la más peligrosa).</td><td>H: &lt;94 cm · M: &lt;80 cm</td></tr>'+
-  '</table></div>';
+
   leftHtml+='<div class="card"><div class="ct">📊 Estadísticas corporales</div>'+statsHtml+'</div>';
 
   /* RM */
