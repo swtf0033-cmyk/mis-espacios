@@ -289,16 +289,34 @@ function renderDashboard(st,rms,plan,evals,att,nutrition,goals,trainGoal){
   var imc=hcm>0?Math.round((wkg/((hcm/100)*(hcm/100)))*10)/10:null;
   var imcCls=imc?imc<18.5?"bw":imc<25?"bg":imc<30?"bw":"bd":"";
   var imcLbl=imc?imc<18.5?"Bajo peso":imc<25?"Normal":imc<30?"Sobrepeso":"Obesidad":"";
-  var statsHtml='<div class="stats-grid">';
+  var fat=ev&&ev.fat!=null?Number(ev.fat):null;
+  var muscle=ev&&ev.muscle!=null?Number(ev.muscle):null;
+  var masaGrasa=fat!=null&&wkg?Math.round(wkg*fat/100*10)/10:null;
+  var masaMagra=masaGrasa!=null&&wkg?Math.round((wkg-masaGrasa)*10)/10:null;
+  var icc=ev&&ev.cin&&ev.cad?Math.round((ev.cin/ev.cad)*100)/100:null;
+  var statsHtml='';
+  if(ev&&ev.date)statsHtml+='<div class="section-date">Última evaluación: '+esc(ev.date)+'</div>';
+  /* Composición */
+  statsHtml+='<div style="font-size:10px;font-weight:600;color:var(--txt2);text-transform:uppercase;letter-spacing:.06em;margin-bottom:7px">Composición corporal</div>';
+  statsHtml+='<div class="stats-grid">';
   if(wkg)statsHtml+='<div class="stat-box"><div class="stat-val">'+wkg+'</div><div class="stat-lbl">Peso (kg)</div></div>';
-  if(ev&&ev.fat!=null)statsHtml+='<div class="stat-box"><div class="stat-val" style="color:var(--warn)">'+ev.fat+'%</div><div class="stat-lbl">Grasa corporal</div></div>';
-  if(ev&&ev.muscle!=null)statsHtml+='<div class="stat-box"><div class="stat-val" style="color:var(--green)">'+ev.muscle+'%</div><div class="stat-lbl">Músculo</div></div>';
-  if(imc)statsHtml+='<div class="stat-box"><div class="stat-val">'+imc+'</div><div class="stat-lbl">IMC</div></div>';
-  if(ev&&ev.waist!=null)statsHtml+='<div class="stat-box"><div class="stat-val">'+ev.waist+'</div><div class="stat-lbl">Cintura (cm)</div></div>';
-  if(ev&&ev.hip!=null)statsHtml+='<div class="stat-box"><div class="stat-val">'+ev.hip+'</div><div class="stat-lbl">Cadera (cm)</div></div>';
+  if(fat!=null)statsHtml+='<div class="stat-box"><div class="stat-val" style="color:var(--warn)">'+fat+'%</div><div class="stat-lbl">% Grasa</div></div>';
+  if(muscle!=null)statsHtml+='<div class="stat-box"><div class="stat-val" style="color:var(--green)">'+muscle+'%</div><div class="stat-lbl">% Músculo</div></div>';
+  if(masaGrasa!=null)statsHtml+='<div class="stat-box"><div class="stat-val" style="color:var(--warn)">'+masaGrasa+'</div><div class="stat-lbl">Masa grasa (kg)</div></div>';
+  if(masaMagra!=null)statsHtml+='<div class="stat-box"><div class="stat-val" style="color:var(--green)">'+masaMagra+'</div><div class="stat-lbl">Masa magra (kg)</div></div>';
+  if(imc!=null)statsHtml+='<div class="stat-box"><div class="stat-val">'+imc+'</div><div class="stat-lbl">IMC</div></div>';
   statsHtml+='</div>';
-  if(imc)statsHtml+='<div style="margin-top:8px;display:flex;gap:6px;align-items:center"><span class="badge '+imcCls+'">IMC '+imc+' — '+imcLbl+'</span></div>';
-  if(ev&&ev.date)statsHtml='<div class="section-date">Última eval: '+esc(ev.date)+'</div>'+statsHtml;
+  if(imc)statsHtml+='<div style="margin:8px 0 14px"><span class="badge '+imcCls+'">IMC '+imc+' — '+imcLbl+'</span>'+(icc!=null?'&nbsp;&nbsp;<span class="badge ba">ICC '+icc+'</span>':'')+'</div>';
+  /* Medidas */
+  var MEDIDAS=[["Cintura",ev&&ev.cin],["Cadera",ev&&ev.cad],["Pecho",ev&&ev.pecho],["Bícep",ev&&ev.bicep],["Muslo",ev&&ev.muslo],["Glúteo",ev&&ev.glut],["Pantorrilla",ev&&ev.pant]].filter(function(m){return m[1]!=null&&m[1]!=="";});
+  if(MEDIDAS.length){
+    statsHtml+='<div style="font-size:10px;font-weight:600;color:var(--txt2);text-transform:uppercase;letter-spacing:.06em;margin-bottom:7px">Circunferencias (cm)</div>';
+    statsHtml+='<div class="stats-grid">';
+    MEDIDAS.forEach(function(m){
+      statsHtml+='<div class="stat-box"><div class="stat-val" style="font-size:18px">'+m[1]+'</div><div class="stat-lbl">'+esc(m[0])+'</div></div>';
+    });
+    statsHtml+='</div>';
+  }
   leftHtml+='<div class="card"><div class="ct">📊 Estadísticas corporales</div>'+statsHtml+'</div>';
 
   /* Marcas RM */
