@@ -362,7 +362,23 @@ a.sel-card{display:block;text-decoration:none;color:inherit}
   .sel-card{width:100%;max-width:340px}
   .form-r{grid-template-columns:1fr}
 }
-@media(max-width:480px){.pipe-board{grid-template-columns:1fr}.sg{grid-template-columns:1fr 1fr}}
+@media(max-width:480px){
+  .pipe-board{grid-template-columns:1fr}
+  .sg{grid-template-columns:1fr 1fr}
+  .content{padding:10px 10px}
+  .main{padding-top:0}
+  .g2{grid-template-columns:1fr}
+  .prof-metrics{grid-template-columns:repeat(2,1fr)!important}
+  .prof-header{flex-direction:column;gap:10px;align-items:flex-start}
+  .rm-grid{grid-template-columns:1fr 1fr!important}
+  .modal-box{border-radius:14px 14px 0 0;max-height:92vh;position:fixed;bottom:0;left:0;right:0;width:100%;margin:0}
+  .modal-overlay{align-items:flex-end}
+  .form-r{grid-template-columns:1fr!important}
+  .eval-row{grid-template-columns:1fr 1fr!important}
+  .student-card{padding:12px}
+  .sb-nav .ni span{display:none}
+  .ni{padding:10px 8px}
+}
 /* Radio-driven navigation — 100% CSS, cero JavaScript necesario para show/hide */
 #nav-home,#nav-fit,#nav-agency,#nav-personal{display:none}
 #nav-fit:checked~#selector,#nav-agency:checked~#selector,#nav-personal:checked~#selector{display:none!important}
