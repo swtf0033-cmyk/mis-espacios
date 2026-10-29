@@ -3,13 +3,13 @@
 <head>
 <meta charset=utf8>
 <meta name=viewport content="width=device-width,initial-scale=1,viewport-fit=cover">
-<title>Mi Portal · Mis Espacios</title>
+<title>Mi Portal · INAMOVIBLE</title>
 <link rel="icon" type="image/png" href="icon.png">
 <link rel="apple-touch-icon" href="icon.png">
 <link rel="manifest" href="manifest.json">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-<meta name="apple-mobile-web-app-title" content="Mis Espacios">
+<meta name="apple-mobile-web-app-title" content="INAMOVIBLE">
 <meta name="theme-color" content="#080808">
 <link rel=stylesheet href="https://fonts.googleapis.com/css2?family=Oswald:wght@500;600;700&family=Inter:wght@400;500;600&display=swap">
 <style>
@@ -228,7 +228,7 @@ body{font-family:'Inter',system-ui,sans-serif;background:var(--bg);color:var(--t
 
 <div id="login">
   <div class="login-card">
-    <div class="login-logo">MIS ESPACIOS</div>
+    <div class="login-logo">INAMOVIBLE <span>APP</span></div>
     <div class="login-sub">Portal del estudiante</div>
     <label class="fl">Usuario</label>
     <input class="fi" id="inp-user" placeholder="tu usuario" autocomplete="username" autocorrect="off" autocapitalize="off" spellcheck="false">
@@ -241,7 +241,7 @@ body{font-family:'Inter',system-ui,sans-serif;background:var(--bg);color:var(--t
 
 <div id="app">
   <div class="app-header">
-    <div class="app-logo">MIS <span>ESPACIOS</span></div>
+    <div class="app-logo">INAMOVIBLE <span>APP</span></div>
     <div style="display:flex;align-items:center;gap:10px">
       <div><div class="app-name" id="app-stname"></div><div class="app-obj" id="app-stobj"></div></div>
       <button class="logout-btn" onclick="doLogout()">Salir</button>
@@ -258,19 +258,45 @@ var SB_KEY="sb_publishable_rS6hiZnNzUevos6Z8n9VDA_V6KSzj0u";
 var SB_H={"apikey":SB_KEY,"Authorization":"Bearer "+SB_KEY,"Content-Type":"application/json"};
 var LSK="misEsp_";
 var G={sid:null,today:new Date().toISOString().slice(0,10),calData:{},mealCount:5,stepsGoal:8000,nutriOk:false,st:{},nutrition:{},plan:null,evals:[],att:[],calMonth:null};
+var I={
+  barbell:'<svg style="width:16px;height:16px" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><line x1="6" y1="12" x2="18" y2="12"/><line x1="3" y1="12" x2="4" y2="12"/><line x1="20" y1="12" x2="21" y2="12"/><line x1="7" y1="9" x2="7" y2="15"/><line x1="17" y1="9" x2="17" y2="15"/><line x1="4" y1="10" x2="4" y2="14"/><line x1="20" y1="10" x2="20" y2="14"/></svg>',
+  flex:'<svg style="width:16px;height:16px" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9c1-3 4-4 6-2s1 5-1 6 0 4 3 5"/><path d="M18 7c-1 2-3 3-3 5s2 4 1 6"/></svg>',
+  arrowup:'<svg style="width:16px;height:16px" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="20" x2="12" y2="4"/><polyline points="6,10 12,4 18,10"/></svg>',
+  pullrow:'<svg style="width:16px;height:16px" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12,5 19,12 12,19"/></svg>',
+  pulldown:'<svg style="width:16px;height:16px" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="4" x2="12" y2="20"/><polyline points="18,14 12,20 6,14"/></svg>',
+  bolt:'<svg style="width:14px;height:14px;vertical-align:-2px;margin-right:5px" viewBox="0 0 24 24" fill="currentColor"><polygon points="13,2 3,14 12,14 11,22 21,10 12,10"/></svg>',
+  repeat:'<svg style="width:14px;height:14px;vertical-align:-2px;margin-right:5px" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="17,1 21,5 17,9"/><path d="M3 11V9a4 4 0 014-4h14"/><polyline points="7,23 3,19 7,15"/><path d="M21 13v2a4 4 0 01-4 4H3"/></svg>',
+  plan_s:'<svg style="width:14px;height:14px;vertical-align:-2px;margin-right:6px" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="3" y1="9" x2="21" y2="9"/><line x1="9" y1="4" x2="9" y2="9"/><line x1="15" y1="4" x2="15" y2="9"/></svg>',
+  stats_s:'<svg style="width:14px;height:14px;vertical-align:-2px;margin-right:6px" viewBox="0 0 24 24" fill="currentColor"><rect x="2" y="13" width="5" height="9"/><rect x="9.5" y="7" width="5" height="15"/><rect x="17" y="2" width="5" height="20"/></svg>',
+  trophy_s:'<svg style="width:14px;height:14px;vertical-align:-2px;margin-right:6px" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M8 2h8v8a4 4 0 01-8 0V2z"/><path d="M8 5H5v3a3 3 0 003 3m8-6h3v3a3 3 0 01-3 3"/><line x1="12" y1="14" x2="12" y2="18"/><line x1="8" y1="22" x2="16" y2="22"/></svg>',
+  check_s:'<svg style="width:14px;height:14px;vertical-align:-2px;margin-right:6px" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><polyline points="4,12 9,17 20,7"/></svg>',
+  food_s:'<svg style="width:14px;height:14px;vertical-align:-2px;margin-right:6px" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><line x1="12" y1="2" x2="12" y2="22"/><path d="M5 2v6a3 3 0 006 0V2"/><line x1="2" y1="2" x2="2" y2="8"/></svg>',
+  cal_s:'<svg style="width:14px;height:14px;vertical-align:-2px;margin-right:6px" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="3" y1="9" x2="21" y2="9"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="16" y1="2" x2="16" y2="6"/><circle cx="8" cy="14" r="1" fill="currentColor"/><circle cx="12" cy="14" r="1" fill="currentColor"/><circle cx="16" cy="14" r="1" fill="currentColor"/></svg>',
+  card_s:'<svg style="width:14px;height:14px;vertical-align:-2px;margin-right:6px" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><rect x="2" y="5" width="20" height="14" rx="2"/><line x1="2" y1="10" x2="22" y2="10"/><line x1="6" y1="15" x2="9" y2="15"/></svg>',
+  workout_b:'<svg style="width:22px;height:22px;flex-shrink:0" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><line x1="6" y1="12" x2="18" y2="12"/><line x1="3" y1="12" x2="4.5" y2="12"/><line x1="19.5" y1="12" x2="21" y2="12"/><line x1="7" y1="9" x2="7" y2="15"/><line x1="17" y1="9" x2="17" y2="15"/><line x1="4.5" y1="10.5" x2="4.5" y2="13.5"/><line x1="19.5" y1="10.5" x2="19.5" y2="13.5"/></svg>',
+  steps_b:'<svg style="width:22px;height:22px;flex-shrink:0" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M13 4a1 1 0 102 0 1 1 0 00-2 0"/><path d="M14.5 6l-1 3-2 1-1 4h4l.5-2.5"/><path d="M7 10a1 1 0 102 0 1 1 0 00-2 0"/><path d="M8.5 12l-1 3-2 1-1 4h4l.5-2.5"/></svg>',
+  done_b:'<svg style="width:22px;height:22px;flex-shrink:0" viewBox="0 0 24 24" fill="none" stroke="var(--acc)" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="4,12 9,17 20,6"/></svg>',
+  sunrise:'<svg style="width:12px;height:12px;vertical-align:-1px;margin-right:4px" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M12 7a5 5 0 015 5H7a5 5 0 015-5z"/><line x1="12" y1="2" x2="12" y2="4"/><line x1="4.2" y1="4.2" x2="5.6" y2="5.6"/><line x1="19.8" y1="4.2" x2="18.4" y2="5.6"/><line x1="2" y1="12" x2="4" y2="12"/><line x1="22" y1="12" x2="20" y2="12"/><line x1="2" y1="16" x2="22" y2="16"/></svg>',
+  sun:'<svg style="width:12px;height:12px;vertical-align:-1px;margin-right:4px" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="4"/><line x1="12" y1="2" x2="12" y2="4"/><line x1="12" y1="20" x2="12" y2="22"/><line x1="4.2" y1="4.2" x2="5.6" y2="5.6"/><line x1="18.4" y1="18.4" x2="19.8" y2="19.8"/><line x1="2" y1="12" x2="4" y2="12"/><line x1="20" y1="12" x2="22" y2="12"/><line x1="4.2" y1="19.8" x2="5.6" y2="18.4"/><line x1="18.4" y1="5.6" x2="19.8" y2="4.2"/></svg>',
+  moon:'<svg style="width:12px;height:12px;vertical-align:-1px;margin-right:4px" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M21 12.79A9 9 0 1111.21 3 7 7 0 0021 12.79z"/></svg>',
+  prot:'<svg style="width:11px;height:11px;vertical-align:-1px;margin-right:4px" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M6 4v16M6 12h6a4 4 0 000-8H6"/></svg>',
+  carb:'<svg style="width:11px;height:11px;vertical-align:-1px;margin-right:4px" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><rect x="3" y="5" width="18" height="14" rx="3"/><line x1="3" y1="12" x2="21" y2="12"/></svg>',
+  fat:'<svg style="width:11px;height:11px;vertical-align:-1px;margin-right:4px" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><circle cx="12" cy="12" r="8"/><path d="M9 12a3 3 0 006 0"/></svg>',
+  pencil:'<svg style="width:11px;height:11px;vertical-align:-1px;margin-right:3px" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M11 4H4a2 2 0 00-2 2v14a2 2 0 002 2h14a2 2 0 002-2v-7"/><path d="M18.5 2.5a2.1 2.1 0 013 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>'
+};
 var RM_EXERCISES=[
-  {key:"squat",name:"Sentadilla",icon:"🏋️"},
-  {key:"hipthrust",name:"Hip thrust",icon:"🍑"},
-  {key:"bench",name:"Flexiones",icon:"💪",trackType:"reps"},
-  {key:"ohp",name:"Press inclinado",icon:"🔝",womenName:"Plancha brazos ext.",womenTrackType:"time"},
-  {key:"row",name:"Polea",icon:"🚣"},
-  {key:"pulldown",name:"Dominadas",icon:"📌",trackType:"reps"}
+  {key:"squat",name:"Sentadilla",icon:I.barbell},
+  {key:"hipthrust",name:"Hip thrust",icon:I.arrowup},
+  {key:"bench",name:"Flexiones",icon:I.flex,trackType:"reps"},
+  {key:"ohp",name:"Press inclinado",icon:I.arrowup,womenName:"Plancha brazos ext.",womenTrackType:"time"},
+  {key:"row",name:"Polea",icon:I.pullrow},
+  {key:"pulldown",name:"Dominadas",icon:I.pulldown,trackType:"reps"}
 ];
 var MESO_TYPES=[
-  {key:"pr",label:"Fuerza / PR",icon:"💪",reps:"1–5 reps",pct:"85–100% 1RM"},
-  {key:"hiper",label:"Hipertrofia",icon:"🏋️",reps:"6–12 reps",pct:"65–80% 1RM"},
-  {key:"power",label:"Potencia",icon:"⚡",reps:"3–6 reps",pct:"75–85% 1RM"},
-  {key:"deload",label:"Deload",icon:"🔄",reps:"15–20 reps",pct:"50–65% 1RM"}
+  {key:"pr",label:"Fuerza / PR",icon:I.barbell,reps:"1–5 reps",pct:"85–100% 1RM"},
+  {key:"hiper",label:"Hipertrofia",icon:I.barbell,reps:"6–12 reps",pct:"65–80% 1RM"},
+  {key:"power",label:"Potencia",icon:I.bolt,reps:"3–6 reps",pct:"75–85% 1RM"},
+  {key:"deload",label:"Deload",icon:I.repeat,reps:"15–20 reps",pct:"50–65% 1RM"}
 ];
 var MEAL_NAMES={
   3:["Desayuno","Almuerzo","Cena"],
@@ -280,9 +306,9 @@ var MEAL_NAMES={
 };
 var MEAL_DIST={3:[30,35,35],4:[25,30,30,15],5:[20,25,30,15,10],6:[15,20,25,20,12,8]};
 var TIME_OPTS=[
-  {key:"M",label:"🌅 Mañana",range:"6am–12pm"},
-  {key:"T",label:"☀️ Tarde",range:"12pm–6pm"},
-  {key:"N",label:"🌙 Noche",range:"6pm–10pm"}
+  {key:"M",label:"Mañana",range:"6am–12pm",ico:"sunrise"},
+  {key:"T",label:"Tarde",range:"12pm–6pm",ico:"sun"},
+  {key:"N",label:"Noche",range:"6pm–10pm",ico:"moon"}
 ];
 
 async function sha256(msg){
@@ -376,7 +402,7 @@ async function toggleWorkout(){
   var block=document.getElementById("tb-workout");
   if(block){
     block.className="today-block"+(e.w?" done-block":"");
-    block.querySelector(".today-block-icon").textContent=e.w?"✅":"🏋️";
+    block.querySelector(".today-block-icon").innerHTML=e.w?I.done_b:I.workout_b;
     block.querySelector(".check-btn").className="check-btn"+(e.w?" done":"");
     block.querySelector(".check-btn").textContent=e.w?"✓":"○";
     var ts=document.getElementById("wtime-section");if(ts)ts.style.display=e.w?"block":"none";
@@ -400,7 +426,7 @@ async function toggleSteps(){
   var block=document.getElementById("tb-steps");
   if(block){
     block.className="today-block"+(e.s?" done-block":"");
-    block.querySelector(".today-block-icon").textContent=e.s?"✅":"👟";
+    block.querySelector(".today-block-icon").innerHTML=e.s?I.done_b:I.steps_b;
     block.querySelector(".check-btn").className="check-btn"+(e.s?" done":"");
     block.querySelector(".check-btn").textContent=e.s?"✓":"○";
     var fill=block.querySelector(".step-bar-fill");if(fill)fill.style.width=(e.s?100:0)+"%";
@@ -491,7 +517,7 @@ function buildMealsHtml(){
 function buildNutriHtml(){
   if(!G.nutriOk){
     return'<div class="disclaimer-box">'+
-      '<div class="disclaimer-title">⚠️ Antes de continuar</div>'+
+      '<div class="disclaimer-title"><svg style="width:14px;height:14px;vertical-align:-2px;margin-right:6px" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M10.3 3.6L2.1 18A2 2 0 004 21h16a2 2 0 001.9-2.4L13.7 3.6a2 2 0 00-3.4 0z"/><line x1="12" y1="9" x2="12" y2="13"/><circle cx="12" cy="17" r="0.5" fill="currentColor"/></svg>Antes de continuar</div>'+
       '<ul class="disclaimer-list">'+
         '<li>Esta información es una <strong>estimación estándar</strong> basada en fórmulas generales (Mifflin-St Jeor). No reemplaza la guía de un nutricionista certificado.</li>'+
         '<li>No somos nutricionistas. Las cifras son referencias orientativas y pueden no ser exactas para tu caso particular.</li>'+
@@ -511,10 +537,10 @@ function buildNutriHtml(){
     '<div class="kcal-box"><div class="kcal-val" style="color:var(--warn)">'+macro.kcal+'</div><div class="kcal-lbl">Meta kcal</div></div>'+
   '</div>'+
   '<div style="font-size:10px;color:var(--txt2);margin-bottom:10px">'+actLabel+' · '+goalLabel+' · Hidratación ~'+(Math.round(macro.wkg*0.033*10)/10)+'–'+(Math.round(macro.wkg*0.040*10)/10)+' L/día</div>'+
-  '<div class="macro-row"><span class="macro-lbl" style="color:#ef4444">🥩 Proteína</span><div class="macro-bar"><div class="macro-fill" style="width:'+macro.pPct+'%;background:#ef4444"></div></div><span class="macro-val">'+macro.protG+'g · '+macro.pPct+'%</span></div>'+
-  '<div class="macro-row"><span class="macro-lbl" style="color:#fbbf24">🍞 Carbos</span><div class="macro-bar"><div class="macro-fill" style="width:'+macro.cPct+'%;background:#fbbf24"></div></div><span class="macro-val">'+macro.carbG+'g · '+macro.cPct+'%</span></div>'+
-  '<div class="macro-row"><span class="macro-lbl" style="color:#a78bfa">🥑 Grasas</span><div class="macro-bar"><div class="macro-fill" style="width:'+macro.fPct+'%;background:#a78bfa"></div></div><span class="macro-val">'+macro.fatG+'g · '+macro.fPct+'%</span></div>'+
-  '<button class="info-toggle" onclick="toggleInfo(\'inf-nutri\')" style="margin:8px 0">ℹ️ ¿Qué son TMB, TDEE y macros?</button>'+
+  '<div class="macro-row"><span class="macro-lbl" style="color:#ef4444">'+I.prot+'Proteína</span><div class="macro-bar"><div class="macro-fill" style="width:'+macro.pPct+'%;background:#ef4444"></div></div><span class="macro-val">'+macro.protG+'g · '+macro.pPct+'%</span></div>'+
+  '<div class="macro-row"><span class="macro-lbl" style="color:#fbbf24">'+I.carb+'Carbos</span><div class="macro-bar"><div class="macro-fill" style="width:'+macro.cPct+'%;background:#fbbf24"></div></div><span class="macro-val">'+macro.carbG+'g · '+macro.cPct+'%</span></div>'+
+  '<div class="macro-row"><span class="macro-lbl" style="color:#a78bfa">'+I.fat+'Grasas</span><div class="macro-bar"><div class="macro-fill" style="width:'+macro.fPct+'%;background:#a78bfa"></div></div><span class="macro-val">'+macro.fatG+'g · '+macro.fPct+'%</span></div>'+
+  '<button class="info-toggle" onclick="toggleInfo(\'inf-nutri\')" style="margin:8px 0"><svg style="width:12px;height:12px;vertical-align:-1px;margin-right:4px" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="9"/><line x1="12" y1="8" x2="12" y2="12"/><circle cx="12" cy="16" r="0.6" fill="currentColor"/></svg>¿Qué son TMB, TDEE y macros?</button>'+
   '<div class="info-box" id="inf-nutri"><table>'+
     '<tr><th>Término</th><th>Qué significa</th></tr>'+
     '<tr><td>TMB</td><td>Tasa Metabólica Basal. Las calorías mínimas que tu cuerpo necesita en reposo total: respirar, latir el corazón, funcionar. Si no hicieras nada el día entero, gastarías estas calorías.</td></tr>'+
@@ -533,7 +559,7 @@ function buildNutriHtml(){
   '</div>'+
   '<div id="meals-section">'+buildMealsHtml()+'</div>'+
   '<div style="margin-top:10px;padding:9px;background:var(--danger-d);border:1px solid rgba(248,113,113,.2);border-radius:8px;font-size:10px;color:var(--danger);line-height:1.6">'+
-    '⚠️ Estos valores son estimaciones. Verifica ingredientes si tienes alergias. Para un plan personalizado, consulta un nutricionista.'+
+    'Estos valores son estimaciones. Verifica ingredientes si tienes alergias. Para un plan personalizado, consulta un nutricionista.'+
   '</div>';
 }
 
@@ -623,9 +649,9 @@ function renderDashboard(rms){
     if(meso&&meso.start){var dp=Math.floor((Date.now()-new Date(meso.start))/(86400000));curWeek=Math.min(Math.max(Math.floor(dp/7),0),3);}
   }
   if(meso&&Array.isArray(meso.weeks)&&meso.weeks.length){
-    leftHtml+='<div class="card"><div class="ct">📅 Mi plan actual</div><div class="week-list">';
+    leftHtml+='<div class="card"><div class="ct">'+I.plan_s+' Mi plan actual</div><div class="week-list">';
     meso.weeks.forEach(function(w,i){
-      var mt=MESO_TYPES.find(function(t){return t.key===w.type;})||{label:w.type||"Semana",icon:"📋",reps:"—",pct:"—"};
+      var mt=MESO_TYPES.find(function(t){return t.key===w.type;})||{label:w.type||"Semana",icon:I.barbell,reps:"—",pct:"—"};
       var isCur=i===curWeek;
       leftHtml+='<div class="week-item'+(isCur?" cur":"")+'"><div class="wnum">S'+(i+1)+'</div>'+
         '<div class="winfo"><div class="wtype">'+mt.icon+' '+esc(mt.label)+'</div><div class="wdetail">'+esc(mt.reps)+' · '+esc(mt.pct)+'</div></div>'+
@@ -711,7 +737,7 @@ function renderDashboard(rms){
     statsHtml+='</div>';
   }
 
-  leftHtml+='<div class="card"><div class="ct">📊 Estadísticas corporales</div>'+statsHtml+'</div>';
+  leftHtml+='<div class="card"><div class="ct">'+I.stats_s+' Estadísticas corporales</div>'+statsHtml+'</div>';
 
   /* RM */
   var rmCards="";
@@ -723,10 +749,10 @@ function renderDashboard(rms){
     var val=stored.rm,valStr="—";
     if(val!=null){if(effTrack==="weight")valStr=val+" kg";else if(effTrack==="reps")valStr=val+" reps";else valStr=fmtTime(val);}
     var badge="";
-    if(stored.isoDate){var dd=Math.floor((Date.now()-new Date(stored.isoDate))/(86400000));badge=dd>60?'<span class="badge bd">⚠ Vencido</span>':dd>45?'<span class="badge bw">⏳ Por vencer</span>':'<span class="badge bg">✓ Vigente</span>';}
+    if(stored.isoDate){var dd=Math.floor((Date.now()-new Date(stored.isoDate))/(86400000));badge=dd>60?'<span class="badge bd">! Vencido</span>':dd>45?'<span class="badge bw">~ Por vencer</span>':'<span class="badge bg">✓ Vigente</span>';}
     rmCards+='<div class="rm-card"><div class="rm-icon">'+ex.icon+'</div><div class="rm-name">'+esc(effName)+'</div><div class="rm-val">'+esc(valStr)+'</div>'+(stored.date?'<div class="rm-date">'+esc(stored.date)+'</div>':'')+(badge?'<div style="margin-top:5px">'+badge+'</div>':'')+'</div>';
   });
-  if(rmCards)leftHtml+='<div class="card"><div class="ct">🏆 Marcas (RM)</div><div class="rm-grid">'+rmCards+'</div></div>';
+  if(rmCards)leftHtml+='<div class="card"><div class="ct">'+I.trophy_s+' Marcas (RM)</div><div class="rm-grid">'+rmCards+'</div></div>';
 
   /* ══ DERECHA ══ */
   var te=todayEntry(),mc=G.mealCount;
@@ -735,12 +761,12 @@ function renderDashboard(rms){
   dateLabel=dateLabel.charAt(0).toUpperCase()+dateLabel.slice(1);
 
   /* HOY */
-  var wtimePills=TIME_OPTS.map(function(t){return'<button id="wt-'+t.key+'" class="time-pill'+(te.wtime===t.key?" on":"")+'" onclick="setWtime(\''+t.key+'\')">'+t.label+'</button>';}).join("");
+  var wtimePills=TIME_OPTS.map(function(t){return'<button id="wt-'+t.key+'" class="time-pill'+(te.wtime===t.key?" on":"")+'" onclick="setWtime(\''+t.key+'\')">'+I[t.ico]+t.label+'</button>';}).join("");
   var stepPct=te.s?100:0;
-  rightHtml+='<div class="card"><div class="ct">✅ Hoy <span style="font-size:11px;font-weight:400;color:var(--txt2);margin-left:4px">'+dateLabel+'</span></div>'+
+  rightHtml+='<div class="card"><div class="ct">'+I.check_s+' Hoy <span style="font-size:11px;font-weight:400;color:var(--txt2);margin-left:4px">'+dateLabel+'</span></div>'+
     '<div style="display:flex;flex-direction:column;gap:8px">'+
     '<div class="today-block'+(te.w?" done-block":"")+'" id="tb-workout">'+
-      '<span class="today-block-icon">'+(te.w?"✅":"🏋️")+'</span>'+
+      '<span class="today-block-icon">'+(te.w?I.done_b:I.workout_b)+'</span>'+
       '<div class="today-block-info">'+
         '<div class="today-block-name">Entrenamiento</div>'+
         '<div class="today-block-sub">Sesión del día</div>'+
@@ -752,7 +778,7 @@ function renderDashboard(rms){
       '<button class="check-btn'+(te.w?" done":"")+'" onclick="toggleWorkout()" style="margin-top:2px">'+(te.w?"✓":"○")+'</button>'+
     '</div>'+
     '<div class="today-block'+(te.s?" done-block":"")+'" id="tb-steps">'+
-      '<span class="today-block-icon">'+(te.s?"✅":"👟")+'</span>'+
+      '<span class="today-block-icon">'+(te.s?I.done_b:I.steps_b)+'</span>'+
       '<div class="today-block-info">'+
         '<div class="today-block-name">Pasos</div>'+
         '<div id="step-goal-lbl" class="today-block-sub">Meta: '+G.stepsGoal.toLocaleString("es-CO")+' pasos</div>'+
@@ -761,17 +787,17 @@ function renderDashboard(rms){
           '<input class="step-goal-inp" id="step-goal-inp" type="number" min="1000" max="50000" step="500" placeholder="Pasos meta">'+
           '<button class="step-save-btn" onclick="saveStepGoal()">Guardar</button>'+
         '</div>'+
-        '<button class="edit-link" onclick="showStepEdit()">✏️ Cambiar meta</button>'+
+        '<button class="edit-link" onclick="showStepEdit()">'+I.pencil+' Cambiar meta</button>'+
       '</div>'+
       '<button class="check-btn'+(te.s?" done":"")+'" onclick="toggleSteps()" style="margin-top:2px">'+(te.s?"✓":"○")+'</button>'+
     '</div>'+
     '</div></div>';
 
   /* NUTRICIÓN */
-  rightHtml+='<div class="card"><div class="ct">🥗 Nutrición</div><div id="nutri-content">'+buildNutriHtml()+'</div></div>';
+  rightHtml+='<div class="card"><div class="ct">'+I.food_s+' Nutrición</div><div id="nutri-content">'+buildNutriHtml()+'</div></div>';
 
   /* CALENDARIO */
-  rightHtml+='<div class="card"><div class="ct">📆 Calendario</div><div id="calendar-inner">'+buildCalendar()+'</div></div>';
+  rightHtml+='<div class="card"><div class="ct">'+I.cal_s+' Calendario</div><div id="calendar-inner">'+buildCalendar()+'</div></div>';
 
   /* MEMBRESÍA */
   var payStatus=st.payStatus||"Pendiente";
@@ -787,7 +813,7 @@ function renderDashboard(rms){
     memHtml+='<div class="mem-row"><span class="mem-key">Próximo pago</span><span class="mem-val">'+esc(st.nextPayDate)+' <span style="color:'+diffCol+';font-size:10px">('+( diff===0?"Hoy":diff>0?"En "+diff+"d":"Hace "+Math.abs(diff)+"d")+')</span></span></div>';
   }
   if(st.months)memHtml+='<div class="mem-row"><span class="mem-key">Meses entrenando</span><span class="mem-val">'+st.months+'</span></div>';
-  rightHtml+='<div class="card"><div class="ct">💳 Membresía</div>'+memHtml+'</div>';
+  rightHtml+='<div class="card"><div class="ct">'+I.card_s+' Membresía</div>'+memHtml+'</div>';
 
   document.getElementById("app-body").innerHTML='<div class="two-col"><div class="col">'+leftHtml+'</div><div class="col">'+rightHtml+'</div></div>';
 }
