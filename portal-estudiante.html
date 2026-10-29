@@ -905,7 +905,7 @@ function renderDashboard(rms){
   /* HOY */
   var wtimePills=TIME_OPTS.map(function(t){return'<button id="wt-'+t.key+'" class="time-pill'+(te.wtime===t.key?" on":"")+'" onclick="setWtime(\''+t.key+'\')">'+I[t.ico]+t.label+'</button>';}).join("");
   var stepPct=te.s?100:0;
-  var rachaHoy=(function(){var c=0;var td=new Date();for(var d=0;d<365;d++){var dd=new Date(td);dd.setDate(dd.getDate()-d);var dk=dd.toISOString().slice(0,10);var en=(G.calData||{})[dk];if(en&&(en.w||en.s))c++;else break;}return c;})();
+  var rachaHoy=(function(){var c=0;var td=new Date();for(var d=0;d<365;d++){var dd=new Date(td);dd.setDate(dd.getDate()-d);var dow=dd.getDay();var dk=dd.toISOString().slice(0,10);var en=(G.calData||{})[dk];if(en&&(en.w||en.s)){c++;}else if(dow===0||dow===6){/* fin de semana opcional, no rompe racha */}else{break;}}return c;})();
   rightHtml+='<div class="card"><div class="ct">'+I.check_s+' HOY <span style="font-size:11px;font-weight:400;color:var(--txt2);margin-left:4px">'+dateLabel+'</span></div>'+
     (rachaHoy>0?'<div class="racha-display"><span class="racha-num">'+rachaHoy+'</span> dias consecutivos.</div>':'')+
     '<div style="display:flex;flex-direction:column;gap:8px">'+
@@ -1137,11 +1137,13 @@ function computeProgress(calData,book,diarioCount){
   });
   var consecutive=0;
   var today=new Date();
-  for(var d=0;d<365;d++){
+  for(var d=0;d<500;d++){
     var dd=new Date(today);dd.setDate(dd.getDate()-d);
     var dk=dd.toISOString().slice(0,10);
+    var dow2=dd.getDay();
     var entry=(calData||{})[dk];
     if(entry&&(entry.w||entry.s))consecutive++;
+    else if(dow2===0||dow2===6){/* fin de semana opcional */}
     else break;
   }
   var libros=0;
@@ -1490,10 +1492,12 @@ async function checkNotifs(st,ev,calData){
   // Alerta: 5+ días sin marcar entrenamiento
   if(!shown.streak){
     var daysBack=0,daysNoWorkout=0;
-    for(var d=0;d<7;d++){
+    for(var d=0;d<10;d++){
       var dd=new Date(today);dd.setDate(dd.getDate()-d);
+      var dowA=dd.getDay();
       var dk=dd.toISOString().slice(0,10);
       var entry=calData[dk];
+      if(dowA===0||dowA===6)continue;
       if(!entry||!entry.w)daysNoWorkout++;else break;
     }
     if(daysNoWorkout>=5){
