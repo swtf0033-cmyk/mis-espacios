@@ -294,7 +294,10 @@ body{font-family:'Inter',system-ui,sans-serif;background:var(--bg);color:var(--t
 .progreso-card{background:var(--surf);border:1px solid var(--border);border-radius:4px;padding:12px 14px}
 .progreso-card-done{border-color:var(--acc)}
 .progreso-card-label{font-family:'Oswald',sans-serif;font-size:10px;font-weight:700;letter-spacing:.12em;color:var(--txt2);text-transform:uppercase;margin-bottom:4px}
+.progreso-card-top{display:flex;align-items:flex-end;justify-content:space-between;gap:6px}
 .progreso-card-count{font-family:'Oswald',sans-serif;font-weight:700;font-size:34px;color:var(--txt);line-height:1}
+.progreso-card-pct{font-family:'Oswald',sans-serif;font-weight:700;font-size:18px;color:var(--txt2);line-height:1;padding-bottom:2px}
+.progreso-card-pct-done{color:var(--acc)}
 .progreso-card-meta{font-size:10px;color:var(--txt2);margin-top:4px;text-transform:lowercase}
 .progreso-bar{height:3px;background:var(--border);border-radius:2px;margin-top:10px}
 .progreso-bar-fill{height:100%;background:var(--acc);border-radius:2px;transition:width .4s}
@@ -1185,8 +1188,11 @@ function buildProgresoHtml(progress,badges){
     }
     html+='<div class="progreso-card'+(earnedAll?" progreso-card-done":"")+'">'+
       '<div class="progreso-card-label">'+cat.label+'</div>'+
-      '<div class="progreso-card-count">'+count+'</div>'+
-      '<div class="progreso-card-meta">'+(earnedAll?'todos los logros completados':'meta: '+nextMilestone+' &mdash; '+nextLabel)+'</div>'+
+      '<div class="progreso-card-top">'+
+        '<div class="progreso-card-count">'+count+'</div>'+
+        '<div class="progreso-card-pct'+(earnedAll?" progreso-card-pct-done":"")+'">'+pct+'%</div>'+
+      '</div>'+
+      '<div class="progreso-card-meta">'+(earnedAll?'completado':'meta: '+nextMilestone+' &mdash; '+nextLabel)+'</div>'+
       '<div class="progreso-bar"><div class="progreso-bar-fill" style="width:'+pct+'%"></div></div>'+
       (lastEarned?'<div class="progreso-card-date">ultimo logro: '+lastEarned+'</div>':'')+
     '</div>';
