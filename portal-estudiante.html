@@ -68,6 +68,20 @@ body{font-family:'Inter',system-ui,sans-serif;background:var(--bg);color:var(--t
 .info-box td{padding:5px 6px 5px 0;border-bottom:1px solid var(--border);line-height:1.4;vertical-align:top}
 .info-box tr:last-child td{border-bottom:none}
 .info-box td:first-child{font-weight:600;white-space:nowrap;color:var(--acc);padding-right:10px}
+/* NOTIF BANNER */
+.notif-banner{position:fixed;top:60px;right:14px;z-index:200;display:flex;flex-direction:column;gap:8px;max-width:320px;pointer-events:none}
+.notif-toast{background:var(--card);border:1px solid var(--border2);border-left:3px solid var(--acc);border-radius:4px;padding:12px 14px;pointer-events:all;display:flex;gap:10px;align-items:flex-start;box-shadow:0 8px 32px rgba(0,0,0,.6);animation:notif-in .25s ease}
+.notif-toast.nt-ok{border-left-color:var(--green)}
+.notif-toast.nt-warn{border-left-color:var(--warn)}
+.notif-toast.nt-alert{border-left-color:var(--danger)}
+.notif-icon{flex-shrink:0;margin-top:1px;opacity:.9}
+.notif-body{flex:1;min-width:0}
+.notif-title{font-family:'Oswald',sans-serif;font-size:12px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:var(--txt);margin-bottom:2px}
+.notif-msg{font-size:11px;color:var(--txt2);line-height:1.4}
+.notif-close{flex-shrink:0;background:none;border:none;color:var(--txt3);font-size:14px;cursor:pointer;padding:0;line-height:1;margin-top:-1px;transition:color .15s}
+.notif-close:hover{color:var(--txt)}
+@keyframes notif-in{from{opacity:0;transform:translateX(20px)}to{opacity:1;transform:translateX(0)}}
+@media(max-width:480px){.notif-banner{left:10px;right:10px;max-width:100%}}
 /* IMC SCALE */
 .imc-scale{margin:10px 0 8px}
 .imc-bar{display:flex;height:8px;border-radius:99px;overflow:hidden;margin-bottom:6px}
@@ -239,6 +253,8 @@ body{font-family:'Inter',system-ui,sans-serif;background:var(--bg);color:var(--t
   </div>
 </div>
 
+<div id="notif-banner" class="notif-banner"></div>
+
 <div id="app">
   <div class="app-header">
     <div class="app-logo">INAMOVIBLE <span>APP</span></div>
@@ -390,6 +406,8 @@ async function loadDashboard(sid){
     document.getElementById("app-stname").textContent=G.st.name||"Estudiante";
     document.getElementById("app-stobj").textContent=G.st.objective||"";
     renderDashboard(rms);
+    requestNotifPermission();
+    setTimeout(function(){checkNotifs(G.st,G.evals&&G.evals[0],G.calData);},800);
   }catch(e){
     document.getElementById("app-body").innerHTML='<div class="loading-wrap">Error cargando datos. Recarga la página.</div>';
   }
@@ -816,6 +834,108 @@ function renderDashboard(rms){
   rightHtml+='<div class="card"><div class="ct">'+I.card_s+' Membresía</div>'+memHtml+'</div>';
 
   document.getElementById("app-body").innerHTML='<div class="two-col"><div class="col">'+leftHtml+'</div><div class="col">'+rightHtml+'</div></div>';
+}
+
+/* ══ NOTIFICACIONES ══ */
+var QUOTES=[
+  "El dolor es temporal. El rendirse dura para siempre.",
+  "No busques motivación. Busca disciplina.",
+  "Cada repetición que no querías hacer es la que te define.",
+  "El cuerpo logra lo que la mente cree.",
+  "Consistencia sobre intensidad. Siempre.",
+  "No eres el mismo que el año pasado. Sigue.",
+  "El esfuerzo de hoy es el cuerpo de mañana.",
+  "Nadie recuerda los días que descansaste de más.",
+  "La incomodidad es el precio del progreso.",
+  "Entrena como si nadie estuviera mirando. El resultado lo verán todos.",
+  "Un kilómetro a la vez. Un entrenamiento a la vez.",
+  "No existen atajos que valgan la pena.",
+  "El único mal entrenamiento es el que no hiciste.",
+  "Tu único competidor eres tú de ayer.",
+  "La disciplina es la libertad que otros no tienen."
+];
+
+function showToast(title,msg,type,autoClose){
+  var wrap=document.getElementById("notif-banner");if(!wrap)return;
+  var icons={acc:'<svg style="width:16px;height:16px" viewBox="0 0 24 24" fill="none" stroke="var(--acc)" stroke-width="2.5" stroke-linecap="round"><polyline points="4,12 9,17 20,6"/></svg>',ok:'<svg style="width:16px;height:16px" viewBox="0 0 24 24" fill="none" stroke="var(--green)" stroke-width="2.5" stroke-linecap="round"><polyline points="4,12 9,17 20,6"/></svg>',warn:'<svg style="width:16px;height:16px" viewBox="0 0 24 24" fill="none" stroke="var(--warn)" stroke-width="2.5" stroke-linecap="round"><path d="M10.3 3.6L2.1 18A2 2 0 004 21h16a2 2 0 001.9-2.4L13.7 3.6a2 2 0 00-3.4 0z"/><line x1="12" y1="9" x2="12" y2="13"/></svg>',alert:'<svg style="width:16px;height:16px" viewBox="0 0 24 24" fill="none" stroke="var(--danger)" stroke-width="2.5" stroke-linecap="round"><circle cx="12" cy="12" r="9"/><line x1="12" y1="8" x2="12" y2="12"/><circle cx="12" cy="16" r=".8" fill="var(--danger)"/></svg>'};
+  var t=document.createElement("div");
+  t.className="notif-toast nt-"+(type||"acc");
+  t.innerHTML='<span class="notif-icon">'+(icons[type||"acc"]||icons.acc)+'</span><div class="notif-body"><div class="notif-title">'+title+'</div><div class="notif-msg">'+msg+'</div></div><button class="notif-close" onclick="this.closest(\'.notif-toast\').remove()">✕</button>';
+  wrap.appendChild(t);
+  if(autoClose!==false)setTimeout(function(){if(t.parentNode)t.remove();},7000);
+}
+
+function sendBrowserNotif(title,body){
+  if(!("Notification" in window))return;
+  if(Notification.permission==="granted"){
+    try{new Notification(title,{body:body,icon:"icon.png",badge:"icon.png",tag:"inamovible-app"});}catch(e){}
+  }
+}
+
+function requestNotifPermission(){
+  if(!("Notification" in window))return;
+  if(Notification.permission==="default"){
+    Notification.requestPermission();
+  }
+}
+
+function checkNotifs(st,ev,calData){
+  var today=G.today;
+  var lsKey="ina_notif_"+G.sid+"_"+today;
+  var shown={};
+  try{shown=JSON.parse(localStorage.getItem(lsKey)||"{}");} catch(e){}
+
+  // Motivacional diario — una vez al día
+  if(!shown.quote){
+    var dayNum=parseInt(today.replace(/-/g,""))%QUOTES.length;
+    var q=QUOTES[dayNum];
+    showToast("INAMOVIBLE",q,"acc",false);
+    sendBrowserNotif("INAMOVIBLE",q);
+    shown.quote=1;
+  }
+
+  // Alerta: membresía por vencer o vencida
+  if(!shown.pay&&st.nextPayDate){
+    var np=new Date(st.nextPayDate),now=new Date();now.setHours(0,0,0,0);
+    var diff=Math.round((np-now)/86400000);
+    if(diff<0){
+      showToast("MEMBRESÍA VENCIDA","Tu membresía venció hace "+Math.abs(diff)+" día"+(Math.abs(diff)>1?"s":"")+". Habla con tu coach.","alert",false);
+      sendBrowserNotif("Membresía vencida","Tu membresía venció hace "+Math.abs(diff)+" días. Habla con tu coach.");
+      shown.pay=1;
+    }else if(diff<=5){
+      showToast("MEMBRESÍA","Tu membresía vence en "+diff+" día"+(diff>1?"s":"")+". Renueva a tiempo.","warn",false);
+      sendBrowserNotif("Membresía por vencer","Vence en "+diff+" días. Renueva a tiempo.");
+      shown.pay=1;
+    }
+  }
+
+  // Alerta: evaluación muy antigua (>35 días)
+  if(!shown.eval&&ev&&ev.date){
+    var evDate=new Date(ev.date);var daysSince=Math.floor((new Date()-evDate)/86400000);
+    if(daysSince>35){
+      showToast("EVALUACIÓN","Tu última evaluación fue hace "+daysSince+" días. Habla con tu coach para programar una nueva.","warn",false);
+      sendBrowserNotif("Evaluación pendiente","Tu última evaluación fue hace "+daysSince+" días.");
+      shown.eval=1;
+    }
+  }
+
+  // Alerta: 5+ días sin marcar entrenamiento
+  if(!shown.streak){
+    var daysBack=0,daysNoWorkout=0;
+    for(var d=0;d<7;d++){
+      var dd=new Date(today);dd.setDate(dd.getDate()-d);
+      var dk=dd.toISOString().slice(0,10);
+      var entry=calData[dk];
+      if(!entry||!entry.w)daysNoWorkout++;else break;
+    }
+    if(daysNoWorkout>=5){
+      showToast("SIN REGISTROS","Llevas "+daysNoWorkout+" días sin marcar entrenamiento. ¿Todo bien?","warn",false);
+      sendBrowserNotif("Sin registros","Llevas "+daysNoWorkout+" días sin marcar entrenamiento.");
+      shown.streak=1;
+    }
+  }
+
+  try{localStorage.setItem(lsKey,JSON.stringify(shown));}catch(e){}
 }
 
 (function(){var sid=sessionStorage.getItem("portal_sid");if(sid)loadDashboard(sid);})();
