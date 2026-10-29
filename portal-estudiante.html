@@ -287,6 +287,32 @@ body{font-family:'Inter',system-ui,sans-serif;background:var(--bg);color:var(--t
   .info-box td,.info-box th{padding:4px 4px 4px 0}
   .disclaimer-list li{font-size:10px}
 }
+/* PROGRESO */
+.progreso-section{margin-bottom:20px}
+.progreso-cat-title{font-family:'Oswald',sans-serif;font-size:11px;font-weight:700;letter-spacing:.1em;color:var(--txt2);text-transform:uppercase;margin-bottom:8px}
+.logro-list{display:flex;flex-direction:column;gap:4px}
+.logro-item{display:flex;align-items:center;gap:10px;padding:8px 10px;border-radius:3px;border:1px solid var(--border)}
+.logro-item.earned{background:var(--surf);border-color:var(--border2)}
+.logro-item.next{background:var(--acc-d);border-color:var(--acc);border-left:3px solid var(--acc)}
+.logro-item.locked{opacity:.3}
+.logro-num{font-family:'Oswald',sans-serif;font-weight:700;font-size:18px;color:var(--acc);min-width:36px}
+.logro-label{font-size:11px;font-weight:600;text-transform:uppercase;letter-spacing:.05em;flex:1}
+.logro-date{font-size:10px;color:var(--txt2)}
+.logro-target{font-family:'Oswald',sans-serif;font-weight:700;font-size:18px;color:var(--acc);min-width:50px}
+.logro-progress{font-size:10px;color:var(--txt2);white-space:nowrap}
+.racha-display{font-size:12px;color:var(--txt2);margin-bottom:10px;padding:8px 0;border-bottom:1px solid var(--border)}
+.racha-num{font-family:'Oswald',sans-serif;font-weight:700;font-size:20px;color:var(--txt)}
+/* DIARIO */
+.diario-q{font-size:13px;font-weight:600;line-height:1.5;margin-bottom:10px;color:var(--txt)}
+.diario-inp{width:100%;background:var(--surf);border:1px solid var(--border);color:var(--txt);border-radius:3px;padding:10px;font-size:12px;font-family:'Inter',sans-serif;outline:none;resize:vertical;min-height:80px}
+.diario-inp:focus{border-color:var(--acc)}
+.diario-btn{background:var(--acc);color:#fff;border:none;border-radius:3px;padding:9px 16px;font-size:11px;font-weight:700;font-family:'Oswald',sans-serif;letter-spacing:.08em;text-transform:uppercase;cursor:pointer;margin-top:8px}
+/* OBSTACULO */
+.obs-inp{width:100%;background:var(--surf);border:1px solid var(--border);color:var(--txt);border-radius:3px;padding:10px;font-size:12px;font-family:'Inter',sans-serif;outline:none;resize:vertical;min-height:60px;margin-bottom:8px}
+.obs-inp:focus{border-color:var(--acc)}
+.obs-hist-item{padding:8px 10px;background:var(--surf);border:1px solid var(--border);border-radius:3px;margin-bottom:6px;font-size:11px;line-height:1.5}
+.obs-hist-date{font-size:9px;color:var(--txt3);margin-top:4px}
+.obs-q{font-size:11px;font-weight:600;color:var(--txt2);text-transform:uppercase;letter-spacing:.06em;margin-bottom:6px}
 </style>
 </head>
 <body>
@@ -324,7 +350,7 @@ var SB_URL="https://qnkaaiazuwkofbbhrtns.supabase.co";
 var SB_KEY="sb_publishable_rS6hiZnNzUevos6Z8n9VDA_V6KSzj0u";
 var SB_H={"apikey":SB_KEY,"Authorization":"Bearer "+SB_KEY,"Content-Type":"application/json"};
 var LSK="misEsp_";
-var G={sid:null,today:new Date().toISOString().slice(0,10),calData:{},mealCount:5,stepsGoal:8000,nutriOk:false,st:{},nutrition:{},plan:null,evals:[],att:[],calMonth:null,shownQuotes:[],notes:[],badges:{},ranking:[],book:null};
+var G={sid:null,today:new Date().toISOString().slice(0,10),calData:{},mealCount:5,stepsGoal:8000,nutriOk:false,st:{},nutrition:{},plan:null,evals:[],att:[],calMonth:null,shownQuotes:[],notes:[],badges:{},ranking:[],book:null,diario:[],obstaculo:[]};
 var I={
   barbell:'<svg style="width:16px;height:16px" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><line x1="6" y1="12" x2="18" y2="12"/><line x1="3" y1="12" x2="4" y2="12"/><line x1="20" y1="12" x2="21" y2="12"/><line x1="7" y1="9" x2="7" y2="15"/><line x1="17" y1="9" x2="17" y2="15"/><line x1="4" y1="10" x2="4" y2="14"/><line x1="20" y1="10" x2="20" y2="14"/></svg>',
   flex:'<svg style="width:16px;height:16px" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9c1-3 4-4 6-2s1 5-1 6 0 4 3 5"/><path d="M18 7c-1 2-3 3-3 5s2 4 1 6"/></svg>',
@@ -426,7 +452,7 @@ async function doLogin(){
 }
 function doLogout(){
   sessionStorage.removeItem("portal_sid");
-  Object.assign(G,{sid:null,calData:{},mealCount:5,stepsGoal:8000,nutriOk:false,st:{},nutrition:{},plan:null,evals:[],att:[],shownQuotes:[],notes:[],badges:{},ranking:[],book:null});
+  Object.assign(G,{sid:null,calData:{},mealCount:5,stepsGoal:8000,nutriOk:false,st:{},nutrition:{},plan:null,evals:[],att:[],shownQuotes:[],notes:[],badges:{},ranking:[],book:null,diario:[],obstaculo:[]});
   document.getElementById("login").style.display="flex";
   document.getElementById("app").style.display="none";
   document.getElementById("inp-pass").value="";
@@ -455,7 +481,9 @@ async function loadDashboard(sid){
       fetchSbKey("portal-notes-"+sid),
       fetchSbKey("portal-badges-"+sid),
       fetchSbKey("portal-ranking"),
-      fetchSbKey("portal-book-"+sid)
+      fetchSbKey("portal-book-"+sid),
+      fetchSbKey("portal-diario-"+sid),
+      fetchSbKey("portal-obstaculo-"+sid)
     ]);
     var students=res[0]||[],rms=res[1]||{};
     G.plan=res[2];G.evals=res[3]||[];G.att=res[4]||[];
@@ -468,6 +496,8 @@ async function loadDashboard(sid){
     G.badges=res[12]||{};
     G.ranking=res[13]||[];
     G.book=res[14]||null;
+    G.diario=res[15]||[];
+    G.obstaculo=res[16]||[];
     G.st=students.find(function(s){return s.id===sid;})||{};
     document.getElementById("app-stname").textContent=G.st.name||"Estudiante";
     document.getElementById("app-stobj").textContent=G.st.objective||"";
@@ -737,7 +767,7 @@ function renderDashboard(rms){
   var ev0=G.evals&&G.evals.length?G.evals[0]:null;
   if(ev0&&ev0.weight)profTags+='<span class="prof-tag">'+ev0.weight+' kg</span>';
   if(st.objective)profTags+='<span class="prof-tag">'+esc(st.objective)+'</span>';
-  leftHtml+='<div class="card"><div class="ct">'+I.user_s+' Mi perfil</div>'+
+  leftHtml+='<div class="card"><div class="ct">'+I.user_s+' PERFIL</div>'+
     '<div class="prof-row"><div class="prof-avatar">'+initials+'</div>'+
     '<div><div class="prof-name">'+esc(st.name||"Estudiante")+'</div>'+
     (st.objective?'<div class="prof-obj">'+esc(st.objective)+'</div>':'')+
@@ -754,7 +784,7 @@ function renderDashboard(rms){
     if(meso&&meso.start){var dp=Math.floor((Date.now()-new Date(meso.start))/(86400000));curWeek=Math.min(Math.max(Math.floor(dp/7),0),3);}
   }
   if(meso&&Array.isArray(meso.weeks)&&meso.weeks.length){
-    leftHtml+='<div class="card"><div class="ct">'+I.plan_s+' Mi plan actual</div><div class="week-list">';
+    leftHtml+='<div class="card"><div class="ct">'+I.plan_s+' MI PLAN</div><div class="week-list">';
     meso.weeks.forEach(function(w,i){
       var mt=MESO_TYPES.find(function(t){return t.key===w.type;})||{label:w.type||"Semana",icon:I.barbell,reps:"—",pct:"—"};
       var isCur=i===curWeek;
@@ -842,7 +872,7 @@ function renderDashboard(rms){
     statsHtml+='</div>';
   }
 
-  leftHtml+='<div class="card"><div class="ct">'+I.stats_s+' Estadísticas corporales</div>'+statsHtml+'</div>';
+  leftHtml+='<div class="card"><div class="ct">'+I.stats_s+' CUERPO</div>'+statsHtml+'</div>';
 
   /* RM */
   var rmCards="";
@@ -857,18 +887,11 @@ function renderDashboard(rms){
     if(stored.isoDate){var dd=Math.floor((Date.now()-new Date(stored.isoDate))/(86400000));badge=dd>60?'<span class="badge bd">! Vencido</span>':dd>45?'<span class="badge bw">~ Por vencer</span>':'<span class="badge bg">✓ Vigente</span>';}
     rmCards+='<div class="rm-card"><div class="rm-icon">'+ex.icon+'</div><div class="rm-name">'+esc(effName)+'</div><div class="rm-val">'+esc(valStr)+'</div>'+(stored.date?'<div class="rm-date">'+esc(stored.date)+'</div>':'')+(badge?'<div style="margin-top:5px">'+badge+'</div>':'')+'</div>';
   });
-  if(rmCards)leftHtml+='<div class="card"><div class="ct">'+I.trophy_s+' Marcas (RM)</div><div class="rm-grid">'+rmCards+'</div></div>';
+  if(rmCards)leftHtml+='<div class="card"><div class="ct">'+I.trophy_s+' MARCAS</div><div class="rm-grid">'+rmCards+'</div></div>';
 
-  /* LOGROS */
-  var badgesHtml=BADGE_DEFS.map(function(b){
-    var earned=G.badges&&G.badges[b.key];
-    return'<div class="badge-item'+(earned?" earned":"")+'">'+
-      '<span class="badge-icon">'+b.icon+'</span>'+
-      '<div class="badge-lbl">'+esc(b.name)+'</div>'+
-      (earned?'<div class="badge-dt">'+esc(G.badges[b.key])+'</div>':'')+
-    '</div>';
-  }).join("");
-  leftHtml+='<div class="card"><div class="ct">'+I.medal_s+' Logros</div><div class="badges-grid">'+badgesHtml+'</div></div>';
+  /* PROGRESO */
+  var prog=computeProgress(G.calData,G.book,G.diario.length);
+  leftHtml+='<div class="card"><div class="ct">'+I.medal_s+' PROGRESO</div>'+buildProgresoHtml(prog,G.badges||{})+'</div>';
 
   /* ══ DERECHA ══ */
   var te=todayEntry(),mc=G.mealCount;
@@ -879,7 +902,9 @@ function renderDashboard(rms){
   /* HOY */
   var wtimePills=TIME_OPTS.map(function(t){return'<button id="wt-'+t.key+'" class="time-pill'+(te.wtime===t.key?" on":"")+'" onclick="setWtime(\''+t.key+'\')">'+I[t.ico]+t.label+'</button>';}).join("");
   var stepPct=te.s?100:0;
-  rightHtml+='<div class="card"><div class="ct">'+I.check_s+' Hoy <span style="font-size:11px;font-weight:400;color:var(--txt2);margin-left:4px">'+dateLabel+'</span></div>'+
+  var rachaHoy=(function(){var c=0;var td=new Date();for(var d=0;d<365;d++){var dd=new Date(td);dd.setDate(dd.getDate()-d);var dk=dd.toISOString().slice(0,10);var en=(G.calData||{})[dk];if(en&&(en.w||en.s))c++;else break;}return c;})();
+  rightHtml+='<div class="card"><div class="ct">'+I.check_s+' HOY <span style="font-size:11px;font-weight:400;color:var(--txt2);margin-left:4px">'+dateLabel+'</span></div>'+
+    (rachaHoy>0?'<div class="racha-display"><span class="racha-num">'+rachaHoy+'</span> dias consecutivos.</div>':'')+
     '<div style="display:flex;flex-direction:column;gap:8px">'+
     '<div class="today-block'+(te.w?" done-block":"")+'" id="tb-workout">'+
       '<span class="today-block-icon">'+(te.w?I.done_b:I.workout_b)+'</span>'+
@@ -918,20 +943,26 @@ function renderDashboard(rms){
     })()+
     '</div></div>';
 
-  /* NUTRICIÓN */
-  rightHtml+='<div class="card"><div class="ct">'+I.food_s+' Nutrición</div><div id="nutri-content">'+buildNutriHtml()+'</div></div>';
+  /* INGESTA */
+  rightHtml+='<div class="card"><div class="ct">'+I.food_s+' INGESTA</div><div id="nutri-content">'+buildNutriHtml()+'</div></div>';
 
-  /* CALENDARIO */
-  rightHtml+='<div class="card"><div class="ct">'+I.cal_s+' Calendario</div><div id="calendar-inner">'+buildCalendar()+'</div></div>';
+  /* REGISTRO */
+  rightHtml+='<div class="card"><div class="ct">'+I.cal_s+' REGISTRO</div><div id="calendar-inner">'+buildCalendar()+'</div></div>';
+
+  /* DIARIO */
+  rightHtml+='<div class="card"><div class="ct">'+I.note_s+' DIARIO</div><div id="diario-inner">'+buildDiarioHtml()+'</div></div>';
+
+  /* EL OBSTACULO */
+  rightHtml+='<div class="card"><div class="ct">'+I.medal_s+' EL OBSTACULO</div><div id="obstaculo-inner">'+buildObstaculoHtml()+'</div></div>';
 
   /* RANKING */
-  rightHtml+='<div class="card"><div class="ct">'+I.rank_s+' Ranking</div><div id="ranking-inner">'+buildRankingHtml()+'</div></div>';
+  rightHtml+='<div class="card"><div class="ct">'+I.rank_s+' RANKING</div><div id="ranking-inner">'+buildRankingHtml()+'</div></div>';
 
-  /* LIBRO */
-  rightHtml+='<div class="card"><div class="ct">'+I.book_s+' Mi libro actual</div><div id="book-inner">'+buildBookHtml()+'</div></div>';
+  /* LECTURA */
+  rightHtml+='<div class="card"><div class="ct">'+I.book_s+' LECTURA</div><div id="book-inner">'+buildBookHtml()+'</div></div>';
 
   /* NOTAS */
-  rightHtml+='<div class="card"><div class="ct">'+I.note_s+' Notas con el coach</div>'+
+  rightHtml+='<div class="card"><div class="ct">'+I.note_s+' NOTAS</div>'+
     '<div class="notes-list" id="notes-list-el">'+buildNotesHtml()+'</div>'+
     '<div class="note-send-row">'+
       '<textarea class="note-inp" id="note-inp-el" placeholder="Escríbele algo a tu coach..." rows="2"></textarea>'+
@@ -953,7 +984,7 @@ function renderDashboard(rms){
     memHtml+='<div class="mem-row"><span class="mem-key">Próximo pago</span><span class="mem-val">'+esc(st.nextPayDate)+' <span style="color:'+diffCol+';font-size:10px">('+( diff===0?"Hoy":diff>0?"En "+diff+"d":"Hace "+Math.abs(diff)+"d")+')</span></span></div>';
   }
   if(st.months)memHtml+='<div class="mem-row"><span class="mem-key">Meses entrenando</span><span class="mem-val">'+st.months+'</span></div>';
-  rightHtml+='<div class="card"><div class="ct">'+I.card_s+' Membresía</div>'+memHtml+'</div>';
+  rightHtml+='<div class="card"><div class="ct">'+I.card_s+' ACCESO</div>'+memHtml+'</div>';
 
   document.getElementById("app-body").innerHTML='<div class="two-col"><div class="col">'+leftHtml+'</div><div class="col">'+rightHtml+'</div></div>';
 }
@@ -982,6 +1013,107 @@ var QUOTES=[
 "Pequeñas victorias diarias construyen grandes victorias futuras.","No necesitas ser el mejor. Necesitas ser constante.","El éxito no es un destino. Es un sistema.","Construye sistemas, no metas.","La meta te da dirección. El sistema te da progreso.","No compares tu capítulo 1 con el capítulo 20 de alguien más.","El que avanza lento sigue adelante del que no avanza.","No hay atajos reales. Solo caminos más eficientes.","Lo que te cuesta hoy se paga en libertad mañana.","No necesitas suerte. Necesitas preparación más oportunidad.","El talento sin trabajo es un potencial desperdiciado.","El trabajo sin talento puede llegar donde el talento sin trabajo no llega.","No actúes desde el miedo. Actúa desde el propósito.","La claridad de propósito es la brújula de la acción.","No te rindas en el proceso. El proceso es el punto.","El crecimiento real es incómodo. Siempre.","Cada versión de ti fue necesaria para llegar a esta.","No compares tus detrás de cámaras con los highlights de otros.","El progreso invisible sigue siendo progreso.","El que planta en invierno cosecha en primavera.","No hay fracaso final mientras sigas intentando.","El que aprende de todo tiene maestros en todo.","La gratitud y la ambición no se contradicen. Se complementan.","No esperes que la vida sea justa. Sé competente.","El que sabe por qué aguanta cualquier cómo.","La diferencia entre quien lo logra y quien no, es seguir cuando duele.","No te enfoques en lo que perdiste. Enfócate en lo que tienes y lo que puedes construir.","Las personas exitosas no son diferentes. Hacen cosas diferentes, consistentemente.","El mejor momento para empezar fue ayer. El segundo mejor momento es ahora.","Sé inamovible."
 ];
 
+var PREGUNTAS_DIARIO=[
+"¿Qué decisión tomé hoy que mi yo de dentro de un año agradecerá?",
+"¿En qué momento del día actué desde el miedo y no desde el propósito?",
+"¿Qué excusa usé hoy que no era verdad?",
+"¿Hubo un momento en que me rendí antes de tiempo?",
+"¿Qué habría hecho diferente si nadie me estuviera mirando?",
+"¿Qué pensamiento recurrente me costó energía hoy sin producir nada?",
+"¿Actué conforme a mis principios o conforme a mi humor?",
+"¿Qué incomodidad evité que debería haber enfrentado?",
+"¿En qué área de mi vida estoy mintiendo o evadiendo?",
+"¿Qué aprendí hoy que puedo aplicar mañana?",
+"¿Fui honesto conmigo mismo en todas mis conversaciones internas?",
+"¿Qué tarea importante postergué por algo urgente pero secundario?",
+"¿Cuánto tiempo usé en consumir en vez de crear?",
+"¿Qué hábito incumplí hoy y por qué?",
+"¿Actué como la persona que quiero ser o como la persona que fui?",
+"¿Qué me dije a mí mismo que me debilitó?",
+"¿Hubo un momento de claridad que no aproveché?",
+"¿Qué construí hoy, aunque fuera pequeño?",
+"¿En qué área de mi vida necesito más disciplina?",
+"¿Qué decisión pendiente lleva demasiado tiempo sin resolverse?",
+"¿Fui la persona más difícil de manejar en alguna situación hoy?",
+"¿Qué parte de mi rutina es solo hábito y no sirve más?",
+"¿Dónde perdí el foco y cómo lo recuperé?",
+"¿Qué conversación importante evité tener hoy?",
+"¿Cuál fue el momento del día en que fui más yo mismo?",
+"¿Qué haría si supiera que nadie me va a juzgar?",
+"¿Cuántas veces busqué aprobación externa hoy?",
+"¿Qué me generó ruido mental innecesario hoy?",
+"¿Qué parte de mi vida necesita una decisión definitiva que sigo evadiendo?",
+"¿Fui más paciente o más impulsivo que ayer?",
+"¿Qué acción tomé hoy que nadie verá pero que importa?",
+"¿Estoy avanzando o solo estoy ocupado?",
+"¿Qué le daría a mi yo de hace un año como consejo basado en hoy?",
+"¿Qué distracción me alejó de lo más importante hoy?",
+"¿Fui consecuente con lo que dije que haría?",
+"¿Qué situación me sacó de mi centro y cómo la manejé?",
+"¿Dónde puse energía que no valía la pena?",
+"¿Qué construí hoy que durará más que este día?",
+"¿En qué momento fui más honesto que cómodo?",
+"¿Qué necesito dejar ir para avanzar?",
+"¿Qué estoy tolerando en mi vida que no debería tolerar?",
+"¿Qué cambié de mi pensamiento hoy?",
+"¿Cuál fue el obstáculo más difícil del día y qué reveló de mí?",
+"¿Actué con intención o con reacción?",
+"¿Qué me limita más: el miedo al fracaso o el miedo al éxito?",
+"¿Fui más disciplinado en lo que entró por mis ojos y oídos?",
+"¿Cuánto tiempo pasé en cosas que no controlo?",
+"¿Qué virtud practiqué hoy?",
+"¿Qué vicio cedió un poco de terreno hoy?",
+"¿Cuál fue el momento del día en que más me acerqué a quien quiero ser?",
+"¿Qué estoy posponiendo que si lo resolviera cambiaría todo?",
+"¿Fui más generoso o más egoísta que ayer?",
+"¿Qué cosa pequeña hice hoy con excelencia?",
+"¿Cuándo actué desde la serenidad y cuándo desde la ansiedad?",
+"¿Qué significa para mí la disciplina hoy, concretamente?",
+"¿Qué me enseñó hoy lo que salió mal?",
+"¿En qué punto del día estuve más presente?",
+"¿Qué palabras me dije a mí mismo que no le diría a alguien que respeto?",
+"¿Qué rompí hoy de mi propio código y cómo lo reparo mañana?",
+"¿Qué fortaleza usé hoy que antes no tenía?",
+"¿Qué hice hoy por primera vez?",
+"¿En qué soy más débil de lo que creo?",
+"¿En qué soy más fuerte de lo que reconozco?",
+"¿Qué me dio energía hoy y qué me la quitó?",
+"¿Qué haría diferente si supiera que este es mi último año?",
+"¿Cuándo actué con carácter y cuándo cedí sin razón?",
+"¿Qué objetivo avancé hoy aunque fuera un paso?",
+"¿Qué dejé sin terminar y por qué?",
+"¿Cuánto control tuve sobre mi atención hoy?",
+"¿Qué problema enfrenté en vez de evitar?",
+"¿Qué pensamiento límite apareció hoy y cómo lo traté?",
+"¿Fui consistente con lo que digo que soy?",
+"¿Qué parte de mi vida necesita más silencio y menos ruido?",
+"¿Qué hice hoy porque era lo correcto, aunque fuera lo difícil?",
+"¿En qué momento estuve más cerca del carácter que quiero construir?",
+"¿Qué haría si no tuviera miedo a equivocarme?",
+"¿Cuánta energía mental gasté en el pasado o el futuro en vez del presente?",
+"¿Qué conversación tuve conmigo mismo que fue honesta y útil?",
+"¿Qué decisión tomé desde el principio y no desde el impulso?",
+"¿Qué me cuesta más: empezar o mantener?",
+"¿Cuándo actué por obligación y cuándo por convicción?",
+"¿Qué aprendí sobre mí mismo a través del cuerpo hoy?",
+"¿Cómo fue mi energía durante el día y qué la afectó?",
+"¿Qué me distanció de mi mejor versión hoy?",
+"¿Qué acerqué hoy a mi mejor versión, aunque fuera poco?",
+"¿Cuándo me juzgué demasiado duro y cuándo demasiado suave?",
+"¿Qué le cambiaría a este día si pudiera repetirlo?",
+"¿Qué me reveló el cansancio de hoy sobre mis prioridades?",
+"¿Cuándo fui más inamovible hoy?",
+"¿Qué valor viví hoy con hechos y no con palabras?",
+"¿Qué mentira cómoda me conté hoy?",
+"¿Qué verdad incómoda ignoré hoy?",
+"¿Qué haría si nadie supiera el resultado?",
+"¿Cuándo actué desde el silencio y cuándo desde el ruido?",
+"¿Qué legado pequeño construí hoy?",
+"¿Cuánto tiempo estuve en modo reacción versus modo creación?",
+"¿Cuál fue la decisión más difícil del día y cómo la tomé?",
+"¿Qué necesito hacer mañana que hoy solo pensé?"
+];
+
 async function getNextQuote(){
   var shown=G.shownQuotes||[];
   var all=QUOTES.map(function(_,i){return i;}).filter(function(i){return shown.indexOf(i)<0;});
@@ -993,39 +1125,93 @@ async function getNextQuote(){
   return QUOTES[idx];
 }
 
-var BADGE_DEFS=[
-  {key:"primer_entreno",icon:"🏋️",name:"Primer entreno"},
-  {key:"entreno_10",icon:"🔥",name:"10 entrenamientos"},
-  {key:"entreno_50",icon:"⚡",name:"50 entrenamientos"},
-  {key:"primer_paso",icon:"👣",name:"Primer día de pasos"},
-  {key:"racha_pasos_5",icon:"🦶",name:"5 días de pasos"},
-  {key:"racha_pasos_10",icon:"🚶",name:"10 días de pasos"},
-  {key:"mes_activo",icon:"📅",name:"Mes activo"},
-  {key:"primer_libro",icon:"📖",name:"Primer libro"}
-];
+function computeProgress(calData,book,diarioCount){
+  var entrenos=0,pasos=0,comidas=0;
+  Object.values(calData||{}).forEach(function(e){
+    if(e.w)entrenos++;
+    if(e.s)pasos++;
+    if(e.m)comidas+=e.m.filter(function(x){return x;}).length;
+  });
+  var consecutive=0;
+  var today=new Date();
+  for(var d=0;d<365;d++){
+    var dd=new Date(today);dd.setDate(dd.getDate()-d);
+    var dk=dd.toISOString().slice(0,10);
+    var entry=(calData||{})[dk];
+    if(entry&&(entry.w||entry.s))consecutive++;
+    else break;
+  }
+  var libros=0;
+  if(book){
+    libros=(book.history||[]).length;
+    if(book.current)libros++;
+  }
+  return{entrenos:entrenos,pasos:pasos,comidas:comidas,racha:consecutive,libros:libros,diario:diarioCount||0};
+}
 
-function computeBadges(calData,book){
+function buildProgresoHtml(progress,badges){
+  var CATS=[
+    {key:"entrenos",label:"ENTRENOS",count:progress.entrenos,
+     milestones:[1,5,10,25,50,100,200,365,500,1000],
+     labels:["Primer entreno","5 entrenamientos","10 entrenamientos","25 entrenamientos","50 entrenamientos","100 entrenamientos","200 entrenamientos","365 entrenamientos","500 entrenamientos","1000 entrenamientos"]},
+    {key:"pasos",label:"PASOS",count:progress.pasos,
+     milestones:[1,5,10,20,40,60,100,150,200,365],
+     labels:["Primer meta de pasos","5 dias de pasos","10 dias de pasos","20 dias de pasos","40 dias de pasos","60 dias de pasos","100 dias de pasos","150 dias de pasos","200 dias de pasos","365 dias de pasos"]},
+    {key:"comidas",label:"COMIDAS",count:progress.comidas,
+     milestones:[1,10,50,100,250,500,1000],
+     labels:["Primera comida marcada","10 comidas","50 comidas","100 comidas","250 comidas","500 comidas","1000 comidas"]},
+    {key:"racha",label:"RACHA",count:progress.racha,
+     milestones:[3,7,14,21,30,60,90,180,365],
+     labels:["3 dias seguidos","7 dias seguidos","14 dias seguidos","21 dias seguidos","30 dias seguidos","60 dias seguidos","90 dias seguidos","180 dias seguidos","365 dias seguidos"]},
+    {key:"libros",label:"LECTURA",count:progress.libros,
+     milestones:[1,3,5,10,20],
+     labels:["Primer libro","3 libros","5 libros","10 libros","20 libros"]},
+    {key:"diario",label:"REFLEXION",count:progress.diario,
+     milestones:[1,7,14,30,60,100],
+     labels:["Primera reflexion","7 reflexiones","14 reflexiones","30 reflexiones","60 reflexiones","100 reflexiones"]}
+  ];
+  var html="";
+  CATS.forEach(function(cat){
+    html+='<div class="progreso-section"><div class="progreso-cat-title">'+cat.label+'</div><div class="logro-list">';
+    var nextShown=false;
+    cat.milestones.forEach(function(m,idx){
+      var bkey=cat.key+"_"+m;
+      if(cat.count>=m){
+        var dateStr=badges[bkey]?new Date(badges[bkey]).toLocaleDateString("es-CO",{day:"numeric",month:"short",year:"numeric"}):"";
+        html+='<div class="logro-item earned"><div class="logro-num">'+m+'</div><div class="logro-label">'+cat.labels[idx]+'</div><div class="logro-date">'+esc(dateStr)+'</div></div>';
+      }else if(!nextShown){
+        nextShown=true;
+        html+='<div class="logro-item next"><div class="logro-target">'+cat.count+' / '+m+'</div><div class="logro-label">'+cat.labels[idx]+'</div></div>';
+      }else{
+        html+='<div class="logro-item locked"><div class="logro-num">'+m+'</div><div class="logro-label">'+cat.labels[idx]+'</div></div>';
+      }
+    });
+    html+='</div></div>';
+  });
+  return html;
+}
+
+function computeProgressBadgeKeys(calData,book,diarioCount){
+  var p=computeProgress(calData,book,diarioCount);
+  var CATS=[
+    {key:"entrenos",count:p.entrenos,milestones:[1,5,10,25,50,100,200,365,500,1000]},
+    {key:"pasos",count:p.pasos,milestones:[1,5,10,20,40,60,100,150,200,365]},
+    {key:"comidas",count:p.comidas,milestones:[1,10,50,100,250,500,1000]},
+    {key:"racha",count:p.racha,milestones:[3,7,14,21,30,60,90,180,365]},
+    {key:"libros",count:p.libros,milestones:[1,3,5,10,20]},
+    {key:"diario",count:p.diario,milestones:[1,7,14,30,60,100]}
+  ];
   var earned={};
-  var days=Object.values(calData||{});
-  var workouts=days.filter(function(d){return d.w;}).length;
-  var stepDays=days.filter(function(d){return d.s;}).length;
-  var allDates=Object.keys(calData||{}).sort();
-  if(workouts>=1)earned.primer_entreno=1;
-  if(workouts>=10)earned.entreno_10=1;
-  if(workouts>=50)earned.entreno_50=1;
-  if(stepDays>=1)earned.primer_paso=1;
-  if(stepDays>=5)earned.racha_pasos_5=1;
-  if(stepDays>=10)earned.racha_pasos_10=1;
-  // mes activo: al menos 15 entrenamientos o pasos en cualquier mes
-  var byMonth={};
-  allDates.forEach(function(d){var m=d.slice(0,7);var e=calData[d];if(!byMonth[m])byMonth[m]=0;if(e.w||e.s)byMonth[m]++;});
-  if(Object.values(byMonth).some(function(n){return n>=15;}))earned.mes_activo=1;
-  if(book&&(book.current||( book.history&&book.history.length)))earned.primer_libro=1;
+  CATS.forEach(function(cat){
+    cat.milestones.forEach(function(m){
+      if(cat.count>=m)earned[cat.key+"_"+m]=1;
+    });
+  });
   return earned;
 }
 
 async function checkAndSaveBadges(){
-  var newEarned=computeBadges(G.calData,G.book);
+  var newEarned=computeProgressBadgeKeys(G.calData,G.book,G.diario.length);
   var prev=G.badges||{};
   var changed=false;
   var today=G.today;
@@ -1048,6 +1234,74 @@ async function updateRanking(){
   var el=document.getElementById("ranking-inner");if(el)el.innerHTML=buildRankingHtml();
 }
 
+async function saveDiario(){
+  var inp=document.getElementById("diario-inp-el");
+  var txt=(inp&&inp.value||"").trim();
+  if(!txt)return;
+  var entry={date:G.today,q:getTodayDiarioQ(),r:txt};
+  G.diario.push(entry);
+  inp.value="";
+  await sbWrite("portal-diario-"+G.sid,G.diario);
+  await checkAndSaveBadges();
+  showToast("DIARIO","Registrado.","acc",true);
+  var el=document.getElementById("diario-inner");if(el)el.innerHTML=buildDiarioHtml();
+}
+
+function getTodayDiarioQ(){
+  var d=new Date(G.today),start=new Date(d.getFullYear(),0,0);
+  var diff=d-start,oneDay=1000*60*60*24;
+  var doy=Math.floor(diff/oneDay);
+  return PREGUNTAS_DIARIO[doy%PREGUNTAS_DIARIO.length];
+}
+
+function buildDiarioHtml(){
+  var q=getTodayDiarioQ();
+  var alreadyToday=(G.diario||[]).some(function(e){return e.date===G.today;});
+  var html='<div class="diario-q">'+esc(q)+'</div>';
+  if(alreadyToday){
+    var last=(G.diario||[]).filter(function(e){return e.date===G.today;})[0];
+    html+='<div style="background:var(--surf);border:1px solid var(--border);border-radius:3px;padding:10px;font-size:12px;line-height:1.5;color:var(--txt2)">'+esc(last.r)+'</div>'+
+    '<div style="font-size:10px;color:var(--txt3);margin-top:4px">Registrado.</div>';
+  }else{
+    html+='<textarea class="diario-inp" id="diario-inp-el" placeholder="Tu reflexion de hoy..."></textarea>'+
+    '<button class="diario-btn" onclick="saveDiario()">REGISTRAR</button>';
+  }
+  return html;
+}
+
+async function saveObstaculo(){
+  var mal=(document.getElementById("obs-mal-inp")&&document.getElementById("obs-mal-inp").value||"").trim();
+  var como=(document.getElementById("obs-como-inp")&&document.getElementById("obs-como-inp").value||"").trim();
+  if(!mal&&!como)return;
+  var entry={date:G.today,mal:mal,como:como};
+  G.obstaculo.push(entry);
+  if(document.getElementById("obs-mal-inp"))document.getElementById("obs-mal-inp").value="";
+  if(document.getElementById("obs-como-inp"))document.getElementById("obs-como-inp").value="";
+  await sbWrite("portal-obstaculo-"+G.sid,G.obstaculo);
+  showToast("OBSTACULO","Registrado.","acc",true);
+  var el=document.getElementById("obstaculo-inner");if(el)el.innerHTML=buildObstaculoHtml();
+}
+
+function buildObstaculoHtml(){
+  var html='<div class="obs-q">¿Que salio mal hoy?</div>'+
+    '<textarea class="obs-inp" id="obs-mal-inp" placeholder="Describe el obstaculo..."></textarea>'+
+    '<div class="obs-q">¿Como lo manejaste?</div>'+
+    '<textarea class="obs-inp" id="obs-como-inp" placeholder="Tu respuesta al obstaculo..."></textarea>'+
+    '<button class="diario-btn" onclick="saveObstaculo()">REGISTRAR</button>';
+  var hist=(G.obstaculo||[]).slice().reverse().slice(0,3);
+  if(hist.length){
+    html+='<div style="margin-top:12px;font-size:10px;color:var(--txt2);text-transform:uppercase;letter-spacing:.06em;margin-bottom:6px">Ultimas entradas</div>';
+    hist.forEach(function(e){
+      html+='<div class="obs-hist-item">'+
+        '<div style="font-size:10px;font-weight:700;color:var(--acc);margin-bottom:4px">'+esc(e.date)+'</div>'+
+        (e.mal?'<div style="margin-bottom:3px"><span style="color:var(--txt2);font-size:9px;text-transform:uppercase">Salio mal:</span><br>'+esc(e.mal)+'</div>':'')+
+        (e.como?'<div><span style="color:var(--txt2);font-size:9px;text-transform:uppercase">Como lo maneji:</span><br>'+esc(e.como)+'</div>':'')+
+      '</div>';
+    });
+  }
+  return html;
+}
+
 async function sendNote(){
   var inp=document.getElementById("note-inp-el");
   var txt=(inp&&inp.value||"").trim();
@@ -1059,6 +1313,12 @@ async function sendNote(){
   var el=document.getElementById("notes-list-el");if(el)el.innerHTML=buildNotesHtml();
 }
 
+async function startBookRec(title,pages){
+  G.book={current:{title:title,pages:pages,currentPage:0,startDate:G.today},history:(G.book&&G.book.history)||[]};
+  await sbWrite("portal-book-"+G.sid,G.book);
+  await checkAndSaveBadges();
+  var el=document.getElementById("book-inner");if(el)el.innerHTML=buildBookHtml();
+}
 async function startBook(){
   var t=(document.getElementById("book-title-inp")&&document.getElementById("book-title-inp").value||"").trim();
   var p=parseInt(document.getElementById("book-pages-inp")&&document.getElementById("book-pages-inp").value)||0;
@@ -1090,7 +1350,7 @@ async function finishBook(){
 
 function buildNotesHtml(){
   var notes=G.notes||[];
-  if(!notes.length)return'<div style="font-size:11px;color:var(--txt3);padding:10px 0">No hay notas aún. Escribe algo para tu coach.</div>';
+  if(!notes.length)return'<div style="font-size:11px;color:var(--txt3);padding:10px 0">Sin notas. Escríbele algo a tu coach.</div>';
   return notes.map(function(n){
     var isCoach=n.from==="coach";
     return'<div class="note-b '+(isCoach?"nc":"ns")+'">'+esc(n.text)+'<div class="note-meta">'+(isCoach?"Coach":"Tú")+' · '+esc(n.date)+'</div></div>';
@@ -1099,7 +1359,7 @@ function buildNotesHtml(){
 
 function buildRankingHtml(){
   var list=G.ranking||[];
-  if(!list.length)return'<div style="font-size:11px;color:var(--txt3);padding:8px 0">Sin datos aún. ¡Entrena para aparecer!</div>';
+  if(!list.length)return'<div style="font-size:11px;color:var(--txt3);padding:8px 0">Sin datos. Empieza a registrar para aparecer.</div>';
   return list.slice(0,10).map(function(r,i){
     var isMe=r.sid===G.sid;
     var pts=r.workouts+r.steps;
@@ -1112,10 +1372,21 @@ function buildBookHtml(){
   var hist=bk&&bk.history||[];
   if(!bk||!bk.current){
     var rec='<div style="font-size:11px;color:var(--txt2);margin-bottom:10px">Sin libro activo.</div>'+
-      '<div style="font-size:11px;color:var(--acc);margin-bottom:8px">📖 Recomendación: <strong>El Secreto — Napoleon Hill</strong></div>'+
+      '<div style="font-size:10px;font-weight:700;color:var(--txt2);text-transform:uppercase;letter-spacing:.06em;margin-bottom:6px">Recomendados</div>'+
+      '<div style="display:flex;flex-direction:column;gap:4px;margin-bottom:12px">'+
+        '<button onclick="startBookRec(\'El Secreto\',294)" style="text-align:left;background:var(--surf);border:1px solid var(--border);border-left:2px solid var(--acc);border-radius:3px;padding:8px 10px;cursor:pointer;color:var(--txt)">'+
+          '<div style="font-size:12px;font-weight:600">El Secreto</div>'+
+          '<div style="font-size:10px;color:var(--txt2)">Rhonda Byrne — 294 pág.</div>'+
+        '</button>'+
+        '<button onclick="startBookRec(\'Conversaciones con Dios 1\',240)" style="text-align:left;background:var(--surf);border:1px solid var(--border);border-left:2px solid var(--acc);border-radius:3px;padding:8px 10px;cursor:pointer;color:var(--txt)">'+
+          '<div style="font-size:12px;font-weight:600">Conversaciones con Dios 1</div>'+
+          '<div style="font-size:10px;color:var(--txt2)">Neale Donald Walsch — 240 pág.</div>'+
+        '</button>'+
+      '</div>'+
+      '<div style="font-size:10px;font-weight:700;color:var(--txt2);text-transform:uppercase;letter-spacing:.06em;margin-bottom:6px">Agregar otro libro</div>'+
       '<div class="book-add-row">'+
-        '<input class="book-add-inp" id="book-title-inp" placeholder="Título del libro">'+
-        '<input class="book-add-inp book-inp" id="book-pages-inp" type="number" min="1" placeholder="Número de páginas">'+
+        '<input class="book-add-inp" id="book-title-inp" placeholder="Titulo del libro">'+
+        '<input class="book-add-inp book-inp" id="book-pages-inp" type="number" min="1" placeholder="Numero de páginas">'+
         '<button class="book-start-btn" onclick="startBook()">Empezar a leer</button>'+
       '</div>';
     if(hist.length){
