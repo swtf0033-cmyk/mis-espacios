@@ -82,6 +82,57 @@ body{font-family:'Inter',system-ui,sans-serif;background:var(--bg);color:var(--t
 .notif-close:hover{color:var(--txt)}
 @keyframes notif-in{from{opacity:0;transform:translateX(20px)}to{opacity:1;transform:translateX(0)}}
 @media(max-width:480px){.notif-banner{left:10px;right:10px;max-width:100%}}
+/* PROFILE */
+.prof-row{display:flex;align-items:center;gap:14px}
+.prof-avatar{width:52px;height:52px;border-radius:50%;background:var(--acc);display:flex;align-items:center;justify-content:center;font-family:'Oswald',sans-serif;font-weight:700;font-size:22px;color:#fff;flex-shrink:0}
+.prof-name{font-family:'Oswald',sans-serif;font-size:17px;font-weight:700;letter-spacing:.06em}
+.prof-obj{font-size:11px;color:var(--txt2);margin-top:2px}
+.prof-meta{display:flex;flex-wrap:wrap;gap:5px;margin-top:8px}
+.prof-tag{background:var(--surf);border:1px solid var(--border);border-radius:2px;padding:3px 8px;font-size:10px;color:var(--txt2)}
+.prof-msg{font-size:10px;color:var(--txt3);margin-top:9px;font-style:italic}
+/* NOTES */
+.notes-list{display:flex;flex-direction:column;gap:6px;max-height:260px;overflow-y:auto;margin-bottom:8px}
+.note-b{padding:8px 11px;border-radius:3px;font-size:11px;line-height:1.5}
+.note-b.nc{background:var(--surf);border:1px solid var(--border);border-left:2px solid var(--acc)}
+.note-b.ns{background:var(--acc-d2);border:1px solid var(--acc-d);border-left:2px solid var(--green)}
+.note-meta{font-size:9px;color:var(--txt3);margin-top:3px}
+.note-send-row{display:flex;gap:6px;margin-top:4px}
+.note-inp{flex:1;background:var(--surf);border:1px solid var(--border);color:var(--txt);border-radius:3px;padding:8px 10px;font-size:12px;font-family:'Inter',sans-serif;outline:none;resize:none;min-height:36px}
+.note-inp:focus{border-color:var(--acc)}
+.note-send-btn{background:var(--acc);color:#fff;border:none;border-radius:3px;padding:0 14px;font-size:11px;font-weight:700;font-family:'Oswald',sans-serif;letter-spacing:.08em;text-transform:uppercase;cursor:pointer}
+/* BADGES */
+.badges-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:6px}
+.badge-item{background:var(--surf);border:1px solid var(--border);border-radius:3px;padding:9px 6px;text-align:center}
+.badge-item.earned{border-color:var(--acc);background:var(--acc-d2)}
+.badge-icon{font-size:20px;opacity:.2;display:block;margin-bottom:3px}
+.badge-item.earned .badge-icon{opacity:1}
+.badge-lbl{font-size:9px;color:var(--txt2);text-transform:uppercase;letter-spacing:.05em;line-height:1.3}
+.badge-dt{font-size:8px;color:var(--acc);margin-top:2px}
+/* RANKING */
+.rank-row{display:flex;align-items:center;gap:10px;padding:7px 0;border-bottom:1px solid var(--border)}
+.rank-row:last-child{border-bottom:none}
+.rank-num{font-family:'Oswald',sans-serif;font-size:17px;font-weight:700;color:var(--txt3);width:22px;flex-shrink:0;text-align:center}
+.rank-name{flex:1;font-size:12px;font-weight:600}
+.rank-pts{font-family:'Oswald',sans-serif;font-size:13px;color:var(--txt2)}
+.rank-row.me .rank-num,.rank-row.me .rank-pts{color:var(--acc)}
+.rank-row.me .rank-name{color:var(--txt)}
+/* BOOK */
+.book-prog-wrap{background:var(--border);border-radius:99px;height:5px;overflow:hidden;margin:7px 0 4px}
+.book-prog-fill{height:100%;border-radius:99px;background:var(--acc)}
+.book-page-row{display:flex;gap:6px;align-items:center;margin-top:6px}
+.book-inp{background:var(--surf);border:1px solid var(--border);color:var(--txt);border-radius:3px;padding:5px 9px;font-size:12px;font-family:'Inter',sans-serif;width:80px;outline:none}
+.book-inp:focus{border-color:var(--acc)}
+.book-btn{background:var(--acc-d);border:1px solid var(--acc);color:var(--acc);border-radius:3px;padding:5px 10px;font-size:11px;font-weight:600;cursor:pointer}
+.book-fin-btn{background:var(--green-d);border:1px solid var(--green);color:var(--green);border-radius:3px;padding:5px 10px;font-size:11px;font-weight:600;cursor:pointer}
+.book-add-row{display:flex;flex-direction:column;gap:6px;margin-top:6px}
+.book-add-inp{background:var(--surf);border:1px solid var(--border);color:var(--txt);border-radius:3px;padding:8px 10px;font-size:12px;font-family:'Inter',sans-serif;outline:none}
+.book-add-inp:focus{border-color:var(--acc)}
+.book-start-btn{background:var(--acc);color:#fff;border:none;border-radius:3px;padding:9px;font-size:11px;font-weight:700;font-family:'Oswald',sans-serif;letter-spacing:.08em;text-transform:uppercase;cursor:pointer}
+.book-hist{margin-top:8px;font-size:10px;color:var(--txt2)}
+.book-hist-item{padding:4px 0;border-bottom:1px solid var(--border)}
+.book-hist-item:last-child{border-bottom:none}
+/* MONTH STEPS */
+.msteps-lbl{font-size:10px;margin-top:6px}
 /* IMC SCALE */
 .imc-scale{margin:10px 0 8px}
 .imc-bar{display:flex;height:8px;border-radius:99px;overflow:hidden;margin-bottom:6px}
@@ -273,7 +324,7 @@ var SB_URL="https://qnkaaiazuwkofbbhrtns.supabase.co";
 var SB_KEY="sb_publishable_rS6hiZnNzUevos6Z8n9VDA_V6KSzj0u";
 var SB_H={"apikey":SB_KEY,"Authorization":"Bearer "+SB_KEY,"Content-Type":"application/json"};
 var LSK="misEsp_";
-var G={sid:null,today:new Date().toISOString().slice(0,10),calData:{},mealCount:5,stepsGoal:8000,nutriOk:false,st:{},nutrition:{},plan:null,evals:[],att:[],calMonth:null};
+var G={sid:null,today:new Date().toISOString().slice(0,10),calData:{},mealCount:5,stepsGoal:8000,nutriOk:false,st:{},nutrition:{},plan:null,evals:[],att:[],calMonth:null,shownQuotes:[],notes:[],badges:{},ranking:[],book:null};
 var I={
   barbell:'<svg style="width:16px;height:16px" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><line x1="6" y1="12" x2="18" y2="12"/><line x1="3" y1="12" x2="4" y2="12"/><line x1="20" y1="12" x2="21" y2="12"/><line x1="7" y1="9" x2="7" y2="15"/><line x1="17" y1="9" x2="17" y2="15"/><line x1="4" y1="10" x2="4" y2="14"/><line x1="20" y1="10" x2="20" y2="14"/></svg>',
   flex:'<svg style="width:16px;height:16px" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9c1-3 4-4 6-2s1 5-1 6 0 4 3 5"/><path d="M18 7c-1 2-3 3-3 5s2 4 1 6"/></svg>',
@@ -298,7 +349,12 @@ var I={
   prot:'<svg style="width:11px;height:11px;vertical-align:-1px;margin-right:4px" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M6 4v16M6 12h6a4 4 0 000-8H6"/></svg>',
   carb:'<svg style="width:11px;height:11px;vertical-align:-1px;margin-right:4px" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><rect x="3" y="5" width="18" height="14" rx="3"/><line x1="3" y1="12" x2="21" y2="12"/></svg>',
   fat:'<svg style="width:11px;height:11px;vertical-align:-1px;margin-right:4px" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><circle cx="12" cy="12" r="8"/><path d="M9 12a3 3 0 006 0"/></svg>',
-  pencil:'<svg style="width:11px;height:11px;vertical-align:-1px;margin-right:3px" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M11 4H4a2 2 0 00-2 2v14a2 2 0 002 2h14a2 2 0 002-2v-7"/><path d="M18.5 2.5a2.1 2.1 0 013 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>'
+  pencil:'<svg style="width:11px;height:11px;vertical-align:-1px;margin-right:3px" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M11 4H4a2 2 0 00-2 2v14a2 2 0 002 2h14a2 2 0 002-2v-7"/><path d="M18.5 2.5a2.1 2.1 0 013 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>',
+  user_s:'<svg style="width:14px;height:14px;vertical-align:-2px;margin-right:6px" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="8" r="4"/><path d="M4 20c0-4 3.6-7 8-7s8 3 8 7"/></svg>',
+  note_s:'<svg style="width:14px;height:14px;vertical-align:-2px;margin-right:6px" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M21 15a2 2 0 01-2 2H7l-4 4V5a2 2 0 012-2h14a2 2 0 012 2z"/></svg>',
+  medal_s:'<svg style="width:14px;height:14px;vertical-align:-2px;margin-right:6px" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="15" r="6"/><path d="M8.5 2.5l1 4.5M15.5 2.5l-1 4.5"/><polyline points="12,9 12,15"/></svg>',
+  rank_s:'<svg style="width:14px;height:14px;vertical-align:-2px;margin-right:6px" viewBox="0 0 24 24" fill="currentColor"><rect x="2" y="15" width="4" height="7"/><rect x="10" y="9" width="4" height="13"/><rect x="18" y="3" width="4" height="19"/></svg>',
+  book_s:'<svg style="width:14px;height:14px;vertical-align:-2px;margin-right:6px" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 19.5A2.5 2.5 0 016.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 014 19.5v-15A2.5 2.5 0 016.5 2z"/></svg>'
 };
 var RM_EXERCISES=[
   {key:"squat",name:"Sentadilla",icon:I.barbell},
@@ -370,7 +426,7 @@ async function doLogin(){
 }
 function doLogout(){
   sessionStorage.removeItem("portal_sid");
-  Object.assign(G,{sid:null,calData:{},mealCount:5,stepsGoal:8000,nutriOk:false,st:{},nutrition:{},plan:null,evals:[],att:[]});
+  Object.assign(G,{sid:null,calData:{},mealCount:5,stepsGoal:8000,nutriOk:false,st:{},nutrition:{},plan:null,evals:[],att:[],shownQuotes:[],notes:[],badges:{},ranking:[],book:null});
   document.getElementById("login").style.display="flex";
   document.getElementById("app").style.display="none";
   document.getElementById("inp-pass").value="";
@@ -394,7 +450,12 @@ async function loadDashboard(sid){
       fetchSbKey("portal-cal-"+sid),
       fetchSbKey("portal-meals-"+sid),
       fetchSbKey("portal-steps-"+sid),
-      fetchSbKey("portal-nutri-ok-"+sid)
+      fetchSbKey("portal-nutri-ok-"+sid),
+      fetchSbKey("portal-quotes-"+sid),
+      fetchSbKey("portal-notes-"+sid),
+      fetchSbKey("portal-badges-"+sid),
+      fetchSbKey("portal-ranking"),
+      fetchSbKey("portal-book-"+sid)
     ]);
     var students=res[0]||[],rms=res[1]||{};
     G.plan=res[2];G.evals=res[3]||[];G.att=res[4]||[];
@@ -402,12 +463,17 @@ async function loadDashboard(sid){
     G.mealCount=res[7]||5;
     G.stepsGoal=res[8]||8000;
     G.nutriOk=res[9]===true;
+    G.shownQuotes=res[10]||[];
+    G.notes=res[11]||[];
+    G.badges=res[12]||{};
+    G.ranking=res[13]||[];
+    G.book=res[14]||null;
     G.st=students.find(function(s){return s.id===sid;})||{};
     document.getElementById("app-stname").textContent=G.st.name||"Estudiante";
     document.getElementById("app-stobj").textContent=G.st.objective||"";
     renderDashboard(rms);
     requestNotifPermission();
-    setTimeout(function(){checkNotifs(G.st,G.evals&&G.evals[0],G.calData);},800);
+    setTimeout(function(){checkNotifs(G.st,G.evals&&G.evals[0],G.calData).catch(function(){});},800);
   }catch(e){
     document.getElementById("app-body").innerHTML='<div class="loading-wrap">Error cargando datos. Recarga la página.</div>';
   }
@@ -417,6 +483,7 @@ async function toggleWorkout(){
   var e=todayEntry();e.w=e.w?0:1;
   if(!e.w)delete e.wtime;
   await sbWrite("portal-cal-"+G.sid,G.calData);
+  if(e.w){await checkAndSaveBadges();await updateRanking();}
   var block=document.getElementById("tb-workout");
   if(block){
     block.className="today-block"+(e.w?" done-block":"");
@@ -441,6 +508,7 @@ async function setWtime(key){
 async function toggleSteps(){
   var e=todayEntry();e.s=e.s?0:1;
   await sbWrite("portal-cal-"+G.sid,G.calData);
+  if(e.s){await checkAndSaveBadges();await updateRanking();}
   var block=document.getElementById("tb-steps");
   if(block){
     block.className="today-block"+(e.s?" done-block":"");
@@ -659,6 +727,25 @@ function renderDashboard(rms){
   var st=G.st,sex=st.sex||"M";
   var leftHtml="",rightHtml="";
 
+  /* PERFIL */
+  var initials=(st.name||"?").charAt(0).toUpperCase();
+  var profTags="";
+  if(st.age)profTags+='<span class="prof-tag">'+st.age+' años</span>';
+  if(st.sex)profTags+='<span class="prof-tag">'+(st.sex==="M"?"Hombre":"Mujer")+'</span>';
+  if(st.height)profTags+='<span class="prof-tag">'+parseHeight(st.height)+' cm</span>';
+  if(st.months)profTags+='<span class="prof-tag">'+st.months+' meses entrenando</span>';
+  var ev0=G.evals&&G.evals.length?G.evals[0]:null;
+  if(ev0&&ev0.weight)profTags+='<span class="prof-tag">'+ev0.weight+' kg</span>';
+  if(st.objective)profTags+='<span class="prof-tag">'+esc(st.objective)+'</span>';
+  leftHtml+='<div class="card"><div class="ct">'+I.user_s+' Mi perfil</div>'+
+    '<div class="prof-row"><div class="prof-avatar">'+initials+'</div>'+
+    '<div><div class="prof-name">'+esc(st.name||"Estudiante")+'</div>'+
+    (st.objective?'<div class="prof-obj">'+esc(st.objective)+'</div>':'')+
+    '</div></div>'+
+    (profTags?'<div class="prof-meta">'+profTags+'</div>':'')+
+    '<div class="prof-msg">Para actualizar tu perfil, habla con tu coach.</div>'+
+  '</div>';
+
   /* PLAN */
   var meso=null,curWeek=-1;
   if(G.plan&&Array.isArray(G.plan.mesociclos)&&G.plan.mesociclos.length){
@@ -772,6 +859,17 @@ function renderDashboard(rms){
   });
   if(rmCards)leftHtml+='<div class="card"><div class="ct">'+I.trophy_s+' Marcas (RM)</div><div class="rm-grid">'+rmCards+'</div></div>';
 
+  /* LOGROS */
+  var badgesHtml=BADGE_DEFS.map(function(b){
+    var earned=G.badges&&G.badges[b.key];
+    return'<div class="badge-item'+(earned?" earned":"")+'">'+
+      '<span class="badge-icon">'+b.icon+'</span>'+
+      '<div class="badge-lbl">'+esc(b.name)+'</div>'+
+      (earned?'<div class="badge-dt">'+esc(G.badges[b.key])+'</div>':'')+
+    '</div>';
+  }).join("");
+  leftHtml+='<div class="card"><div class="ct">'+I.medal_s+' Logros</div><div class="badges-grid">'+badgesHtml+'</div></div>';
+
   /* ══ DERECHA ══ */
   var te=todayEntry(),mc=G.mealCount;
   if(!te.m||te.m.length!==mc)te.m=Array(mc).fill(0);
@@ -809,6 +907,15 @@ function renderDashboard(rms){
       '</div>'+
       '<button class="check-btn'+(te.s?" done":"")+'" onclick="toggleSteps()" style="margin-top:2px">'+(te.s?"✓":"○")+'</button>'+
     '</div>'+
+    (function(){
+      var ym=G.today.slice(0,7);
+      var monthDays=Object.keys(G.calData).filter(function(d){return d.startsWith(ym)&&d<=G.today;});
+      var stepDays=monthDays.filter(function(d){return G.calData[d]&&G.calData[d].s;}).length;
+      var total=monthDays.length||1;
+      var pct=Math.round(stepDays/total*100);
+      var col=pct>=60?"var(--green)":"var(--acc)";
+      return'<div class="msteps-lbl" style="color:'+col+'">Pasos este mes: <strong>'+stepDays+' / '+total+' días</strong> ('+pct+'%)</div>';
+    })()+
     '</div></div>';
 
   /* NUTRICIÓN */
@@ -816,6 +923,21 @@ function renderDashboard(rms){
 
   /* CALENDARIO */
   rightHtml+='<div class="card"><div class="ct">'+I.cal_s+' Calendario</div><div id="calendar-inner">'+buildCalendar()+'</div></div>';
+
+  /* RANKING */
+  rightHtml+='<div class="card"><div class="ct">'+I.rank_s+' Ranking</div><div id="ranking-inner">'+buildRankingHtml()+'</div></div>';
+
+  /* LIBRO */
+  rightHtml+='<div class="card"><div class="ct">'+I.book_s+' Mi libro actual</div><div id="book-inner">'+buildBookHtml()+'</div></div>';
+
+  /* NOTAS */
+  rightHtml+='<div class="card"><div class="ct">'+I.note_s+' Notas con el coach</div>'+
+    '<div class="notes-list" id="notes-list-el">'+buildNotesHtml()+'</div>'+
+    '<div class="note-send-row">'+
+      '<textarea class="note-inp" id="note-inp-el" placeholder="Escríbele algo a tu coach..." rows="2"></textarea>'+
+      '<button class="note-send-btn" onclick="sendNote()">Enviar</button>'+
+    '</div>'+
+  '</div>';
 
   /* MEMBRESÍA */
   var payStatus=st.payStatus||"Pendiente";
@@ -838,22 +960,188 @@ function renderDashboard(rms){
 
 /* ══ NOTIFICACIONES ══ */
 var QUOTES=[
-  "El dolor es temporal. El rendirse dura para siempre.",
-  "No busques motivación. Busca disciplina.",
-  "Cada repetición que no querías hacer es la que te define.",
-  "El cuerpo logra lo que la mente cree.",
-  "Consistencia sobre intensidad. Siempre.",
-  "No eres el mismo que el año pasado. Sigue.",
-  "El esfuerzo de hoy es el cuerpo de mañana.",
-  "Nadie recuerda los días que descansaste de más.",
-  "La incomodidad es el precio del progreso.",
-  "Entrena como si nadie estuviera mirando. El resultado lo verán todos.",
-  "Un kilómetro a la vez. Un entrenamiento a la vez.",
-  "No existen atajos que valgan la pena.",
-  "El único mal entrenamiento es el que no hiciste.",
-  "Tu único competidor eres tú de ayer.",
-  "La disciplina es la libertad que otros no tienen."
+// DISCIPLINA
+"El dolor es temporal. El rendirse dura para siempre.","No busques motivación. Busca disciplina.","Consistencia sobre intensidad. Siempre.","El único mal entrenamiento es el que no hiciste.","Tu único competidor eres tú de ayer.","La disciplina es la libertad que otros no tienen.","Cada repetición que no querías hacer es la que te define.","No eres el mismo que el año pasado. Sigue.","Nadie recuerda los días que descansaste de más.","La incomodidad es el precio del progreso.","El hábito es más poderoso que el talento.","Haz hoy lo que otros no harán. Logra mañana lo que otros no podrán.","No esperes tener ganas. Actúa y las ganas llegan.","Lo que haces cada día importa más que lo que haces de vez en cuando.","El esfuerzo compuesto bate al esfuerzo brillante.","Disciplina: hacer lo correcto aunque no quieras.","La constancia construye imperios. El impulso solo construye momentos.","Empieza despacio. Nunca pares.","Cada día que cumples refuerza quién eres.","Un 1% mejor cada día. Un año después, 37 veces mejor.","La motivación te lleva al gimnasio. La disciplina te mantiene ahí.","No rompas la cadena. Nunca.","Pequeño y constante derrota a grande e irregular.","El dolor de hoy es la fuerza de mañana.","No es cuestión de humor. Es cuestión de compromiso.","Si lo haces solo cuando tienes ganas, no durará.","La autodisciplina es la forma más alta de amor propio.","Quien domina sus hábitos domina su destino.","Disciplina = libertad. Sin ella, solo reaccionas.","Los resultados visibles son el reflejo de los hábitos invisibles.","Sé el tipo de persona que cumple. Siempre.","Primero tú mismo. Luego los resultados.","Repites hasta que se convierte en reflejo.","La victoria es el resultado de mil decisiones cotidianas.","El atleta que gana no es el más inspirado. Es el más consistente.","Cero días sin hacer algo hacia tu meta.","Lo extraordinario es la suma de lo ordinario bien hecho.","Si te cansas, aprende a descansar, no a rendirte.","La grandeza no es un destino. Es una dirección constante.","Disciplina sin propósito es sufrimiento. Con propósito, es poder.","Hay libertad al otro lado del esfuerzo.","No midas tus días por lo que sientes. Mídelos por lo que haces.","Compromiso significa hacerlo incluso cuando es difícil.","Lo que construyes hoy en silencio grita mañana.","No hay trucos. Solo trabajo.","La rutina no aburre. La rutina forma.","Hoy que no quieres es el día que más importa.","Sé inamovible en tus hábitos.","El carácter se construye en los días difíciles.","No busques atajos. El camino largo es el que funciona.","El precio de la excelencia se paga por adelantado.","Cada vez que cedes, cedes un poco de ti.","Cada vez que te mantienes, ganas un poco más.","La resistencia es el músculo más importante.","No mañana. Hoy.","Tus hábitos son tu identidad.","Tú decides quién eres cada vez que decides levantarte.","No es una racha. Es una vida.","Toma la decisión difícil. Repítela mañana.","Un entrenamiento no cambia nada. Cien sí.","La excelencia no es un accidente.","Cuando dudas, actúa igual.","La disciplina se hereda a ti mismo del futuro.","No saltes el proceso.","Proceso primero. Resultados después.","La constancia es invisible hasta que no lo es.","Cada hábito es un voto para la persona que quieres ser.","No te compares. Solo mejora.","El límite que sientes no es real.","La grandeza exige aburrimiento.","Cada día ordinario bien ejecutado es extraordinario.","Lo que hoy te cuesta, mañana te define.","La disciplina protege tu libertad.","Sin estructura, la libertad se convierte en caos.","El cuerpo sigue a la mente que no cede.","Nada en ti cambia si no cambias lo que haces cada día.","Hoy no importa cómo te sientes. Importa lo que haces.","Comprometerte contigo mismo es el primer contrato real.","Crea el estándar. Vívelo.","Tu versión futura ya tomó las decisiones que tú dudas.","Sin repetición no hay dominio.","Los campeones entrenan. Los demás se excusan.","No esperes la tormenta a pasar. Aprende a bailar bajo la lluvia.","La constancia es silenciosa pero demoledora.","Un entrenamiento perdido no es el problema. El hábito de perderlos sí.","Hoy toma el lugar del ayer que lamentarás no haber aprovechado.","La disciplina convierte lo posible en inevitable.","Lo que siembras en secreto se cosecha en público.","Cada repetición es una promesa que te haces a ti mismo.","No eres tus excusas.","Tus excusas son imaginarias. Tu potencial, real.","No hay excusa que construya músculo.","Hazte difícil de ignorar.","Los que llegan lejos son los que se quedan cuando duele.","Entrena tu mente primero. Tu cuerpo la sigue.","El guerrero más peligroso es el que no necesita motivación externa.","La fuerza no se toma. Se construye.",
+// CUERPO/ENTRENAMIENTO
+"El cuerpo logra lo que la mente cree.","El esfuerzo de hoy es el cuerpo de mañana.","Entrena como si nadie estuviera mirando. El resultado lo verán todos.","Un kilómetro a la vez. Un entrenamiento a la vez.","No existen atajos que valgan la pena.","El músculo no crece durante el entrenamiento. Crece en el descanso.","Cuida el sueño como cuidas el entrenamiento.","Tus músculos recuerdan cada repetición.","El progreso no siempre se ve en el espejo. A veces se siente en el peso.","Cada sesión es un depósito en el banco de tu cuerpo.","El calentamiento no es opcional.","Hidratación, sueño, alimentación: el triángulo que sostiene todo.","No busques el músculo. Busca el movimiento correcto.","La técnica primero. El peso después.","La lesión te roba más tiempo del que te gana la impaciencia.","El cuerpo humano tiene capacidades que aún no has explorado.","Nunca subestimes lo que 30 minutos de movimiento pueden hacer.","Muévete hoy aunque no sientas ganas. Tu cuerpo te lo agradecerá.","El dolor muscular es el idioma en que habla el crecimiento.","No entrenes para verte bien. Entrena para ser capaz.","Tu cuerpo es tu herramienta más importante.","Cada entrenamiento cumplido es una victoria pequeña y real.","La sobrecarga progresiva es la ley del progreso físico.","No se trata de cuánto levantas hoy. Se trata de cuánto levantas en diez años.","Escucha a tu cuerpo. Pero no le creas todo lo que dice.","El descanso es parte del plan.","Recuperación activa es mejor que inactividad total.","La flexibilidad de hoy es la movilidad de mañana.","Construye un cuerpo que te sirva para toda la vida.","El cuerpo fuerte y el cuerpo sano no siempre son el mismo. Busca ambos.","La fuerza real se demuestra en los momentos difíciles.","Entrena para la función, no solo para la forma.","Cada paso en las escaleras es una repetición gratis.","Más frecuencia bate más intensidad a largo plazo.","No copies el entrenamiento de alguien más sin entender tu propio cuerpo.","La consistencia en el movimiento retrasa el envejecimiento.","El entrenamiento es medicina preventiva.","Cada set completo es una negación a la mediocridad.","Más músculo, más metabolismo, más vida.","No te midas contra modelos. Mídete contra quien eras.","La postura correcta no es accidente. Es hábito entrenado.","El torso fuerte protege la columna que te sostiene.","Construye capacidades antes de construir estética.","No entrenes para impresionar. Entrena para mejorar.","La respiración correcta es técnica, no accidente.","El movimiento bien ejecutado no caduca.","Cuanto más fuerte, más resiliente. En todo sentido.","Corre aunque sea despacio. Moverse lento bate a no moverse.","El cuerpo que cuidas hoy te sirve en los próximos 40 años.","Cada repetición sin trampas vale el doble.","El rango completo de movimiento construye el músculo completo.","No subestimes el poder de una caminata diaria.","El entrenamiento no tiene que durar horas para ser efectivo.","20 minutos con intención > 2 horas sin foco.","La progresión inteligente evita la lesión innecesaria.","Sé paciente con el proceso. El cuerpo cambia más lento de lo que queremos.","El entrenamiento de fuerza es el mejor anti-aging disponible.","Tu cuerpo dice cuándo parar. Aprende a distinguirlo del miedo a incomodarte.","No estás entrenando para el verano. Estás entrenando para la vida.","Los hábitos de movimiento se acumulan en un cuerpo que funciona bien.","Construye músculo. Construye hueso. Construye salud.","No esperes estar listo. El entrenamiento te prepara.","El gimnasio no es castigo. Es inversión.","Más fuerza en las piernas, más energía en todo el día.","La velocidad del progreso depende de la calidad del esfuerzo.","El entrenamiento inteligente supera al entrenamiento duro.","Lo que no practicas, se pierde.","El cuerpo es plástico. Cambia cuando se lo exiges.","Dormir poco anula los beneficios del entrenamiento.","El calor que sientes en el músculo es el cambio en progreso.","Cada entrenamiento te enseña algo de ti mismo.","El movimiento cura más de lo que imaginas.","La fuerza no es un punto de llegada. Es una dirección.","Construye el hábito. El físico llega solo.","No compares tu inicio con el medio de otro.","Tu mayor competencia no tiene cara. Se llama versión anterior.","La rutina de hoy es el resultado de mañana.",
+// ESTOICISMO
+"Lo único que controlas es tu respuesta.","Memento mori. Actúa en consecuencia.","No pidas que las cosas sean más fáciles. Pide ser más fuerte.","Vivir bien es más difícil que vivir mucho.","El sabio no lamenta lo que no puede cambiar.","Actúa como si todo dependiera de ti. Acepta como si todo dependiera del destino.","La adversidad no es el enemigo. Es la escuela.","Amor fati: ama lo que te toca vivir.","Nada externo te perturba. Solo tu opinión sobre ello lo hace.","La muerte recuerda la importancia de cada día.","El estoico no suprime el dolor. Lo observa y actúa igual.","Controla el control. Suelta lo incontrolable.","No busques aplausos. Busca integridad.","El sabio actúa bien aunque nadie lo vea.","El carácter se revela en la adversidad.","Lo que no puedes evitar, úsalo.","No te quejes. Actúa o acepta.","Sé la roca que el mar no puede mover.","La fortuna no hace al hombre. Lo revela.","El tiempo es el único recurso no renovable.","Medita sobre la muerte para vivir con urgencia.","No el sufrimiento sino la reacción al sufrimiento te define.","El estoico es libre porque no depende de lo externo.","Haz lo correcto aunque duela. Especialmente entonces.","La fama es ruido. El carácter es sustancia.","No esperes justicia del mundo. Sé justo tú.","El sabio se alegra de lo que tiene sin depender de ello.","Cada obstáculo contiene la lección que necesitas.","Tu opinión sobre las cosas crea tu experiencia de ellas.","El presente es el único lugar donde puedes actuar.","No corras de la dificultad. Corre hacia ella.","La virtud es su propio premio.","Quien se domina a sí mismo, domina todo.","El miedo a la muerte roba más vida que la muerte misma.","No seas esclavo de tus pasiones.","La serenidad no es indiferencia. Es claridad bajo presión.","Lo que resistes, persiste. Lo que enfrentas, se disuelve.","No le pidas al universo comodidad. Pide capacidad.","El estoico no finge que todo está bien. Actúa bien de todas formas.","Cada día es una vida completa en miniatura.","Muere antes de morir. Luego ya no tienes miedo.","Las emociones informan. No deben gobernar.","Acepta el presente. Mejora el futuro. Olvida el pasado.","El carácter no se declara. Se vive.","El hombre que busca aprobación externa no es libre.","Nadie puede quitarte lo que ya no tienes.","La riqueza interior no depende del mercado.","Sé duro con tus hábitos. Sé compasivo con tu proceso.","La tranquilidad no se encuentra. Se construye.","El guerrero interior no entra en pánico. Observa y actúa.","No le temas a la opinión ajena. Témele a tu propia cobardía.","La virtud en la adversidad es la virtud real.","El sabio no necesita que el mundo lo entienda.","Lo que mereces es lo que construyes.","El ruido exterior no puede entrar sin tu permiso.","La vida es corta. Actúa en consecuencia.","No malgastes energía en lo que no puedes cambiar.","El tiempo que pierdes quejándote es tiempo que no usas construyendo.","Vive como si cada día fuera el último. Planifica como si fuera el primero.","No necesitas permiso de nadie para ser quien quieres ser.","La adversidad es la sala de pesas del carácter.","El sabio no tiene enemigos. Tiene maestros disfrazados.","Eres dueño de tus acciones. No de sus consecuencias.","El carácter estoico no se dobla ante el viento. Se curva y regresa.","No el bienestar, sino la virtud, es el fin.","Habla menos. Escucha más. Actúa primero.","Quien no es su propio amo, no es libre de ninguna forma.","El sabio no espera que la vida mejore. Mejora él.","La disciplina estoica no es austeridad. Es prioridad.","La queja es el idioma del que no quiere cambiar.","No confundas confort con paz.","El que domina sus emociones domina la sala.","Lo que piensas sobre ti mismo importa más que lo que piensan los demás.","Vive conforme a la naturaleza. Sé lo que debes ser.","El estoico elige cómo reaccionar. Esa elección lo define.","El sabio vive en el presente. No en sus expectativas.","No te aferres a lo que fue. Construye lo que será.","La adversidad no te hace. Revela lo que ya eres.","El miedo es una señal, no una orden.",
+// MENTE/CLARIDAD
+"Mente clara, acción directa.","El ruido mental es el mayor obstáculo.","Claridad antes que velocidad.","Piensa menos. Decide más.","La confusión no es ignorancia. Es la mente ordenando.","El foco es la habilidad más escasa del siglo XXI.","Cada pensamiento no actuado es energía perdida.","No multitasking. Monofoco brutal.","La mente entrenada no se dispersa. Elige.","Una cosa a la vez, hecha bien.","El enfoque profundo produce resultados superficiales imposibles.","Silencia el teléfono. Activa el cerebro.","La mente que no descansa, tampoco crea bien.","El ruido exterior se reduce con el orden interior.","No hay claridad sin silencio previo.","Decide quién eres y actúa en consecuencia. Sin debate interno.","La ansiedad vive en el futuro. La depresión en el pasado. La paz en el presente.","No temas a tu mente. Entrénala.","Menos opciones, más decisión.","La disciplina mental es el padre de todas las demás disciplinas.","Tu diálogo interno es el entrenador más importante que tienes.","El cerebro es plástico. Puedes rehacerte.","No eres tus pensamientos. Los observas.","El hábito de pensar bien construye una vida bien.","La intención sin acción es solo imaginación.","El cerebro sigue a los ojos. Cuida lo que consumes.","Una mente ocupada no puede crear.","La calidad de tus preguntas determina la calidad de tu vida.","Pregúntate: ¿esto me acerca o me aleja de quien quiero ser?","No sigas a la emoción. Observa y actúa desde el principio.","El que conoce su mente es más libre que el que conoce el mundo.","El descanso no es perder tiempo. Es cargar energía mental.","El cerebro cambia con lo que haces repetidamente.","Cada decisión pequeña entrena tu voluntad.","No te castigues. Aprende y sigue.","La narrativa que te cuentas construye la vida que tienes.","Cambia la historia que te cuentas. Cambia lo que construyes.","El miedo y el entusiasmo se sienten igual. Elige la interpretación.","Un pensamiento repetido se convierte en creencia.","Una creencia repetida se convierte en realidad.","No hay problema que resistas más tiempo del que lo enfrentas.","La claridad mental es producto del estilo de vida, no solo del esfuerzo.","Medita aunque sea cinco minutos. La mente lo agradece.","El cerebro necesita soledad para integrar lo que aprende.","Sin reflexión, la acción es ruido.","Piensa primero en el resultado. Luego en el proceso.","Tu mente es el campo de batalla más importante.","Elige pensamientos que construyan.","La mente exhausta no toma buenas decisiones.","Claridad > Urgencia.","No reacciones. Responde.","La inteligencia emocional supera al coeficiente intelectual en resultados.","Quien domina su atención domina su vida.","No consumas pasivamente. Crea activamente.","El scroll infinito es el enemigo del pensamiento profundo.","Tu cerebro necesita aburrimiento para innovar.","Las mejores ideas llegan al silencio.","No pienses más. Actúa y ajusta.","El análisis sin acción es parálisis.","La duda es el umbral. Crúzalo.","Confía en el proceso que diseñaste en frío cuando estás en calor.","Tu estado mental construye tu estado físico.","La coherencia entre lo que piensas y haces genera paz interior.","El descanso profundo es entrenamiento mental.","La creatividad nace cuando el cerebro tiene espacio.","No dejes que el ruido de la opinión ajena ahogue tu voz interior.","La mente que no descansa acumula deuda cognitiva.","Reduce la velocidad para ir más lejos.","No todo pensamiento merece ser seguido.","La claridad llega actuando, no pensando.","El contexto mental que construyes es el aire que respiras.","Cuida tu mente como cuidas tu cuerpo.","Lo que entra por los ojos y oídos alimenta tu mente.","Disciplina mental: hacer lo correcto aunque la mente proteste.","La mente fuerte no es la que no siente. Es la que actúa igual.","El ruido interno baja cuando el propósito sube.","Tu cerebro cree lo que repites. Elige bien.","No te rindas con tu mente. Es entrenable.",
+// SILENCIO/ACCIÓN
+"El que habla mucho hace poco.","El silencio es la respuesta más poderosa.","Actúa. Todo lo demás es opinión.","No anuncies lo que vas a hacer. Muéstralo.","El trabajo silencioso habla más fuerte que la declaración ruidosa.","No necesitas que te entiendan para avanzar.","La acción sin anuncio es la más honesta.","Deja que los resultados sean tu mensaje.","El que menos habla de sus sueños, más trabaja en ellos.","La victoria callada dura más.","Hazlo. Luego cuéntalo si quieres.","No busques aprobación antes de actuar.","El silencio estratégico es una forma de poder.","El que explica demasiado, duda demasiado.","Actúa primero. Explica después, si hace falta.","No publiques el proceso. Muestra el resultado.","La paz viene de hacer, no de planear hacer.","El ruido es el refugio de quienes no actúan.","En el silencio de la acción se construye el carácter.","No esperes el momento perfecto. Crea el momento.","El guerrero habla poco porque sus acciones lo preceden.","El que trabaja en silencio construye sin interrupciones.","No justifiques tu camino. Recórrelo.","La acción constante no necesita audiencia.","Cada día sin acción es un día de deuda con tu futuro.","El silencio es la disciplina de los que ya saben qué hacer.","Habla menos. Construye más.","El éxito no pide permiso para existir.","No esperes señales. Empieza.","La indecisión es la decisión de no avanzar.","El momento es ahora. Siempre ha sido ahora.","Actuar mal supera a planear perfecto.","La claridad llega con el movimiento, no antes.","No hay más preparación que hacer.","El impulso se mantiene actuando.","Actúa desde los principios, no desde el humor.","La velocidad de decisión separa a los que logran de los que desean.","No permitas que el perfeccionismo sea inacción disfrazada.","Comenzar siempre es el paso más difícil. Hazlo.","La procrastinación es miedo con mejor excusa.","El tiempo que usas en justificarte podrías usarlo en actuar.","Silencio y acción: la combinación más temida.","No esperes motivación. Créala moviéndote.","La confianza no viene antes de actuar. Viene después.","El que actúa en silencio construye sin comparaciones.","No hay espectador en tu propio progreso. Solo tú.","La acción rompe el ciclo de la duda.","Menos palabras, más hechos.","No digas que vas a cambiar. Cambia.","El silencio de quien trabaja vale más que mil declaraciones.",
+// TIEMPO/URGENCIA
+"El tiempo no espera a quien duda.","Hoy que tienes salud, úsala.","No desperdicies el día que tienes.","Cada mañana es una segunda oportunidad.","El tiempo perdido no se recupera. El músculo sí, si actúas.","Eres finito. Actúa como si lo supieras.","Memento mori: el tiempo se acaba. Empléalo bien.","No hay tiempo para no estar en tu mejor versión.","El reloj no para para quien no se mueve.","Cada día sin crecer es un día de deuda con quien puedes ser.","El hoy determina el mañana que querrás recordar.","No postergues lo que importa por lo que urge.","El urgente mata al importante si lo dejas.","Haz lo importante antes de que se vuelva urgente.","La procrastinación roba días que no vuelven.","Diez años pasan de todas formas. ¿Qué harás con ellos?","No hay versión de ti del futuro sin el trabajo del presente.","Cada minuto de entrenamiento es un minuto invertido en tu libertad.","El tiempo que dedicaste al entrenamiento nadie te lo quita.","No hay retiro para quien no construyó.","Comienza hoy. El comienzo tardío sigue siendo un comienzo.","No hay momento perfecto. Solo hay ahora.","El cuerpo envejece. El hábito lo retrasa.","El tiempo no perdona la pasividad.","Invierte en tu cuerpo ahora o págale al médico después.","El que no actúa hoy trabaja para sus excusas mañana.","El tiempo que pasas quejándote es tiempo que no inviertes.","Esta semana va a pasar de todos modos. Decide qué harás con ella.","Cada día es una unidad de construcción.","La urgencia de vivir bien no llega. La decides tú.","No hay después. Solo hay ahora y sus consecuencias.","Eres más joven hoy que mañana. Actúa.","El tiempo es el activo que nadie puede devolverte.","La inacción es una decisión activa de no crecer.","No esperes al lunes. El lunes ya llegó.","Cada hora empleada bien es una hora que trabaja para ti.","El presente no es una sala de espera.","El tiempo que inviertes en tus hábitos tiene retorno compuesto.","Haz hoy lo que tu yo de 70 años agradecerá.","No existe el tiempo libre. Existe el tiempo elegido.",
+// IDENTIDAD/CARÁCTER
+"Eres lo que haces cuando nadie mira.","No eres tus emociones. Eres tus acciones.","El carácter es quien eres bajo presión.","La identidad no se declara. Se vive.","Sé la persona que tu plan necesita.","No cambies tus metas. Cambia quien eres para alcanzarlas.","El que sabe quién es no necesita validación.","Tu identidad es la suma de tus hábitos.","Conviértete en el tipo de persona que hace lo que dices que vas a hacer.","El carácter no es perfecto. Es consistente.","No actúes por resultados. Actúa por quién quieres ser.","La integridad es la alineación entre lo que piensas, dices y haces.","No finjas tener valores que no vives.","La reputación se construye en privado.","Sé el mismo cuando te ven y cuando no te ven.","El hombre sin principios sigue cualquier viento.","Construye una identidad que no dependa de resultados externos.","Tu forma de hacer una cosa es tu forma de hacer todo.","El carácter no se negocia por comodidad.","Un hombre de palabra es más raro que uno de talento.","La consistencia es la prueba del carácter.","No te definas por tu trabajo, tu físico, ni tus logros. Defínete por tus principios.","El que se conoce a sí mismo no teme a los cambios.","Sé auténtico aunque sea incómodo.","La persona que quieres ser ya está en las decisiones que tomas hoy.","No hay éxito que compense una vida sin integridad.","El carácter se construye en las elecciones que nadie ve.","La fortaleza de carácter es más valiosa que la fuerza física.","No seas lo que el mundo pide. Sé lo que elegiste ser.","Quien no tiene carácter es esclavo de sus circunstancias.","El hombre de carácter hace lo correcto aunque no sea conveniente.","Tu marca personal es lo que haces cuando nadie te paga por hacerlo.","No vendas tu integridad por aprobación.","La identidad sólida resiste la presión del grupo.","No cambies de posición para caerle bien a todos.","Sé congruente con quien eres, no con quien esperan que seas.","El carácter no se improvisa en la crisis. Se trae de antes.","No sigas a la mayoría si la mayoría va en la dirección equivocada.","Tu palabra es tu contrato más importante.","Sé el mismo hombre en la cumbre y en el fondo.",
+// ADVERSIDAD/RESILIENCIA
+"El obstáculo es el camino.","Lo que no te mata, informa.","Cada caída enseña algo que el éxito no puede.","No pidas una vida sin dificultades. Pide la fuerza para enfrentarlas.","La resiliencia no es rebotar. Es adaptarse y seguir.","El fuego no destruye al oro. Lo purifica.","Las cicatrices son mapas de sobrevivencia.","No te quejes de la tormenta. Conviértete en marinero experto.","La adversidad es el precio de entrada para la grandeza.","El que nunca falló, nunca lo intentó en serio.","Los mejores atletas no evitan el dolor. Aprenden a respetarlo.","No hay historia de éxito sin capítulos de fracaso.","La derrota es información disfrazada de dolor.","El fracaso no es el opuesto del éxito. Es parte de él.","Cae siete veces. Levántate ocho.","El carácter no se forma en la comodidad.","La dificultad es temporal. La rendición, permanente.","No evites los momentos difíciles. Vívelos con conciencia.","Cada obstáculo que superas amplía tu rango de lo posible.","La resiliencia no se declara. Se entrena.","El dolor que evades hoy se convierte en miedo mañana.","El que enfrenta sus miedos los encoge.","No hay versión mejorada de ti sin una versión desafiada de ti.","La adversidad no te crea. Te revela.","El que huye del problema lo agranda.","Enfrenta el monstruo mientras es pequeño.","Cada vez que sigues cuando quieres parar, te construyes.","El que resiste cuando otros se rinden, gana por default.","No esperes que la vida se vuelva más fácil. Vuélvete tú más fuerte.","La historia de tu vida la escribes con decisiones bajo presión.","No hay músculo sin resistencia. No hay carácter sin adversidad.","Cuando todo falla, eres tú lo que queda.","El que no tiene miedo no tiene valor. El valiente actúa a pesar del miedo.","El fracaso frecuente es el precio del aprendizaje real.","Cada crisis es una oportunidad de demostrar quién eres.","No necesitas condiciones perfectas para avanzar.","La vida no se detiene para que te recuperes. Muévete mientras sanas.","El sufrimiento consciente construye. El sufrimiento evitado acumula.","No rompas cuando duele. Ese es el momento exacto para mantenerse.","La adversidad es el entrenador más honesto.",
+// LIBROS/CRECIMIENTO
+"Un libro al mes te separa del 95%.","Leer es el atajo que parece largo.","Los que más saben son los que más leen.","Un libro bien leído cambia una decisión que cambia una vida.","No leas para impresionar. Lee para transformarte.","El libro que no lees no te ayuda.","Cada página es un depósito en tu cuenta de conocimiento.","Los libros son la experiencia comprimida de otros.","Leer es pensar con la mente del más sabio.","El conocimiento sin acción es solo entretenimiento.","Lee. Aplica. Repite.","El que lee vive mil vidas. El que no, solo una.","Cada libro es una conversación con alguien que pasó más tiempo pensando en ese tema que tú.","La ignorancia no se combate con fuerza. Se combate con conocimiento.","Un buen libro te hace mejores preguntas.","No leas rápido. Lee profundo.","Las notas del libro son el libro que realmente leerás.","Si no recuerdas lo que leíste, no lo aplicaste.","El lector ávido no tiene competencia.","Invierte en libros antes que en cualquier otra cosa.","El libro que cambió mi vida no es el mismo para todos. Lee y descubre el tuyo.","La lectura es el único hábito que entrena tu mente mientras descansas.","No hay título universitario que reemplace la biblioteca autodidacta.","Los líderes son lectores.","Una hora de lectura al día > la mayoría de cursos pagos.","El conocimiento práctico viene de aplicar lo que lees.","Lee lo que otros no leerán. Sabe lo que otros no sabrán.","El libro que evitas leer es probablemente el que más necesitas.","No esperes entender todo en la primera lectura. Los libros maduran contigo.","La biblioteca personal es el GPS de la mente.",
+// MISCELÁNEOS
+"Pequeñas victorias diarias construyen grandes victorias futuras.","No necesitas ser el mejor. Necesitas ser constante.","El éxito no es un destino. Es un sistema.","Construye sistemas, no metas.","La meta te da dirección. El sistema te da progreso.","No compares tu capítulo 1 con el capítulo 20 de alguien más.","El que avanza lento sigue adelante del que no avanza.","No hay atajos reales. Solo caminos más eficientes.","Lo que te cuesta hoy se paga en libertad mañana.","No necesitas suerte. Necesitas preparación más oportunidad.","El talento sin trabajo es un potencial desperdiciado.","El trabajo sin talento puede llegar donde el talento sin trabajo no llega.","No actúes desde el miedo. Actúa desde el propósito.","La claridad de propósito es la brújula de la acción.","No te rindas en el proceso. El proceso es el punto.","El crecimiento real es incómodo. Siempre.","Cada versión de ti fue necesaria para llegar a esta.","No compares tus detrás de cámaras con los highlights de otros.","El progreso invisible sigue siendo progreso.","El que planta en invierno cosecha en primavera.","No hay fracaso final mientras sigas intentando.","El que aprende de todo tiene maestros en todo.","La gratitud y la ambición no se contradicen. Se complementan.","No esperes que la vida sea justa. Sé competente.","El que sabe por qué aguanta cualquier cómo.","La diferencia entre quien lo logra y quien no, es seguir cuando duele.","No te enfoques en lo que perdiste. Enfócate en lo que tienes y lo que puedes construir.","Las personas exitosas no son diferentes. Hacen cosas diferentes, consistentemente.","El mejor momento para empezar fue ayer. El segundo mejor momento es ahora.","Sé inamovible."
 ];
+
+async function getNextQuote(){
+  var shown=G.shownQuotes||[];
+  var all=QUOTES.map(function(_,i){return i;}).filter(function(i){return shown.indexOf(i)<0;});
+  if(all.length===0){shown=[];all=QUOTES.map(function(_,i){return i;});}
+  var idx=all[Math.floor(Math.random()*all.length)];
+  shown.push(idx);
+  G.shownQuotes=shown;
+  await sbWrite("portal-quotes-"+G.sid,shown);
+  return QUOTES[idx];
+}
+
+var BADGE_DEFS=[
+  {key:"primer_entreno",icon:"🏋️",name:"Primer entreno"},
+  {key:"entreno_10",icon:"🔥",name:"10 entrenamientos"},
+  {key:"entreno_50",icon:"⚡",name:"50 entrenamientos"},
+  {key:"primer_paso",icon:"👣",name:"Primer día de pasos"},
+  {key:"racha_pasos_5",icon:"🦶",name:"5 días de pasos"},
+  {key:"racha_pasos_10",icon:"🚶",name:"10 días de pasos"},
+  {key:"mes_activo",icon:"📅",name:"Mes activo"},
+  {key:"primer_libro",icon:"📖",name:"Primer libro"}
+];
+
+function computeBadges(calData,book){
+  var earned={};
+  var days=Object.values(calData||{});
+  var workouts=days.filter(function(d){return d.w;}).length;
+  var stepDays=days.filter(function(d){return d.s;}).length;
+  var allDates=Object.keys(calData||{}).sort();
+  if(workouts>=1)earned.primer_entreno=1;
+  if(workouts>=10)earned.entreno_10=1;
+  if(workouts>=50)earned.entreno_50=1;
+  if(stepDays>=1)earned.primer_paso=1;
+  if(stepDays>=5)earned.racha_pasos_5=1;
+  if(stepDays>=10)earned.racha_pasos_10=1;
+  // mes activo: al menos 15 entrenamientos o pasos en cualquier mes
+  var byMonth={};
+  allDates.forEach(function(d){var m=d.slice(0,7);var e=calData[d];if(!byMonth[m])byMonth[m]=0;if(e.w||e.s)byMonth[m]++;});
+  if(Object.values(byMonth).some(function(n){return n>=15;}))earned.mes_activo=1;
+  if(book&&(book.current||( book.history&&book.history.length)))earned.primer_libro=1;
+  return earned;
+}
+
+async function checkAndSaveBadges(){
+  var newEarned=computeBadges(G.calData,G.book);
+  var prev=G.badges||{};
+  var changed=false;
+  var today=G.today;
+  Object.keys(newEarned).forEach(function(k){
+    if(!prev[k]){prev[k]=today;changed=true;}
+  });
+  if(changed){G.badges=prev;await sbWrite("portal-badges-"+G.sid,prev);}
+}
+
+async function updateRanking(){
+  var days=Object.values(G.calData||{});
+  var workouts=days.filter(function(d){return d.w;}).length;
+  var steps=days.filter(function(d){return d.s;}).length;
+  var me={sid:G.sid,name:G.st.name||G.sid,workouts:workouts,steps:steps,updated:G.today};
+  var list=(G.ranking||[]).filter(function(r){return r.sid!==G.sid;});
+  list.push(me);
+  list.sort(function(a,b){return(b.workouts+b.steps)-(a.workouts+a.steps);});
+  G.ranking=list;
+  await sbWrite("portal-ranking",list);
+  var el=document.getElementById("ranking-inner");if(el)el.innerHTML=buildRankingHtml();
+}
+
+async function sendNote(){
+  var inp=document.getElementById("note-inp-el");
+  var txt=(inp&&inp.value||"").trim();
+  if(!txt)return;
+  var note={from:"student",text:txt,date:G.today,read:false};
+  G.notes.push(note);
+  inp.value="";
+  await sbWrite("portal-notes-"+G.sid,G.notes);
+  var el=document.getElementById("notes-list-el");if(el)el.innerHTML=buildNotesHtml();
+}
+
+async function startBook(){
+  var t=(document.getElementById("book-title-inp")&&document.getElementById("book-title-inp").value||"").trim();
+  var p=parseInt(document.getElementById("book-pages-inp")&&document.getElementById("book-pages-inp").value)||0;
+  if(!t||p<1)return;
+  G.book={current:{title:t,pages:p,currentPage:0,startDate:G.today},history:(G.book&&G.book.history)||[]};
+  await sbWrite("portal-book-"+G.sid,G.book);
+  await checkAndSaveBadges();
+  var el=document.getElementById("book-inner");if(el)el.innerHTML=buildBookHtml();
+}
+
+async function updateBookPage(){
+  if(!G.book||!G.book.current)return;
+  var p=parseInt(document.getElementById("book-page-inp")&&document.getElementById("book-page-inp").value)||0;
+  if(p<0)p=0;if(p>G.book.current.pages)p=G.book.current.pages;
+  G.book.current.currentPage=p;
+  await sbWrite("portal-book-"+G.sid,G.book);
+  var el=document.getElementById("book-inner");if(el)el.innerHTML=buildBookHtml();
+}
+
+async function finishBook(){
+  if(!G.book||!G.book.current)return;
+  var b=G.book.current;
+  G.book.history=G.book.history||[];
+  G.book.history.push({title:b.title,pages:b.pages,finishDate:G.today});
+  G.book.current=null;
+  await sbWrite("portal-book-"+G.sid,G.book);
+  var el=document.getElementById("book-inner");if(el)el.innerHTML=buildBookHtml();
+}
+
+function buildNotesHtml(){
+  var notes=G.notes||[];
+  if(!notes.length)return'<div style="font-size:11px;color:var(--txt3);padding:10px 0">No hay notas aún. Escribe algo para tu coach.</div>';
+  return notes.map(function(n){
+    var isCoach=n.from==="coach";
+    return'<div class="note-b '+(isCoach?"nc":"ns")+'">'+esc(n.text)+'<div class="note-meta">'+(isCoach?"Coach":"Tú")+' · '+esc(n.date)+'</div></div>';
+  }).join("");
+}
+
+function buildRankingHtml(){
+  var list=G.ranking||[];
+  if(!list.length)return'<div style="font-size:11px;color:var(--txt3);padding:8px 0">Sin datos aún. ¡Entrena para aparecer!</div>';
+  return list.slice(0,10).map(function(r,i){
+    var isMe=r.sid===G.sid;
+    var pts=r.workouts+r.steps;
+    return'<div class="rank-row'+(isMe?" me":"")+'"><span class="rank-num">'+(i+1)+'</span><span class="rank-name">'+esc(r.name||r.sid)+'</span><span class="rank-pts">'+pts+' pts</span></div>';
+  }).join("");
+}
+
+function buildBookHtml(){
+  var bk=G.book;
+  var hist=bk&&bk.history||[];
+  if(!bk||!bk.current){
+    var rec='<div style="font-size:11px;color:var(--txt2);margin-bottom:10px">Sin libro activo.</div>'+
+      '<div style="font-size:11px;color:var(--acc);margin-bottom:8px">📖 Recomendación: <strong>El Secreto — Napoleon Hill</strong></div>'+
+      '<div class="book-add-row">'+
+        '<input class="book-add-inp" id="book-title-inp" placeholder="Título del libro">'+
+        '<input class="book-add-inp book-inp" id="book-pages-inp" type="number" min="1" placeholder="Número de páginas">'+
+        '<button class="book-start-btn" onclick="startBook()">Empezar a leer</button>'+
+      '</div>';
+    if(hist.length){
+      rec+='<div class="book-hist" style="margin-top:10px"><div class="section-lbl">Leídos</div>'+
+        hist.map(function(h){return'<div class="book-hist-item">'+esc(h.title)+' · '+h.pages+' pág · '+esc(h.finishDate)+'</div>';}).join("")+
+      '</div>';
+    }
+    return rec;
+  }
+  var cur=bk.current;
+  var pct=cur.pages>0?Math.round(cur.currentPage/cur.pages*100):0;
+  var html='<div style="font-size:13px;font-weight:600;margin-bottom:2px">'+esc(cur.title)+'</div>'+
+    '<div style="font-size:10px;color:var(--txt2)">Página '+cur.currentPage+' / '+cur.pages+' · '+pct+'%</div>'+
+    '<div class="book-prog-wrap"><div class="book-prog-fill" style="width:'+pct+'%"></div></div>'+
+    '<div class="book-page-row">'+
+      '<input class="book-inp" id="book-page-inp" type="number" min="0" max="'+cur.pages+'" value="'+cur.currentPage+'" placeholder="Página actual">'+
+      '<button class="book-btn" onclick="updateBookPage()">Actualizar</button>'+
+      '<button class="book-fin-btn" onclick="finishBook()">Terminé</button>'+
+    '</div>';
+  if(hist.length){
+    html+='<div class="book-hist" style="margin-top:10px"><div class="section-lbl">Leídos</div>'+
+      hist.map(function(h){return'<div class="book-hist-item">'+esc(h.title)+' · '+esc(h.finishDate)+'</div>';}).join("")+
+    '</div>';
+  }
+  return html;
+}
 
 function showToast(title,msg,type,autoClose){
   var wrap=document.getElementById("notif-banner");if(!wrap)return;
@@ -879,16 +1167,15 @@ function requestNotifPermission(){
   }
 }
 
-function checkNotifs(st,ev,calData){
+async function checkNotifs(st,ev,calData){
   var today=G.today;
   var lsKey="ina_notif_"+G.sid+"_"+today;
   var shown={};
   try{shown=JSON.parse(localStorage.getItem(lsKey)||"{}");} catch(e){}
 
-  // Motivacional diario — una vez al día
+  // Motivacional diario — una vez al día, frase no repetida
   if(!shown.quote){
-    var dayNum=parseInt(today.replace(/-/g,""))%QUOTES.length;
-    var q=QUOTES[dayNum];
+    var q=await getNextQuote();
     showToast("INAMOVIBLE",q,"acc",false);
     sendBrowserNotif("INAMOVIBLE",q);
     shown.quote=1;
