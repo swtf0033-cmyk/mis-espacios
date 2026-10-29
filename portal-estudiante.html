@@ -1509,6 +1509,9 @@ async function checkNotifs(st,ev,calData){
 (function(){var sid=sessionStorage.getItem("portal_sid");if(sid)loadDashboard(sid);})();
 document.getElementById("inp-user").addEventListener("keydown",function(e){if(e.key==="Enter")document.getElementById("inp-pass").focus();});
 document.getElementById("inp-pass").addEventListener("keydown",function(e){if(e.key==="Enter")doLogin();});
+if("serviceWorker" in navigator){
+  navigator.serviceWorker.register("/mis-espacios/sw.js").catch(function(){});
+}
 </script>
 </body>
 </html>
