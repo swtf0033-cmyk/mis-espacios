@@ -1,0 +1,15 @@
+{
+    "theme_color":  "#07050F",
+    "name":  "Mis Espacios",
+    "display":  "standalone",
+    "short_name":  "Mis Espacios",
+    "background_color":  "#07050F",
+    "start_url":  "/mis-espacios/portal-estudiante.html",
+    "icons":  [
+                  {
+                      "type":  "image/png",
+                      "sizes":  "512x512",
+                      "src":  "/mis-espacios/icon.png"
+                  }
+              ]
+}
