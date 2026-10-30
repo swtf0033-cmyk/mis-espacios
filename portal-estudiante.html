@@ -737,6 +737,11 @@ async function loadDashboard(sid){
     }
     document.getElementById("app-stname").textContent=G.st.name||"Estudiante";
     document.getElementById("app-stobj").textContent=G.st.objective||"";
+    // Fix stale ranking entry: if stored name equals sid, update it now
+    if(G.st.name){
+      var myRank=G.ranking.find(function(r){return r.sid===sid;});
+      if(myRank&&myRank.name===sid){myRank.name=G.st.name;sbWrite("portal-ranking",G.ranking).catch(function(){});}
+    }
     renderDashboard(rms);
     requestNotifPermission();
     setTimeout(function(){checkNotifs(G.st,G.evals&&G.evals[0],G.calData).catch(function(){});},800);
