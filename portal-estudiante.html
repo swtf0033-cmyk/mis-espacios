@@ -396,6 +396,20 @@ body{font-family:'Inter',system-ui,sans-serif;background:var(--bg);color:var(--t
 .meta-hist-item{display:flex;align-items:center;gap:6px;font-size:10px;color:var(--txt2);padding:4px 0;border-bottom:1px solid var(--border)}
 .meta-hist-item:last-child{border-bottom:none}
 .meta-nivel-badge{font-size:9px;padding:2px 5px;border-radius:2px;font-family:'Oswald',sans-serif;font-weight:700;letter-spacing:.04em;background:var(--surf);color:var(--txt2)}
+/* META DAILY */
+.meta-day-row{display:flex;gap:4px;margin-bottom:6px}
+.meta-day-pill{flex:1;display:flex;flex-direction:column;align-items:center;gap:2px;padding:5px 2px;border-radius:3px;border:1px solid var(--border);background:var(--surf);font-size:9px;font-family:'Oswald',sans-serif;font-weight:700;letter-spacing:.04em;color:var(--txt3)}
+.meta-day-pill.today{border-color:var(--acc);color:var(--acc);background:var(--acc-d)}
+.meta-day-pill.done{border-color:var(--green);color:var(--green);background:rgba(34,197,94,.08)}
+.meta-day-check{font-size:11px;line-height:1}
+.meta-today-card{background:var(--surf);border:1px solid var(--border2);border-left:2px solid var(--acc);border-radius:3px;padding:10px 12px;margin-bottom:10px}
+.meta-today-label{font-size:9px;font-weight:700;font-family:'Oswald',sans-serif;letter-spacing:.08em;text-transform:uppercase;color:var(--acc);margin-bottom:4px}
+.meta-today-task{font-size:12px;color:var(--txt);line-height:1.5;margin-bottom:8px}
+.meta-checkin-btn{background:var(--acc);color:#fff;border:none;border-radius:2px;padding:9px 0;font-size:11px;font-family:'Oswald',sans-serif;font-weight:700;letter-spacing:.08em;text-transform:uppercase;cursor:pointer;width:100%;transition:opacity .2s}
+.meta-checkin-btn:disabled{background:var(--green);cursor:default;opacity:.85}
+.meta-notif-btn{background:none;border:1px solid var(--border2);color:var(--txt2);border-radius:2px;padding:7px 10px;font-size:10px;font-family:'Oswald',sans-serif;font-weight:600;letter-spacing:.06em;text-transform:uppercase;cursor:pointer;width:100%;margin-top:4px}
+.meta-notif-btn.on{border-color:var(--green);color:var(--green)}
+.meta-dias-btn.sel{border-color:var(--acc)!important;color:var(--txt)!important;background:var(--acc-d)!important}
 </style>
 </head>
 <body>
@@ -695,6 +709,7 @@ async function loadDashboard(sid){
     renderDashboard(rms);
     requestNotifPermission();
     setTimeout(function(){checkNotifs(G.st,G.evals&&G.evals[0],G.calData).catch(function(){});},800);
+    setTimeout(function(){setupMetaNotifications().catch(function(){});},1200);
   }catch(e){
     document.getElementById("app-body").innerHTML='<div class="loading-wrap">Error cargando datos. Recarga la página.</div>';
   }
@@ -1676,6 +1691,65 @@ async function savePerfil(){
 }
 
 /* ══ MI SIGUIENTE PASO ══ */
+/* ══ META DAILY TASK BANK ══ */
+var META_DAILY_TASKS={
+  deporte:["Completa tu entrenamiento hoy — sin excusas","Trabaja el punto más difícil de tu reto","Cardio: suma minutos, no importa el ritmo","Técnica perfecta hoy — calidad sobre cantidad","Activo: mínimo 8.000 pasos o 30 min de movimiento","Recuperación activa: estira y moviliza 15 min","Evalúa: ¿qué mejoró esta semana? Anótalo."],
+  compra:["Investiga una opción o precio del producto","Identifica un gasto innecesario y córtalo hoy","Separa o transfiere lo que puedes ahorrar hoy","Compara: busca al menos 2 precios antes de decidir","Habla con alguien que ya tiene lo que quieres","Actualiza tu ahorro: ¿cuánto llevas, cuánto falta?","¿Qué puedes vender o hacer hoy para sumar?"],
+  habito:["Haz el hábito a la hora exacta que planeaste","Hazlo aunque no tengas ganas — empieza 2 minutos","El hábito va hoy. La motivación viene después.","Conéctalo a algo que ya haces — ancla el hábito","Sigue la racha — no la rompas hoy","¿Difícil? Solo empieza. El impulso llega después.","Reflexiona: ¿por qué empezaste esto? Recuérdalo."],
+  talento:["Practica el tiempo que te comprometiste hoy","Trabaja la parte más difícil — ahí creces","Haz algo nuevo con lo que aprendiste hoy","Practica con intención, no solo por cumplir","Comparte lo que aprendiste con alguien hoy","Crea algo — no solo consumas contenido","¿Qué mejoraste esta semana? Anótalo."]
+};
+function getMetaDailyTask(act){
+  var bank=META_DAILY_TASKS[act.type]||META_DAILY_TASKS.deporte;
+  var weeks=act.weeks||[];
+  var si=weeks.findIndex(function(w){return!w.done;});if(si<0)si=weeks.length-1;
+  var dow=(new Date().getDay()+6)%7;
+  var task=bank[(si*7+dow)%bank.length];
+  var logro=act.typeParams&&act.typeParams.logro;
+  if(logro)task=task+" ["+logro+"]";
+  return task;
+}
+function getWeekDates(){
+  var d=new Date(),dow=d.getDay(),monday=new Date(d);
+  monday.setDate(d.getDate()-(dow===0?6:dow-1));
+  var out=[];
+  for(var i=0;i<7;i++){var dd=new Date(monday);dd.setDate(monday.getDate()+i);out.push(dd.toISOString().slice(0,10));}
+  return out;
+}
+async function setupMetaNotifications(){
+  if(!("Notification" in window)||!G.meta||!G.meta.active)return;
+  if(Notification.permission!=="granted")return;
+  var key="meta_notif_"+G.today;
+  try{if(localStorage.getItem(key))return;localStorage.setItem(key,"1");}catch(e){return;}
+  var act=G.meta.active;
+  var task=getMetaDailyTask(act);
+  try{
+    var reg=await navigator.serviceWorker.ready;
+    reg.showNotification("INAMOVIBLE · "+act.title,{body:task,icon:"/mis-espacios/icon.png",badge:"/mis-espacios/icon.png",tag:"meta-daily",requireInteraction:false});
+  }catch(e){}
+}
+async function requestMetaNotif(){
+  if(!("Notification" in window)){showToast("No disponible","Tu navegador no soporta notificaciones.","warn");return;}
+  var perm=await Notification.requestPermission();
+  if(perm==="granted"){
+    try{localStorage.removeItem("meta_notif_"+G.today);}catch(e){}
+    setupMetaNotifications();
+    var el=document.getElementById("meta-notif-btn");
+    if(el){el.classList.add("on");el.innerHTML='🔔 Recordatorio activado';}
+    showToast("¡Activado!","Verás tu tarea al abrir la app cada día.","ok");
+  }else{
+    showToast("Permiso denegado","Activa las notificaciones en la configuración de tu celular.","warn");
+  }
+}
+async function checkInToday(){
+  if(!G.meta||!G.meta.active)return;
+  if(!G.meta.active.checkins)G.meta.active.checkins={};
+  if(G.meta.active.checkins[G.today]){return;}
+  G.meta.active.checkins[G.today]=true;
+  await sbWrite("portal-meta-"+G.sid,G.meta);
+  var el=document.getElementById("meta-inner");if(el)el.innerHTML=buildMetaHtml();
+  showToast("¡Registrado!","Un día más. Eso es lo que separa a los que logran cosas de los que no.","ok");
+}
+
 var META_TIPOS={
   deporte:{icon:"🏋️",label:"Deporte",
     extra:'<div class="section-lbl" style="margin:8px 0 4px">¿Qué quiero lograr exactamente?</div>'+
@@ -1688,13 +1762,7 @@ var META_TIPOS={
     tasks:["Investigar exactamente qué quiero y cuánto cuesta","Definir de dónde sale el dinero y la fecha de compra","Juntar o gestionar la plata necesaria","Hacer la compra"],
     durDef:{v:8,u:"semanas"}},
   habito:{icon:"🔁",label:"Hábito",
-    extra:'<div class="section-lbl" style="margin:8px 0 4px">¿Cuántas veces por semana?</div>'+
-          '<div style="display:flex;gap:6px;margin-bottom:8px">'+
-            ['1x','2x','3x','4x','5x','6x','7x'].map(function(f,i){
-              return '<button class="meta-frec-btn" data-frec="'+(i+1)+'" onclick="selMetaFrec(this,'+(i+1)+')" style="flex:1;padding:5px 0;border:1px solid var(--border);border-radius:3px;background:var(--surf);color:var(--txt2);font-size:11px;cursor:pointer">'+f+'</button>';
-            }).join("")+
-          '</div>'+
-          '<div class="section-lbl" style="margin:0 0 4px">¿Cuánto tiempo por sesión?</div>'+
+    extra:'<div class="section-lbl" style="margin:8px 0 4px">¿Cuánto tiempo por sesión?</div>'+
           '<select class="meta-inp" id="me-duracion" style="cursor:pointer">'+
             '<option value="">Selecciona...</option>'+
             '<option value="10 min">10 minutos</option>'+
@@ -1724,72 +1792,63 @@ var META_NIVELES=[
   {key:"plata",label:"Plata",color:"#9ca3af",desc:"Requiere esfuerzo"},
   {key:"oro",label:"Oro",color:"#eab308",desc:"Máxima dificultad"}
 ];
-var _metaSelType="",_metaSelNivel="",_metaFrec=0;
+var _metaSelType="",_metaSelNivel="",_metaDias=3;
 
 function _metaStepLabel(act,i){
   var dur=act.duration||{v:4,u:"semanas"};
   var n=act.weeks?act.weeks.length:4;
-  if(dur.u==="días"){
-    var chunk=Math.ceil(dur.v/n);
-    var s=i*chunk+1,e=Math.min((i+1)*chunk,dur.v);
-    return s===e?"Día "+s:"Días "+s+"–"+e;
-  }
-  if(dur.u==="meses"){
-    if(n===4)return"Mes "+(i+1);
-    var mc=Math.ceil(dur.v/n);
-    var ms=i*mc+1,me2=Math.min((i+1)*mc,dur.v);
-    return ms===me2?"Mes "+ms:"Meses "+ms+"–"+me2;
-  }
-  // semanas
+  if(dur.u==="días"){var chunk=Math.ceil(dur.v/n),s=i*chunk+1,e=Math.min((i+1)*chunk,dur.v);return s===e?"Día "+s:"Días "+s+"–"+e;}
+  if(dur.u==="meses"){var mc=Math.ceil(dur.v/n),ms=i*mc+1,me2=Math.min((i+1)*mc,dur.v);return ms===me2?"Mes "+ms:"Meses "+ms+"–"+me2;}
   if(dur.v<=4)return"Semana "+(i+1);
-  var wc=Math.ceil(dur.v/n);
-  var ws=i*wc+1,we=Math.min((i+1)*wc,dur.v);
+  var wc=Math.ceil(dur.v/n),ws=i*wc+1,we=Math.min((i+1)*wc,dur.v);
   return ws===we?"Semana "+ws:"Semanas "+ws+"–"+we;
 }
 
 function buildMetaHtml(){
   var m=G.meta;
   if(!m||!m.active){
+    /* ── CREATION FORM ── */
     var tipos=Object.keys(META_TIPOS).map(function(k){
       var t=META_TIPOS[k];
       return '<button class="meta-type-btn'+(_metaSelType===k?" sel":"")+'" onclick="selMetaTipo(\''+k+'\')">'+
-        '<div class="meta-type-icon">'+t.icon+'</div>'+
-        '<div class="meta-type-lbl">'+t.label+'</div>'+
-      '</button>';
+        '<div class="meta-type-icon">'+t.icon+'</div><div class="meta-type-lbl">'+t.label+'</div></button>';
     }).join("");
     var tipoObj=_metaSelType?META_TIPOS[_metaSelType]:null;
-    var extras='';
-    if(tipoObj)extras=tipoObj.extra;
     var durDef=tipoObj?tipoObj.durDef:{v:4,u:"semanas"};
     var tasks=tipoObj?tipoObj.tasks:["Paso 1","Paso 2","Paso 3","Paso 4"];
-    var taskInputs='<div class="section-lbl" style="margin:8px 0 4px">Mis 4 pasos clave (puedes editarlos)</div>'+
+    var diasRow='<div class="section-lbl" style="margin:8px 0 4px">¿Cuántos días a la semana le dedicarás?</div>'+
+      '<div style="display:flex;gap:4px;margin-bottom:8px">'+
+      [1,2,3,4,5,6,7].map(function(d){
+        return '<button class="meta-dias-btn'+(d===_metaDias?" sel":"")+'" onclick="selMetaDias('+d+')" style="flex:1;padding:5px 0;border:1px solid var(--border);border-radius:3px;background:var(--surf);color:'+(d===_metaDias?"var(--txt)":"var(--txt2)")+';font-size:11px;cursor:pointer;border-color:'+(d===_metaDias?"var(--acc)":"var(--border)")+'">'+d+'</button>';
+      }).join("")+
+      '</div>';
+    var taskInputs='<div class="section-lbl" style="margin:8px 0 4px">Mis 4 pasos clave <span style="font-weight:400;color:var(--txt2)">(personalízalos)</span></div>'+
       tasks.map(function(t,i){
         return '<div style="display:flex;align-items:center;gap:6px;margin-bottom:4px">'+
-          '<span style="font-size:9px;font-weight:700;font-family:\'Oswald\',sans-serif;color:var(--txt2);min-width:14px">'+(i+1)+'</span>'+
-          '<input class="meta-inp" id="meta-task-'+i+'" placeholder="Paso '+(i+1)+'..." value="'+esc(t)+'" style="margin-bottom:0">'+
+          '<span style="font-size:9px;font-weight:700;font-family:\'Oswald\',sans-serif;color:var(--acc);min-width:14px">'+(i+1)+'</span>'+
+          '<input class="meta-inp" id="meta-task-'+i+'" value="'+esc(t)+'" style="margin-bottom:0">'+
         '</div>';
       }).join("");
     var niveles=META_NIVELES.map(function(n){
       return '<button class="meta-nivel-btn'+(_metaSelNivel===n.key?" sel":"")+'" onclick="selMetaNivel(\''+n.key+'\')" style="'+(_metaSelNivel===n.key?'border-color:'+n.color:'')+'">'+
         '<span style="color:'+n.color+'">'+n.label+'</span><br>'+
-        '<span style="font-size:9px;font-weight:400;color:var(--txt2)">'+n.desc+'</span>'+
-      '</button>';
+        '<span style="font-size:9px;font-weight:400;color:var(--txt2)">'+n.desc+'</span></button>';
     }).join("");
     var hist=m&&m.historial&&m.historial.length?
       '<div style="margin-top:14px;padding-top:10px;border-top:1px solid var(--border)"><div class="section-lbl" style="margin-bottom:6px">Metas anteriores</div>'+
       m.historial.slice().reverse().slice(0,5).map(function(h){
         var t2=META_TIPOS[h.type]||{icon:"⭐"};
-        var nv=META_NIVELES.find(function(n){return n.key===h.nivel;})||{label:h.nivel||"",color:"#9ca3af"};
-        var durStr=h.duration?h.duration.v+" "+h.duration.u:"";
+        var nv=META_NIVELES.find(function(x){return x.key===h.nivel;})||{label:h.nivel||"",color:"#9ca3af"};
+        var checkins=h.checkins?Object.keys(h.checkins).filter(function(k){return h.checkins[k];}).length:0;
         return '<div class="meta-hist-item">'+t2.icon+' <span style="flex:1">'+esc(h.title)+'</span>'+
-          (durStr?'<span style="color:var(--txt3);margin-right:4px">'+esc(durStr)+'</span>':'')+
+          (checkins?'<span style="color:var(--txt3);margin-right:4px">'+checkins+'d</span>':'')+
           '<span class="meta-nivel-badge" style="color:'+nv.color+'">'+nv.label+'</span>'+
-          '<span style="margin-left:6px;color:var(--txt3);min-width:50px;text-align:right">'+esc(h.completedDate||"")+'</span></div>';
+          '<span style="margin-left:6px;color:var(--txt3)">'+esc(h.completedDate||"")+'</span></div>';
       }).join("")+'</div>':'';
     return '<div class="section-lbl" style="margin-bottom:8px">¿Qué tipo de meta?</div>'+
       '<div class="meta-type-grid">'+tipos+'</div>'+
-      '<input class="meta-inp" id="meta-title-inp" placeholder="'+(tipoObj?"Ej: comprar una moto, correr 5km, aprender guitarra...":"¿Cuál es tu meta?")+'">'+
-      extras+
+      '<input class="meta-inp" id="meta-title-inp" placeholder="'+(tipoObj?"Describe tu meta específica...":"¿Cuál es tu meta?")+'">'+
+      (tipoObj?tipoObj.extra:'')+
       '<div class="section-lbl" style="margin:8px 0 4px">¿En cuánto tiempo lo vas a lograr?</div>'+
       '<div style="display:flex;gap:6px;margin-bottom:8px">'+
         '<input class="meta-inp" id="meta-dur-val" type="number" min="1" max="365" value="'+durDef.v+'" style="margin-bottom:0;width:70px;flex-shrink:0">'+
@@ -1799,121 +1858,160 @@ function buildMetaHtml(){
           '<option value="meses"'+(durDef.u==="meses"?" selected":"")+'>meses</option>'+
         '</select>'+
       '</div>'+
+      diasRow+
       taskInputs+
       '<div class="section-lbl" style="margin:8px 0 4px">Nivel de dificultad</div>'+
       '<div class="meta-nivel-row">'+niveles+'</div>'+
       '<button class="meta-start-btn" onclick="startMeta()">Crear mi siguiente paso →</button>'+
       hist;
   }
-  // ── Active meta view ──
+
+  /* ── ACTIVE META VIEW ── */
   var act=m.active;
   var tobj=META_TIPOS[act.type]||{icon:"⭐",label:act.type};
   var niv=META_NIVELES.find(function(n){return n.key===act.nivel;})||{label:act.nivel||"",color:"#9ca3af"};
   var dur=act.duration||{v:4,u:"semanas"};
-  var n=act.weeks.length;
-  var done=act.weeks.filter(function(w){return w.done;}).length;
-  var pct=Math.round(done/n*100);
-  var allDone=done===n;
-  // type-specific params line
+  var diasPorSemana=act.diasPorSemana||3;
+  var checkins=act.checkins||{};
+
+  // overall step progress
+  var totalSteps=act.weeks.length;
+  var doneSteps=act.weeks.filter(function(w){return w.done;}).length;
+  var overallPct=Math.round(doneSteps/totalSteps*100);
+  var allDone=doneSteps===totalSteps;
+  var curStepIdx=act.weeks.findIndex(function(w){return!w.done;});
+  if(curStepIdx<0)curStepIdx=totalSteps-1;
+  var curStep=act.weeks[curStepIdx];
+
+  // this week calendar
+  var weekDates=getWeekDates();
+  var DAY_NAMES=["L","M","M","J","V","S","D"];
+  var todayChecked=!!checkins[G.today];
+  var thisWeekDone=weekDates.filter(function(d){return!!checkins[d];}).length;
+  var weekPct=Math.min(Math.round(thisWeekDone/diasPorSemana*100),100);
+
+  var dayPills=weekDates.map(function(date,i){
+    var isToday=date===G.today;
+    var isDone=!!checkins[date];
+    var cls="meta-day-pill"+(isDone?" done":isToday?" today":"");
+    return '<div class="'+cls+'"><span>'+DAY_NAMES[i]+'</span><span class="meta-day-check">'+(isDone?"✓":isToday?"●":"·")+'</span></div>';
+  }).join("");
+
+  // type params
   var paramsLine="";
-  if(act.typeParams){
-    var p=act.typeParams;
-    if(p.logro)paramsLine+='<span>🎯 '+esc(p.logro)+'</span> ';
-    if(p.monto)paramsLine+='<span>💵 '+esc(p.monto)+'</span> ';
-    if(p.frecuencia)paramsLine+='<span>📅 '+p.frecuencia+'x por semana</span> ';
-    if(p.duracion)paramsLine+='<span>⏱ '+esc(p.duracion)+'</span> ';
-    if(p.practica)paramsLine+='<span>⏱ '+esc(p.practica)+'</span> ';
+  if(act.typeParams){var p=act.typeParams;
+    if(p.logro)paramsLine+='<span style="margin-right:8px">🎯 '+esc(p.logro)+'</span>';
+    if(p.monto)paramsLine+='<span style="margin-right:8px">💵 '+esc(p.monto)+'</span>';
+    if(p.duracion)paramsLine+='<span style="margin-right:8px">⏱ '+esc(p.duracion)+'</span>';
+    if(p.practica)paramsLine+='<span style="margin-right:8px">⏱ '+esc(p.practica)+'</span>';
   }
-  var stepHtml=act.weeks.map(function(w,i){
-    var isCur=!w.done&&act.weeks.slice(0,i).every(function(pw){return pw.done;});
+
+  // today's micro-task
+  var dailyTask=getMetaDailyTask(act);
+  var notifGranted=("Notification" in window)&&Notification.permission==="granted";
+
+  // step list (compact, for marking done)
+  var stepList=act.weeks.map(function(w,i){
+    var isCur=i===curStepIdx;
     var lbl=_metaStepLabel(act,i);
     return '<div class="meta-week-item'+(w.done?" done":isCur?" cur":"")+'">'+
       '<input type="checkbox" class="meta-week-check"'+(w.done?" checked":"")+' onchange="toggleMetaTask('+i+',this.checked)">'+
       '<div class="meta-week-body">'+
-        '<div class="meta-week-num">'+esc(lbl)+(isCur?' · <span style="color:var(--acc)">En curso</span>':w.done?' · <span style="color:var(--green)">Listo</span>':'')+'</div>'+
+        '<div class="meta-week-num">'+esc(lbl)+(isCur?'<span style="color:var(--acc);margin-left:6px">En curso</span>':w.done?'<span style="color:var(--green);margin-left:6px">Completado</span>':'')+'</div>'+
         '<div class="meta-week-task">'+esc(w.task)+'</div>'+
-      '</div>'+
-    '</div>';
+      '</div></div>';
   }).join("");
-  return '<div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:2px">'+
-    '<div style="font-size:13px;font-weight:600">'+tobj.icon+' '+esc(act.title)+'</div>'+
-    '<span class="meta-nivel-badge" style="color:'+niv.color+'">'+niv.label+'</span>'+
-  '</div>'+
-  '<div style="font-size:10px;color:var(--txt2);margin-bottom:8px">'+dur.v+' '+esc(dur.u)+(paramsLine?' · '+paramsLine:'')+'</div>'+
-  '<div class="meta-progress">'+
-    '<div style="display:flex;justify-content:space-between;font-size:10px;color:var(--txt2)">'+
-      '<span>'+done+' de '+n+' pasos</span><span>'+pct+'%</span>'+
+
+  return (
+    /* Header */
+    '<div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:2px">'+
+      '<div style="font-size:13px;font-weight:600">'+tobj.icon+' '+esc(act.title)+'</div>'+
+      '<span class="meta-nivel-badge" style="color:'+niv.color+'">'+niv.label+'</span>'+
     '</div>'+
-    '<div class="meta-prog-bar"><div class="meta-prog-fill" style="width:'+pct+'%"></div></div>'+
-  '</div>'+
-  '<div class="meta-week-list">'+stepHtml+'</div>'+
-  (allDone?'<button class="meta-complete-btn" onclick="completeMeta()">✓ Meta cumplida — crear la siguiente</button>':'');
+    '<div style="font-size:10px;color:var(--txt2);margin-bottom:8px">'+dur.v+' '+esc(dur.u)+' · '+diasPorSemana+' días/sem'+(paramsLine?' · '+paramsLine:'')+'</div>'+
+    /* Overall progress */
+    '<div class="meta-progress" style="margin-bottom:10px">'+
+      '<div style="display:flex;justify-content:space-between;font-size:10px;color:var(--txt2)">'+
+        '<span>Paso '+(curStepIdx+1)+' de '+totalSteps+': '+esc(_metaStepLabel(act,curStepIdx))+'</span><span>'+overallPct+'%</span>'+
+      '</div>'+
+      '<div class="meta-prog-bar"><div class="meta-prog-fill" style="width:'+overallPct+'%"></div></div>'+
+    '</div>'+
+    /* Today card */
+    '<div class="meta-today-card">'+
+      '<div class="meta-today-label">Tu tarea de hoy</div>'+
+      '<div class="meta-today-task">'+esc(dailyTask)+'</div>'+
+      '<button class="meta-checkin-btn"'+(todayChecked?' disabled':'')+' onclick="checkInToday()">'+
+        (todayChecked?'✓ Ya lo registraste hoy':'Lo hice hoy →')+
+      '</button>'+
+    '</div>'+
+    /* Week calendar */
+    '<div style="margin-bottom:4px;display:flex;align-items:center;justify-content:space-between">'+
+      '<span class="section-lbl">Esta semana</span>'+
+      '<span style="font-size:10px;color:var(--txt2)">'+thisWeekDone+' / '+diasPorSemana+' días</span>'+
+    '</div>'+
+    '<div class="meta-day-row" style="margin-bottom:4px">'+dayPills+'</div>'+
+    '<div class="meta-prog-bar" style="margin-bottom:12px"><div class="meta-prog-fill" style="width:'+weekPct+'%;background:var(--green)"></div></div>'+
+    /* Notification btn */
+    '<button class="meta-notif-btn'+(notifGranted?" on":"")+'" onclick="requestMetaNotif()" id="meta-notif-btn">'+
+      (notifGranted?"🔔 Recordatorio activado":"🔔 Activar recordatorio diario")+
+    '</button>'+
+    /* Step list */
+    '<div style="margin:12px 0 6px"><div class="section-lbl">Mis pasos</div></div>'+
+    '<div class="meta-week-list">'+stepList+'</div>'+
+    (allDone?'<button class="meta-complete-btn" onclick="completeMeta()">✓ Meta cumplida — definir la siguiente</button>':'')
+  );
 }
 
 function selMetaTipo(key){
   _metaSelType=key;
-  _metaFrec=0;
   var el=document.getElementById("meta-inner");if(el)el.innerHTML=buildMetaHtml();
 }
 function selMetaNivel(key){
   _metaSelNivel=key;
-  var btns=document.querySelectorAll(".meta-nivel-btn");
-  btns.forEach(function(b,i){
-    var n=META_NIVELES[i];
-    if(!n)return;
-    b.classList.toggle("sel",n.key===key);
-    b.style.borderColor=n.key===key?n.color:"";
+  document.querySelectorAll(".meta-nivel-btn").forEach(function(b,i){
+    var n=META_NIVELES[i];if(!n)return;
+    b.classList.toggle("sel",n.key===key);b.style.borderColor=n.key===key?n.color:"";
   });
 }
-function selMetaFrec(btn,val){
-  _metaFrec=val;
-  document.querySelectorAll(".meta-frec-btn").forEach(function(b){
-    b.style.borderColor="";b.style.color="var(--txt2)";b.style.background="var(--surf)";
+function selMetaDias(val){
+  _metaDias=val;
+  document.querySelectorAll(".meta-dias-btn").forEach(function(b){
+    var d=parseInt(b.getAttribute("onclick").match(/\d+/)[0]);
+    b.classList.toggle("sel",d===val);
+    b.style.borderColor=d===val?"var(--acc)":"var(--border)";
+    b.style.color=d===val?"var(--txt)":"var(--txt2)";
+    b.style.background=d===val?"var(--acc-d)":"var(--surf)";
   });
-  btn.style.borderColor="var(--acc)";btn.style.color="var(--txt)";btn.style.background="var(--acc-d)";
 }
 async function startMeta(){
   if(!_metaSelType){showToast("Elige un tipo","Selecciona el tipo de meta primero.","warn");return;}
   if(!_metaSelNivel){showToast("Elige nivel","Selecciona la dificultad.","warn");return;}
-  var titulo=(document.getElementById("meta-title-inp")||{}).value||"";
-  if(!titulo.trim()){showToast("Escribe tu meta","¿Cuál es tu meta?","warn");return;}
+  var titulo=((document.getElementById("meta-title-inp")||{}).value||"").trim();
+  if(!titulo){showToast("Escribe tu meta","¿Cuál es tu meta?","warn");return;}
   var durV=parseInt((document.getElementById("meta-dur-val")||{}).value)||4;
   var durU=(document.getElementById("meta-dur-unit")||{}).value||"semanas";
   if(durV<1){showToast("Tiempo inválido","Pon un tiempo mayor a 0.","warn");return;}
-  // read tasks
   var tasks=[];
-  for(var i=0;i<4;i++){
-    var v=((document.getElementById("meta-task-"+i)||{}).value||"").trim();
-    if(v)tasks.push(v);
-  }
-  if(tasks.length<2){showToast("Pasos incompletos","Define al menos 2 pasos clave.","warn");return;}
+  for(var i=0;i<4;i++){var v=((document.getElementById("meta-task-"+i)||{}).value||"").trim();if(v)tasks.push(v);}
+  if(tasks.length<2){showToast("Pasos incompletos","Define al menos 2 pasos.","warn");return;}
   while(tasks.length<4)tasks.push("Paso "+(tasks.length+1));
-  // type params
   var tp={};
-  if(_metaSelType==="deporte"){var logro=(document.getElementById("me-logro")||{}).value||"";if(logro.trim())tp.logro=logro.trim();}
-  if(_metaSelType==="compra"){var monto=(document.getElementById("me-monto")||{}).value||"";if(monto.trim())tp.monto=monto.trim();}
-  if(_metaSelType==="habito"){
-    if(_metaFrec)tp.frecuencia=_metaFrec;
-    var dur2=(document.getElementById("me-duracion")||{}).value||"";if(dur2)tp.duracion=dur2;
-  }
+  if(_metaSelType==="deporte"){var logro=((document.getElementById("me-logro")||{}).value||"").trim();if(logro)tp.logro=logro;}
+  if(_metaSelType==="compra"){var monto=((document.getElementById("me-monto")||{}).value||"").trim();if(monto)tp.monto=monto;}
+  if(_metaSelType==="habito"){var dur2=(document.getElementById("me-duracion")||{}).value||"";if(dur2)tp.duracion=dur2;}
   if(_metaSelType==="talento"){var prac=(document.getElementById("me-practica")||{}).value||"";if(prac)tp.practica=prac;}
   var hist=(G.meta&&G.meta.historial)||[];
-  G.meta={
-    historial:hist,
-    active:{
-      type:_metaSelType,
-      nivel:_metaSelNivel,
-      title:titulo.trim(),
-      duration:{v:durV,u:durU},
-      typeParams:tp,
-      created:G.today,
-      weeks:tasks.map(function(t){return{task:t,done:false};})
-    }
-  };
-  _metaSelType="";_metaSelNivel="";_metaFrec=0;
+  G.meta={historial:hist,active:{
+    type:_metaSelType,nivel:_metaSelNivel,title:titulo,
+    duration:{v:durV,u:durU},diasPorSemana:_metaDias,
+    typeParams:tp,created:G.today,checkins:{},
+    weeks:tasks.map(function(t){return{task:t,done:false};})
+  }};
+  _metaSelType="";_metaSelNivel="";_metaDias=3;
   await sbWrite("portal-meta-"+G.sid,G.meta);
   var el=document.getElementById("meta-inner");if(el)el.innerHTML=buildMetaHtml();
-  showToast("¡Siguiente paso creado!","Empieza por el paso 1.","ok");
+  setupMetaNotifications();
+  showToast("¡Siguiente paso creado!","Cada día que hagas la tarea te acerca. Empieza hoy.","ok");
 }
 async function toggleMetaTask(idx,checked){
   if(!G.meta||!G.meta.active)return;
@@ -1926,14 +2024,16 @@ async function completeMeta(){
   var act=G.meta.active;
   var MESES=["ene","feb","mar","abr","may","jun","jul","ago","sep","oct","nov","dic"];
   var d=new Date();
+  var totalDias=Object.keys(act.checkins||{}).filter(function(k){return act.checkins[k];}).length;
   act.completedDate=d.getDate()+"/"+MESES[d.getMonth()]+"/"+d.getFullYear();
+  act.totalDias=totalDias;
   var hist=G.meta.historial||[];
   hist.push(act);
   G.meta={historial:hist,active:null};
-  _metaSelType="";_metaSelNivel="";_metaFrec=0;
+  _metaSelType="";_metaSelNivel="";_metaDias=3;
   await sbWrite("portal-meta-"+G.sid,G.meta);
   var el=document.getElementById("meta-inner");if(el)el.innerHTML=buildMetaHtml();
-  showToast("¡Meta cumplida!","Excelente disciplina. Define tu próximo paso.","ok");
+  showToast("Meta cumplida","Eso es lo que hace la gente que logra cosas: no para. Define la siguiente.","ok");
 }
 
 function showToast(title,msg,type,autoClose){
