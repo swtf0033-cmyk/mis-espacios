@@ -357,6 +357,23 @@ body{font-family:'Inter',system-ui,sans-serif;background:var(--bg);color:var(--t
 .day-note-footer{display:flex;gap:8px;margin-top:8px}
 .day-note-cancel{background:none;border:1px solid var(--border2);color:var(--txt2);border-radius:2px;padding:7px 14px;font-size:10px;font-family:'Oswald',sans-serif;font-weight:600;letter-spacing:.08em;text-transform:uppercase;cursor:pointer;flex:1}
 .day-note-save{background:var(--acc);color:#fff;border:none;border-radius:2px;padding:7px 14px;font-size:10px;font-family:'Oswald',sans-serif;font-weight:700;letter-spacing:.08em;text-transform:uppercase;cursor:pointer;flex:1}
+/* HOY RESUMEN */
+.hoy-sum-grid{display:flex;gap:8px;margin-bottom:8px}
+.hoy-sum-item{flex:1;text-align:center;padding:8px 4px;border-radius:6px;border:1px solid var(--border)}
+.hoy-sum-item.done{border-color:var(--acc);background:var(--acc-d)}
+.hoy-sum-ico{font-size:17px;line-height:1}
+.hoy-sum-lbl{font-size:9px;color:var(--txt2);margin-top:2px;text-transform:uppercase;letter-spacing:.05em}
+.hoy-sum-racha{font-family:'Oswald',sans-serif;font-size:20px;font-weight:700;color:var(--acc);line-height:1}
+.hoy-meta-preview{font-size:11px;color:var(--txt2);border-top:1px solid var(--border);padding-top:7px;margin-top:6px;line-height:1.5}
+/* EVAL ALERT */
+.eval-alert-inline{display:flex;align-items:center;gap:7px;background:rgba(200,16,46,.08);border:1px solid rgba(200,16,46,.25);border-radius:5px;padding:8px 10px;font-size:11px;color:#ff6060;margin-top:8px;line-height:1.4}
+/* ONBOARDING */
+.onboard-card{background:rgba(200,16,46,.05);border:1px solid var(--border2);border-radius:8px;padding:14px;margin-bottom:14px}
+.onboard-title{font-family:'Oswald',sans-serif;font-size:12px;font-weight:600;letter-spacing:.08em;text-transform:uppercase;color:var(--txt2);margin-bottom:10px}
+.onboard-step{display:flex;align-items:center;gap:10px;padding:5px 0;font-size:12px;color:var(--txt)}
+.onboard-step-ico{width:20px;height:20px;border-radius:50%;border:2px solid var(--border2);display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:700;flex-shrink:0;color:var(--txt3)}
+.onboard-step.done .onboard-step-ico{background:var(--acc);border-color:var(--acc);color:#fff}
+.onboard-step.done{color:var(--txt2);text-decoration:line-through}
 /* PERFIL EDIT */
 .prof-edit-btn{background:none;border:1px solid var(--border2);color:var(--txt2);border-radius:2px;padding:4px 10px;font-size:10px;font-family:'Oswald',sans-serif;font-weight:600;letter-spacing:.06em;text-transform:uppercase;cursor:pointer;margin-top:8px;transition:border-color .2s}
 .prof-edit-btn:hover{border-color:var(--acc);color:var(--txt)}
@@ -639,7 +656,15 @@ async function doRegister(){
     if(phone)newUser.phone=phone;
     if(code){
       var coachCode=await fetchSbKey("portal-coach-code")||"";
-      if(code===coachCode)newUser.coach_linked=true;
+      if(code===coachCode){
+        newUser.coach_linked=true;
+        // Add to coach's students list so they appear immediately in the coach app
+        var coachStudents=await fetchSbKey("students")||[];
+        if(!coachStudents.some(function(s){return s.id===sid;})){
+          coachStudents.push({id:sid,name:name,appUser:true,selfRegistered:true,payStatus:"Pendiente",months:0,progress:0,fee:0});
+          await sbWrite("students",coachStudents);
+        }
+      }
     }
     users.push(newUser);
     await sbWrite("portales",portales);
@@ -969,6 +994,32 @@ function renderDashboard(rms){
 
   /* PERFIL */
 
+  /* ── HOY RESUMEN (top of left col) ── */
+  var te0=todayEntry();
+  var rachaD=(function(){var c=0;var td=new Date();for(var d=0;d<365;d++){var dd=new Date(td);dd.setDate(dd.getDate()-d);var dow=dd.getDay();var dk=dd.toISOString().slice(0,10);var en=(G.calData||{})[dk];if(en&&(en.w||en.s)){c++;}else if(dow===0||dow===6){}else{break;}}return c;})();
+  var hoyPreview="";
+  if(G.meta&&G.meta.active){var _mt=G.meta.active;var _ts=getMetaDailyTask(_mt);if(_ts)hoyPreview='<div class="hoy-meta-preview">Meta hoy: '+esc(_ts.length>70?_ts.slice(0,70)+"…":_ts)+'</div>';}
+  leftHtml+='<div class="card" style="margin-bottom:14px"><div class="ct">'+I.check_s+' RESUMEN DEL DÍA</div>'+
+    '<div class="hoy-sum-grid">'+
+    '<div class="hoy-sum-item'+(te0.w?" done":"")+'"><div class="hoy-sum-ico">'+(te0.w?"✓":"○")+'</div><div class="hoy-sum-lbl">Entreno</div></div>'+
+    '<div class="hoy-sum-item'+(te0.s?" done":"")+'"><div class="hoy-sum-ico">'+(te0.s?"✓":"○")+'</div><div class="hoy-sum-lbl">Pasos</div></div>'+
+    (rachaD>0?'<div class="hoy-sum-item done"><div class="hoy-sum-racha">'+rachaD+'</div><div class="hoy-sum-lbl">Racha</div></div>':'')+
+    '</div>'+hoyPreview+'</div>';
+
+  /* ── ONBOARDING (mostrar si faltan pasos) ── */
+  var ob1=G.evals&&G.evals.length>0;
+  var ob2=!!(G.meta&&G.meta.active);
+  var ob3=Object.keys(G.calData||{}).some(function(k){var e=G.calData[k];return e&&(e.w||e.s);});
+  if(!ob1||!ob2||!ob3){
+    leftHtml+='<div class="onboard-card">'+
+      '<div class="onboard-title">Primeros pasos</div>'+
+      '<div class="onboard-step'+(ob1?" done":"")+'"><div class="onboard-step-ico">'+(ob1?"✓":"1")+'</div>Solicita tu evaluación al coach</div>'+
+      '<div class="onboard-step'+(ob2?" done":"")+'"><div class="onboard-step-ico">'+(ob2?"✓":"2")+'</div>Define tu primera meta (Mi Siguiente Paso)</div>'+
+      '<div class="onboard-step'+(ob3?" done":"")+'"><div class="onboard-step-ico">'+(ob3?"✓":"3")+'</div>Marca tu primer día completado</div>'+
+    '</div>';
+  }
+
+  /* ── PERFIL ── */
   var profTags="";
   if(st.sex)profTags+='<span class="prof-tag">'+(st.sex==="M"?"Hombre":"Mujer")+'</span>';
   if(st.dob){var dobAge=Math.floor((Date.now()-new Date(st.dob))/(365.25*24*3600*1000));if(dobAge>0&&dobAge<100)profTags+='<span class="prof-tag">'+dobAge+' años</span>';}
@@ -985,6 +1036,7 @@ function renderDashboard(rms){
     (st.objective?'<div class="prof-obj" id="prof-obj-disp">'+esc(st.objective)+'</div>':'<div class="prof-obj" id="prof-obj-disp" style="display:none"></div>')+
     '</div></div>'+
     (profTags?'<div class="prof-meta">'+profTags+'</div>':'')+
+    (!ev0?'<div class="eval-alert-inline">⚠ Solicita tu evaluación inicial al coach para activar Cuerpo e Ingesta.</div>':'')+
     '<button class="prof-edit-btn" onclick="togglePerfilEdit()">Editar datos</button>'+
     '<div id="perfil-edit-form" style="display:none" class="prof-edit-form">'+
       '<input class="prof-edit-inp" id="pe-name" placeholder="Nombre completo" value="'+esc(st.name||"")+'">'+
