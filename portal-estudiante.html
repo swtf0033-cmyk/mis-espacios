@@ -357,6 +357,45 @@ body{font-family:'Inter',system-ui,sans-serif;background:var(--bg);color:var(--t
 .day-note-footer{display:flex;gap:8px;margin-top:8px}
 .day-note-cancel{background:none;border:1px solid var(--border2);color:var(--txt2);border-radius:2px;padding:7px 14px;font-size:10px;font-family:'Oswald',sans-serif;font-weight:600;letter-spacing:.08em;text-transform:uppercase;cursor:pointer;flex:1}
 .day-note-save{background:var(--acc);color:#fff;border:none;border-radius:2px;padding:7px 14px;font-size:10px;font-family:'Oswald',sans-serif;font-weight:700;letter-spacing:.08em;text-transform:uppercase;cursor:pointer;flex:1}
+/* PERFIL EDIT */
+.prof-edit-btn{background:none;border:1px solid var(--border2);color:var(--txt2);border-radius:2px;padding:4px 10px;font-size:10px;font-family:'Oswald',sans-serif;font-weight:600;letter-spacing:.06em;text-transform:uppercase;cursor:pointer;margin-top:8px;transition:border-color .2s}
+.prof-edit-btn:hover{border-color:var(--acc);color:var(--txt)}
+.prof-edit-form{margin-top:10px;display:flex;flex-direction:column;gap:6px}
+.prof-edit-inp{background:var(--surf);border:1px solid var(--border);color:var(--txt);border-radius:3px;padding:7px 10px;font-size:12px;font-family:'Inter',sans-serif;outline:none}
+.prof-edit-inp:focus{border-color:var(--acc)}
+.prof-edit-row{display:flex;gap:6px}
+.prof-save-btn{background:var(--acc);color:#fff;border:none;border-radius:2px;padding:7px 0;font-size:10px;font-family:'Oswald',sans-serif;font-weight:700;letter-spacing:.08em;text-transform:uppercase;cursor:pointer;flex:1}
+.prof-cancel-btn{background:none;border:1px solid var(--border2);color:var(--txt2);border-radius:2px;padding:7px 0;font-size:10px;font-family:'Oswald',sans-serif;font-weight:600;letter-spacing:.08em;text-transform:uppercase;cursor:pointer;flex:1}
+/* MI SIGUIENTE PASO */
+.meta-type-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:12px}
+.meta-type-btn{background:var(--surf);border:1px solid var(--border);border-radius:3px;padding:10px 8px;cursor:pointer;text-align:center;transition:border-color .2s,background .2s}
+.meta-type-btn:hover,.meta-type-btn.sel{border-color:var(--acc);background:var(--acc-d)}
+.meta-type-icon{font-size:20px;margin-bottom:4px;line-height:1}
+.meta-type-lbl{font-family:'Oswald',sans-serif;font-size:11px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:var(--txt)}
+.meta-nivel-row{display:flex;gap:6px;margin-bottom:12px}
+.meta-nivel-btn{flex:1;border:1px solid var(--border);border-radius:3px;padding:6px 4px;text-align:center;cursor:pointer;background:var(--surf);font-size:10px;font-family:'Oswald',sans-serif;font-weight:600;letter-spacing:.05em;text-transform:uppercase;transition:border-color .2s}
+.meta-nivel-btn:hover,.meta-nivel-btn.sel{border-color:var(--acc);background:var(--acc-d);color:var(--txt)}
+.meta-inp{background:var(--surf);border:1px solid var(--border);color:var(--txt);border-radius:3px;padding:8px 10px;font-size:12px;font-family:'Inter',sans-serif;outline:none;width:100%;margin-bottom:8px;box-sizing:border-box}
+.meta-inp:focus{border-color:var(--acc)}
+.meta-start-btn{background:var(--acc);color:#fff;border:none;border-radius:2px;padding:9px 0;font-size:11px;font-family:'Oswald',sans-serif;font-weight:700;letter-spacing:.08em;text-transform:uppercase;cursor:pointer;width:100%}
+.meta-progress{margin-bottom:10px}
+.meta-prog-bar{background:var(--border);border-radius:2px;height:4px;margin-top:4px}
+.meta-prog-fill{background:var(--acc);border-radius:2px;height:4px;transition:width .4s}
+.meta-week-list{display:flex;flex-direction:column;gap:6px;margin-bottom:12px}
+.meta-week-item{display:flex;align-items:flex-start;gap:8px;padding:8px 10px;background:var(--surf);border:1px solid var(--border);border-radius:3px;border-left:2px solid var(--border)}
+.meta-week-item.done{border-left-color:var(--green);opacity:.7}
+.meta-week-item.cur{border-left-color:var(--acc)}
+.meta-week-check{width:16px;height:16px;flex-shrink:0;accent-color:var(--acc);margin-top:1px;cursor:pointer}
+.meta-week-body{flex:1}
+.meta-week-num{font-size:9px;font-weight:700;font-family:'Oswald',sans-serif;letter-spacing:.08em;text-transform:uppercase;color:var(--txt2);margin-bottom:2px}
+.meta-week-task{font-size:11px;color:var(--txt);line-height:1.4}
+.meta-week-task-inp{background:var(--bg);border:1px solid var(--border);color:var(--txt);border-radius:2px;padding:4px 6px;font-size:11px;font-family:'Inter',sans-serif;outline:none;width:100%;margin-top:4px}
+.meta-week-task-inp:focus{border-color:var(--acc)}
+.meta-complete-btn{background:none;border:1px solid var(--green);color:var(--green);border-radius:2px;padding:8px 0;font-size:11px;font-family:'Oswald',sans-serif;font-weight:700;letter-spacing:.08em;text-transform:uppercase;cursor:pointer;width:100%;margin-top:4px;transition:background .2s}
+.meta-complete-btn:hover{background:rgba(34,197,94,.1)}
+.meta-hist-item{display:flex;align-items:center;gap:6px;font-size:10px;color:var(--txt2);padding:4px 0;border-bottom:1px solid var(--border)}
+.meta-hist-item:last-child{border-bottom:none}
+.meta-nivel-badge{font-size:9px;padding:2px 5px;border-radius:2px;font-family:'Oswald',sans-serif;font-weight:700;letter-spacing:.04em;background:var(--surf);color:var(--txt2)}
 </style>
 </head>
 <body>
@@ -600,7 +639,7 @@ async function doRegister(){
 
 function doLogout(){
   try{localStorage.removeItem("portal_auth");}catch(e){}
-  Object.assign(G,{sid:null,calData:{},mealCount:5,stepsGoal:8000,nutriOk:false,st:{},nutrition:{},plan:null,evals:[],att:[],shownQuotes:[],notes:[],badges:{},ranking:[],book:null,diario:[],obstaculo:[],fotos:[]});
+  Object.assign(G,{sid:null,calData:{},mealCount:5,stepsGoal:8000,nutriOk:false,st:{},nutrition:{},plan:null,evals:[],att:[],shownQuotes:[],notes:[],badges:{},ranking:[],book:null,diario:[],obstaculo:[],fotos:[],meta:null});
   document.getElementById("login").style.display="flex";
   document.getElementById("app").style.display="none";
   document.getElementById("inp-pass").value="";
@@ -632,7 +671,8 @@ async function loadDashboard(sid){
       fetchSbKey("portal-book-"+sid),
       fetchSbKey("portal-diario-"+sid),
       fetchSbKey("portal-obstaculo-"+sid),
-      fetchSbKey("portal-fotos-"+sid)
+      fetchSbKey("portal-fotos-"+sid),
+      fetchSbKey("portal-meta-"+sid)
     ]);
     var students=res[0]||[],rms=res[1]||{};
     G.plan=res[2];G.evals=res[3]||[];G.att=res[4]||[];
@@ -648,6 +688,7 @@ async function loadDashboard(sid){
     G.diario=res[15]||[];
     G.obstaculo=res[16]||[];
     G.fotos=res[17]||[];
+    G.meta=res[18]||null;
     G.st=students.find(function(s){return s.id===sid;})||{};
     document.getElementById("app-stname").textContent=G.st.name||"Estudiante";
     document.getElementById("app-stobj").textContent=G.st.objective||"";
@@ -925,11 +966,19 @@ function renderDashboard(rms){
   if(st.objective)profTags+='<span class="prof-tag">'+esc(st.objective)+'</span>';
   leftHtml+='<div class="card"><div class="ct">'+I.user_s+' PERFIL</div>'+
     '<div class="prof-row"><div class="prof-avatar"><img src="icon.png" style="width:100%;height:100%;object-fit:cover"></div>'+
-    '<div><div class="prof-name">'+esc(st.name||"Estudiante")+'</div>'+
-    (st.objective?'<div class="prof-obj">'+esc(st.objective)+'</div>':'')+
+    '<div><div class="prof-name" id="prof-name-disp">'+esc(st.name||"Estudiante")+'</div>'+
+    (st.objective?'<div class="prof-obj" id="prof-obj-disp">'+esc(st.objective)+'</div>':'<div class="prof-obj" id="prof-obj-disp" style="display:none"></div>')+
     '</div></div>'+
     (profTags?'<div class="prof-meta">'+profTags+'</div>':'')+
-    '<div class="prof-msg">Para actualizar tu perfil, habla con tu coach.</div>'+
+    '<button class="prof-edit-btn" onclick="togglePerfilEdit()">Editar datos</button>'+
+    '<div id="perfil-edit-form" style="display:none" class="prof-edit-form">'+
+      '<input class="prof-edit-inp" id="pe-name" placeholder="Nombre completo" value="'+esc(st.name||"")+'">'+
+      '<input class="prof-edit-inp" id="pe-objetivo" placeholder="Mi objetivo (ej: perder 5kg, correr 5km...)" value="'+esc(st.objective||"")+'">'+
+      '<div class="prof-edit-row">'+
+        '<button class="prof-cancel-btn" onclick="togglePerfilEdit()">Cancelar</button>'+
+        '<button class="prof-save-btn" onclick="savePerfil()">Guardar</button>'+
+      '</div>'+
+    '</div>'+
   '</div>';
 
   /* PLAN */
@@ -1155,6 +1204,10 @@ function renderDashboard(rms){
   }
   if(st.months)memHtml+='<div class="mem-row"><span class="mem-key">Meses entrenando</span><span class="mem-val">'+st.months+'</span></div>';
   rightHtml+='<div class="card"><div class="ct">'+I.card_s+' ACCESO</div>'+memHtml+'</div>';
+
+  /* MI SIGUIENTE PASO */
+  var metaIcon='<svg style="width:14px;height:14px;vertical-align:-2px;margin-right:6px" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><polyline points="12,8 12,12 14,14"/></svg>';
+  leftHtml+='<div class="card"><div class="ct">'+metaIcon+'MI SIGUIENTE PASO</div><div id="meta-inner">'+buildMetaHtml()+'</div></div>';
 
   document.getElementById("app-body").innerHTML='<div class="two-col"><div class="col">'+leftHtml+'</div><div class="col">'+rightHtml+'</div></div>';
 }
@@ -1598,6 +1651,172 @@ async function deleteFoto(idx){
   G.fotos=fotos;
   await sbWrite("portal-fotos-"+G.sid,fotos);
   var el=document.getElementById("fotos-inner");if(el)el.innerHTML=buildFotosHtml();
+}
+
+/* ══ PERFIL EDIT ══ */
+function togglePerfilEdit(){
+  var f=document.getElementById("perfil-edit-form");
+  if(!f)return;
+  f.style.display=f.style.display==="none"?"block":"none";
+}
+async function savePerfil(){
+  var name=(document.getElementById("pe-name")||{}).value||"";
+  var objetivo=(document.getElementById("pe-objetivo")||{}).value||"";
+  if(!name.trim()){showToast("Falta nombre","Escribe tu nombre.","warn");return;}
+  G.st.name=name.trim();G.st.objective=objetivo.trim();
+  var users=await fetchSbKey("portal-users")||[];
+  var idx=users.findIndex(function(u){return u.id===G.sid;});
+  if(idx>=0){users[idx].name=G.st.name;users[idx].objective=G.st.objective;}
+  await sbWrite("portal-users",users);
+  var nd=document.getElementById("prof-name-disp");if(nd)nd.textContent=G.st.name;
+  var od=document.getElementById("prof-obj-disp");
+  if(od){od.textContent=G.st.objective;od.style.display=G.st.objective?"":"none";}
+  togglePerfilEdit();
+  showToast("Perfil actualizado","Tus datos han sido guardados.","ok");
+}
+
+/* ══ MI SIGUIENTE PASO ══ */
+var META_TIPOS=[
+  {key:"deporte",icon:"🏋️",label:"Deporte",tasks:["Definir mi reto específico y fecha límite","Entrenar mínimo 4 días esta semana","Superar la mitad del reto","Completar el desafío"]},
+  {key:"compra",icon:"🎯",label:"Compra",tasks:["Investigar opciones y precios","Calcular cuánto necesito y cómo conseguirlo","Juntar o gestionar el dinero","Hacer la compra"]},
+  {key:"habito",icon:"🔁",label:"Hábito",tasks:["Definir el hábito exacto y a qué hora lo hago","Completar el hábito 5 días seguidos","Completar el hábito 10 días seguidos","Completar 21 días del hábito"]},
+  {key:"talento",icon:"🧠",label:"Talento",tasks:["Encontrar recursos y empezar a aprender","Practicar mínimo 30 min diarios esta semana","Crear algo con lo que aprendí","Aplicar o mostrar el talento"]}
+];
+var META_NIVELES=[
+  {key:"bronce",label:"Bronce",color:"#cd7f32",desc:"Meta alcanzable"},
+  {key:"plata",label:"Plata",color:"#9ca3af",desc:"Requiere esfuerzo"},
+  {key:"oro",label:"Oro",color:"#eab308",desc:"Máxima dificultad"}
+];
+
+function buildMetaHtml(){
+  var m=G.meta;
+  if(!m||!m.active){
+    // Creation form
+    var selType=m&&m._selType||"";
+    var selNivel=m&&m._selNivel||"";
+    var tipos=META_TIPOS.map(function(t){
+      return '<button class="meta-type-btn'+(selType===t.key?" sel":"")+'" onclick="selMetaTipo(\''+t.key+'\')">'+
+        '<div class="meta-type-icon">'+t.icon+'</div>'+
+        '<div class="meta-type-lbl">'+t.label+'</div>'+
+      '</button>';
+    }).join("");
+    var niveles=META_NIVELES.map(function(n){
+      return '<button class="meta-nivel-btn'+(selNivel===n.key?" sel":"")+'" onclick="selMetaNivel(\''+n.key+'\')" style="'+(selNivel===n.key?'border-color:'+n.color+';color:'+n.color:'')+'">'+
+        '<span style="color:'+n.color+'">'+n.label+'</span><br><span style="font-size:9px;font-weight:400;color:var(--txt2)">'+n.desc+'</span>'+
+      '</button>';
+    }).join("");
+    var tipoActual=META_TIPOS.find(function(t){return t.key===selType;});
+    var placeholder=tipoActual?"Ej: "+tipoActual.tasks[0].toLowerCase()+"...":"¿Cuál es tu meta?";
+    var hist=m&&m.historial&&m.historial.length?
+      '<div style="margin-top:12px"><div class="section-lbl" style="margin-bottom:6px">Metas anteriores</div>'+
+      m.historial.slice().reverse().slice(0,3).map(function(h){
+        var tipo=META_TIPOS.find(function(t){return t.key===h.type;})||{icon:"⭐",label:h.type};
+        var niv=META_NIVELES.find(function(n){return n.key===h.nivel;})||{label:h.nivel,color:"#9ca3af"};
+        return '<div class="meta-hist-item">'+tipo.icon+' <span style="flex:1">'+esc(h.title)+'</span>'+
+          '<span class="meta-nivel-badge" style="color:'+niv.color+'">'+niv.label+'</span>'+
+          '<span style="margin-left:6px;color:var(--txt3)">'+esc(h.completedDate||"")+'</span></div>';
+      }).join("")+
+      '</div>':'';
+    return '<div class="section-lbl" style="margin-bottom:8px">¿Qué tipo de meta?</div>'+
+      '<div class="meta-type-grid">'+tipos+'</div>'+
+      '<div class="section-lbl" style="margin-bottom:8px">Nivel de dificultad</div>'+
+      '<div class="meta-nivel-row">'+niveles+'</div>'+
+      '<input class="meta-inp" id="meta-title-inp" placeholder="'+esc(placeholder)+'" value="'+esc(m&&m._title||"")+'">'+
+      '<button class="meta-start-btn" onclick="startMeta()">Crear meta →</button>'+
+      hist;
+  }
+  // Active meta view
+  var act=m.active;
+  var tipo=META_TIPOS.find(function(t){return t.key===act.type;})||{icon:"⭐",label:act.type};
+  var niv=META_NIVELES.find(function(n){return n.key===act.nivel;})||{label:act.nivel,color:"#9ca3af"};
+  var done=act.weeks.filter(function(w){return w.done;}).length;
+  var pct=Math.round(done/4*100);
+  var allDone=done===4;
+  var weekHtml=act.weeks.map(function(w,i){
+    var isCur=!w.done&&act.weeks.slice(0,i).every(function(pw){return pw.done;});
+    return '<div class="meta-week-item'+(w.done?" done":isCur?" cur":"")+'">'+
+      '<input type="checkbox" class="meta-week-check"'+(w.done?" checked":"")+' onchange="toggleMetaTask('+i+',this.checked)">'+
+      '<div class="meta-week-body">'+
+        '<div class="meta-week-num">Semana '+(i+1)+(isCur?' · <span style="color:var(--acc)">Esta semana</span>':w.done?' · <span style="color:var(--green)">Completada</span>':'')+'</div>'+
+        '<div class="meta-week-task">'+esc(w.task)+'</div>'+
+      '</div>'+
+    '</div>';
+  }).join("");
+  return '<div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:4px">'+
+    '<div style="font-size:13px;font-weight:600">'+tipo.icon+' '+esc(act.title)+'</div>'+
+    '<span class="meta-nivel-badge" style="color:'+niv.color+'">'+niv.label+'</span>'+
+  '</div>'+
+  '<div class="meta-progress">'+
+    '<div style="display:flex;justify-content:space-between;font-size:10px;color:var(--txt2)">'+
+      '<span>'+done+' de 4 semanas</span><span>'+pct+'%</span>'+
+    '</div>'+
+    '<div class="meta-prog-bar"><div class="meta-prog-fill" style="width:'+pct+'%"></div></div>'+
+  '</div>'+
+  '<div class="meta-week-list">'+weekHtml+'</div>'+
+  (allDone?'<button class="meta-complete-btn" onclick="completeMeta()">✓ Meta cumplida — definir la siguiente</button>':'');
+}
+
+function selMetaTipo(key){
+  if(!G.meta)G.meta={};
+  G.meta._selType=key;
+  var tipo=META_TIPOS.find(function(t){return t.key===key;});
+  if(tipo){var inp=document.getElementById("meta-title-inp");if(inp&&!inp.value)inp.placeholder="Ej: "+tipo.tasks[0].toLowerCase()+"...";}
+  var btns=document.querySelectorAll(".meta-type-btn");
+  btns.forEach(function(b){b.classList.remove("sel");});
+  var el=document.querySelector(".meta-type-btn[onclick*=\"'"+key+"'\"]");
+  if(el)el.classList.add("sel");
+}
+function selMetaNivel(key){
+  if(!G.meta)G.meta={};
+  G.meta._selNivel=key;
+  var niv=META_NIVELES.find(function(n){return n.key===key;});
+  var btns=document.querySelectorAll(".meta-nivel-btn");
+  btns.forEach(function(b){b.classList.remove("sel");b.style.borderColor="";b.querySelector("span").style.color=b.querySelector("span").style.color||"";});
+  document.querySelectorAll(".meta-nivel-btn").forEach(function(b,i){
+    if(META_NIVELES[i]&&META_NIVELES[i].key===key){b.classList.add("sel");b.style.borderColor=META_NIVELES[i].color;}
+  });
+}
+async function startMeta(){
+  var tipo=G.meta&&G.meta._selType;
+  var nivel=G.meta&&G.meta._selNivel;
+  var titulo=(document.getElementById("meta-title-inp")||{}).value||"";
+  if(!tipo){showToast("Elige un tipo","Selecciona el tipo de meta primero.","warn");return;}
+  if(!nivel){showToast("Elige nivel","Selecciona la dificultad.","warn");return;}
+  if(!titulo.trim()){showToast("Escribe tu meta","¿Cuál es tu meta?","warn");return;}
+  var tipoObj=META_TIPOS.find(function(t){return t.key===tipo;});
+  var hist=(G.meta&&G.meta.historial)||[];
+  G.meta={
+    historial:hist,
+    active:{
+      type:tipo,
+      nivel:nivel,
+      title:titulo.trim(),
+      created:G.today,
+      weeks:tipoObj.tasks.map(function(task){return{task:task,done:false};})
+    }
+  };
+  await sbWrite("portal-meta-"+G.sid,G.meta);
+  var el=document.getElementById("meta-inner");if(el)el.innerHTML=buildMetaHtml();
+  showToast("¡Meta creada!","Empieza con la semana 1.","ok");
+}
+async function toggleMetaTask(idx,checked){
+  if(!G.meta||!G.meta.active)return;
+  G.meta.active.weeks[idx].done=checked;
+  await sbWrite("portal-meta-"+G.sid,G.meta);
+  var el=document.getElementById("meta-inner");if(el)el.innerHTML=buildMetaHtml();
+}
+async function completeMeta(){
+  if(!G.meta||!G.meta.active)return;
+  var act=G.meta.active;
+  var MESES=["ene","feb","mar","abr","may","jun","jul","ago","sep","oct","nov","dic"];
+  var d=new Date();
+  act.completedDate=d.getDate()+"/"+MESES[d.getMonth()]+"/"+d.getFullYear();
+  var hist=G.meta.historial||[];
+  hist.push(act);
+  G.meta={historial:hist,active:null};
+  await sbWrite("portal-meta-"+G.sid,G.meta);
+  var el=document.getElementById("meta-inner");if(el)el.innerHTML=buildMetaHtml();
+  showToast("¡Meta cumplida!","Excelente. Define tu siguiente paso.","ok");
 }
 
 function showToast(title,msg,type,autoClose){
