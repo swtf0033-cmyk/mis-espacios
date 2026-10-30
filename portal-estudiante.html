@@ -729,6 +729,12 @@ async function loadDashboard(sid){
     G.fotos=res[17]||[];
     G.meta=res[18]||null;
     G.st=students.find(function(s){return s.id===sid;})||{};
+    // For self-registered students not yet in coach's list, load name from portal-users
+    if(!G.st.name){
+      var pUsers=await fetchSbKey("portal-users")||[];
+      var puRecord=pUsers.find(function(u){return u.id===sid;});
+      if(puRecord){Object.assign(G.st,{name:puRecord.name,sex:puRecord.sex,dob:puRecord.dob,phone:puRecord.phone,objective:puRecord.objective,selfRegistered:true});}
+    }
     document.getElementById("app-stname").textContent=G.st.name||"Estudiante";
     document.getElementById("app-stobj").textContent=G.st.objective||"";
     renderDashboard(rms);
