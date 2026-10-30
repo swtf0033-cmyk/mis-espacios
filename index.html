@@ -3,11 +3,11 @@
 <head>
 <meta charset=utf8>
 <meta name=viewport content="width=device-width,initial-scale=1,viewport-fit=cover">
-<title>Mis Espacios</title>
-<link rel=stylesheet href="https://fonts.googleapis.com/css2?family=Rajdhani:wght@500;600;700&family=Inter:wght@400;500;600&display=swap">
+<title>INAMOVIBLE Coach</title>
+<link rel=stylesheet href="https://fonts.googleapis.com/css2?family=Oswald:wght@400;500;600;700&family=Inter:wght@400;500;600&display=swap">
 <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
 <style>
-:root{--bg:#07050F;--surf:#0D0920;--card:#130D27;--card2:#1A1235;--border:#231740;--border2:#2F1F56;--acc:#A855F7;--acc2:#EC4899;--acc-d:rgba(168,85,247,.13);--acc-d2:rgba(168,85,247,.06);--txt:#EDE6FF;--txt2:#7A6A9E;--txt3:#3A2860;--grad:linear-gradient(135deg,#A855F7,#EC4899);--green:#34D399;--green-d:rgba(52,211,153,.12);--warn:#FBBF24;--warn-d:rgba(251,191,36,.12);--danger:#F87171;--danger-d:rgba(248,113,113,.12);color-scheme:dark}
+:root{--bg:#080808;--surf:#111111;--card:#191919;--card2:#222222;--border:#2A2A2A;--border2:#6B1010;--acc:#C8102E;--acc2:#991020;--acc-d:rgba(200,16,46,.13);--acc-d2:rgba(200,16,46,.06);--txt:#F2F2F2;--txt2:#888888;--txt3:#444444;--grad:linear-gradient(135deg,#C8102E,#7F0018);--green:#34D399;--green-d:rgba(52,211,153,.12);--warn:#FBBF24;--warn-d:rgba(251,191,36,.12);--danger:#F87171;--danger-d:rgba(248,113,113,.12);color-scheme:dark}
 [data-profile="agency"]{--bg:#080808;--surf:#111111;--card:#191919;--card2:#222;--border:#2A2A2A;--border2:#3D1212;--acc:#EF4444;--acc2:#B91C1C;--acc-d:rgba(239,68,68,.13);--acc-d2:rgba(239,68,68,.06);--txt:#FFF1F1;--txt2:#906060;--txt3:#4A2020;--grad:linear-gradient(135deg,#EF4444,#7F1D1D);color-scheme:dark}
 [data-profile="personal"]{--bg:#07040A;--surf:#0F0812;--card:#160B20;--card2:#1E112A;--border:#2A1240;--border2:#3D1840;--acc:#A855F7;--acc2:#EF4444;--acc-d:rgba(168,85,247,.13);--acc-d2:rgba(168,85,247,.06);--txt:#F5EEFF;--txt2:#7A6090;--txt3:#3A1855;--grad:linear-gradient(135deg,#A855F7,#EF4444);color-scheme:dark}
 *{box-sizing:border-box;margin:0;padding:0}
@@ -17,8 +17,8 @@ body{font-family:'Inter',system-ui,sans-serif;background:var(--bg);color:var(--t
 #selector::after{content:'';position:absolute;bottom:-80px;right:-80px;width:350px;height:350px;background:radial-gradient(circle,rgba(239,68,68,.1) 0%,transparent 70%);pointer-events:none}
 .sel-top{text-align:center;margin-bottom:36px;position:relative;z-index:1}
 .sel-date{font-size:12px;color:var(--txt2);letter-spacing:2px;text-transform:uppercase;margin-bottom:14px}
-.sel-title{font-family:'Rajdhani',sans-serif;font-weight:700;font-size:48px;line-height:1;margin-bottom:10px}
-.sel-title span{background:linear-gradient(135deg,#A855F7,#EF4444);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
+.sel-title{font-family:'Oswald',sans-serif;font-weight:700;font-size:48px;line-height:1;margin-bottom:10px}
+.sel-title span{background:linear-gradient(135deg,#C8102E,#FF4060);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
 .sel-sub{font-size:15px;color:var(--txt2)}
 .sel-quote-box{background:rgba(168,85,247,.07);border:1px solid rgba(168,85,247,.2);border-radius:16px;padding:20px 24px;margin-bottom:28px;position:relative;z-index:1;max-width:540px;width:100%;text-align:center}
 .sel-qt{font-size:14px;line-height:1.7;color:var(--txt);font-style:italic;margin-bottom:8px}
@@ -41,7 +41,7 @@ a.sel-card{display:block;text-decoration:none;color:inherit}
 .sel-card-personal{background:linear-gradient(135deg,rgba(168,85,247,.07),rgba(239,68,68,.07));border-color:rgba(168,85,247,.2)}
 .sel-card-personal:hover{border-color:rgba(168,85,247,.5);box-shadow:0 20px 60px rgba(168,85,247,.2)}
 .sel-card-icon{width:48px;height:48px;border-radius:12px;display:flex;align-items:center;justify-content:center;font-size:22px;margin-bottom:16px;position:relative;z-index:1}
-.sel-card-name{font-family:'Rajdhani',sans-serif;font-weight:700;font-size:24px;margin-bottom:6px;position:relative;z-index:1}
+.sel-card-name{font-family:'Oswald',sans-serif;font-weight:700;font-size:24px;margin-bottom:6px;position:relative;z-index:1}
 .sel-card-desc{font-size:12px;color:var(--txt2);line-height:1.6;margin-bottom:20px;position:relative;z-index:1}
 .sel-card-enter{display:inline-flex;align-items:center;gap:8px;font-size:13px;font-weight:600;padding:9px 20px;border-radius:99px;border:none;cursor:pointer;transition:all .2s;font-family:'Inter',sans-serif;position:relative;z-index:1}
 .sel-card-enter:hover{gap:12px}
@@ -51,10 +51,10 @@ a.sel-card{display:block;text-decoration:none;color:inherit}
 .sb::before{content:'';position:absolute;top:-60px;left:-40px;width:180px;height:180px;background:radial-gradient(circle,var(--acc-d) 0%,transparent 70%);pointer-events:none}
 .sb-logo{padding:20px 18px 16px;border-bottom:1px solid var(--border)}
 .logo-icon{width:34px;height:34px;border-radius:9px;display:flex;align-items:center;justify-content:center;font-size:17px;margin-bottom:9px;background:var(--grad)}
-.logo-name{font-family:'Rajdhani',sans-serif;font-weight:700;font-size:19px;background:var(--grad);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
+.logo-name{font-family:'Oswald',sans-serif;font-weight:700;font-size:19px;background:var(--grad);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
 .logo-sub{font-size:10px;color:var(--txt3);letter-spacing:1.5px;text-transform:uppercase;margin-top:2px}
 .sb-nav{flex:1;padding:12px 8px;display:flex;flex-direction:column;gap:3px;overflow-y:auto}
-.ni{display:flex;align-items:center;gap:10px;padding:9px 12px;border-radius:9px;cursor:pointer;font-family:'Rajdhani',sans-serif;font-weight:600;font-size:15px;color:var(--txt2);transition:all .15s;user-select:none;position:relative}
+.ni{display:flex;align-items:center;gap:10px;padding:9px 12px;border-radius:9px;cursor:pointer;font-family:'Oswald',sans-serif;font-weight:600;font-size:15px;color:var(--txt2);transition:all .15s;user-select:none;position:relative}
 .ni:hover{background:var(--acc-d2);color:var(--txt)}
 .ni.on{background:var(--acc-d);color:var(--acc)}
 .ni.on::before{content:'';position:absolute;left:0;top:20%;bottom:20%;width:3px;background:var(--grad);border-radius:99px}
@@ -66,12 +66,12 @@ a.sel-card{display:block;text-decoration:none;color:inherit}
 .switch-btn:hover{background:var(--acc-d2);color:var(--txt)}
 .sb-foot{padding:12px 16px;border-top:1px solid var(--border)}
 .av{display:flex;align-items:center;gap:10px}
-.av-pic{width:34px;height:34px;border-radius:50%;background:var(--grad);display:flex;align-items:center;justify-content:center;font-family:'Rajdhani',sans-serif;font-weight:700;font-size:13px;color:#fff;flex-shrink:0}
+.av-pic{width:34px;height:34px;border-radius:50%;background:var(--grad);display:flex;align-items:center;justify-content:center;font-family:'Oswald',sans-serif;font-weight:700;font-size:13px;color:#fff;flex-shrink:0}
 .av-name{font-size:13px;font-weight:600}
 .av-role{font-size:10px;color:var(--txt2);margin-top:1px}
 .main{flex:1;display:flex;flex-direction:column;overflow:hidden;min-width:0}
 .topbar{height:56px;background:var(--surf);border-bottom:1px solid var(--border);display:flex;align-items:center;padding:0 22px;gap:12px;flex-shrink:0}
-.tb-title{font-family:'Rajdhani',sans-serif;font-weight:700;font-size:20px;flex:1}
+.tb-title{font-family:'Oswald',sans-serif;font-weight:700;font-size:20px;flex:1}
 .btn{display:inline-flex;align-items:center;gap:6px;padding:8px 16px;border-radius:8px;font-size:13px;font-weight:600;font-family:'Inter',sans-serif;cursor:pointer;border:none;transition:all .18s}
 .btn-p{background:var(--grad);color:#fff}
 .btn-c{background:var(--surf);color:var(--txt2);border:1px solid var(--border)}
@@ -83,7 +83,7 @@ a.sel-card{display:block;text-decoration:none;color:inherit}
 .sc:hover{border-color:var(--border2)}
 .sc-bar{position:absolute;top:0;left:0;right:0;height:3px;border-radius:13px 13px 0 0;background:var(--grad)}
 .sl{font-size:10px;color:var(--txt2);text-transform:uppercase;letter-spacing:1.2px;font-weight:600;margin-bottom:7px}
-.sv{font-family:'Rajdhani',sans-serif;font-size:32px;font-weight:700;font-variant-numeric:tabular-nums;line-height:1;color:var(--acc)}
+.sv{font-family:'Oswald',sans-serif;font-size:32px;font-weight:700;font-variant-numeric:tabular-nums;line-height:1;color:var(--acc)}
 .ss{font-size:11px;color:var(--txt2);margin-top:4px}
 .up{color:var(--green)}.dn{color:var(--danger)}
 .g2{display:grid;grid-template-columns:1fr 1fr;gap:14px}
@@ -91,7 +91,7 @@ a.sel-card{display:block;text-decoration:none;color:inherit}
 .g32{display:grid;grid-template-columns:2fr 1fr;gap:14px}
 .g32>*{min-width:0}
 .card{background:var(--card);border:1px solid var(--border);border-radius:13px;padding:18px;min-width:0;overflow:hidden;transition:border-color .2s}
-.ct{font-family:'Rajdhani',sans-serif;font-weight:700;font-size:16px;margin-bottom:13px;display:flex;align-items:center;justify-content:space-between;gap:8px;flex-wrap:wrap}
+.ct{font-family:'Oswald',sans-serif;font-weight:700;font-size:16px;margin-bottom:13px;display:flex;align-items:center;justify-content:space-between;gap:8px;flex-wrap:wrap}
 .badge{display:inline-flex;align-items:center;padding:3px 8px;border-radius:99px;font-size:11px;font-weight:600}
 .ba{background:var(--acc-d);color:var(--acc)}.bg{background:var(--green-d);color:var(--green)}.bw{background:var(--warn-d);color:var(--warn)}.bd{background:var(--danger-d);color:var(--danger)}
 .pb{background:var(--border);border-radius:99px;height:6px;overflow:hidden;margin-top:4px}
@@ -102,7 +102,7 @@ a.sel-card{display:block;text-decoration:none;color:inherit}
 .rt td{padding:9px 0;border-bottom:1px solid var(--border);font-size:13px;vertical-align:middle}
 .rt td:not(:first-child){padding-left:10px}
 .rt tr:last-child td{border-bottom:none}
-.cap{width:32px;height:32px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-family:'Rajdhani',sans-serif;font-weight:700;font-size:12px;flex-shrink:0}
+.cap{width:32px;height:32px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-family:'Oswald',sans-serif;font-weight:700;font-size:12px;flex-shrink:0}
 .cc{display:flex;align-items:center;gap:9px}
 .cn{font-weight:600;font-size:13px}.cm{font-size:11px;color:var(--txt2);margin-top:1px}
 .view{display:none}.view.on{display:block}
@@ -114,26 +114,26 @@ a.sel-card{display:block;text-decoration:none;color:inherit}
 .meta-item{margin-bottom:14px}
 .meta-top{display:flex;justify-content:space-between;align-items:baseline;margin-bottom:5px}
 .meta-name{font-size:14px;font-weight:600}
-.meta-vals{font-size:12px;color:var(--txt2)}.meta-pct{font-family:'Rajdhani',sans-serif;font-weight:700;font-size:15px;color:var(--acc)}
+.meta-vals{font-size:12px;color:var(--txt2)}.meta-pct{font-family:'Oswald',sans-serif;font-weight:700;font-size:15px;color:var(--acc)}
 .foco-item{display:flex;align-items:center;gap:10px;padding:9px 11px;border-radius:9px;background:var(--surf);border:1px solid var(--border);margin-bottom:6px}
-.foco-num{font-family:'Rajdhani',sans-serif;font-weight:700;font-size:17px;color:var(--acc);min-width:20px}
+.foco-num{font-family:'Oswald',sans-serif;font-weight:700;font-size:17px;color:var(--acc);min-width:20px}
 .foco-in{flex:1;background:transparent;border:none;outline:none;color:var(--txt);font-family:'Inter',sans-serif;font-size:13px;font-weight:500}
 .row-item{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:13px 16px;display:flex;align-items:center;gap:12px;transition:border-color .2s;margin-bottom:8px}
 .row-item:hover{border-color:var(--border2)}
 .row-actions{margin-left:auto;display:flex;gap:4px;align-items:center;flex-shrink:0}
 .pipe-board{display:grid;grid-template-columns:repeat(4,1fr);gap:11px;align-items:start}
 .pipe-col{background:var(--surf);border:1px solid var(--border);border-radius:12px;padding:13px}
-.pipe-col-hd{font-family:'Rajdhani',sans-serif;font-weight:700;font-size:13px;margin-bottom:9px;display:flex;align-items:center;justify-content:space-between}
+.pipe-col-hd{font-family:'Oswald',sans-serif;font-weight:700;font-size:13px;margin-bottom:9px;display:flex;align-items:center;justify-content:space-between}
 .pipe-card{background:var(--card);border:1px solid var(--border);border-radius:9px;padding:11px;margin-bottom:7px;transition:border-color .2s}
 .pipe-card:hover{border-color:var(--acc)}
 .pipe-card-ttl{font-weight:600;font-size:13px;margin-bottom:3px}
 .pipe-card-sub{font-size:11px;color:var(--txt2)}
-.pipe-card-val{font-family:'Rajdhani',sans-serif;font-weight:700;font-size:15px;color:var(--acc);margin-top:6px}
+.pipe-card-val{font-family:'Oswald',sans-serif;font-weight:700;font-size:15px;color:var(--acc);margin-top:6px}
 .pipe-card-actions{display:flex;gap:4px;margin-top:8px;flex-wrap:wrap}
 .freedom-bar-wrap{background:var(--border);border-radius:99px;height:8px;overflow:hidden;margin-top:8px}
 .freedom-bar-fill{height:100%;border-radius:99px;background:var(--grad);transition:width .6s}
 .dream-item{display:flex;align-items:center;gap:10px;padding:9px 12px;border-radius:9px;background:var(--surf);border:1px solid var(--border);margin-bottom:6px}
-.dream-num{font-family:'Rajdhani',sans-serif;font-weight:700;font-size:16px;color:var(--acc);min-width:20px}
+.dream-num{font-family:'Oswald',sans-serif;font-weight:700;font-size:16px;color:var(--acc);min-width:20px}
 .dream-in{flex:1;background:transparent;border:none;outline:none;color:var(--txt);font-family:'Inter',sans-serif;font-size:13px;font-weight:500}
 .empty-st{text-align:center;padding:36px 20px;color:var(--txt2)}
 .empty-st .ico{font-size:32px;margin-bottom:10px;opacity:.5}
@@ -147,7 +147,7 @@ a.sel-card{display:block;text-decoration:none;color:inherit}
 .prof-metrics{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-bottom:16px}
 @media(max-width:600px){.prof-metrics{grid-template-columns:repeat(2,1fr)}}
 .prof-metric{background:var(--card);border:1px solid var(--border);border-radius:10px;padding:12px;text-align:center}
-.prof-metric-val{font-family:'Rajdhani',sans-serif;font-size:22px;font-weight:700;color:var(--acc)}
+.prof-metric-val{font-family:'Oswald',sans-serif;font-size:22px;font-weight:700;color:var(--acc)}
 .prof-metric-lbl{font-size:10px;color:var(--txt2);margin-top:2px}
 .prof-metric-delta{font-size:11px;margin-top:4px;font-weight:600}
 .chart-wrap{background:var(--card);border:1px solid var(--border);border-radius:10px;padding:14px;margin-bottom:14px}
@@ -181,14 +181,14 @@ a.sel-card{display:block;text-decoration:none;color:inherit}
 .meso-prescr-grid{display:flex;gap:7px;flex-wrap:wrap;margin-bottom:7px}
 .meso-prescr-item{background:rgba(0,0,0,.25);border-radius:6px;padding:5px 9px;text-align:center;min-width:54px}
 .meso-prescr-lbl{font-size:8px;color:var(--txt2);text-transform:uppercase;letter-spacing:.4px;margin-bottom:2px}
-.meso-prescr-val{font-size:13px;font-weight:700;font-family:'Rajdhani',sans-serif;color:var(--txt)}
+.meso-prescr-val{font-size:13px;font-weight:700;font-family:'Oswald',sans-serif;color:var(--txt)}
 .meso-prescr-obj{font-size:10px;color:var(--txt2);line-height:1.5}
 .meso-rm-ref{background:var(--surf);border:1px solid var(--border);border-radius:8px;padding:8px 10px;margin-bottom:10px}
 .meso-rm-ref-lbl{font-size:9px;font-weight:700;color:var(--txt2);text-transform:uppercase;letter-spacing:.5px;margin-bottom:6px}
 .meso-rm-ref-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:5px}
 .meso-rm-item{display:flex;align-items:center;justify-content:space-between;background:var(--card);border:1px solid var(--border);border-radius:5px;padding:4px 7px;gap:6px;min-width:0}
 .meso-rm-exname{font-size:9px;color:var(--txt2);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-.meso-rm-range{font-size:11px;font-weight:700;font-family:'Rajdhani',sans-serif;color:var(--acc);white-space:nowrap;flex-shrink:0}
+.meso-rm-range{font-size:11px;font-weight:700;font-family:'Oswald',sans-serif;color:var(--acc);white-space:nowrap;flex-shrink:0}
 .mw-info{font-size:10px;color:var(--txt2);flex:1;line-height:1.5}
 .mw-chevron{font-size:12px;color:var(--txt2);transition:transform .2s;flex-shrink:0}
 .mw-chevron.open{transform:rotate(90deg)}
@@ -197,7 +197,7 @@ a.sel-card{display:block;text-decoration:none;color:inherit}
 .nut-lbl{font-size:12px;font-weight:600;width:90px;flex-shrink:0}
 .nut-bar-wrap{flex:1;height:8px;border-radius:99px;background:var(--border);overflow:hidden}
 .nut-fill{height:100%;border-radius:99px;transition:width .4s}
-.nut-val{font-size:12px;font-weight:700;font-family:'Rajdhani',sans-serif;min-width:60px;text-align:right;color:var(--txt)}
+.nut-val{font-size:12px;font-weight:700;font-family:'Oswald',sans-serif;min-width:60px;text-align:right;color:var(--txt)}
 .goal-card{background:var(--card);border:1px solid var(--border);border-radius:10px;padding:14px;margin-bottom:10px}
 .goal-bar-wrap{height:12px;border-radius:99px;background:var(--border);overflow:hidden;margin:8px 0 4px}
 .goal-fill{height:100%;border-radius:99px;background:var(--grad);transition:width .6s}
@@ -212,23 +212,23 @@ a.sel-card{display:block;text-decoration:none;color:inherit}
 .rm-card-head{display:flex;align-items:center;justify-content:space-between;margin-bottom:8px}
 .rm-card-name{font-size:12px;font-weight:700}
 .rm-card-pattern{font-size:9px;color:var(--txt2);margin-top:1px}
-.rm-current-val{font-family:'Rajdhani',sans-serif;font-size:22px;font-weight:700;color:var(--acc);text-align:right}
+.rm-current-val{font-family:'Oswald',sans-serif;font-size:22px;font-weight:700;color:var(--acc);text-align:right}
 .rm-current-lbl{font-size:9px;color:var(--txt2);text-align:right}
 .rm-current-date{font-size:9px;color:var(--txt2);text-align:right;margin-top:1px}
 .rm-method-tabs{display:flex;gap:4px;margin-bottom:8px}
 .rm-method-tab{flex:1;background:var(--surf);border:1px solid var(--border);color:var(--txt2);font-size:10px;font-weight:600;padding:4px 8px;border-radius:6px;cursor:pointer;font-family:'Inter',sans-serif;transition:all .15s}
 .rm-method-tab.on{background:var(--acc-d);border-color:var(--acc);color:var(--acc)}
 .rm-input-row{display:flex;gap:6px;align-items:center}
-.rm-i{flex:1;background:var(--surf);border:1px solid var(--border2);border-radius:6px;padding:5px 8px;color:var(--txt);font-size:13px;font-weight:700;font-family:'Rajdhani',sans-serif;outline:none;text-align:right}
+.rm-i{flex:1;background:var(--surf);border:1px solid var(--border2);border-radius:6px;padding:5px 8px;color:var(--txt);font-size:13px;font-weight:700;font-family:'Oswald',sans-serif;outline:none;text-align:right}
 .rm-i:focus{border-color:var(--acc)}
 .rm-i-lbl{font-size:9px;color:var(--txt2);white-space:nowrap}
 .rm-weeks{display:grid;grid-template-columns:repeat(4,1fr);gap:4px;margin-top:10px;padding-top:8px;border-top:1px solid var(--border)}
 .rm-week-box{background:var(--surf);border-radius:6px;padding:5px 4px;text-align:center}
 .rm-week-lbl{font-size:8px;font-weight:700;margin-bottom:2px;text-transform:uppercase}
-.rm-week-range{font-size:10px;font-weight:700;font-family:'Rajdhani',sans-serif;color:var(--txt)}
+.rm-week-range{font-size:10px;font-weight:700;font-family:'Oswald',sans-serif;color:var(--txt)}
 .rm-week-pct{font-size:8px;color:var(--txt2)}
 .eval-hd{display:flex;align-items:center;gap:12px;padding:14px 20px;border-bottom:1px solid var(--border);flex-shrink:0;background:var(--card)}
-.eval-hd-name{font-family:'Rajdhani',sans-serif;font-weight:700;font-size:18px;flex:1}
+.eval-hd-name{font-family:'Oswald',sans-serif;font-weight:700;font-size:18px;flex:1}
 .eval-hd-sub{font-size:11px;color:var(--txt2);margin-top:1px}
 .eval-tabs{display:flex;gap:6px;padding:12px 20px 0;border-bottom:1px solid var(--border);flex-shrink:0;background:var(--card)}
 .eval-tab{padding:8px 14px;border-radius:8px 8px 0 0;border:none;background:transparent;color:var(--txt2);font-size:12px;font-weight:600;font-family:'Inter',sans-serif;cursor:pointer;border:1px solid transparent;border-bottom:none;margin-bottom:-1px}
@@ -243,7 +243,7 @@ a.sel-card{display:block;text-decoration:none;color:inherit}
 .cb-item{padding:12px 16px;text-align:center;flex:1;min-width:90px}
 .cb-item+.cb-item{border-left:1px solid var(--border2)}
 .cb-lbl{font-size:9px;font-weight:700;text-transform:uppercase;letter-spacing:.06em;color:var(--txt2)}
-.cb-val{font-family:'Rajdhani',sans-serif;font-size:22px;font-weight:700;background:var(--grad);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;line-height:1.2}
+.cb-val{font-family:'Oswald',sans-serif;font-size:22px;font-weight:700;background:var(--grad);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;line-height:1.2}
 .cb-cat{font-size:9px;font-weight:700;margin-top:2px}
 /* bm grid */
 .bm-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin-bottom:10px}
@@ -251,7 +251,7 @@ a.sel-card{display:block;text-decoration:none;color:inherit}
 .bm-f{background:var(--surf);border:1px solid var(--border);border-radius:9px;padding:10px}
 .bm-l{font-size:9px;font-weight:700;text-transform:uppercase;letter-spacing:.05em;color:var(--txt2);margin-bottom:5px}
 .bm-r{display:flex;align-items:center;gap:4px}
-.bm-i{flex:1;background:transparent;border:none;color:var(--txt);font-size:17px;font-weight:700;font-family:'Rajdhani',sans-serif;outline:none;min-width:0;width:100%}
+.bm-i{flex:1;background:transparent;border:none;color:var(--txt);font-size:17px;font-weight:700;font-family:'Oswald',sans-serif;outline:none;min-width:0;width:100%}
 .bm-u{font-size:10px;color:var(--txt2)}
 /* skinfold rows */
 .eval-layout{display:grid;grid-template-columns:170px 1fr;gap:14px;align-items:start}
@@ -264,17 +264,17 @@ a.sel-card{display:block;text-decoration:none;color:inherit}
 .mf-name{font-size:12px;font-weight:600}
 .mf-hint{font-size:10px;color:var(--txt2)}
 .mf-iw{display:flex;align-items:center;gap:4px}
-.mf-i{width:60px;background:var(--card);border:1px solid var(--border2);border-radius:6px;padding:5px 8px;color:var(--txt);font-size:13px;font-weight:700;font-family:'Rajdhani',sans-serif;text-align:right;outline:none}
+.mf-i{width:60px;background:var(--card);border:1px solid var(--border2);border-radius:6px;padding:5px 8px;color:var(--txt);font-size:13px;font-weight:700;font-family:'Oswald',sans-serif;text-align:right;outline:none}
 .mf-i:focus{border-color:var(--acc)}
 .mf-u{font-size:10px;color:var(--txt2)}
 .mf-takes{display:flex;align-items:center;gap:5px;flex-shrink:0}
 .mf-take{display:flex;flex-direction:column;align-items:center;gap:2px}
 .mf-take span{font-size:8px;color:var(--txt2);font-weight:700;letter-spacing:.5px;text-transform:uppercase}
-.mf-ti{width:42px;background:var(--card);border:1px solid var(--border2);border-radius:6px;padding:4px 5px;color:var(--txt);font-size:12px;font-weight:700;font-family:'Rajdhani',sans-serif;text-align:right;outline:none}
+.mf-ti{width:42px;background:var(--card);border:1px solid var(--border2);border-radius:6px;padding:4px 5px;color:var(--txt);font-size:12px;font-weight:700;font-family:'Oswald',sans-serif;text-align:right;outline:none}
 .mf-ti:focus{border-color:var(--acc)}
-.mf-avg{font-size:11px;font-weight:700;color:var(--acc);font-family:'Rajdhani',sans-serif;min-width:40px;text-align:right;white-space:nowrap}
+.mf-avg{font-size:11px;font-weight:700;color:var(--acc);font-family:'Oswald',sans-serif;min-width:40px;text-align:right;white-space:nowrap}
 .e-rbox{border-radius:9px;padding:11px 14px;margin-top:10px;display:flex;justify-content:space-between;align-items:center;border:1px solid var(--border2);background:var(--acc-d)}
-.e-rbox-val{font-family:'Rajdhani',sans-serif;font-size:28px;font-weight:700;background:var(--grad);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
+.e-rbox-val{font-family:'Oswald',sans-serif;font-size:28px;font-weight:700;background:var(--grad);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
 /* zona bars */
 .zona-row{display:flex;align-items:center;gap:8px;padding:7px 10px;border-radius:7px;border:1px solid transparent;margin-bottom:4px;transition:all .25s}
 .zona-row.on{border-color:currentColor}
@@ -286,7 +286,7 @@ a.sel-card{display:block;text-decoration:none;color:inherit}
 .test-fields{display:flex;flex-direction:column;gap:7px}
 .t-field{display:flex;align-items:center;gap:8px;background:var(--card);border:1px solid var(--border);border-radius:8px;padding:8px 10px}
 .t-field label{font-size:11px;font-weight:600;color:var(--txt2);flex:1;white-space:nowrap}
-.t-field input{width:56px;background:var(--surf);border:1px solid var(--border2);border-radius:6px;padding:4px 7px;color:var(--txt);font-size:14px;font-weight:700;font-family:'Rajdhani',sans-serif;text-align:right;outline:none}
+.t-field input{width:56px;background:var(--surf);border:1px solid var(--border2);border-radius:6px;padding:4px 7px;color:var(--txt);font-size:14px;font-weight:700;font-family:'Oswald',sans-serif;text-align:right;outline:none}
 .t-field input:focus{border-color:var(--acc)}
 .t-field .tu{font-size:10px;color:var(--txt2)}
 .t-result{font-size:11px;font-weight:700;padding:8px 10px;border-radius:7px;background:var(--card);border:1px solid var(--border);margin-top:4px}
@@ -303,14 +303,14 @@ a.sel-card{display:block;text-decoration:none;color:inherit}
 .ev-stat{background:var(--card);border:1px solid var(--border);border-radius:7px;padding:7px 10px;min-width:90px}
 .zona-name{font-size:12px;font-weight:700;width:60px;flex-shrink:0}
 .zona-sub{font-size:10px;color:var(--txt2);flex:1}
-.zona-range{font-size:11px;font-family:'Rajdhani',sans-serif;font-weight:700;width:90px;text-align:right;flex-shrink:0}
+.zona-range{font-size:11px;font-family:'Oswald',sans-serif;font-weight:700;width:90px;text-align:right;flex-shrink:0}
 .zona-bar-w{width:80px;height:6px;background:var(--border);border-radius:3px;overflow:hidden;flex-shrink:0}
 .zona-bar-f{height:100%;border-radius:3px;transition:width .4s}
 .zona-act-badge{font-size:9px;font-weight:700;padding:2px 6px;border-radius:10px;flex-shrink:0}
 .zona-row.active{background:var(--surf)}
-.ev-date{font-family:'Rajdhani',sans-serif;font-size:14px;font-weight:700;color:var(--acc)}
+.ev-date{font-family:'Oswald',sans-serif;font-size:14px;font-weight:700;color:var(--acc)}
 .ev-stats{display:flex;gap:14px;flex-wrap:wrap;margin-top:6px}
-.ev-sv{font-family:'Rajdhani',sans-serif;font-size:16px;font-weight:700}
+.ev-sv{font-family:'Oswald',sans-serif;font-size:16px;font-weight:700}
 .ev-sl{font-size:9px;color:var(--txt2);font-weight:700;text-transform:uppercase}
 .ev-delta{font-size:11px;font-weight:700}
 .ev-green{color:var(--green)}.ev-red{color:var(--danger)}
@@ -321,7 +321,7 @@ a.sel-card{display:block;text-decoration:none;color:inherit}
 .mdot.on,.mdot:hover{background:var(--acc);color:#fff}
 .modal-box{background:var(--card);border:1px solid var(--border2);border-radius:18px;width:100%;max-width:480px;max-height:88vh;display:flex;flex-direction:column}
 .modal-hd{padding:18px 22px;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;flex-shrink:0}
-.modal-ttl{font-family:'Rajdhani',sans-serif;font-weight:700;font-size:19px}
+.modal-ttl{font-family:'Oswald',sans-serif;font-weight:700;font-size:19px}
 .modal-cl{background:none;border:none;color:var(--txt2);cursor:pointer;font-size:18px;padding:4px 8px;border-radius:6px;line-height:1}
 .modal-cl:hover{color:var(--txt);background:var(--surf)}
 .modal-bd{padding:18px 22px;overflow-y:auto;flex:1;display:flex;flex-direction:column;gap:13px}
@@ -421,13 +421,13 @@ label.switch-btn:hover{background:var(--acc-d2);color:var(--txt)}
 .meal-items{font-size:11px;color:var(--txt2);line-height:2;padding-left:8px;border-left:2px solid var(--border2)}
 .target-row{display:flex;align-items:center;gap:12px;padding:10px 13px;background:var(--surf);border-radius:10px;margin-bottom:8px;border:1px solid var(--border)}
 .target-icon{font-size:20px;flex-shrink:0;width:28px;text-align:center}
-.target-val{font-family:'Rajdhani',sans-serif;font-size:22px;font-weight:700;color:var(--acc);line-height:1}
+.target-val{font-family:'Oswald',sans-serif;font-size:22px;font-weight:700;color:var(--acc);line-height:1}
 .target-lbl{font-size:10px;color:var(--txt2);margin-top:2px}
 .lab-row{display:grid;grid-template-columns:1fr 72px 54px 66px;gap:6px;align-items:center;padding:7px 0;border-bottom:1px solid var(--border)}
 .lab-row:last-child{border-bottom:none}
 .lab-name{font-size:11px;font-weight:600;color:var(--txt)}
 .lab-ref{font-size:10px;color:var(--txt3);margin-top:1px}
-.lab-inp{background:var(--surf);border:1px solid var(--border);border-radius:6px;padding:4px 7px;color:var(--txt);font-size:12px;font-family:'Rajdhani',sans-serif;font-weight:700;outline:none;width:100%;text-align:right}
+.lab-inp{background:var(--surf);border:1px solid var(--border);border-radius:6px;padding:4px 7px;color:var(--txt);font-size:12px;font-family:'Oswald',sans-serif;font-weight:700;outline:none;width:100%;text-align:right}
 .lab-inp:focus{border-color:var(--acc)}
 .lab-pill{font-size:10px;font-weight:700;padding:2px 7px;border-radius:99px;text-align:center;white-space:nowrap}
 .lp-ok{background:var(--green-d);color:var(--green)}
@@ -448,20 +448,20 @@ label.switch-btn:hover{background:var(--acc-d2);color:var(--txt)}
 .att-day.empty{border:none;background:none;cursor:default;pointer-events:none}
 .att-stats{display:flex;gap:10px;flex-wrap:wrap;margin-bottom:14px}
 .att-stat{background:var(--card);border:1px solid var(--border);border-radius:8px;padding:10px 14px;flex:1;min-width:80px;text-align:center}
-.att-stat-val{font-size:22px;font-weight:700;font-family:'Rajdhani',sans-serif;color:var(--acc)}
+.att-stat-val{font-size:22px;font-weight:700;font-family:'Oswald',sans-serif;color:var(--acc)}
 .att-stat-lbl{font-size:9px;color:var(--txt2);text-transform:uppercase;letter-spacing:.4px;margin-top:2px}
 /* ── Progression ── */
 .prog-ex{background:var(--card);border:1px solid var(--border);border-radius:10px;margin-bottom:8px;overflow:hidden}
 .prog-ex-head{display:flex;align-items:center;gap:10px;padding:11px 14px;cursor:pointer;user-select:none}
 .prog-ex-head:hover{background:var(--acc-d2)}
 .prog-ex-name{font-size:12px;font-weight:700;flex:1}
-.prog-ex-last{font-size:11px;color:var(--acc);font-family:'Rajdhani',sans-serif;font-weight:700;white-space:nowrap}
+.prog-ex-last{font-size:11px;color:var(--acc);font-family:'Oswald',sans-serif;font-weight:700;white-space:nowrap}
 .prog-ex-body{display:none;padding:12px 14px;border-top:1px solid var(--border)}
 .prog-ex-body.on{display:block}
 .prog-log-form{display:flex;gap:6px;flex-wrap:wrap;align-items:flex-end;margin-bottom:10px}
 .prog-fi-wrap{display:flex;flex-direction:column;gap:2px}
 .prog-fi-lbl{font-size:8px;color:var(--txt2);text-transform:uppercase;letter-spacing:.3px}
-.prog-fi{background:var(--surf);border:1px solid var(--border);border-radius:6px;padding:5px 8px;color:var(--txt);font-size:13px;font-family:'Rajdhani',sans-serif;font-weight:700;outline:none;width:64px;text-align:center}
+.prog-fi{background:var(--surf);border:1px solid var(--border);border-radius:6px;padding:5px 8px;color:var(--txt);font-size:13px;font-family:'Oswald',sans-serif;font-weight:700;outline:none;width:64px;text-align:center}
 .prog-fi:focus{border-color:var(--acc)}
 .prog-log-tbl{width:100%;border-collapse:collapse;font-size:11px}
 .prog-log-tbl th{font-size:9px;color:var(--txt2);text-transform:uppercase;letter-spacing:.3px;font-weight:700;padding:3px 5px;text-align:left;border-bottom:1px solid var(--border)}
@@ -489,8 +489,8 @@ label.switch-btn:hover{background:var(--acc-d2);color:var(--txt)}
 <div id="selector">
   <div class="sel-top">
     <div class="sel-date" id="sel-date"></div>
-    <div class="sel-title">Mis <span>Espacios</span></div>
-    <div class="sel-sub">¿A donde vas hoy?</div>
+    <div class="sel-title"><span>INAMOVIBLE</span></div>
+    <div class="sel-sub">Panel de control del coach</div>
     <div id="sync-ind" style="display:none;font-size:11px;color:var(--txt2);margin-top:8px;letter-spacing:.5px">☁️ Sincronizando datos...</div>
   </div>
   <div class="sel-quote-box">
@@ -500,10 +500,10 @@ label.switch-btn:hover{background:var(--acc-d2);color:var(--txt)}
   </div>
   <div class="sel-cards">
     <label class="sel-card sel-card-fit" for="nav-fit">
-      <div class="sel-card-icon" style="background:linear-gradient(135deg,rgba(168,85,247,.3),rgba(236,72,153,.3))">&#128170;</div>
-      <div class="sel-card-name" style="background:linear-gradient(135deg,#A855F7,#EC4899);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text">FitCoach Pro</div>
+      <div class="sel-card-icon" style="background:rgba(200,16,46,.2)">&#128170;</div>
+      <div class="sel-card-name" style="color:#C8102E">INAMOVIBLE Coach</div>
       <div class="sel-card-desc">Alumnos, entrenamiento, composicion corporal, nutricion y pagos.</div>
-      <div class="sel-card-enter" style="background:linear-gradient(135deg,#A855F7,#EC4899);color:#fff">Entrar &#8594;</div>
+      <div class="sel-card-enter" style="background:#C8102E;color:#fff">Entrar &#8594;</div>
     </label>
     <label class="sel-card sel-card-agency" for="nav-agency">
       <div class="sel-card-icon" style="background:linear-gradient(135deg,rgba(239,68,68,.3),rgba(127,29,29,.4))">&#128226;</div>
@@ -528,7 +528,7 @@ label.switch-btn:hover{background:var(--acc-d2);color:var(--txt)}
 <input type="radio" id="fit-v-finanzas" name="fit-v" style="display:none">
 <input type="radio" id="fit-v-gastos" name="fit-v" style="display:none">
   <div class="sb">
-    <div class="sb-logo"><div class="logo-icon">&#128170;</div><div class="logo-name">FitCoach Pro</div><div class="logo-sub">Entrenador personal</div></div>
+    <div class="sb-logo"><div class="logo-icon" style="background:var(--acc);font-family:'Oswald',sans-serif;font-weight:700;font-size:12px;color:#fff;letter-spacing:.03em">INA</div><div class="logo-name">INAMOVIBLE</div><div class="logo-sub">Coach · FitPro</div></div>
     <nav class="sb-nav">
       <label class="ni" for="fit-v-dash"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7" rx="1.5"/><rect x="14" y="3" width="7" height="7" rx="1.5"/><rect x="3" y="14" width="7" height="7" rx="1.5"/><rect x="14" y="14" width="7" height="7" rx="1.5"/></svg>Dashboard</label>
       <label class="ni" for="fit-v-alumnos"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>Alumnos<span class="nb" id="fit-nb" style="display:none">0</span></label>
@@ -538,7 +538,7 @@ label.switch-btn:hover{background:var(--acc-d2);color:var(--txt)}
       <label class="ni" for="fit-v-gastos" onclick="setTimeout(function(){initCharts('fit','gastos');},60)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="16"/><line x1="8" y1="12" x2="16" y2="12"/></svg>Gastos</label>
     </nav>
     <div class="sb-switch"><label class="switch-btn" for="nav-home"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="15 18 9 12 15 6"/></svg>Cambiar espacio</label><div class="switch-btn" onclick="backupData()" title="Descargar respaldo JSON de todos los datos" style="cursor:pointer">💾 Respaldo</div></div>
-    <div class="sb-foot"><div class="av"><div class="av-pic">FC</div><div><div class="av-name">FitCoach Pro</div><div class="av-role">Entrenador</div></div></div></div>
+    <div class="sb-foot"><div class="av"><div class="av-pic" style="background:var(--acc)">INA</div><div><div class="av-name">INAMOVIBLE</div><div class="av-role">Coach</div></div></div></div>
   </div>
   <div class="main">
     <div class="topbar"><div class="tb-title" id="fit-title">Dashboard</div><div id="sync-status" class="show syncing" onclick="pullAndRefresh()" title="Toca para sincronizar ahora" style="cursor:pointer"><span class="sync-dot"></span><span id="sync-status-txt">Conectando...</span></div><button class="btn btn-c" onclick="syncAllToSupabase()" title="Subir todos los datos locales a Supabase" style="font-size:11px;padding:6px 12px">☁ Subir todo</button><button class="btn btn-p" id="fit-btn-add">+ Alumno</button></div>
@@ -831,7 +831,7 @@ label.switch-btn:hover{background:var(--acc-d2);color:var(--txt)}
               <div class="form-g"><label>Patrimonio actual ($)</label><input id="fr-networth" type="number" class="fi" placeholder="ej. 25000" oninput="calcFreedom()"></div>
               <div style="background:var(--acc-d);border-radius:12px;padding:18px;border:1px solid var(--border2);text-align:center">
                 <div style="font-size:11px;color:var(--txt2);margin-bottom:6px;text-transform:uppercase;letter-spacing:1px">Capital necesario</div>
-                <div id="fr-capital" style="font-family:'Rajdhani',sans-serif;font-size:38px;font-weight:700;background:var(--grad);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text">$—</div>
+                <div id="fr-capital" style="font-family:'Oswald',sans-serif;font-size:38px;font-weight:700;background:var(--grad);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text">$—</div>
                 <div style="font-size:12px;color:var(--txt2);margin-top:6px">Progreso: <strong id="fr-pct" style="color:var(--acc)">0%</strong></div>
                 <div class="freedom-bar-wrap"><div class="freedom-bar-fill" id="fr-bar" style="width:0%"></div></div>
               </div>
@@ -841,7 +841,7 @@ label.switch-btn:hover{background:var(--acc-d2);color:var(--txt)}
             <div class="ct">Patrimonio neto (Net Worth)</div>
             <div style="text-align:center;padding:20px 0">
               <div style="font-size:11px;color:var(--txt2);text-transform:uppercase;letter-spacing:1px;margin-bottom:8px">Total acumulado</div>
-              <div id="fr-nw-display" style="font-family:'Rajdhani',sans-serif;font-size:52px;font-weight:700;background:var(--grad);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;line-height:1">$—</div>
+              <div id="fr-nw-display" style="font-family:'Oswald',sans-serif;font-size:52px;font-weight:700;background:var(--grad);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;line-height:1">$—</div>
             </div>
             <div class="ct" style="margin-top:10px">Victorias &#127942;<button class="btn-sm" onclick="addWin('personal')">+ Agregar</button></div>
             <div id="wins-personal-2" class="al"></div>
@@ -982,7 +982,7 @@ label.switch-btn:hover{background:var(--acc-d2);color:var(--txt)}
             </div>
             <div style="background:var(--card);border:1px solid var(--border);border-radius:8px;padding:8px 12px;display:flex;justify-content:space-between;align-items:center;margin-bottom:8px">
               <span style="font-size:11px;font-weight:700;color:var(--txt2)">FC máxima (220 − edad)</span>
-              <span style="font-family:'Rajdhani',sans-serif;font-size:18px;font-weight:700;color:var(--acc)" id="e-fc-max">— bpm</span>
+              <span style="font-family:'Oswald',sans-serif;font-size:18px;font-weight:700;color:var(--acc)" id="e-fc-max">— bpm</span>
             </div>
             <div id="e-zona-bar"></div>
           </div>
@@ -1141,25 +1141,25 @@ label.switch-btn:hover{background:var(--acc-d2);color:var(--txt)}
         <div style="font-size:11px;font-weight:700;color:var(--acc);margin-bottom:8px;text-transform:uppercase;letter-spacing:.07em">Protocolo estándar NSCA previo al test</div>
         <div style="display:grid;grid-template-columns:repeat(5,1fr);gap:6px;margin-bottom:10px">
           <div style="background:var(--surf);border-radius:8px;padding:8px;text-align:center"><div style="font-size:18px;margin-bottom:4px">🚴</div><div style="font-size:9px;font-weight:700;color:var(--txt2)">GENERAL</div><div style="font-size:10px;color:var(--txt);margin-top:2px">5–10 min cardio ligero</div></div>
-          <div style="background:var(--surf);border-radius:8px;padding:8px;text-align:center"><div style="font-size:10px;font-weight:700;color:var(--green);margin-bottom:4px">SERIE 1</div><div style="font-size:16px;font-weight:700;font-family:'Rajdhani',sans-serif;color:var(--green)">50%</div><div style="font-size:9px;color:var(--txt2)">× 8 reps<br>2 min desc.</div></div>
-          <div style="background:var(--surf);border-radius:8px;padding:8px;text-align:center"><div style="font-size:10px;font-weight:700;color:var(--warn);margin-bottom:4px">SERIE 2</div><div style="font-size:16px;font-weight:700;font-family:'Rajdhani',sans-serif;color:var(--warn)">70%</div><div style="font-size:9px;color:var(--txt2)">× 4 reps<br>2 min desc.</div></div>
-          <div style="background:var(--surf);border-radius:8px;padding:8px;text-align:center"><div style="font-size:10px;font-weight:700;color:var(--danger);margin-bottom:4px">SERIE 3</div><div style="font-size:16px;font-weight:700;font-family:'Rajdhani',sans-serif;color:var(--danger)">85%</div><div style="font-size:9px;color:var(--txt2)">× 2 reps<br>3 min desc.</div></div>
-          <div style="background:var(--acc-d);border:1px solid var(--acc);border-radius:8px;padding:8px;text-align:center"><div style="font-size:10px;font-weight:700;color:var(--acc);margin-bottom:4px">TEST</div><div style="font-size:16px;font-weight:700;font-family:'Rajdhani',sans-serif;color:var(--acc)">3RM</div><div style="font-size:9px;color:var(--txt2)">3 reps al máximo<br>3–5 min desc.</div></div>
+          <div style="background:var(--surf);border-radius:8px;padding:8px;text-align:center"><div style="font-size:10px;font-weight:700;color:var(--green);margin-bottom:4px">SERIE 1</div><div style="font-size:16px;font-weight:700;font-family:'Oswald',sans-serif;color:var(--green)">50%</div><div style="font-size:9px;color:var(--txt2)">× 8 reps<br>2 min desc.</div></div>
+          <div style="background:var(--surf);border-radius:8px;padding:8px;text-align:center"><div style="font-size:10px;font-weight:700;color:var(--warn);margin-bottom:4px">SERIE 2</div><div style="font-size:16px;font-weight:700;font-family:'Oswald',sans-serif;color:var(--warn)">70%</div><div style="font-size:9px;color:var(--txt2)">× 4 reps<br>2 min desc.</div></div>
+          <div style="background:var(--surf);border-radius:8px;padding:8px;text-align:center"><div style="font-size:10px;font-weight:700;color:var(--danger);margin-bottom:4px">SERIE 3</div><div style="font-size:16px;font-weight:700;font-family:'Oswald',sans-serif;color:var(--danger)">85%</div><div style="font-size:9px;color:var(--txt2)">× 2 reps<br>3 min desc.</div></div>
+          <div style="background:var(--acc-d);border:1px solid var(--acc);border-radius:8px;padding:8px;text-align:center"><div style="font-size:10px;font-weight:700;color:var(--acc);margin-bottom:4px">TEST</div><div style="font-size:16px;font-weight:700;font-family:'Oswald',sans-serif;color:var(--acc)">3RM</div><div style="font-size:9px;color:var(--txt2)">3 reps al máximo<br>3–5 min desc.</div></div>
         </div>
         <div style="font-size:10px;color:var(--txt2);line-height:1.6;margin-bottom:10px">🎯 <strong>Test de 3RM</strong>: el alumno ejecuta 3 repeticiones al máximo con técnica limpia. La app calcula el 1RM según la tabla oficial NSCA (Baechle &amp; Earle): <em>3RM = 93% del 1RM → 1RM = peso ÷ 0.93</em>. El 3RM es más seguro que el 1RM directo y más preciso que fórmulas estimadas (Mayhew et al., 1992).</div>
         <div style="font-size:9px;font-weight:700;color:var(--txt2);margin-bottom:5px;text-transform:uppercase;letter-spacing:.07em">Tabla NSCA — Reps máximas vs % del 1RM</div>
         <div style="display:flex;gap:3px;flex-wrap:wrap">
-          <div style="background:rgba(248,113,113,.15);border-radius:5px;padding:4px 7px;text-align:center"><div style="font-size:9px;font-weight:700;color:var(--danger)">1 rep</div><div style="font-size:11px;font-weight:700;font-family:'Rajdhani',sans-serif">100%</div></div>
-          <div style="background:rgba(248,113,113,.12);border-radius:5px;padding:4px 7px;text-align:center"><div style="font-size:9px;font-weight:700;color:var(--danger)">2 reps</div><div style="font-size:11px;font-weight:700;font-family:'Rajdhani',sans-serif">95%</div></div>
-          <div style="background:rgba(248,113,113,.1);border-radius:5px;padding:4px 7px;text-align:center;border:1px solid rgba(168,85,247,.5)"><div style="font-size:9px;font-weight:700;color:var(--acc)">3 reps ✓</div><div style="font-size:11px;font-weight:700;font-family:'Rajdhani',sans-serif;color:var(--acc)">93%</div></div>
-          <div style="background:var(--surf);border-radius:5px;padding:4px 7px;text-align:center"><div style="font-size:9px;color:var(--txt2)">4 reps</div><div style="font-size:11px;font-weight:700;font-family:'Rajdhani',sans-serif">90%</div></div>
-          <div style="background:var(--surf);border-radius:5px;padding:4px 7px;text-align:center"><div style="font-size:9px;color:var(--txt2)">5 reps</div><div style="font-size:11px;font-weight:700;font-family:'Rajdhani',sans-serif">87%</div></div>
-          <div style="background:var(--surf);border-radius:5px;padding:4px 7px;text-align:center"><div style="font-size:9px;color:var(--txt2)">6 reps</div><div style="font-size:11px;font-weight:700;font-family:'Rajdhani',sans-serif">85%</div></div>
-          <div style="background:var(--surf);border-radius:5px;padding:4px 7px;text-align:center"><div style="font-size:9px;color:var(--txt2)">7 reps</div><div style="font-size:11px;font-weight:700;font-family:'Rajdhani',sans-serif">83%</div></div>
-          <div style="background:rgba(168,85,247,.08);border-radius:5px;padding:4px 7px;text-align:center"><div style="font-size:9px;color:var(--txt2)">8 reps</div><div style="font-size:11px;font-weight:700;font-family:'Rajdhani',sans-serif">80%</div></div>
-          <div style="background:rgba(168,85,247,.08);border-radius:5px;padding:4px 7px;text-align:center"><div style="font-size:9px;color:var(--txt2)">10 reps</div><div style="font-size:11px;font-weight:700;font-family:'Rajdhani',sans-serif">75%</div></div>
-          <div style="background:rgba(52,211,153,.08);border-radius:5px;padding:4px 7px;text-align:center"><div style="font-size:9px;color:var(--txt2)">12 reps</div><div style="font-size:11px;font-weight:700;font-family:'Rajdhani',sans-serif">67%</div></div>
-          <div style="background:rgba(52,211,153,.08);border-radius:5px;padding:4px 7px;text-align:center"><div style="font-size:9px;color:var(--txt2)">15 reps</div><div style="font-size:11px;font-weight:700;font-family:'Rajdhani',sans-serif">65%</div></div>
+          <div style="background:rgba(248,113,113,.15);border-radius:5px;padding:4px 7px;text-align:center"><div style="font-size:9px;font-weight:700;color:var(--danger)">1 rep</div><div style="font-size:11px;font-weight:700;font-family:'Oswald',sans-serif">100%</div></div>
+          <div style="background:rgba(248,113,113,.12);border-radius:5px;padding:4px 7px;text-align:center"><div style="font-size:9px;font-weight:700;color:var(--danger)">2 reps</div><div style="font-size:11px;font-weight:700;font-family:'Oswald',sans-serif">95%</div></div>
+          <div style="background:rgba(248,113,113,.1);border-radius:5px;padding:4px 7px;text-align:center;border:1px solid rgba(168,85,247,.5)"><div style="font-size:9px;font-weight:700;color:var(--acc)">3 reps ✓</div><div style="font-size:11px;font-weight:700;font-family:'Oswald',sans-serif;color:var(--acc)">93%</div></div>
+          <div style="background:var(--surf);border-radius:5px;padding:4px 7px;text-align:center"><div style="font-size:9px;color:var(--txt2)">4 reps</div><div style="font-size:11px;font-weight:700;font-family:'Oswald',sans-serif">90%</div></div>
+          <div style="background:var(--surf);border-radius:5px;padding:4px 7px;text-align:center"><div style="font-size:9px;color:var(--txt2)">5 reps</div><div style="font-size:11px;font-weight:700;font-family:'Oswald',sans-serif">87%</div></div>
+          <div style="background:var(--surf);border-radius:5px;padding:4px 7px;text-align:center"><div style="font-size:9px;color:var(--txt2)">6 reps</div><div style="font-size:11px;font-weight:700;font-family:'Oswald',sans-serif">85%</div></div>
+          <div style="background:var(--surf);border-radius:5px;padding:4px 7px;text-align:center"><div style="font-size:9px;color:var(--txt2)">7 reps</div><div style="font-size:11px;font-weight:700;font-family:'Oswald',sans-serif">83%</div></div>
+          <div style="background:rgba(168,85,247,.08);border-radius:5px;padding:4px 7px;text-align:center"><div style="font-size:9px;color:var(--txt2)">8 reps</div><div style="font-size:11px;font-weight:700;font-family:'Oswald',sans-serif">80%</div></div>
+          <div style="background:rgba(168,85,247,.08);border-radius:5px;padding:4px 7px;text-align:center"><div style="font-size:9px;color:var(--txt2)">10 reps</div><div style="font-size:11px;font-weight:700;font-family:'Oswald',sans-serif">75%</div></div>
+          <div style="background:rgba(52,211,153,.08);border-radius:5px;padding:4px 7px;text-align:center"><div style="font-size:9px;color:var(--txt2)">12 reps</div><div style="font-size:11px;font-weight:700;font-family:'Oswald',sans-serif">67%</div></div>
+          <div style="background:rgba(52,211,153,.08);border-radius:5px;padding:4px 7px;text-align:center"><div style="font-size:9px;color:var(--txt2)">15 reps</div><div style="font-size:11px;font-weight:700;font-family:'Oswald',sans-serif">65%</div></div>
         </div>
       </div>
       <div id="rm-grid"></div>
@@ -1175,8 +1175,8 @@ label.switch-btn:hover{background:var(--acc-d2);color:var(--txt)}
         <div style="font-size:12px;font-weight:700;margin-bottom:10px;color:#EC4899">🌸 Ciclo menstrual — Entrenamiento por fases</div>
         <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;margin-bottom:12px">
           <div><div style="font-size:10px;color:var(--txt2);margin-bottom:3px">Inicio último período</div><input type="date" id="cycle-start" style="width:100%;background:var(--surf);border:1px solid var(--border);border-radius:6px;padding:5px 8px;color:var(--txt);font-size:12px;outline:none" oninput="saveCycleData();renderCyclePhase()"></div>
-          <div><div style="font-size:10px;color:var(--txt2);margin-bottom:3px">Duración ciclo (días)</div><input type="number" id="cycle-len" value="28" min="21" max="35" style="width:100%;background:var(--surf);border:1px solid var(--border);border-radius:6px;padding:5px 8px;color:var(--txt);font-size:12px;outline:none;font-family:'Rajdhani',sans-serif;font-weight:700" oninput="saveCycleData();renderCyclePhase()"></div>
-          <div><div style="font-size:10px;color:var(--txt2);margin-bottom:3px">Duración período (días)</div><input type="number" id="cycle-period-len" value="5" min="2" max="10" style="width:100%;background:var(--surf);border:1px solid var(--border);border-radius:6px;padding:5px 8px;color:var(--txt);font-size:12px;outline:none;font-family:'Rajdhani',sans-serif;font-weight:700" oninput="saveCycleData();renderCyclePhase()"></div>
+          <div><div style="font-size:10px;color:var(--txt2);margin-bottom:3px">Duración ciclo (días)</div><input type="number" id="cycle-len" value="28" min="21" max="35" style="width:100%;background:var(--surf);border:1px solid var(--border);border-radius:6px;padding:5px 8px;color:var(--txt);font-size:12px;outline:none;font-family:'Oswald',sans-serif;font-weight:700" oninput="saveCycleData();renderCyclePhase()"></div>
+          <div><div style="font-size:10px;color:var(--txt2);margin-bottom:3px">Duración período (días)</div><input type="number" id="cycle-period-len" value="5" min="2" max="10" style="width:100%;background:var(--surf);border:1px solid var(--border);border-radius:6px;padding:5px 8px;color:var(--txt);font-size:12px;outline:none;font-family:'Oswald',sans-serif;font-weight:700" oninput="saveCycleData();renderCyclePhase()"></div>
         </div>
         <div id="cycle-phase-info"></div>
         <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:6px;margin-top:10px">
@@ -1265,7 +1265,7 @@ label.switch-btn:hover{background:var(--acc-d2);color:var(--txt)}
         <div class="goal-card">
           <div style="font-size:12px;font-weight:700;margin-bottom:10px">🎯 Meta de peso</div>
           <div style="display:flex;gap:8px;align-items:center">
-            <input type="number" id="goal-weight" placeholder="ej. 75" style="flex:1;background:var(--surf);border:1px solid var(--border);border-radius:6px;padding:6px 8px;color:var(--txt);font-size:13px;font-family:'Rajdhani',sans-serif;font-weight:700;outline:none" oninput="saveGoals();renderGoals()">
+            <input type="number" id="goal-weight" placeholder="ej. 75" style="flex:1;background:var(--surf);border:1px solid var(--border);border-radius:6px;padding:6px 8px;color:var(--txt);font-size:13px;font-family:'Oswald',sans-serif;font-weight:700;outline:none" oninput="saveGoals();renderGoals()">
             <span style="font-size:11px;color:var(--txt2)">kg</span>
           </div>
           <input type="date" id="goal-weight-date" style="width:100%;margin-top:7px;background:var(--surf);border:1px solid var(--border);border-radius:6px;padding:5px 8px;color:var(--txt);font-size:11px;outline:none" oninput="saveGoals();renderGoals()">
@@ -1274,7 +1274,7 @@ label.switch-btn:hover{background:var(--acc-d2);color:var(--txt)}
         <div class="goal-card">
           <div style="font-size:12px;font-weight:700;margin-bottom:10px">🔥 Meta de % grasa</div>
           <div style="display:flex;gap:8px;align-items:center">
-            <input type="number" id="goal-fat" placeholder="ej. 15" style="flex:1;background:var(--surf);border:1px solid var(--border);border-radius:6px;padding:6px 8px;color:var(--txt);font-size:13px;font-family:'Rajdhani',sans-serif;font-weight:700;outline:none" oninput="saveGoals();renderGoals()">
+            <input type="number" id="goal-fat" placeholder="ej. 15" style="flex:1;background:var(--surf);border:1px solid var(--border);border-radius:6px;padding:6px 8px;color:var(--txt);font-size:13px;font-family:'Oswald',sans-serif;font-weight:700;outline:none" oninput="saveGoals();renderGoals()">
             <span style="font-size:11px;color:var(--txt2)">%</span>
           </div>
           <input type="date" id="goal-fat-date" style="width:100%;margin-top:7px;background:var(--surf);border:1px solid var(--border);border-radius:6px;padding:5px 8px;color:var(--txt);font-size:11px;outline:none" oninput="saveGoals();renderGoals()">
@@ -1435,8 +1435,11 @@ function pullAndRefresh(){
         state.pipeline=lsGet("pipeline",[]);
         state.revenue=lsGet("revenue",{});
         state.goals=lsGet("goals",{});
-        if(typeof renderStudents==="function")renderStudents();
-        if(typeof refreshPipeline==="function")refreshPipeline();
+        // Merge portal-users (self-registered via app) into students list
+        mergeAppStudents(function(){
+          if(typeof renderStudents==="function")renderStudents();
+          if(typeof refreshPipeline==="function")refreshPipeline();
+        });
       }catch(e){}
       setSyncStatus("ok","✓ Sincronizado");
     })
@@ -1480,11 +1483,36 @@ function syncFromCloud(cb){
       }
       if(ind)ind.style.display="none";
       setSyncStatus("ok","✓ Sincronizado");
-      cb();
+      // Merge app students then start UI
+      mergeAppStudents(function(){cb();});
       // Auto-sync cada 60s para capturar cambios del celular automáticamente
       if(!autoSyncInt){autoSyncInt=setInterval(pullAndRefresh,60000);}
     })
     .catch(function(){if(ind)ind.style.display="none";setSyncStatus("err","⚠ Sin conexión");cb();});
+}
+// Merge self-registered app students (portal-users with coach_linked) into students list
+function mergeAppStudents(cb){
+  fetch(SB_URL+"/rest/v1/app_data?key=eq."+encodeURIComponent("misEsp_portal-users")+"&select=value",{headers:SB_H})
+    .then(function(r){return r.json();})
+    .then(function(rows){
+      var pUsers=(Array.isArray(rows)&&rows.length&&Array.isArray(rows[0].value))?rows[0].value:[];
+      var appStudents=pUsers.filter(function(u){return u.coach_linked&&u.selfRegistered;});
+      if(!appStudents.length){if(cb)cb();return;}
+      var existing=lsGet("students",[]);
+      var changed=false;
+      appStudents.forEach(function(u){
+        if(!existing.some(function(s){return s.id===u.id;})){
+          existing.push({id:u.id,name:u.name||"App Student",appUser:true,selfRegistered:true,payStatus:"Pendiente",months:0,progress:0,fee:0});
+          changed=true;
+        }
+      });
+      if(changed){
+        lsSave("students",existing);
+        state.students=existing.slice().sort(function(a,b){return(a.name||"").localeCompare(b.name||"");});
+      }
+      if(cb)cb();
+    })
+    .catch(function(){if(cb)cb();});
 }
 function backupData(){
   var data={version:1,date:new Date().toISOString(),data:{}};
@@ -1731,10 +1759,10 @@ function renderFitRanking(){
     var pct=Number(s.progress)||0;
     var clr=pct>=70?"var(--green)":pct>=40?"var(--warn)":"var(--danger)";
     var num=("0"+(i+1)).slice(-2);
-    return '<tr><td style="font-family:Rajdhani,sans-serif;font-weight:700;font-size:16px;color:var(--acc)">'+num+'</td>'+
+    return '<tr><td style="font-family:Oswald,sans-serif;font-weight:700;font-size:16px;color:var(--acc)">'+num+'</td>'+
       '<td><div class="cc"><div class="cap" style="background:var(--acc-d);color:var(--acc)">'+mkInitials(s.name)+'</div><div><div class="cn">'+s.name+'</div><div class="cm">'+(s.objective||'')+'</div></div></div></td>'+
       '<td><div class="pb" style="min-width:80px"><div class="pbf" style="width:'+pct+'%;background:'+clr+'"></div></div></td>'+
-      '<td style="font-family:Rajdhani,sans-serif;font-weight:700;color:'+clr+'">'+pct+'%</td></tr>';
+      '<td style="font-family:Oswald,sans-serif;font-weight:700;color:'+clr+'">'+pct+'%</td></tr>';
   }).join("");
   el("fit-ranking").innerHTML='<table class="rt"><thead><tr><th>#</th><th>Alumno</th><th style="min-width:100px">Progreso</th><th>%</th></tr></thead><tbody>'+rows+'</tbody></table>';
 }
@@ -1763,10 +1791,10 @@ function renderStudents(){
     var telBtn=s.tel?'<a href="https://wa.me/'+s.tel.replace(/[^0-9+]/g,"")+'" target="_blank" class="btn-icon" title="WhatsApp" style="font-size:15px;text-decoration:none">💬</a>':"";
     return '<div class="row-item">'+
       '<div class="cap" style="background:var(--acc-d);color:var(--acc);width:40px;height:40px;font-size:14px">'+mkInitials(s.name)+'</div>'+
-      '<div style="flex:1;min-width:0"><div style="font-weight:600;font-size:14px">'+s.name+(s.birthday&&s.birthday.startsWith(todayDDMM)?" 🎂":"")+'</div>'+
+      '<div style="flex:1;min-width:0"><div style="font-weight:600;font-size:14px">'+s.name+(s.birthday&&s.birthday.startsWith(todayDDMM)?" 🎂":"")+(s.appUser?'<span style="background:rgba(200,16,46,.18);color:var(--acc);font-size:9px;font-weight:700;padding:1px 5px;border-radius:3px;margin-left:6px;letter-spacing:.04em;font-family:Oswald,sans-serif">APP</span>':"")+'</div>'+
       '<div style="font-size:11px;color:var(--txt2);margin-top:2px">'+(s.objective||'')+(s.months?' &middot; '+s.months+' meses':'')+' &middot; '+bodyInfo+'</div></div>'+
-      '<div style="text-align:right;margin-right:8px"><div style="font-family:Rajdhani,sans-serif;font-weight:700;font-size:18px;color:var(--acc)">'+(s.progress||0)+'%</div><div style="font-size:10px;color:var(--txt2)">progreso</div></div>'+
-      '<div style="text-align:right;margin-right:10px"><div style="font-family:Rajdhani,sans-serif;font-weight:700;font-size:16px">'+fatTxt+'</div><div style="font-size:10px;color:var(--txt2)">grasa</div></div>'+
+      '<div style="text-align:right;margin-right:8px"><div style="font-family:Oswald,sans-serif;font-weight:700;font-size:18px;color:var(--acc)">'+(s.progress||0)+'%</div><div style="font-size:10px;color:var(--txt2)">progreso</div></div>'+
+      '<div style="text-align:right;margin-right:10px"><div style="font-family:Oswald,sans-serif;font-weight:700;font-size:16px">'+fatTxt+'</div><div style="font-size:10px;color:var(--txt2)">grasa</div></div>'+
       '<span class="badge '+pc+'">'+s.payStatus+'</span>'+
       '<div class="row-actions">'+
         telBtn+
@@ -1846,7 +1874,7 @@ function renderClients(){
       var nlabel=nd.toLocaleDateString("es-CO",{day:"2-digit",month:"short"});
       var col=diff<0?"var(--danger)":diff<=3?"#f97316":diff<=7?"var(--warn)":"var(--green)";
       var tag=diff<0?"Vencido hace "+Math.abs(diff)+"d":diff===0?"Hoy":diff<=7?"En "+diff+"d":"";
-      nextInfo='<div style="text-align:right;margin-right:10px"><div style="font-family:Rajdhani,sans-serif;font-weight:700;font-size:15px;color:'+col+'">'+nlabel+'</div><div style="font-size:10px;color:'+col+'">'+(tag||"Al día")+'</div></div>';
+      nextInfo='<div style="text-align:right;margin-right:10px"><div style="font-family:Oswald,sans-serif;font-weight:700;font-size:15px;color:'+col+'">'+nlabel+'</div><div style="font-size:10px;color:'+col+'">'+(tag||"Al día")+'</div></div>';
       if(diff<0){statusBadge='<span class="badge bd">Vencido</span>';pagarBtnHtml='<button class="btn-sm c-pagar" data-id="'+c.id+'" style="font-size:10px;padding:3px 9px;background:rgba(52,211,153,.12);color:var(--green);border:1px solid rgba(52,211,153,.3);border-radius:5px;cursor:pointer;font-weight:700">✓ Pagó</button>';}
       else if(diff<=7){statusBadge='<span class="badge bw" style="color:#f97316;border-color:#f97316">Por vencer</span>';pagarBtnHtml='<button class="btn-sm c-pagar" data-id="'+c.id+'" style="font-size:10px;padding:3px 9px;background:rgba(52,211,153,.12);color:var(--green);border:1px solid rgba(52,211,153,.3);border-radius:5px;cursor:pointer;font-weight:700">✓ Pagó</button>';}
       else{statusBadge='<span class="badge bg">Al día</span>';}
@@ -1858,7 +1886,7 @@ function renderClients(){
       '<div class="cap" style="background:var(--acc-d);color:var(--acc);width:40px;height:40px;font-size:14px">'+mkInitials(c.name)+'</div>'+
       '<div style="flex:1;min-width:0"><div style="font-weight:600;font-size:14px">'+c.name+'</div>'+
       '<div style="font-size:11px;color:var(--txt2);margin-top:2px">'+(c.service||'')+(c.website?' &middot; '+c.website:'')+'</div></div>'+
-      '<div style="text-align:right;margin-right:10px"><div style="font-family:Rajdhani,sans-serif;font-weight:700;font-size:18px;color:var(--acc)">'+fmtMoney(c.monthly)+'</div><div style="font-size:10px;color:var(--txt2)">mensual</div></div>'+
+      '<div style="text-align:right;margin-right:10px"><div style="font-family:Oswald,sans-serif;font-weight:700;font-size:18px;color:var(--acc)">'+fmtMoney(c.monthly)+'</div><div style="font-size:10px;color:var(--txt2)">mensual</div></div>'+
       nextInfo+
       '<div style="display:flex;align-items:center;gap:6px">'+statusBadge+pagarBtnHtml+'</div>'+
       '<div class="row-actions"><button class="btn-icon c-edit" data-id="'+c.id+'">&#9999;</button><button class="btn-icon btn-del c-del" data-id="'+c.id+'">&#128465;</button></div></div>';
@@ -2152,15 +2180,15 @@ function renderAgExp(){
       +'<div><span style="font-size:13px;font-weight:600">'+i.lbl+badge(i.type)+detail+'</span>'
       +expProfileBadge(i.lbl,"ag",i.type)
       +'</div>'
-      +'<span style="font-family:Rajdhani,sans-serif;font-weight:700;font-size:15px;color:var(--danger);flex-shrink:0;margin-left:8px">'+fmtMoney(eff)+'</span></div></div>';
+      +'<span style="font-family:Oswald,sans-serif;font-weight:700;font-size:15px;color:var(--danger);flex-shrink:0;margin-left:8px">'+fmtMoney(eff)+'</span></div></div>';
   }).join("");
   var html;
   if(!rows&&!state.agTools.length){html='<div class="empty-st"><div class="ico">&#128184;</div><p>Sin gastos registrados</p><button class="btn-sm" onclick="openAddAgTool()">+ Agregar</button></div>';}
   else{
     html=rows+'<div style="display:flex;flex-direction:column;gap:6px;margin-top:8px">';
-    if(monthly>0)html+='<div style="display:flex;justify-content:space-between;align-items:center;padding:9px 12px;background:rgba(52,211,153,.08);border-radius:9px;border:1px solid rgba(52,211,153,.2)"><span style="font-size:12px;font-weight:700;color:#34D399">Mensuales</span><span style="font-family:Rajdhani,sans-serif;font-weight:700;font-size:16px;color:#34D399">'+fmtMoney(monthly)+'/mes</span></div>';
-    if(once>0)html+='<div style="display:flex;justify-content:space-between;align-items:center;padding:9px 12px;background:rgba(245,158,11,.08);border-radius:9px;border:1px solid rgba(245,158,11,.2)"><span style="font-size:12px;font-weight:700;color:#F59E0B">Únicos</span><span style="font-family:Rajdhani,sans-serif;font-weight:700;font-size:16px;color:#F59E0B">'+fmtMoney(once)+'</span></div>';
-    if(total>0)html+='<div style="display:flex;justify-content:space-between;align-items:center;padding:11px 13px;background:var(--danger-d);border-radius:9px;border:1px solid rgba(248,113,113,.2)"><span style="font-weight:700;font-size:14px">Total gastos</span><span style="font-family:Rajdhani,sans-serif;font-weight:700;font-size:22px;color:var(--danger)">'+fmtMoney(total)+'</span></div>';
+    if(monthly>0)html+='<div style="display:flex;justify-content:space-between;align-items:center;padding:9px 12px;background:rgba(52,211,153,.08);border-radius:9px;border:1px solid rgba(52,211,153,.2)"><span style="font-size:12px;font-weight:700;color:#34D399">Mensuales</span><span style="font-family:Oswald,sans-serif;font-weight:700;font-size:16px;color:#34D399">'+fmtMoney(monthly)+'/mes</span></div>';
+    if(once>0)html+='<div style="display:flex;justify-content:space-between;align-items:center;padding:9px 12px;background:rgba(245,158,11,.08);border-radius:9px;border:1px solid rgba(245,158,11,.2)"><span style="font-size:12px;font-weight:700;color:#F59E0B">Únicos</span><span style="font-family:Oswald,sans-serif;font-weight:700;font-size:16px;color:#F59E0B">'+fmtMoney(once)+'</span></div>';
+    if(total>0)html+='<div style="display:flex;justify-content:space-between;align-items:center;padding:11px 13px;background:var(--danger-d);border-radius:9px;border:1px solid rgba(248,113,113,.2)"><span style="font-weight:700;font-size:14px">Total gastos</span><span style="font-family:Oswald,sans-serif;font-weight:700;font-size:22px;color:var(--danger)">'+fmtMoney(total)+'</span></div>';
     html+='</div>';
   }
   // Herramientas / Mejoras (unificado)
@@ -2219,7 +2247,7 @@ function renderAgExp(){
         })()
         +mejorBar
         +'</div>'
-        +(effCost>0&&t.type!=="mejora"?'<div style="text-align:right;flex-shrink:0"><span style="font-family:Rajdhani,sans-serif;font-size:13px;font-weight:700;color:'+col+';white-space:nowrap">'+fmtMoney(effCost)+'/mes</span>'+(t.perClient&&nc2?'<div style="font-size:9px;opacity:.5">'+fmtMoney(t.cost)+'×'+nc2+'cli</div>':'')+'</div>':'')
+        +(effCost>0&&t.type!=="mejora"?'<div style="text-align:right;flex-shrink:0"><span style="font-family:Oswald,sans-serif;font-size:13px;font-weight:700;color:'+col+';white-space:nowrap">'+fmtMoney(effCost)+'/mes</span>'+(t.perClient&&nc2?'<div style="font-size:9px;opacity:.5">'+fmtMoney(t.cost)+'×'+nc2+'cli</div>':'')+'</div>':'')
         +(t.type!=="sub"&&t.type!=="credits"&&t.type!=="ads"?'<span style="font-size:10px;margin-left:4px">'+(priDot[t.priority]||"🟡")+'</span>':'<span style="font-size:10px;margin-left:4px">'+(priDot[t.priority]||"🟡")+'</span>')
         +'<button onclick="openEditAgTool(\''+t.id+'\')" style="background:none;border:none;color:var(--txt2);cursor:pointer;font-size:13px;padding:0 3px">✏️</button>'
         +'<button onclick="deleteAgTool(\''+t.id+'\')" style="background:none;border:none;color:var(--danger);cursor:pointer;font-size:13px;opacity:.5;padding:0 3px">🗑</button>'
@@ -2291,7 +2319,7 @@ function renderPayOrder(){
       +'<span style="flex:1;font-size:13px;font-weight:600;text-decoration:'+(isPaid?"line-through":"none")+'">'+lbl+'</span>'
       +creditTag
       +(item.type==="por-cliente"?'<span style="font-size:9px;background:rgba(59,130,246,.15);color:#3B82F6;border-radius:4px;padding:2px 5px;font-weight:700">×'+activeClients.length+'cli</span>':'')
-      +'<span style="font-family:Rajdhani,sans-serif;font-weight:700;font-size:14px;color:var(--danger);white-space:nowrap">'+fmtMoney(eff)+'</span>'
+      +'<span style="font-family:Oswald,sans-serif;font-weight:700;font-size:14px;color:var(--danger);white-space:nowrap">'+fmtMoney(eff)+'</span>'
       +'<button onclick="payToggle(\''+lbl.replace(/'/g,"\\'")+'\',\''+state2+'\')" style="'+btnStyle+';border-radius:7px;cursor:pointer;padding:4px 9px;font-size:11px;font-weight:700;white-space:nowrap;flex:none">'+btnTxt+'</button>'
       +'</div>';
     // Para ítems ×cliente: checklist por cliente (alumnos si es fit, clientes si es ag/per)
@@ -2311,7 +2339,7 @@ function renderPayOrder(){
               +(done?'<svg width="10" height="10" viewBox="0 0 10 10"><polyline points="1.5,5 4,7.5 8.5,2" stroke="#fff" stroke-width="1.8" fill="none"/></svg>':'')
               +'</div>'
               +'<span style="flex:1;font-size:12px;font-weight:600;text-decoration:'+(done?"line-through":"none")+';opacity:'+(done?.5:1)+'">'+c.name+'</span>'
-              +(item.val>0?'<span style="font-family:Rajdhani,sans-serif;font-size:12px;font-weight:700;color:'+(done?"#34D399":"rgba(59,130,246,.7)")+'">'+fmtMoney(Number(item.val))+'</span>':'')
+              +(item.val>0?'<span style="font-family:Oswald,sans-serif;font-size:12px;font-weight:700;color:'+(done?"#34D399":"rgba(59,130,246,.7)")+'">'+fmtMoney(Number(item.val))+'</span>':'')
               +'<span style="font-size:9px;font-weight:700;padding:2px 6px;border-radius:4px;background:'+(done?"rgba(52,211,153,.15)":"rgba(248,113,113,.15)")+';color:'+(done?"#34D399":"var(--danger)")+'">'+( done?"✓ Listo":"Falta")+'</span>'
               +'</div>';
           }).join("")
@@ -2327,9 +2355,9 @@ function renderPayOrder(){
   var pend=order.reduce(function(s,l){return s+(!paid[l]&&byLbl[l]?getExpVal(byLbl[l],byLbl[l]._src):0);},0);
   var totalCredits=order.reduce(function(s,l){return s+(paid[l]==="credits"&&byLbl[l]?Math.ceil(getExpVal(byLbl[l],byLbl[l]._src)/sesPrice)*10:0);},0);
   var summaryHtml='<div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:6px;margin-top:12px">'
-    +'<div style="padding:9px;background:rgba(52,211,153,.07);border-radius:9px;border:1px solid rgba(52,211,153,.18);text-align:center"><div style="font-size:9px;opacity:.55;margin-bottom:2px">✓ Efectivo</div><div style="font-family:Rajdhani,sans-serif;font-weight:700;font-size:14px;color:#34D399">'+fmtMoney(cashPaid)+'</div></div>'
-    +'<div style="padding:9px;background:rgba(168,85,247,.07);border-radius:9px;border:1px solid rgba(168,85,247,.18);text-align:center"><div style="font-size:9px;opacity:.55;margin-bottom:2px">💳 Créditos</div><div style="font-family:Rajdhani,sans-serif;font-weight:700;font-size:14px;color:#A855F7">'+totalCredits+' cr</div></div>'
-    +'<div style="padding:9px;background:rgba(248,113,113,.07);border-radius:9px;border:1px solid rgba(248,113,113,.18);text-align:center"><div style="font-size:9px;opacity:.55;margin-bottom:2px">Pendiente</div><div style="font-family:Rajdhani,sans-serif;font-weight:700;font-size:14px;color:var(--danger)">'+fmtMoney(pend)+'</div></div>'
+    +'<div style="padding:9px;background:rgba(52,211,153,.07);border-radius:9px;border:1px solid rgba(52,211,153,.18);text-align:center"><div style="font-size:9px;opacity:.55;margin-bottom:2px">✓ Efectivo</div><div style="font-family:Oswald,sans-serif;font-weight:700;font-size:14px;color:#34D399">'+fmtMoney(cashPaid)+'</div></div>'
+    +'<div style="padding:9px;background:rgba(168,85,247,.07);border-radius:9px;border:1px solid rgba(168,85,247,.18);text-align:center"><div style="font-size:9px;opacity:.55;margin-bottom:2px">💳 Créditos</div><div style="font-family:Oswald,sans-serif;font-weight:700;font-size:14px;color:#A855F7">'+totalCredits+' cr</div></div>'
+    +'<div style="padding:9px;background:rgba(248,113,113,.07);border-radius:9px;border:1px solid rgba(248,113,113,.18);text-align:center"><div style="font-size:9px;opacity:.55;margin-bottom:2px">Pendiente</div><div style="font-family:Oswald,sans-serif;font-weight:700;font-size:14px;color:var(--danger)">'+fmtMoney(pend)+'</div></div>'
     +'</div>';
 
   // Progreso mensualidad
@@ -2340,7 +2368,7 @@ function renderPayOrder(){
   var mensHtml='<div style="margin-top:14px;padding:14px;background:var(--surf);border-radius:12px;border:1px solid var(--border)">'
     +'<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px">'
     +'<span style="font-size:12px;font-weight:700">Mensualidad cubierta</span>'
-    +'<span style="font-family:Rajdhani,sans-serif;font-size:20px;font-weight:700;color:'+barColor+'">'+pct+'%</span>'
+    +'<span style="font-family:Oswald,sans-serif;font-size:20px;font-weight:700;color:'+barColor+'">'+pct+'%</span>'
     +'</div>'
     +'<div style="background:var(--border);border-radius:99px;height:10px;overflow:hidden">'
     +'<div style="width:'+pct+'%;height:100%;background:'+barColor+';border-radius:99px;transition:width .4s"></div>'
@@ -2363,7 +2391,7 @@ function renderPayOrder(){
       else{btnStyle2="background:var(--surf);border:1px solid var(--border);color:var(--txt2)";btnTxt2="Pendiente";}
       return '<div style="display:flex;align-items:center;gap:8px;padding:10px 11px;background:var(--surf);border-radius:10px;margin-bottom:7px;opacity:'+(isPaid2?.4:1)+';transition:opacity .2s">'
         +'<span style="flex:1;font-size:13px;font-weight:600;text-decoration:'+(isPaid2?"line-through":"none")+'">'+item.lbl+'</span>'
-        +'<span style="font-family:Rajdhani,sans-serif;font-weight:700;font-size:14px;color:#A855F7;white-space:nowrap">'+fmtMoney(item.val)+'</span>'
+        +'<span style="font-family:Oswald,sans-serif;font-weight:700;font-size:14px;color:#A855F7;white-space:nowrap">'+fmtMoney(item.val)+'</span>'
         +'<button onclick="payToggle(\''+item.lbl.replace(/'/g,"\\'")+'\',\''+state3+'\')" style="'+btnStyle2+';border-radius:7px;cursor:pointer;padding:4px 9px;font-size:11px;font-weight:700;white-space:nowrap;flex:none">'+btnTxt2+'</button>'
         +'</div>';
     }).join("");
@@ -2388,7 +2416,7 @@ function renderPayOrder(){
         +(done?'<svg width="11" height="11" viewBox="0 0 12 12"><polyline points="2,6 5,9 10,3" stroke="#fff" stroke-width="2" fill="none"/></svg>':'')
         +'</div>'
         +'<span style="flex:1;font-size:13px;font-weight:600;text-decoration:'+(done?"line-through":"none")+'">'+item.lbl+'</span>'
-        +'<span style="font-family:Rajdhani,sans-serif;font-weight:700;font-size:14px;color:'+(done?"#34D399":"#FBBF24")+'">'+fmtMoney(item.val)+'</span>'
+        +'<span style="font-family:Oswald,sans-serif;font-weight:700;font-size:14px;color:'+(done?"#34D399":"#FBBF24")+'">'+fmtMoney(item.val)+'</span>'
         +'</div>';
     }).join("");
     unicosHtml='<div style="margin-top:18px">'
@@ -2622,7 +2650,7 @@ function renderPerInc(){
     return'<div style="display:flex;align-items:center;gap:12px;padding:12px 14px;background:var(--surf);border-radius:12px">'
       +'<div style="width:36px;height:36px;border-radius:9px;background:'+grad+';display:flex;align-items:center;justify-content:center;font-size:15px;flex-shrink:0">'+icon+'</div>'
       +'<div style="flex:1"><div style="font-weight:600;font-size:13px">'+title+'</div><div style="font-size:10px;opacity:.5">'+sub+'</div></div>'
-      +'<span style="font-family:Rajdhani,sans-serif;font-size:20px;font-weight:700;color:'+col+'">'+fmtMoney(val)+'</span></div>';
+      +'<span style="font-family:Oswald,sans-serif;font-size:20px;font-weight:700;color:'+col+'">'+fmtMoney(val)+'</span></div>';
   }
   var html='<div style="display:flex;flex-direction:column;gap:8px;margin-top:4px">';
   // FitCoach block
@@ -2631,7 +2659,7 @@ function renderPerInc(){
     +'<div style="display:flex;align-items:center;gap:10px">'
     +'<div style="width:34px;height:34px;border-radius:9px;background:linear-gradient(135deg,#A855F7,#EC4899);display:flex;align-items:center;justify-content:center;font-size:14px">💪</div>'
     +'<div><div style="font-weight:600;font-size:13px">FitCoach Pro</div><div style="font-size:10px;opacity:.5">'+nc+' alumnos · bruto '+fmtCOP(pi.fitBruto)+'</div></div></div>'
-    +'<span style="font-family:Rajdhani,sans-serif;font-size:20px;font-weight:700;color:#A855F7">'+fmtCOP(pi.fitNeto)+'</span></div>';
+    +'<span style="font-family:Oswald,sans-serif;font-size:20px;font-weight:700;color:#A855F7">'+fmtCOP(pi.fitNeto)+'</span></div>';
   var fitD=pi.fitDistrib||{pago:50,marca:20};
   html+='<div style="padding:6px 14px 10px;font-size:10px;opacity:.55">'+fitD.pago+'% de mi pago sobre margen '+fmtCOP(pi.fitMargen||0)+(pi.calleraCut>0?' · 🧤 calleras −'+fmtCOP(pi.calleraCut):'')+'</div>';
   if(nc===0)html+='<div style="padding:4px 14px 10px;font-size:11px;opacity:.4">Sin alumnos activos aún</div>';
@@ -2642,13 +2670,13 @@ function renderPerInc(){
     +'<div style="display:flex;align-items:center;gap:10px">'
     +'<div style="width:34px;height:34px;border-radius:9px;background:linear-gradient(135deg,#EF4444,#7F1D1D);display:flex;align-items:center;justify-content:center;font-size:14px">📣</div>'
     +'<div><div style="font-weight:600;font-size:13px">Mi pago — Agencia</div><div style="font-size:10px;opacity:.5">'+cas.distrib.pago+'% del margen ('+fmtMoney(cas.margen)+' margen)</div></div></div>'
-    +'<span style="font-family:Rajdhani,sans-serif;font-size:20px;font-weight:700;color:#EF4444">'+fmtMoney(pi.agPago)+'</span></div>';
+    +'<span style="font-family:Oswald,sans-serif;font-size:20px;font-weight:700;color:#EF4444">'+fmtMoney(pi.agPago)+'</span></div>';
   if(cas.margen<=0)html+='<div style="padding:8px 14px 12px;font-size:11px;color:var(--danger);opacity:.7">⚠️ Margen operativo negativo — ajusta gastos o clientes</div>';
   html+='</div>';
   // Total
   html+='<div style="display:flex;justify-content:space-between;align-items:center;padding:14px;background:var(--acc-d);border-radius:12px;border:1px solid var(--border2)">'
     +'<span style="font-weight:700;font-size:14px">Total personal /mes</span>'
-    +'<span style="font-family:Rajdhani,sans-serif;font-weight:700;font-size:26px;background:var(--grad);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text">'+fmtMoney(pi.total)+'</span></div>';
+    +'<span style="font-family:Oswald,sans-serif;font-weight:700;font-size:26px;background:var(--grad);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text">'+fmtMoney(pi.total)+'</span></div>';
   // Callera setting when no pending
   if(pi.calleraCount===0&&nc>0){
     html+='<div style="display:flex;align-items:center;gap:8px;padding:8px 12px;opacity:.5;font-size:11px">'
@@ -2681,9 +2709,9 @@ function renderPerExp(){
 
   var incHtml='<div style="background:linear-gradient(135deg,rgba(52,211,153,.08),rgba(168,85,247,.06));border-radius:10px;border:1px solid rgba(52,211,153,.15);padding:12px 14px;margin-bottom:14px">'
     +'<div style="font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.07em;opacity:.45;margin-bottom:10px">Ingresos que te entran este mes</div>'
-    +'<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:7px"><span style="font-size:12px;opacity:.75">💪 FitCoach (tu pago)</span><span style="font-family:Rajdhani,sans-serif;font-weight:700;font-size:15px;color:#34D399">'+fmtMoney(incFit)+'</span></div>'
-    +'<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:7px"><span style="font-size:12px;opacity:.75">📣 Agencia (tu pago)</span><span style="font-family:Rajdhani,sans-serif;font-weight:700;font-size:15px;color:#A855F7">'+fmtMoney(incAg)+'</span></div>'
-    +'<div style="display:flex;justify-content:space-between;align-items:center;padding-top:7px;border-top:1px solid var(--border)"><span style="font-size:12px;font-weight:700">Total a tu bolsillo</span><span style="font-family:Rajdhani,sans-serif;font-weight:700;font-size:18px;background:var(--grad);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text">'+fmtMoney(incTotal)+'</span></div>'
+    +'<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:7px"><span style="font-size:12px;opacity:.75">💪 FitCoach (tu pago)</span><span style="font-family:Oswald,sans-serif;font-weight:700;font-size:15px;color:#34D399">'+fmtMoney(incFit)+'</span></div>'
+    +'<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:7px"><span style="font-size:12px;opacity:.75">📣 Agencia (tu pago)</span><span style="font-family:Oswald,sans-serif;font-weight:700;font-size:15px;color:#A855F7">'+fmtMoney(incAg)+'</span></div>'
+    +'<div style="display:flex;justify-content:space-between;align-items:center;padding-top:7px;border-top:1px solid var(--border)"><span style="font-size:12px;font-weight:700">Total a tu bolsillo</span><span style="font-family:Oswald,sans-serif;font-weight:700;font-size:18px;background:var(--grad);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text">'+fmtMoney(incTotal)+'</span></div>'
     +'</div>';
 
   // ── Categorías de gastos personales ──
@@ -2713,7 +2741,7 @@ function renderPerExp(){
     catHtml+='<div style="display:flex;align-items:center;gap:8px;padding:10px 12px">'
       +'<span style="font-size:15px">'+c.ico+'</span>'
       +'<span style="flex:1;font-size:12px;font-weight:700">'+c.lbl+'</span>'
-      +(total>0?'<span style="font-family:Rajdhani,sans-serif;font-weight:700;font-size:14px;color:var(--danger)">'+fmtMoney(total)+'/mes</span>':'<span style="font-size:11px;opacity:.3">$0</span>')
+      +(total>0?'<span style="font-family:Oswald,sans-serif;font-weight:700;font-size:14px;color:var(--danger)">'+fmtMoney(total)+'/mes</span>':'<span style="font-size:11px;opacity:.3">$0</span>')
       +'<button onclick="openPerCatMeta(\''+c.key+'\',\''+c.lbl+'\')" style="font-size:9px;padding:2px 7px;border-radius:5px;border:1px solid var(--border2);background:transparent;color:var(--txt2);cursor:pointer;margin-left:6px">'+(hasMeta?'✏ Meta':'+ Meta')+'</button>'
       +'</div>';
     // Items
@@ -2726,7 +2754,7 @@ function renderPerExp(){
         var paid=(it.paidMonth||"")===curMon2;
         var amtStr=isAhorro&&it.pct>0
           ?'<span style="font-size:11px;color:#A855F7">'+(it.pct)+'% = '+fmtMoney(effV)+'</span>'
-          :'<span style="font-family:Rajdhani,sans-serif;font-weight:600">'+fmtMoney(effV)+'</span>';
+          :'<span style="font-family:Oswald,sans-serif;font-weight:600">'+fmtMoney(effV)+'</span>';
         var dueStr=hasDue&&it.dueDay
           ?'<span style="font-size:10px;margin-left:4px;opacity:.5">día '+it.dueDay+'</span>'
           +(paid
@@ -2766,14 +2794,14 @@ function renderPerExp(){
   if(fitExpTotal>0||agExpTotal>0){
     extHtml+='<div style="margin-top:4px;margin-bottom:10px">'
       +'<div style="font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.07em;opacity:.35;margin-bottom:6px">Gastos de otros espacios</div>';
-    if(fitExpTotal>0)extHtml+='<div style="display:flex;justify-content:space-between;padding:7px 11px;background:var(--surf);border-radius:8px;margin-bottom:4px;opacity:.65"><span style="font-size:12px">💪 Coach</span><span style="font-family:Rajdhani,sans-serif;font-weight:700;font-size:13px;color:var(--danger)">'+fmtMoney(fitExpTotal)+'/mes</span></div>';
-    if(agExpTotal>0)extHtml+='<div style="display:flex;justify-content:space-between;padding:7px 11px;background:var(--surf);border-radius:8px;margin-bottom:4px;opacity:.65"><span style="font-size:12px">📣 Agencia</span><span style="font-family:Rajdhani,sans-serif;font-weight:700;font-size:13px;color:var(--danger)">'+fmtMoney(agExpTotal)+'/mes</span></div>';
+    if(fitExpTotal>0)extHtml+='<div style="display:flex;justify-content:space-between;padding:7px 11px;background:var(--surf);border-radius:8px;margin-bottom:4px;opacity:.65"><span style="font-size:12px">💪 Coach</span><span style="font-family:Oswald,sans-serif;font-weight:700;font-size:13px;color:var(--danger)">'+fmtMoney(fitExpTotal)+'/mes</span></div>';
+    if(agExpTotal>0)extHtml+='<div style="display:flex;justify-content:space-between;padding:7px 11px;background:var(--surf);border-radius:8px;margin-bottom:4px;opacity:.65"><span style="font-size:12px">📣 Agencia</span><span style="font-family:Oswald,sans-serif;font-weight:700;font-size:13px;color:var(--danger)">'+fmtMoney(agExpTotal)+'/mes</span></div>';
     extHtml+='</div>';
   }
 
   var sumHtml='<div style="display:flex;flex-direction:column;gap:6px;margin-top:8px">'
-    +'<div style="display:flex;justify-content:space-between;padding:9px 13px;background:rgba(248,113,113,.08);border-radius:9px;border:1px solid rgba(248,113,113,.18)"><span style="font-size:12px;font-weight:700;opacity:.8">Total gastos</span><span style="font-family:Rajdhani,sans-serif;font-weight:700;font-size:16px;color:var(--danger)">'+fmtMoney(grandTotal)+'/mes</span></div>'
-    +'<div style="display:flex;justify-content:space-between;padding:9px 13px;background:'+(bal>=0?"rgba(52,211,153,.08)":"rgba(248,113,113,.08)")+';border-radius:9px;border:1px solid '+(bal>=0?"rgba(52,211,153,.2)":"rgba(248,113,113,.2)")+'"><span style="font-size:12px;font-weight:700;opacity:.8">Balance mensual</span><span style="font-family:Rajdhani,sans-serif;font-weight:700;font-size:16px;color:'+(bal>=0?"#34D399":"var(--danger)")+'">'+fmtMoney(bal)+'</span></div>'
+    +'<div style="display:flex;justify-content:space-between;padding:9px 13px;background:rgba(248,113,113,.08);border-radius:9px;border:1px solid rgba(248,113,113,.18)"><span style="font-size:12px;font-weight:700;opacity:.8">Total gastos</span><span style="font-family:Oswald,sans-serif;font-weight:700;font-size:16px;color:var(--danger)">'+fmtMoney(grandTotal)+'/mes</span></div>'
+    +'<div style="display:flex;justify-content:space-between;padding:9px 13px;background:'+(bal>=0?"rgba(52,211,153,.08)":"rgba(248,113,113,.08)")+';border-radius:9px;border:1px solid '+(bal>=0?"rgba(52,211,153,.2)":"rgba(248,113,113,.2)")+'"><span style="font-size:12px;font-weight:700;opacity:.8">Balance mensual</span><span style="font-family:Oswald,sans-serif;font-weight:700;font-size:16px;color:'+(bal>=0?"#34D399":"var(--danger)")+'">'+fmtMoney(bal)+'</span></div>'
     +'</div>';
 
   var sugHtml="";
@@ -2782,8 +2810,8 @@ function renderPerExp(){
     sugHtml='<div style="margin-top:10px;padding:14px;background:linear-gradient(135deg,rgba(168,85,247,.1),rgba(59,130,246,.08));border-radius:10px;border:1px solid rgba(168,85,247,.25)">'
       +'<div style="font-size:11px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;opacity:.55;margin-bottom:10px">¿Cuánto deberías ganar?</div>'
       +'<div style="display:flex;flex-direction:column;gap:8px">'
-      +'<div style="display:flex;justify-content:space-between"><span style="font-size:12px;opacity:.75">Mínimo (30% ahorro)</span><span style="font-family:Rajdhani,sans-serif;font-weight:700;font-size:15px;color:#A855F7">'+fmtMoney(meta1)+'/mes</span></div>'
-      +'<div style="display:flex;justify-content:space-between"><span style="font-size:12px;opacity:.75">Cómodo (50% ahorro)</span><span style="font-family:Rajdhani,sans-serif;font-weight:700;font-size:15px;color:#3B82F6">'+fmtMoney(meta2)+'/mes</span></div>'
+      +'<div style="display:flex;justify-content:space-between"><span style="font-size:12px;opacity:.75">Mínimo (30% ahorro)</span><span style="font-family:Oswald,sans-serif;font-weight:700;font-size:15px;color:#A855F7">'+fmtMoney(meta1)+'/mes</span></div>'
+      +'<div style="display:flex;justify-content:space-between"><span style="font-size:12px;opacity:.75">Cómodo (50% ahorro)</span><span style="font-family:Oswald,sans-serif;font-weight:700;font-size:15px;color:#3B82F6">'+fmtMoney(meta2)+'/mes</span></div>'
       +'</div></div>';
   }
 
@@ -2806,7 +2834,7 @@ function renderPerExp(){
       urgHtml+='<div style="background:var(--surf);border-radius:10px;border-left:3px solid '+(done?'#34D399':'#EF4444')+';padding:10px 12px;margin-bottom:6px">'
         +'<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:6px">'
           +'<span style="font-size:13px;font-weight:700">'+(done?'✅ ':'')+u.lbl+'</span>'
-          +'<span style="font-family:Rajdhani,sans-serif;font-weight:700;font-size:13px;color:'+(done?'#34D399':'#EF4444')+'">'+fmtMoney(rem)+' pendiente</span>'
+          +'<span style="font-family:Oswald,sans-serif;font-weight:700;font-size:13px;color:'+(done?'#34D399':'#EF4444')+'">'+fmtMoney(rem)+' pendiente</span>'
         +'</div>'
         +'<div style="height:5px;background:rgba(255,255,255,.07);border-radius:3px;overflow:hidden;margin-bottom:6px">'
           +'<div style="height:100%;width:'+pct+'%;background:'+(done?'#34D399':'#EF4444')+';border-radius:3px;transition:width .3s"></div>'
@@ -2931,9 +2959,9 @@ function renderFoco(){
         +'</div>'
         +'<div style="display:flex;align-items:center;gap:6px;padding-left:32px">'
         +'<span style="font-size:10px;opacity:.5;white-space:nowrap">Llevamos</span>'
-        +'<input type="number" min="0" data-fp="'+p+'" data-fi="'+i+'" data-fk="cur" value="'+(d.cur||"")+'" placeholder="0" oninput="onFocoField(this)" style="width:60px;background:var(--card2);border:1px solid var(--border2);border-radius:6px;padding:3px 7px;color:var(--txt);font-size:12px;font-weight:700;outline:none;font-family:Rajdhani,sans-serif;text-align:center">'
+        +'<input type="number" min="0" data-fp="'+p+'" data-fi="'+i+'" data-fk="cur" value="'+(d.cur||"")+'" placeholder="0" oninput="onFocoField(this)" style="width:60px;background:var(--card2);border:1px solid var(--border2);border-radius:6px;padding:3px 7px;color:var(--txt);font-size:12px;font-weight:700;outline:none;font-family:Oswald,sans-serif;text-align:center">'
         +'<span style="font-size:10px;opacity:.5">/</span>'
-        +'<input type="number" min="0" data-fp="'+p+'" data-fi="'+i+'" data-fk="tgt" value="'+(d.tgt||"")+'" placeholder="Meta" oninput="onFocoField(this)" style="width:60px;background:var(--card2);border:1px solid var(--border2);border-radius:6px;padding:3px 7px;color:var(--txt);font-size:12px;font-weight:700;outline:none;font-family:Rajdhani,sans-serif;text-align:center">'
+        +'<input type="number" min="0" data-fp="'+p+'" data-fi="'+i+'" data-fk="tgt" value="'+(d.tgt||"")+'" placeholder="Meta" oninput="onFocoField(this)" style="width:60px;background:var(--card2);border:1px solid var(--border2);border-radius:6px;padding:3px 7px;color:var(--txt);font-size:12px;font-weight:700;outline:none;font-family:Oswald,sans-serif;text-align:center">'
         +(d.tgt>0?'<span style="font-size:11px;font-weight:700;margin-left:4px;color:'+(pct>=100?"#34D399":pct>=60?"#FBBF24":"var(--acc)")+'">'+pct+'%</span>':'')
         +(left!==null&&left>0?'<span style="font-size:10px;opacity:.5;margin-left:2px">· faltan '+left+'</span>':'')
         +(pct>=100?'<span style="font-size:11px;font-weight:700;color:#34D399;margin-left:4px">✓ Logrado</span>':'')
@@ -3070,7 +3098,7 @@ function renderPipeline(){
   var counts=PIPE_STAGES.map(function(s){return list.filter(function(c){return c.stage===s.key;}).length;});
   // Header resumen
   var header='<div style="display:flex;gap:8px;margin-bottom:14px;flex-wrap:wrap">'
-    +PIPE_STAGES.map(function(s,i){return '<div style="flex:1;min-width:80px;padding:8px 12px;background:'+s.bg+';border-radius:9px;border:1px solid '+s.col+'33;text-align:center"><div style="font-size:10px;font-weight:700;color:'+s.col+'">'+s.key+'</div><div style="font-family:Rajdhani,sans-serif;font-size:22px;font-weight:700">'+counts[i]+'</div></div>';}).join("")
+    +PIPE_STAGES.map(function(s,i){return '<div style="flex:1;min-width:80px;padding:8px 12px;background:'+s.bg+';border-radius:9px;border:1px solid '+s.col+'33;text-align:center"><div style="font-size:10px;font-weight:700;color:'+s.col+'">'+s.key+'</div><div style="font-family:Oswald,sans-serif;font-size:22px;font-weight:700">'+counts[i]+'</div></div>';}).join("")
     +'</div>';
   if(!list.length){board.innerHTML=header+'<div class="empty-st"><div class="ico">📋</div><p>Sin prospectos aún</p><button class="btn-sm" onclick="openAddPipe()">+ Agregar prospecto</button></div>';return;}
   var cards=list.map(function(c){
@@ -3088,7 +3116,7 @@ function renderPipeline(){
     return '<div style="background:var(--card);border:1px solid var(--border);border-radius:12px;padding:14px;margin-bottom:10px">'
       +'<div style="display:flex;align-items:flex-start;gap:10px;margin-bottom:11px">'
       +'<div style="flex:1"><div style="font-weight:700;font-size:14px">'+c.title+'</div>'+(c.client?'<div style="font-size:11px;opacity:.6;margin-top:1px">'+c.client+'</div>':'')+(c.note?'<div style="font-size:11px;opacity:.5;margin-top:3px;font-style:italic">'+c.note+'</div>':'')+'</div>'
-      +(c.value?'<div style="font-family:Rajdhani,sans-serif;font-weight:700;font-size:18px;color:var(--acc)">'+fmtMoney(c.value)+'</div>':'')
+      +(c.value?'<div style="font-family:Oswald,sans-serif;font-weight:700;font-size:18px;color:var(--acc)">'+fmtMoney(c.value)+'</div>':'')
       +'</div>'
       +'<div style="display:flex;align-items:center;margin-bottom:10px">'+stageRow+'</div>'
       +'<div style="display:flex;gap:6px;align-items:center">'
@@ -4952,7 +4980,7 @@ function renderAgKpis(){
       +'<button class="btn-icon btn-del" onclick="deleteKpi(\''+k.id+'\')">🗑</button>'
       +'</div>'
       +(logs.length?'<div style="display:flex;align-items:baseline;gap:6px;margin-bottom:8px">'
-        +'<span style="font-family:Rajdhani,sans-serif;font-weight:700;font-size:28px;color:'+col+'">'+lastVal+'</span>'
+        +'<span style="font-family:Oswald,sans-serif;font-weight:700;font-size:28px;color:'+col+'">'+lastVal+'</span>'
         +'<span style="font-size:12px;opacity:.5">/ meta '+curGoal+' (S'+logs.length+')</span>'
         +(pct>=100?'<span style="font-size:12px;font-weight:700;color:#34D399;margin-left:6px">✓ Logrado</span>':'<span style="font-size:11px;opacity:.4;margin-left:4px">faltan '+(curGoal-lastVal)+'</span>')
         +'</div>':'<div style="font-size:12px;opacity:.4;margin-bottom:8px">Sin registros aún</div>')
@@ -5040,7 +5068,7 @@ function openLogKpi(id,period){
   var goals=k.goals||[];var curGoal=goals[Math.min(period,goals.length-1)]||0;
   var html='<div style="text-align:center;margin-bottom:14px"><div style="font-size:13px;opacity:.5">Período S'+(period+1)+'</div><div style="font-size:12px;opacity:.4">Meta: '+curGoal+'</div></div>'
     +'<div class="form-g" style="text-align:center"><label>¿Cuánto llevamos?</label>'
-    +'<input id="kpi-log-val" type="number" class="fi" placeholder="0" min="0" style="font-size:24px;font-weight:700;font-family:Rajdhani,sans-serif;text-align:center;height:56px"></div>';
+    +'<input id="kpi-log-val" type="number" class="fi" placeholder="0" min="0" style="font-size:24px;font-weight:700;font-family:Oswald,sans-serif;text-align:center;height:56px"></div>';
   openModal("Registrar "+k.name,html,function(){
     var val=parseInt(el("kpi-log-val").value)||0;
     if(!k.logs)k.logs=[];
@@ -5336,9 +5364,9 @@ function renderFitFinSummary(){
   var totalExp=expMonthly(state.fitExp,"fit");
   var net=inc-totalExp;
   var html='<div style="display:flex;flex-direction:column;gap:10px;margin-top:4px">'
-    +'<div style="display:flex;justify-content:space-between;align-items:center;padding:14px;background:var(--green-d);border-radius:10px;border:1px solid rgba(52,211,153,.2)"><span style="font-size:13px;font-weight:600;color:var(--green)">Ingresos mes</span><span style="font-family:Rajdhani,sans-serif;font-weight:700;font-size:22px;color:var(--green)">'+fmtMoney(inc)+'</span></div>'
-    +'<div style="display:flex;justify-content:space-between;align-items:center;padding:14px;background:var(--danger-d);border-radius:10px;border:1px solid rgba(248,113,113,.2)"><span style="font-size:13px;font-weight:600;color:var(--danger)">Gastos fijos</span><span style="font-family:Rajdhani,sans-serif;font-weight:700;font-size:22px;color:var(--danger)">&minus; '+fmtMoney(totalExp)+'</span></div>'
-    +'<div style="display:flex;justify-content:space-between;align-items:center;padding:14px;background:var(--acc-d);border-radius:10px;border:1px solid var(--border2)"><span style="font-size:13px;font-weight:600;color:var(--acc)">Utilidad neta</span><span style="font-family:Rajdhani,sans-serif;font-weight:700;font-size:28px;background:var(--grad);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text">'+fmtMoney(net)+'</span></div>'
+    +'<div style="display:flex;justify-content:space-between;align-items:center;padding:14px;background:var(--green-d);border-radius:10px;border:1px solid rgba(52,211,153,.2)"><span style="font-size:13px;font-weight:600;color:var(--green)">Ingresos mes</span><span style="font-family:Oswald,sans-serif;font-weight:700;font-size:22px;color:var(--green)">'+fmtMoney(inc)+'</span></div>'
+    +'<div style="display:flex;justify-content:space-between;align-items:center;padding:14px;background:var(--danger-d);border-radius:10px;border:1px solid rgba(248,113,113,.2)"><span style="font-size:13px;font-weight:600;color:var(--danger)">Gastos fijos</span><span style="font-family:Oswald,sans-serif;font-weight:700;font-size:22px;color:var(--danger)">&minus; '+fmtMoney(totalExp)+'</span></div>'
+    +'<div style="display:flex;justify-content:space-between;align-items:center;padding:14px;background:var(--acc-d);border-radius:10px;border:1px solid var(--border2)"><span style="font-size:13px;font-weight:600;color:var(--acc)">Utilidad neta</span><span style="font-family:Oswald,sans-serif;font-weight:700;font-size:28px;background:var(--grad);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text">'+fmtMoney(net)+'</span></div>'
     +'</div>';
   var e2=el("fit-fin-summary");if(e2)e2.innerHTML=html;
 }
@@ -5358,15 +5386,15 @@ function renderFitExpList(){
       +'<div><span style="font-size:13px;font-weight:600">'+i.lbl+badge(i.type)+'</span>'
       +expProfileBadge(i.lbl,"fit",i.type)
       +'</div>'
-      +'<span style="font-family:Rajdhani,sans-serif;font-weight:700;font-size:15px;color:var(--danger);flex-shrink:0;margin-left:8px">'+fmtMoney(eff)+'</span></div></div>';
+      +'<span style="font-family:Oswald,sans-serif;font-weight:700;font-size:15px;color:var(--danger);flex-shrink:0;margin-left:8px">'+fmtMoney(eff)+'</span></div></div>';
   }).join("");
   var html;
   if(!rows){html='<div class="empty-st"><div class="ico">&#128184;</div><p>Sin gastos registrados</p><button class="btn-sm" onclick="editFitExp()">+ Agregar</button></div>';}
   else{
     html=rows+'<div style="display:flex;flex-direction:column;gap:6px;margin-top:8px">';
-    if(monthly>0)html+='<div style="display:flex;justify-content:space-between;align-items:center;padding:9px 12px;background:rgba(52,211,153,.08);border-radius:9px;border:1px solid rgba(52,211,153,.2)"><span style="font-size:12px;font-weight:700;color:#34D399">Mensuales</span><span style="font-family:Rajdhani,sans-serif;font-weight:700;font-size:16px;color:#34D399">'+fmtMoney(monthly)+'/mes</span></div>';
-    if(once>0)html+='<div style="display:flex;justify-content:space-between;align-items:center;padding:9px 12px;background:rgba(245,158,11,.08);border-radius:9px;border:1px solid rgba(245,158,11,.2)"><span style="font-size:12px;font-weight:700;color:#F59E0B">Únicos</span><span style="font-family:Rajdhani,sans-serif;font-weight:700;font-size:16px;color:#F59E0B">'+fmtMoney(once)+'</span></div>';
-    html+='<div style="display:flex;justify-content:space-between;align-items:center;padding:11px 13px;background:var(--danger-d);border-radius:9px;border:1px solid rgba(248,113,113,.2)"><span style="font-weight:700;font-size:14px">Total gastos</span><span style="font-family:Rajdhani,sans-serif;font-weight:700;font-size:22px;color:var(--danger)">'+fmtMoney(total)+'</span></div>';
+    if(monthly>0)html+='<div style="display:flex;justify-content:space-between;align-items:center;padding:9px 12px;background:rgba(52,211,153,.08);border-radius:9px;border:1px solid rgba(52,211,153,.2)"><span style="font-size:12px;font-weight:700;color:#34D399">Mensuales</span><span style="font-family:Oswald,sans-serif;font-weight:700;font-size:16px;color:#34D399">'+fmtMoney(monthly)+'/mes</span></div>';
+    if(once>0)html+='<div style="display:flex;justify-content:space-between;align-items:center;padding:9px 12px;background:rgba(245,158,11,.08);border-radius:9px;border:1px solid rgba(245,158,11,.2)"><span style="font-size:12px;font-weight:700;color:#F59E0B">Únicos</span><span style="font-family:Oswald,sans-serif;font-weight:700;font-size:16px;color:#F59E0B">'+fmtMoney(once)+'</span></div>';
+    html+='<div style="display:flex;justify-content:space-between;align-items:center;padding:11px 13px;background:var(--danger-d);border-radius:9px;border:1px solid rgba(248,113,113,.2)"><span style="font-weight:700;font-size:14px">Total gastos</span><span style="font-family:Oswald,sans-serif;font-weight:700;font-size:22px;color:var(--danger)">'+fmtMoney(total)+'</span></div>';
     html+='</div>';
   }
   var e2=el("fit-exp-list");if(e2)e2.innerHTML=html;
@@ -5406,7 +5434,7 @@ function renderAgFinSummary(){
     size=size||"18px";prefix=prefix===undefined?"":prefix;
     return'<div style="display:flex;justify-content:space-between;align-items:center;padding:12px 14px;background:'+bg+';border-radius:10px;border:1px solid '+border+'">'
       +'<span style="font-size:13px;font-weight:600;color:'+col+'">'+icon+' '+label+'</span>'
-      +'<span style="font-family:Rajdhani,sans-serif;font-weight:700;font-size:'+size+';color:'+col+'">'+prefix+fmtMoney(val)+'</span></div>';
+      +'<span style="font-family:Oswald,sans-serif;font-weight:700;font-size:'+size+';color:'+col+'">'+prefix+fmtMoney(val)+'</span></div>';
   }
   function pctRow(icon,label,field,pct,amount,col,bg){
     return'<div style="display:flex;align-items:center;gap:10px;padding:10px 14px;background:'+bg+';border-radius:10px;border:1px solid rgba(255,255,255,.06)">'
@@ -5414,27 +5442,27 @@ function renderAgFinSummary(){
       +'<div style="display:flex;align-items:center;gap:6px">'
       +'<input type="number" min="0" max="100" value="'+pct+'" oninput="saveAgDistrib(\''+field+'\',this.value)" style="width:46px;background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.12);border-radius:6px;color:'+col+';font-size:13px;font-weight:700;text-align:center;padding:3px 4px;outline:none">%'
       +'</div>'
-      +'<span style="font-family:Rajdhani,sans-serif;font-weight:700;font-size:16px;color:'+col+';min-width:80px;text-align:right">'+fmtMoney(amount)+'</span></div>';
+      +'<span style="font-family:Oswald,sans-serif;font-weight:700;font-size:16px;color:'+col+';min-width:80px;text-align:right">'+fmtMoney(amount)+'</span></div>';
   }
 
   var varDetail=varTools.length?'<div style="font-size:10px;opacity:.5;margin-top:2px;padding-left:2px">'+varTools.map(function(t){return t.name+': '+fmtMoney(t.cost)+'×'+_nc;}).join(' · ')+'</div>':'';
 
   var html='<div style="display:flex;flex-direction:column;gap:8px;margin-top:4px">'
     +row('💰','Ingresos brutos',billing,'var(--green-d)','rgba(52,211,153,.2)','var(--green)','22px')
-    +(varCosts>0?'<div style="background:rgba(251,191,36,.07);border-radius:10px;border:1px solid rgba(251,191,36,.18);padding:12px 14px"><div style="display:flex;justify-content:space-between;align-items:center"><span style="font-size:13px;font-weight:600;color:#FBBF24">📦 Gastos por cliente</span><span style="font-family:Rajdhani,sans-serif;font-weight:700;font-size:18px;color:#FBBF24">− '+fmtMoney(varCosts)+'</span></div>'+varDetail+'</div>':'')
+    +(varCosts>0?'<div style="background:rgba(251,191,36,.07);border-radius:10px;border:1px solid rgba(251,191,36,.18);padding:12px 14px"><div style="display:flex;justify-content:space-between;align-items:center"><span style="font-size:13px;font-weight:600;color:#FBBF24">📦 Gastos por cliente</span><span style="font-family:Oswald,sans-serif;font-weight:700;font-size:18px;color:#FBBF24">− '+fmtMoney(varCosts)+'</span></div>'+varDetail+'</div>':'')
     +row('🔩','Gastos fijos',fixedCosts,'var(--danger-d)','rgba(248,113,113,.2)','var(--danger)','18px','− ')
-    +'<div style="display:flex;justify-content:space-between;align-items:center;padding:13px 14px;background:rgba(139,92,246,.1);border-radius:10px;border:1px solid rgba(139,92,246,.25)"><span style="font-size:13px;font-weight:700;color:#A78BFA">= Margen operativo</span><span style="font-family:Rajdhani,sans-serif;font-weight:700;font-size:22px;color:#A78BFA">'+fmtMoney(margen)+'</span></div>'
+    +'<div style="display:flex;justify-content:space-between;align-items:center;padding:13px 14px;background:rgba(139,92,246,.1);border-radius:10px;border:1px solid rgba(139,92,246,.25)"><span style="font-size:13px;font-weight:700;color:#A78BFA">= Margen operativo</span><span style="font-family:Oswald,sans-serif;font-weight:700;font-size:22px;color:#A78BFA">'+fmtMoney(margen)+'</span></div>'
     +'<div style="background:rgba(255,255,255,.03);border-radius:10px;border:1px solid rgba(255,255,255,.07);overflow:hidden">'
     +'<div style="padding:10px 14px 6px;font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.07em;opacity:.4">Tu pago</div>'
     +pctRow('🤑','Pago personal','pago',d.pago,pago,'#34D399','transparent')
     +'</div>'
-    +'<div style="display:flex;justify-content:space-between;align-items:center;padding:13px 14px;background:rgba(56,189,248,.09);border-radius:10px;border:1px solid rgba(56,189,248,.2)"><span style="font-size:13px;font-weight:700;color:#38BDF8">= Flujo libre</span><span style="font-family:Rajdhani,sans-serif;font-weight:700;font-size:22px;color:#38BDF8">'+fmtMoney(flujo)+'</span></div>'
+    +'<div style="display:flex;justify-content:space-between;align-items:center;padding:13px 14px;background:rgba(56,189,248,.09);border-radius:10px;border:1px solid rgba(56,189,248,.2)"><span style="font-size:13px;font-weight:700;color:#38BDF8">= Flujo libre</span><span style="font-family:Oswald,sans-serif;font-weight:700;font-size:22px;color:#38BDF8">'+fmtMoney(flujo)+'</span></div>'
     +'<div style="background:rgba(255,255,255,.03);border-radius:10px;border:1px solid rgba(255,255,255,.07);overflow:hidden">'
     +'<div style="padding:10px 14px 4px;display:flex;justify-content:space-between;align-items:center"><span style="font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.07em;opacity:.4">Distribución del flujo libre</span><span style="font-size:10px;color:'+(distTotal>100?"var(--danger)":distTotal===100?"var(--green)":"var(--warn)")+';font-weight:700">'+distTotal+'% asignado</span></div>'
     +pctRow('🏗️','Sostenimiento','sost',d.sost,sost,'#60A5FA','transparent')
     +pctRow('💾','Ahorro','ahorro',d.ahorro,ahorro,'#34D399','transparent')
     +pctRow('🎯','Metas','metas',d.metas,metas,'#FBBF24','transparent')
-    +(Math.abs(remainder)>1?'<div style="display:flex;justify-content:space-between;padding:8px 14px 10px;opacity:.5;font-size:12px"><span>Sin asignar</span><span style="font-family:Rajdhani,sans-serif;font-weight:700">'+fmtMoney(remainder)+'</span></div>':'')
+    +(Math.abs(remainder)>1?'<div style="display:flex;justify-content:space-between;padding:8px 14px 10px;opacity:.5;font-size:12px"><span>Sin asignar</span><span style="font-family:Oswald,sans-serif;font-weight:700">'+fmtMoney(remainder)+'</span></div>':'')
     +'</div>'
     +'</div>';
   var e2=el("ag-fin-summary");if(e2)e2.innerHTML=html;
@@ -5486,13 +5514,13 @@ function renderGastosRapidos(){
   var todayStr=new Date().toISOString().slice(0,10);
   var todayTotal=gr.filter(function(g){return g.date===todayStr;}).reduce(function(s,g){return s+(Number(g.amount)||0);},0);
   var html='';
-  if(todayTotal>0)html+='<div style="display:flex;justify-content:space-between;padding:8px 10px;background:rgba(248,113,113,.08);border-radius:8px;margin-bottom:8px;border:1px solid rgba(248,113,113,.15)"><span style="font-size:11px;font-weight:700;opacity:.7">Hoy gastaste</span><span style="font-family:Rajdhani,sans-serif;font-weight:700;color:var(--danger)">'+fmtMoney(todayTotal)+'</span></div>';
+  if(todayTotal>0)html+='<div style="display:flex;justify-content:space-between;padding:8px 10px;background:rgba(248,113,113,.08);border-radius:8px;margin-bottom:8px;border:1px solid rgba(248,113,113,.15)"><span style="font-size:11px;font-weight:700;opacity:.7">Hoy gastaste</span><span style="font-family:Oswald,sans-serif;font-weight:700;color:var(--danger)">'+fmtMoney(todayTotal)+'</span></div>';
   html+=gr.slice(0,10).map(function(g){
     var isToday=g.date===todayStr;
     return'<div style="display:flex;align-items:center;gap:8px;padding:7px 10px;background:var(--surf);border-radius:8px;margin-bottom:4px">'
       +'<div style="flex:1;min-width:0"><div style="font-size:12px;font-weight:600">'+g.desc+'</div>'
       +'<div style="font-size:10px;opacity:.45">'+(isToday?"Hoy":g.date)+'</div></div>'
-      +'<span style="font-family:Rajdhani,sans-serif;font-weight:700;font-size:14px;color:var(--danger)">'+fmtMoney(g.amount)+'</span>'
+      +'<span style="font-family:Oswald,sans-serif;font-weight:700;font-size:14px;color:var(--danger)">'+fmtMoney(g.amount)+'</span>'
       +'<button onclick="deleteGastoRapido(\''+g.id+'\')" style="background:none;border:none;color:var(--danger);cursor:pointer;font-size:11px;opacity:.4;padding:0 2px">✕</button>'
       +'</div>';
   }).join("");
@@ -5549,25 +5577,25 @@ function renderFitFinSummary(){
     size=size||"18px";prefix=prefix===undefined?"":prefix;
     return'<div style="display:flex;justify-content:space-between;align-items:center;padding:11px 14px;background:'+bg+';border-radius:10px;border:1px solid '+border+'">'
       +'<span style="font-size:13px;font-weight:600;color:'+col+'">'+label+'</span>'
-      +'<span style="font-family:Rajdhani,sans-serif;font-weight:700;font-size:'+size+';color:'+col+'">'+prefix+fmtMoney(val)+'</span></div>';
+      +'<span style="font-family:Oswald,sans-serif;font-weight:700;font-size:'+size+';color:'+col+'">'+prefix+fmtMoney(val)+'</span></div>';
   }
   function prow(icon,label,field,pct,amount,col){
     return'<div style="display:flex;align-items:center;gap:10px;padding:9px 14px;border-radius:10px">'
       +'<span style="font-size:13px;font-weight:600;color:'+col+';flex:1">'+icon+' '+label+'</span>'
       +'<input type="number" min="0" max="100" value="'+pct+'" oninput="saveFitDistrib(\''+field+'\',this.value)" style="width:44px;background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.12);border-radius:6px;color:'+col+';font-size:13px;font-weight:700;text-align:center;padding:3px 4px;outline:none">%'
-      +'<span style="font-family:Rajdhani,sans-serif;font-weight:700;font-size:16px;color:'+col+';min-width:72px;text-align:right">'+fmtMoney(amount)+'</span></div>';
+      +'<span style="font-family:Oswald,sans-serif;font-weight:700;font-size:16px;color:'+col+';min-width:72px;text-align:right">'+fmtMoney(amount)+'</span></div>';
   }
   var distTotal=cas.distrib.marca+cas.distrib.pago;
   var html='<div style="display:flex;flex-direction:column;gap:8px;margin-top:4px">'
     +frow('💪 Ingresos brutos',cas.bruto,'var(--green-d)','rgba(52,211,153,.2)','var(--green)','22px')
     +(cas.calleraCut>0?frow('🧤 Calleras ('+cas.calleraCount+' alumnos)',cas.calleraCut,'rgba(245,158,11,.07)','rgba(245,158,11,.18)','#FBBF24','16px','− '):'')
     +frow('🔩 Gastos FitCoach',cas.gastosFit,'var(--danger-d)','rgba(248,113,113,.2)','var(--danger)','16px','− ')
-    +'<div style="display:flex;justify-content:space-between;align-items:center;padding:12px 14px;background:rgba(139,92,246,.1);border-radius:10px;border:1px solid rgba(139,92,246,.25)"><span style="font-weight:700;font-size:13px;color:#A78BFA">= Margen FitCoach</span><span style="font-family:Rajdhani,sans-serif;font-weight:700;font-size:22px;color:#A78BFA">'+fmtMoney(cas.margen)+'</span></div>'
+    +'<div style="display:flex;justify-content:space-between;align-items:center;padding:12px 14px;background:rgba(139,92,246,.1);border-radius:10px;border:1px solid rgba(139,92,246,.25)"><span style="font-weight:700;font-size:13px;color:#A78BFA">= Margen FitCoach</span><span style="font-family:Oswald,sans-serif;font-weight:700;font-size:22px;color:#A78BFA">'+fmtMoney(cas.margen)+'</span></div>'
     +'<div style="background:rgba(255,255,255,.03);border-radius:10px;border:1px solid rgba(255,255,255,.07);overflow:hidden">'
     +'<div style="padding:8px 14px 4px;display:flex;justify-content:space-between"><span style="font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.07em;opacity:.4">Distribución</span><span style="font-size:10px;font-weight:700;color:'+(distTotal>100?"var(--danger)":distTotal===100?"var(--green)":"var(--warn)")+'">'+(distTotal)+'% asignado</span></div>'
     +prow('🎽','Inversión marca','marca',cas.distrib.marca,cas.marca,'#60A5FA')
     +prow('🤑','Mi pago personal','pago',cas.distrib.pago,cas.pago,'#34D399')
-    +(cas.buffer>0?'<div style="display:flex;justify-content:space-between;padding:8px 14px 10px;opacity:.5;font-size:12px"><span>Buffer FitCoach</span><span style="font-family:Rajdhani,sans-serif;font-weight:700">'+fmtMoney(cas.buffer)+'</span></div>':'')
+    +(cas.buffer>0?'<div style="display:flex;justify-content:space-between;padding:8px 14px 10px;opacity:.5;font-size:12px"><span>Buffer FitCoach</span><span style="font-family:Oswald,sans-serif;font-weight:700">'+fmtMoney(cas.buffer)+'</span></div>':'')
     +'</div>'
     +'</div>';
   var e2=el("fit-fin-summary");if(e2)e2.innerHTML=html;
