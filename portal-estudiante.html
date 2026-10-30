@@ -1740,14 +1740,35 @@ async function requestMetaNotif(){
     showToast("Permiso denegado","Activa las notificaciones en la configuración de tu celular.","warn");
   }
 }
+function getStepRequired(act){
+  var dur=act.duration||{v:4,u:"semanas"};
+  var n=act.weeks?act.weeks.length:4;
+  var dias=act.diasPorSemana||3;
+  var chunk=dur.v/n;
+  var weeks=dur.u==="días"?chunk/7:dur.u==="meses"?chunk*4:chunk;
+  return Math.max(1,Math.round(weeks*dias));
+}
+function getTotalCheckins(act){
+  var c=act.checkins||{};
+  return Object.keys(c).filter(function(k){return c[k];}).length;
+}
+
 async function checkInToday(){
   if(!G.meta||!G.meta.active)return;
   if(!G.meta.active.checkins)G.meta.active.checkins={};
-  if(G.meta.active.checkins[G.today]){return;}
+  if(G.meta.active.checkins[G.today])return;
   G.meta.active.checkins[G.today]=true;
+  var act=G.meta.active;
+  var req=getStepRequired(act);
+  var total=getTotalCheckins(act);
+  var stepUnlocked=false;
+  act.weeks.forEach(function(w,i){
+    if(!w.done&&total>=req*(i+1)){w.done=true;stepUnlocked=true;}
+  });
   await sbWrite("portal-meta-"+G.sid,G.meta);
   var el=document.getElementById("meta-inner");if(el)el.innerHTML=buildMetaHtml();
-  showToast("¡Registrado!","Un día más. Eso es lo que separa a los que logran cosas de los que no.","ok");
+  if(stepUnlocked)showToast("PASO COMPLETADO","Lo ganaste día a día. Eso no se lo quita nadie.","ok");
+  else showToast("Registrado","Un día más en la racha. No pares.","acc");
 }
 
 var META_TIPOS={
@@ -1882,6 +1903,8 @@ function buildMetaHtml(){
   var curStepIdx=act.weeks.findIndex(function(w){return!w.done;});
   if(curStepIdx<0)curStepIdx=totalSteps-1;
   var curStep=act.weeks[curStepIdx];
+  var stepReq=getStepRequired(act);
+  var totalCheckins=getTotalCheckins(act);
 
   // this week calendar
   var weekDates=getWeekDates();
@@ -1910,15 +1933,29 @@ function buildMetaHtml(){
   var dailyTask=getMetaDailyTask(act);
   var notifGranted=("Notification" in window)&&Notification.permission==="granted";
 
-  // step list (compact, for marking done)
+  // step list — no manual checkbox, earned by daily check-ins
   var stepList=act.weeks.map(function(w,i){
-    var isCur=i===curStepIdx;
     var lbl=_metaStepLabel(act,i);
-    return '<div class="meta-week-item'+(w.done?" done":isCur?" cur":"")+'">'+
-      '<input type="checkbox" class="meta-week-check"'+(w.done?" checked":"")+' onchange="toggleMetaTask('+i+',this.checked)">'+
+    var isCur=i===curStepIdx&&!w.done;
+    var isLocked=!w.done&&i>curStepIdx;
+    // check-ins credited toward this step slot
+    var slotStart=stepReq*i;
+    var progressInSlot=Math.min(Math.max(totalCheckins-slotStart,0),stepReq);
+    var slotPct=Math.round(progressInSlot/stepReq*100);
+    var icon=w.done?'<span style="color:var(--green);font-size:13px">✓</span>':
+              isCur?'<span style="color:var(--acc);font-size:13px">→</span>':
+              '<span style="font-size:12px;opacity:.4">🔒</span>';
+    var statusLine=w.done
+      ?'<span style="color:var(--green)">Ganado</span>'
+      :isCur
+        ?'<span style="color:var(--acc)">'+progressInSlot+' / '+stepReq+' días</span>'
+        :'<span style="color:var(--txt3)">Bloqueado</span>';
+    return '<div class="meta-week-item'+(w.done?" done":isCur?" cur":"")+'" style="opacity:'+(isLocked?.45:1)+'">'+
+      '<div style="min-width:20px;text-align:center;padding-top:1px">'+icon+'</div>'+
       '<div class="meta-week-body">'+
-        '<div class="meta-week-num">'+esc(lbl)+(isCur?'<span style="color:var(--acc);margin-left:6px">En curso</span>':w.done?'<span style="color:var(--green);margin-left:6px">Completado</span>':'')+'</div>'+
+        '<div class="meta-week-num">'+esc(lbl)+' · '+statusLine+'</div>'+
         '<div class="meta-week-task">'+esc(w.task)+'</div>'+
+        (isCur?'<div class="meta-prog-bar" style="margin-top:5px"><div class="meta-prog-fill" style="width:'+slotPct+'%"></div></div>':'')+
       '</div></div>';
   }).join("");
 
@@ -1932,7 +1969,7 @@ function buildMetaHtml(){
     /* Overall progress */
     '<div class="meta-progress" style="margin-bottom:10px">'+
       '<div style="display:flex;justify-content:space-between;font-size:10px;color:var(--txt2)">'+
-        '<span>Paso '+(curStepIdx+1)+' de '+totalSteps+': '+esc(_metaStepLabel(act,curStepIdx))+'</span><span>'+overallPct+'%</span>'+
+        '<span>Paso '+(curStepIdx+1)+' / '+totalSteps+(allDone?' — Todos completados':' — '+Math.min(Math.max(totalCheckins-stepReq*curStepIdx,0),stepReq)+'/'+stepReq+' días')+'</span><span>'+overallPct+'%</span>'+
       '</div>'+
       '<div class="meta-prog-bar"><div class="meta-prog-fill" style="width:'+overallPct+'%"></div></div>'+
     '</div>'+
@@ -1958,7 +1995,13 @@ function buildMetaHtml(){
     /* Step list */
     '<div style="margin:12px 0 6px"><div class="section-lbl">Mis pasos</div></div>'+
     '<div class="meta-week-list">'+stepList+'</div>'+
-    (allDone?'<button class="meta-complete-btn" onclick="completeMeta()">✓ Meta cumplida — definir la siguiente</button>':'')
+    (allDone?
+      '<div style="border-top:1px solid var(--border);margin-top:8px;padding-top:12px">'+
+      '<div style="font-size:10px;color:var(--txt2);text-align:center;margin-bottom:8px;font-style:italic">'+
+        'Lograste esto porque apareciste cada día cuando no tenías ganas.<br>Eso es lo que hace la gente inamovible.'+
+      '</div>'+
+      '<button class="meta-complete-btn" onclick="completeMeta()">MISIÓN CUMPLIDA — DEFINIR LA SIGUIENTE</button>'+
+      '</div>':'')
   );
 }
 
