@@ -658,11 +658,22 @@ async function doRegister(){
       var coachCode=await fetchSbKey("portal-coach-code")||"";
       if(code===coachCode){
         newUser.coach_linked=true;
-        // Add to coach's students list so they appear immediately in the coach app
         var coachStudents=await fetchSbKey("students")||[];
-        if(!coachStudents.some(function(s){return s.id===sid;})){
-          coachStudents.push({id:sid,name:name,appUser:true,selfRegistered:true,payStatus:"Pendiente",months:0,progress:0,fee:0});
+        // Try to link to existing coach profile by name (case-insensitive)
+        var nameLow=name.toLowerCase().trim();
+        var existingCoach=coachStudents.find(function(s){return (s.name||"").toLowerCase().trim()===nameLow;});
+        if(existingCoach){
+          // Link portal account to coach-managed profile
+          newUser.coachStudentId=existingCoach.id;
+          existingCoach.portalSid=sid;
+          existingCoach.appUser=true;
           await sbWrite("students",coachStudents);
+        } else {
+          // New student not yet in coach list — add them
+          if(!coachStudents.some(function(s){return s.id===sid;})){
+            coachStudents.push({id:sid,name:name,appUser:true,selfRegistered:true,payStatus:"Pendiente",months:0,progress:0,fee:0});
+            await sbWrite("students",coachStudents);
+          }
         }
       }
     }
@@ -728,12 +739,20 @@ async function loadDashboard(sid){
     G.obstaculo=res[16]||[];
     G.fotos=res[17]||[];
     G.meta=res[18]||null;
-    G.st=students.find(function(s){return s.id===sid;})||{};
-    // For self-registered students not yet in coach's list, load name from portal-users
+    // Try by direct sid, or by portalSid reference
+    G.st=students.find(function(s){return s.id===sid||s.portalSid===sid;})||{};
+    // If still no name, check portal-users for coachStudentId link or own data
     if(!G.st.name){
       var pUsers=await fetchSbKey("portal-users")||[];
       var puRecord=pUsers.find(function(u){return u.id===sid;});
-      if(puRecord){Object.assign(G.st,{name:puRecord.name,sex:puRecord.sex,dob:puRecord.dob,phone:puRecord.phone,objective:puRecord.objective,selfRegistered:true});}
+      if(puRecord&&puRecord.coachStudentId){
+        // Linked account: load full coach-managed profile
+        var linked=students.find(function(s){return s.id===puRecord.coachStudentId;});
+        if(linked)G.st=linked;
+      }
+      if(!G.st.name&&puRecord){
+        Object.assign(G.st,{name:puRecord.name,sex:puRecord.sex,dob:puRecord.dob,phone:puRecord.phone,objective:puRecord.objective,selfRegistered:true});
+      }
     }
     document.getElementById("app-stname").textContent=G.st.name||"Estudiante";
     document.getElementById("app-stobj").textContent=G.st.objective||"";
