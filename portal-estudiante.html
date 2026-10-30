@@ -306,16 +306,44 @@ body{font-family:'Inter',system-ui,sans-serif;background:var(--bg);color:var(--t
 .racha-display{font-size:12px;color:var(--txt2);margin-bottom:10px;padding:8px 0;border-bottom:1px solid var(--border)}
 .racha-num{font-family:'Oswald',sans-serif;font-weight:700;font-size:20px;color:var(--txt)}
 /* DIARIO */
+.diario-tema{font-size:10px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--acc);margin-bottom:6px}
 .diario-q{font-size:13px;font-weight:600;line-height:1.5;margin-bottom:10px;color:var(--txt)}
-.diario-inp{width:100%;background:var(--surf);border:1px solid var(--border);color:var(--txt);border-radius:3px;padding:10px;font-size:12px;font-family:'Inter',sans-serif;outline:none;resize:vertical;min-height:80px}
+.diario-inp{width:100%;background:var(--surf);border:1px solid var(--border);color:var(--txt);border-radius:3px;padding:10px;font-size:12px;font-family:'Inter',sans-serif;outline:none;resize:vertical;min-height:70px}
 .diario-inp:focus{border-color:var(--acc)}
+.diario-inp::placeholder{color:var(--txt2);opacity:1}
+.diario-lbl{font-size:10px;font-weight:600;color:var(--txt2);text-transform:uppercase;letter-spacing:.06em;margin-top:10px;margin-bottom:5px;display:block}
 .diario-btn{background:var(--acc);color:#fff;border:none;border-radius:3px;padding:9px 16px;font-size:11px;font-weight:700;font-family:'Oswald',sans-serif;letter-spacing:.08em;text-transform:uppercase;cursor:pointer;margin-top:8px}
-/* OBSTACULO */
-.obs-inp{width:100%;background:var(--surf);border:1px solid var(--border);color:var(--txt);border-radius:3px;padding:10px;font-size:12px;font-family:'Inter',sans-serif;outline:none;resize:vertical;min-height:60px;margin-bottom:8px}
-.obs-inp:focus{border-color:var(--acc)}
-.obs-hist-item{padding:8px 10px;background:var(--surf);border:1px solid var(--border);border-radius:3px;margin-bottom:6px;font-size:11px;line-height:1.5}
-.obs-hist-date{font-size:9px;color:var(--txt3);margin-top:4px}
-.obs-q{font-size:11px;font-weight:600;color:var(--txt2);text-transform:uppercase;letter-spacing:.06em;margin-bottom:6px}
+/* LA ROCA */
+.roca-cita{font-size:10px;color:var(--txt2);font-style:italic;margin-bottom:12px;padding-left:10px;border-left:2px solid var(--acc);line-height:1.6}
+.roca-inp{width:100%;background:var(--surf);border:1px solid var(--border);color:var(--txt);border-radius:3px;padding:10px;font-size:12px;font-family:'Inter',sans-serif;outline:none;resize:vertical;min-height:70px;margin-bottom:8px}
+.roca-inp:focus{border-color:var(--acc)}
+.roca-inp::placeholder{color:var(--txt2);opacity:1}
+.roca-hist-item{padding:8px 10px;background:var(--surf);border:1px solid var(--border);border-radius:3px;margin-bottom:6px;font-size:11px;line-height:1.5}
+.roca-hist-date{font-size:9px;color:var(--txt3);margin-top:4px}
+/* MODAL FRASE */
+.quote-modal{position:fixed;inset:0;background:rgba(0,0,0,.88);backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px);z-index:1000;display:flex;align-items:center;justify-content:center;padding:24px;opacity:0;transition:opacity .3s}
+.quote-modal.visible{opacity:1}
+.quote-box{background:var(--card);border:1px solid var(--border2);border-top:2px solid var(--acc);border-radius:4px;padding:32px 28px;max-width:400px;width:100%;text-align:center}
+.quote-day{font-size:10px;color:var(--txt2);text-transform:uppercase;letter-spacing:.12em;margin-bottom:20px}
+.quote-text{font-family:'Oswald',sans-serif;font-size:22px;font-weight:500;line-height:1.45;color:var(--txt);margin-bottom:24px}
+.quote-close{background:var(--acc);color:#fff;border:none;border-radius:3px;padding:11px 28px;font-size:12px;font-weight:700;font-family:'Oswald',sans-serif;letter-spacing:.12em;text-transform:uppercase;cursor:pointer}
+/* REGISTRO */
+.login-toggle{font-size:11px;color:var(--txt2);text-align:center;margin-top:14px}
+.login-toggle a{color:var(--acc);cursor:pointer;text-decoration:none;font-weight:600}
+.reg-card{display:none}
+/* CAL NOTA */
+.cal-note-dot{width:5px;height:5px;border-radius:50%;background:var(--txt2);flex-shrink:0}
+.cal-note-inp{width:100%;background:var(--surf);border:1px solid var(--border);color:var(--txt);border-radius:3px;padding:8px 10px;font-size:11px;font-family:'Inter',sans-serif;outline:none;resize:none;min-height:56px;margin-top:8px}
+.cal-note-inp::placeholder{color:var(--txt2);opacity:1}
+.cal-note-inp:focus{border-color:var(--acc)}
+.cal-note-btn{background:var(--acc);color:#fff;border:none;border-radius:2px;padding:5px 12px;font-size:10px;font-weight:700;font-family:'Oswald',sans-serif;letter-spacing:.08em;text-transform:uppercase;cursor:pointer;margin-top:5px}
+.day-note-modal{position:fixed;inset:0;background:rgba(0,0,0,.8);backdrop-filter:blur(6px);-webkit-backdrop-filter:blur(6px);z-index:900;display:none;align-items:center;justify-content:center;padding:20px}
+.day-note-modal.open{display:flex}
+.day-note-box{background:var(--card);border:1px solid var(--border2);border-radius:4px;padding:20px;max-width:360px;width:100%}
+.day-note-title{font-family:'Oswald',sans-serif;font-size:14px;font-weight:700;letter-spacing:.06em;margin-bottom:12px}
+.day-note-footer{display:flex;gap:8px;margin-top:8px}
+.day-note-cancel{background:none;border:1px solid var(--border2);color:var(--txt2);border-radius:2px;padding:7px 14px;font-size:10px;font-family:'Oswald',sans-serif;font-weight:600;letter-spacing:.08em;text-transform:uppercase;cursor:pointer;flex:1}
+.day-note-save{background:var(--acc);color:#fff;border:none;border-radius:2px;padding:7px 14px;font-size:10px;font-family:'Oswald',sans-serif;font-weight:700;letter-spacing:.08em;text-transform:uppercase;cursor:pointer;flex:1}
 </style>
 </head>
 <body>
@@ -324,12 +352,51 @@ body{font-family:'Inter',system-ui,sans-serif;background:var(--bg);color:var(--t
   <div class="login-card">
     <div class="login-logo">INAMOVIBLE <span>APP</span></div>
     <div class="login-sub">Portal del estudiante</div>
-    <label class="fl">Usuario</label>
-    <input class="fi" id="inp-user" placeholder="tu usuario" autocomplete="username" autocorrect="off" autocapitalize="off" spellcheck="false">
-    <label class="fl">Contraseña</label>
-    <input class="fi" id="inp-pass" type="password" placeholder="••••••••" autocomplete="current-password" style="margin-bottom:4px">
-    <button class="login-btn" id="login-btn" onclick="doLogin()">Entrar</button>
-    <div class="login-err" id="login-err"></div>
+    <!-- LOGIN FORM -->
+    <div id="login-form">
+      <label class="fl">Usuario</label>
+      <input class="fi" id="inp-user" placeholder="tu usuario" autocomplete="username" autocorrect="off" autocapitalize="off" spellcheck="false">
+      <label class="fl">Contraseña</label>
+      <input class="fi" id="inp-pass" type="password" placeholder="••••••••" autocomplete="current-password" style="margin-bottom:4px">
+      <button class="login-btn" id="login-btn" onclick="doLogin()">Entrar</button>
+      <div class="login-err" id="login-err"></div>
+      <div class="login-toggle">¿No tienes cuenta? <a onclick="showRegForm()">Regístrate</a></div>
+    </div>
+    <!-- REGISTRO FORM -->
+    <div id="reg-form" class="reg-card">
+      <label class="fl">Nombre completo</label>
+      <input class="fi" id="reg-name" placeholder="Tu nombre" autocorrect="off" autocapitalize="words">
+      <label class="fl">Usuario</label>
+      <input class="fi" id="reg-user" placeholder="elige un usuario" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false">
+      <label class="fl">Contraseña</label>
+      <input class="fi" id="reg-pass" type="password" placeholder="••••••••" autocomplete="new-password">
+      <label class="fl" style="color:var(--txt3)">Código de coach <span style="font-weight:400;text-transform:none;letter-spacing:0">(opcional)</span></label>
+      <input class="fi" id="reg-code" placeholder="si te lo dieron" autocomplete="off" style="margin-bottom:4px">
+      <button class="login-btn" id="reg-btn" onclick="doRegister()">Crear cuenta</button>
+      <div class="login-err" id="reg-err"></div>
+      <div class="login-toggle">¿Ya tienes cuenta? <a onclick="showLoginForm()">Entrar</a></div>
+    </div>
+  </div>
+</div>
+
+<!-- MODAL FRASE DEL DÍA -->
+<div id="quote-modal" class="quote-modal" onclick="closeQuoteModal(event)">
+  <div class="quote-box">
+    <div class="quote-day" id="qm-day"></div>
+    <div class="quote-text" id="qm-text"></div>
+    <button class="quote-close" onclick="closeQuoteModal()">Continuar</button>
+  </div>
+</div>
+
+<!-- MODAL NOTA DEL DÍA -->
+<div id="day-note-modal" class="day-note-modal">
+  <div class="day-note-box">
+    <div class="day-note-title" id="dnn-title">NOTA</div>
+    <textarea class="cal-note-inp" id="dnn-inp" placeholder="Escribe una nota para este día..."></textarea>
+    <div class="day-note-footer">
+      <button class="day-note-cancel" onclick="closeDayNoteModal()">Cancelar</button>
+      <button class="day-note-save" onclick="saveDayNote()">Guardar</button>
+    </div>
   </div>
 </div>
 
@@ -433,7 +500,12 @@ async function sbWrite(key,value){
 function fmtTime(s){var m=Math.floor((s||0)/60),sec=(s||0)%60;return m+":"+(sec<10?"0":"")+sec;}
 function esc(s){return(s||"").replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;");}
 function showErr(msg){var e=document.getElementById("login-err");if(e)e.textContent=msg;}
+function showRegErr(msg){var e=document.getElementById("reg-err");if(e)e.textContent=msg;}
 function setLoading(on){var b=document.getElementById("login-btn");if(b){b.disabled=on;b.innerHTML=on?'<span class="spin"></span> Entrando...':'Entrar';}}
+function setRegLoading(on){var b=document.getElementById("reg-btn");if(b){b.disabled=on;b.innerHTML=on?'<span class="spin"></span> Creando...':'Crear cuenta';}}
+function showRegForm(){document.getElementById("login-form").style.display="none";document.getElementById("reg-form").style.display="block";}
+function showLoginForm(){document.getElementById("reg-form").style.display="none";document.getElementById("login-form").style.display="block";}
+function saveSession(sid){try{localStorage.setItem("portal_auth",JSON.stringify({sid:sid}));}catch(e){}}
 function todayEntry(){return G.calData[G.today]||(G.calData[G.today]={w:0,s:0,m:[]});}
 
 async function doLogin(){
@@ -448,13 +520,45 @@ async function doLogin(){
     var hash=await sha256(pass);
     var entry=portales.find(function(p){return p.username===uname&&p.pwdHash===hash;});
     if(!entry){showErr("Usuario o contraseña incorrectos");setLoading(false);return;}
-    sessionStorage.setItem("portal_sid",entry.studentId);
+    saveSession(entry.studentId);
     await loadDashboard(entry.studentId);
   }catch(e){showErr("Error de conexión");}
   setLoading(false);
 }
+
+async function doRegister(){
+  var name=(document.getElementById("reg-name").value||"").trim();
+  var uname=(document.getElementById("reg-user").value||"").trim().toLowerCase();
+  var pass=document.getElementById("reg-pass").value||"";
+  var code=(document.getElementById("reg-code").value||"").trim();
+  showRegErr("");
+  if(!name){showRegErr("Escribe tu nombre");return;}
+  if(!uname||uname.length<3){showRegErr("Usuario debe tener al menos 3 caracteres");return;}
+  if(pass.length<6){showRegErr("Contraseña debe tener al menos 6 caracteres");return;}
+  setRegLoading(true);
+  try{
+    var portales=await fetchSbKey("portales")||[];
+    if(portales.find(function(p){return p.username===uname;})){showRegErr("Ese usuario ya existe");setRegLoading(false);return;}
+    var hash=await sha256(pass);
+    var sid="u_"+uname+"_"+Date.now().toString(36);
+    portales.push({username:uname,pwdHash:hash,studentId:sid});
+    var users=await fetchSbKey("portal-users")||[];
+    var newUser={id:sid,name:name,selfRegistered:true};
+    if(code){
+      var coachCode=await fetchSbKey("portal-coach-code")||"";
+      if(code===coachCode)newUser.coach_linked=true;
+    }
+    users.push(newUser);
+    await sbWrite("portales",portales);
+    await sbWrite("portal-users",users);
+    saveSession(sid);
+    await loadDashboard(sid);
+  }catch(e){showRegErr("Error de conexión");}
+  setRegLoading(false);
+}
+
 function doLogout(){
-  sessionStorage.removeItem("portal_sid");
+  try{localStorage.removeItem("portal_auth");}catch(e){}
   Object.assign(G,{sid:null,calData:{},mealCount:5,stepsGoal:8000,nutriOk:false,st:{},nutrition:{},plan:null,evals:[],att:[],shownQuotes:[],notes:[],badges:{},ranking:[],book:null,diario:[],obstaculo:[]});
   document.getElementById("login").style.display="flex";
   document.getElementById("app").style.display="none";
@@ -722,10 +826,12 @@ function buildDots(dateStr){
   var e=G.calData[dateStr]||{},mc=G.mealCount;
   var mDone=(e.m||[]).filter(function(x){return x;}).length===mc&&mc>0;
   var mAny=(e.m||[]).some(function(x){return x;});
+  var hasNote=!!(e.note&&e.note.trim());
   return'<div class="cal-dots">'+
     '<div class="cal-dot '+(e.w?"dot-w":"dot-empty")+'" title="Entrenamiento"></div>'+
     '<div class="cal-dot '+(e.s?"dot-s":"dot-empty")+'" title="Pasos"></div>'+
     '<div class="cal-dot '+(mDone?"dot-m":mAny?"dot-m":"dot-empty")+'" style="'+(mAny&&!mDone?"opacity:.45":"")+'" title="Comidas"></div>'+
+    (hasNote?'<div class="cal-note-dot" title="'+esc(e.note)+'"></div>':'')+
   '</div>';
 }
 function buildCalendar(){
@@ -741,7 +847,9 @@ function buildCalendar(){
     var dStr=yr+"-"+(mo+1<10?"0":"")+(mo+1)+"-"+(d<10?"0":"")+d;
     var isToday=(yr===todayY&&mo===todayM&&d===todayD);
     var isFuture=new Date(yr,mo,d)>new Date(todayY,todayM,todayD);
-    html+='<div class="cal-day'+(isToday?" today":"")+(isFuture?" future":"")+'"><div class="cal-dn">'+d+'</div><div id="caldots-'+dStr+'">'+(!isFuture?buildDots(dStr):"")+'</div></div>';
+    html+='<div class="cal-day'+(isToday?" today":"")+(isFuture?" future":"")+'"'+ (!isFuture?' onclick="openDayNoteModal(\''+dStr+'\')" style="cursor:pointer"':'')+'>'+
+      '<div class="cal-dn">'+d+'</div>'+
+      '<div id="caldots-'+dStr+'">'+(!isFuture?buildDots(dStr):"")+'</div></div>';
   }
   html+='</div><div style="margin-top:10px;display:flex;gap:12px;font-size:10px;color:var(--txt2)">'+
     '<span><span style="display:inline-block;width:8px;height:8px;border-radius:50%;background:var(--acc);margin-right:4px;vertical-align:middle"></span>Entreno</span>'+
@@ -955,8 +1063,8 @@ function renderDashboard(rms){
   /* DIARIO */
   rightHtml+='<div class="card"><div class="ct">'+I.note_s+' DIARIO</div><div id="diario-inner">'+buildDiarioHtml()+'</div></div>';
 
-  /* EL OBSTACULO */
-  rightHtml+='<div class="card"><div class="ct">'+I.medal_s+' EL OBSTACULO</div><div id="obstaculo-inner">'+buildObstaculoHtml()+'</div></div>';
+  /* LA ROCA */
+  rightHtml+='<div class="card"><div class="ct">'+I.medal_s+' LA ROCA</div><div id="obstaculo-inner">'+buildRocaHtml()+'</div></div>';
 
   /* RANKING */
   rightHtml+='<div class="card"><div class="ct">'+I.rank_s+' RANKING</div><div id="ranking-inner">'+buildRankingHtml()+'</div></div>';
@@ -1016,105 +1124,37 @@ var QUOTES=[
 "Pequeñas victorias diarias construyen grandes victorias futuras.","No necesitas ser el mejor. Necesitas ser constante.","El éxito no es un destino. Es un sistema.","Construye sistemas, no metas.","La meta te da dirección. El sistema te da progreso.","No compares tu capítulo 1 con el capítulo 20 de alguien más.","El que avanza lento sigue adelante del que no avanza.","No hay atajos reales. Solo caminos más eficientes.","Lo que te cuesta hoy se paga en libertad mañana.","No necesitas suerte. Necesitas preparación más oportunidad.","El talento sin trabajo es un potencial desperdiciado.","El trabajo sin talento puede llegar donde el talento sin trabajo no llega.","No actúes desde el miedo. Actúa desde el propósito.","La claridad de propósito es la brújula de la acción.","No te rindas en el proceso. El proceso es el punto.","El crecimiento real es incómodo. Siempre.","Cada versión de ti fue necesaria para llegar a esta.","No compares tus detrás de cámaras con los highlights de otros.","El progreso invisible sigue siendo progreso.","El que planta en invierno cosecha en primavera.","No hay fracaso final mientras sigas intentando.","El que aprende de todo tiene maestros en todo.","La gratitud y la ambición no se contradicen. Se complementan.","No esperes que la vida sea justa. Sé competente.","El que sabe por qué aguanta cualquier cómo.","La diferencia entre quien lo logra y quien no, es seguir cuando duele.","No te enfoques en lo que perdiste. Enfócate en lo que tienes y lo que puedes construir.","Las personas exitosas no son diferentes. Hacen cosas diferentes, consistentemente.","El mejor momento para empezar fue ayer. El segundo mejor momento es ahora.","Sé inamovible."
 ];
 
-var PREGUNTAS_DIARIO=[
-"¿Qué decisión tomé hoy que mi yo de dentro de un año agradecerá?",
-"¿En qué momento del día actué desde el miedo y no desde el propósito?",
-"¿Qué excusa usé hoy que no era verdad?",
-"¿Hubo un momento en que me rendí antes de tiempo?",
-"¿Qué habría hecho diferente si nadie me estuviera mirando?",
-"¿Qué pensamiento recurrente me costó energía hoy sin producir nada?",
-"¿Actué conforme a mis principios o conforme a mi humor?",
-"¿Qué incomodidad evité que debería haber enfrentado?",
-"¿En qué área de mi vida estoy mintiendo o evadiendo?",
-"¿Qué aprendí hoy que puedo aplicar mañana?",
-"¿Fui honesto conmigo mismo en todas mis conversaciones internas?",
-"¿Qué tarea importante postergué por algo urgente pero secundario?",
-"¿Cuánto tiempo usé en consumir en vez de crear?",
-"¿Qué hábito incumplí hoy y por qué?",
-"¿Actué como la persona que quiero ser o como la persona que fui?",
-"¿Qué me dije a mí mismo que me debilitó?",
-"¿Hubo un momento de claridad que no aproveché?",
-"¿Qué construí hoy, aunque fuera pequeño?",
-"¿En qué área de mi vida necesito más disciplina?",
-"¿Qué decisión pendiente lleva demasiado tiempo sin resolverse?",
-"¿Fui la persona más difícil de manejar en alguna situación hoy?",
-"¿Qué parte de mi rutina es solo hábito y no sirve más?",
-"¿Dónde perdí el foco y cómo lo recuperé?",
-"¿Qué conversación importante evité tener hoy?",
-"¿Cuál fue el momento del día en que fui más yo mismo?",
-"¿Qué haría si supiera que nadie me va a juzgar?",
-"¿Cuántas veces busqué aprobación externa hoy?",
-"¿Qué me generó ruido mental innecesario hoy?",
-"¿Qué parte de mi vida necesita una decisión definitiva que sigo evadiendo?",
-"¿Fui más paciente o más impulsivo que ayer?",
-"¿Qué acción tomé hoy que nadie verá pero que importa?",
-"¿Estoy avanzando o solo estoy ocupado?",
-"¿Qué le daría a mi yo de hace un año como consejo basado en hoy?",
-"¿Qué distracción me alejó de lo más importante hoy?",
-"¿Fui consecuente con lo que dije que haría?",
-"¿Qué situación me sacó de mi centro y cómo la manejé?",
-"¿Dónde puse energía que no valía la pena?",
-"¿Qué construí hoy que durará más que este día?",
-"¿En qué momento fui más honesto que cómodo?",
-"¿Qué necesito dejar ir para avanzar?",
-"¿Qué estoy tolerando en mi vida que no debería tolerar?",
-"¿Qué cambié de mi pensamiento hoy?",
-"¿Cuál fue el obstáculo más difícil del día y qué reveló de mí?",
-"¿Actué con intención o con reacción?",
-"¿Qué me limita más: el miedo al fracaso o el miedo al éxito?",
-"¿Fui más disciplinado en lo que entró por mis ojos y oídos?",
-"¿Cuánto tiempo pasé en cosas que no controlo?",
-"¿Qué virtud practiqué hoy?",
-"¿Qué vicio cedió un poco de terreno hoy?",
-"¿Cuál fue el momento del día en que más me acerqué a quien quiero ser?",
-"¿Qué estoy posponiendo que si lo resolviera cambiaría todo?",
-"¿Fui más generoso o más egoísta que ayer?",
-"¿Qué cosa pequeña hice hoy con excelencia?",
-"¿Cuándo actué desde la serenidad y cuándo desde la ansiedad?",
-"¿Qué significa para mí la disciplina hoy, concretamente?",
-"¿Qué me enseñó hoy lo que salió mal?",
-"¿En qué punto del día estuve más presente?",
-"¿Qué palabras me dije a mí mismo que no le diría a alguien que respeto?",
-"¿Qué rompí hoy de mi propio código y cómo lo reparo mañana?",
-"¿Qué fortaleza usé hoy que antes no tenía?",
-"¿Qué hice hoy por primera vez?",
-"¿En qué soy más débil de lo que creo?",
-"¿En qué soy más fuerte de lo que reconozco?",
-"¿Qué me dio energía hoy y qué me la quitó?",
-"¿Qué haría diferente si supiera que este es mi último año?",
-"¿Cuándo actué con carácter y cuándo cedí sin razón?",
-"¿Qué objetivo avancé hoy aunque fuera un paso?",
-"¿Qué dejé sin terminar y por qué?",
-"¿Cuánto control tuve sobre mi atención hoy?",
-"¿Qué problema enfrenté en vez de evitar?",
-"¿Qué pensamiento límite apareció hoy y cómo lo traté?",
-"¿Fui consistente con lo que digo que soy?",
-"¿Qué parte de mi vida necesita más silencio y menos ruido?",
-"¿Qué hice hoy porque era lo correcto, aunque fuera lo difícil?",
-"¿En qué momento estuve más cerca del carácter que quiero construir?",
-"¿Qué haría si no tuviera miedo a equivocarme?",
-"¿Cuánta energía mental gasté en el pasado o el futuro en vez del presente?",
-"¿Qué conversación tuve conmigo mismo que fue honesta y útil?",
-"¿Qué decisión tomé desde el principio y no desde el impulso?",
-"¿Qué me cuesta más: empezar o mantener?",
-"¿Cuándo actué por obligación y cuándo por convicción?",
-"¿Qué aprendí sobre mí mismo a través del cuerpo hoy?",
-"¿Cómo fue mi energía durante el día y qué la afectó?",
-"¿Qué me distanció de mi mejor versión hoy?",
-"¿Qué acerqué hoy a mi mejor versión, aunque fuera poco?",
-"¿Cuándo me juzgué demasiado duro y cuándo demasiado suave?",
-"¿Qué le cambiaría a este día si pudiera repetirlo?",
-"¿Qué me reveló el cansancio de hoy sobre mis prioridades?",
-"¿Cuándo fui más inamovible hoy?",
-"¿Qué valor viví hoy con hechos y no con palabras?",
-"¿Qué mentira cómoda me conté hoy?",
-"¿Qué verdad incómoda ignoré hoy?",
-"¿Qué haría si nadie supiera el resultado?",
-"¿Cuándo actué desde el silencio y cuándo desde el ruido?",
-"¿Qué legado pequeño construí hoy?",
-"¿Cuánto tiempo estuve en modo reacción versus modo creación?",
-"¿Cuál fue la decisión más difícil del día y cómo la tomé?",
-"¿Qué necesito hacer mañana que hoy solo pensé?"
+var TEMAS_DIARIO=[
+  {tema:"DISCIPLINA",prompt:"¿Dónde mantuviste el rumbo hoy cuando era más fácil desviarte?"},
+  {tema:"CUERPO",prompt:"¿Qué te dijo tu cuerpo hoy que vale la pena escuchar?"},
+  {tema:"MENTE",prompt:"¿Qué patrón de pensamiento dominó tu día y qué te revela?"},
+  {tema:"TIEMPO",prompt:"¿A qué le diste tu atención hoy y valió la pena?"},
+  {tema:"CARÁCTER",prompt:"¿Cuándo actuaste desde tus principios y cuándo desde el impulso?"},
+  {tema:"SILENCIO",prompt:"¿Cuándo el silencio fue tu mayor ventaja hoy?"},
+  {tema:"OBSTÁCULOS",prompt:"¿Qué dificultad de hoy te hizo más fuerte?"},
+  {tema:"DECISIONES",prompt:"¿Qué decisión tomaste hoy que tu yo futuro agradecerá?"},
+  {tema:"HÁBITOS",prompt:"¿Qué hábito construiste o rompiste hoy?"},
+  {tema:"FOCO",prompt:"¿Dónde pusiste tu energía hoy — en lo que controlas o en lo que no?"},
+  {tema:"IDENTIDAD",prompt:"¿Actuaste como la persona que quieres ser o como la que eras?"},
+  {tema:"ERRORES",prompt:"¿Qué salió mal hoy y qué te enseñó exactamente?"},
+  {tema:"ACCIÓN",prompt:"¿Qué construiste hoy, por pequeño que fuera?"},
+  {tema:"CLARIDAD",prompt:"¿Hubo un momento de claridad hoy que vale la pena guardar?"},
+  {tema:"CONTROL",prompt:"¿En qué gastaste energía que no estaba en tu control?"},
+  {tema:"FORTALEZA",prompt:"¿Qué fortaleza usaste hoy que antes no reconocías?"},
+  {tema:"PROPÓSITO",prompt:"¿Cómo se conectó lo que hiciste hoy con lo que quieres construir?"},
+  {tema:"PRESENCIA",prompt:"¿En qué momento del día estuviste completamente presente?"},
+  {tema:"HONESTIDAD",prompt:"¿Qué verdad incómoda encaraste hoy — o seguiste evadiendo?"},
+  {tema:"MOVIMIENTO",prompt:"¿Cómo avanzaste hoy, aunque fuera un solo paso?"},
+  {tema:"DESCANSO",prompt:"¿Cuándo recargaste bien y cuándo solo consumiste sin recuperar?"},
+  {tema:"CONEXIÓN",prompt:"¿Qué conversación de hoy valió la pena tener?"},
+  {tema:"EXCELENCIA",prompt:"¿Qué cosa pequeña hiciste hoy con excelencia?"},
+  {tema:"CONSISTENCIA",prompt:"¿Fuiste consecuente hoy con lo que dices que eres?"},
+  {tema:"LEGADO",prompt:"¿Qué construiste hoy que durará más que este día?"},
+  {tema:"PACIENCIA",prompt:"¿Cuándo fuiste más paciente hoy y qué lo hizo posible?"},
+  {tema:"IMPACTO",prompt:"¿Qué hiciste hoy que impactó a alguien más, aunque no lo supieras?"},
+  {tema:"VALENTÍA",prompt:"¿Qué hiciste hoy que requirió más valor del que crees que tienes?"},
+  {tema:"SIMPLEZA",prompt:"¿Qué complicaste innecesariamente hoy que podía ser simple?"},
+  {tema:"GRATITUD",prompt:"¿Qué de hoy —bueno o difícil— merece agradecimiento?"}
 ];
 
 async function getNextQuote(){
@@ -1246,69 +1286,88 @@ async function updateRanking(){
   var el=document.getElementById("ranking-inner");if(el)el.innerHTML=buildRankingHtml();
 }
 
+function getTodayTema(){
+  var d=new Date(G.today),start=new Date(d.getFullYear(),0,0);
+  var doy=Math.floor((d-start)/(1000*60*60*24));
+  return TEMAS_DIARIO[doy%TEMAS_DIARIO.length];
+}
+
 async function saveDiario(){
-  var inp=document.getElementById("diario-inp-el");
-  var txt=(inp&&inp.value||"").trim();
-  if(!txt)return;
-  var entry={date:G.today,q:getTodayDiarioQ(),r:txt};
+  var a1=document.getElementById("diario-a1");
+  var a2=document.getElementById("diario-a2");
+  var txt1=(a1&&a1.value||"").trim();
+  var txt2=(a2&&a2.value||"").trim();
+  if(!txt1)return;
+  var tema=getTodayTema();
+  var entry={date:G.today,tema:tema.tema,aprendizaje:txt1,descripcion:txt2};
   G.diario.push(entry);
-  inp.value="";
+  if(a1)a1.value="";if(a2)a2.value="";
   await sbWrite("portal-diario-"+G.sid,G.diario);
   await checkAndSaveBadges();
-  showToast("DIARIO","Registrado.","acc",true);
+  showToast("DIARIO","Guardado.","acc",true);
   var el=document.getElementById("diario-inner");if(el)el.innerHTML=buildDiarioHtml();
 }
 
-function getTodayDiarioQ(){
-  var d=new Date(G.today),start=new Date(d.getFullYear(),0,0);
-  var diff=d-start,oneDay=1000*60*60*24;
-  var doy=Math.floor(diff/oneDay);
-  return PREGUNTAS_DIARIO[doy%PREGUNTAS_DIARIO.length];
-}
-
 function buildDiarioHtml(){
-  var q=getTodayDiarioQ();
+  var tema=getTodayTema();
   var alreadyToday=(G.diario||[]).some(function(e){return e.date===G.today;});
-  var html='<div class="diario-q">'+esc(q)+'</div>';
+  var hist=(G.diario||[]).slice().reverse().slice(0,3);
+  var html='<div class="diario-tema">'+esc(tema.tema)+'</div>'+
+    '<div class="diario-q">'+esc(tema.prompt)+'</div>';
   if(alreadyToday){
     var last=(G.diario||[]).filter(function(e){return e.date===G.today;})[0];
-    html+='<div style="background:var(--surf);border:1px solid var(--border);border-radius:3px;padding:10px;font-size:12px;line-height:1.5;color:var(--txt2)">'+esc(last.r)+'</div>'+
-    '<div style="font-size:10px;color:var(--txt3);margin-top:4px">Registrado.</div>';
+    html+='<div style="background:var(--surf);border:1px solid var(--border);border-left:2px solid var(--acc);border-radius:3px;padding:10px;font-size:12px;line-height:1.5">'+esc(last.aprendizaje||last.r||"")+'</div>'+
+    (last.descripcion?'<div style="background:var(--surf);border:1px solid var(--border);border-radius:3px;padding:10px;font-size:11px;line-height:1.5;color:var(--txt2);margin-top:6px">'+esc(last.descripcion)+'</div>':'')+
+    '<div style="font-size:10px;color:var(--txt3);margin-top:6px">Registrado hoy.</div>';
   }else{
-    html+='<textarea class="diario-inp" id="diario-inp-el" placeholder="Tu reflexion de hoy..."></textarea>'+
+    html+='<span class="diario-lbl">Aprendizaje del día</span>'+
+    '<textarea class="diario-inp" id="diario-a1" placeholder="¿Qué aprendiste hoy?"></textarea>'+
+    '<span class="diario-lbl">Descripción <span style="font-weight:400;text-transform:none;letter-spacing:0">(opcional)</span></span>'+
+    '<textarea class="diario-inp" id="diario-a2" placeholder="Desarrolla la idea..."></textarea>'+
     '<button class="diario-btn" onclick="saveDiario()">REGISTRAR</button>';
+  }
+  if(hist.length&&!alreadyToday){
+    html+='<div style="margin-top:14px;font-size:10px;color:var(--txt2);text-transform:uppercase;letter-spacing:.07em;margin-bottom:6px">Entradas recientes</div>';
+    hist.forEach(function(e){
+      html+='<div style="padding:8px 10px;background:var(--surf);border:1px solid var(--border);border-radius:3px;margin-bottom:5px">'+
+        '<div style="font-size:9px;color:var(--acc);font-weight:700;letter-spacing:.08em;text-transform:uppercase;margin-bottom:3px">'+(e.tema||"")+'</div>'+
+        '<div style="font-size:11px;line-height:1.5">'+esc(e.aprendizaje||e.r||"")+'</div>'+
+        '<div style="font-size:9px;color:var(--txt3);margin-top:3px">'+esc(e.date)+'</div>'+
+      '</div>';
+    });
   }
   return html;
 }
 
-async function saveObstaculo(){
-  var mal=(document.getElementById("obs-mal-inp")&&document.getElementById("obs-mal-inp").value||"").trim();
-  var como=(document.getElementById("obs-como-inp")&&document.getElementById("obs-como-inp").value||"").trim();
-  if(!mal&&!como)return;
-  var entry={date:G.today,mal:mal,como:como};
+async function saveRoca(){
+  var inp=document.getElementById("roca-inp-el");
+  var txt=(inp&&inp.value||"").trim();
+  if(!txt)return;
+  var entry={date:G.today,roca:txt};
   G.obstaculo.push(entry);
-  if(document.getElementById("obs-mal-inp"))document.getElementById("obs-mal-inp").value="";
-  if(document.getElementById("obs-como-inp"))document.getElementById("obs-como-inp").value="";
+  inp.value="";
   await sbWrite("portal-obstaculo-"+G.sid,G.obstaculo);
-  showToast("OBSTACULO","Registrado.","acc",true);
-  var el=document.getElementById("obstaculo-inner");if(el)el.innerHTML=buildObstaculoHtml();
+  showToast("LA ROCA","Guardado.","acc",true);
+  var el=document.getElementById("obstaculo-inner");if(el)el.innerHTML=buildRocaHtml();
 }
 
-function buildObstaculoHtml(){
-  var html='<div class="obs-q">¿Que salio mal hoy?</div>'+
-    '<textarea class="obs-inp" id="obs-mal-inp" placeholder="Describe el obstaculo..."></textarea>'+
-    '<div class="obs-q">¿Como lo manejaste?</div>'+
-    '<textarea class="obs-inp" id="obs-como-inp" placeholder="Tu respuesta al obstaculo..."></textarea>'+
-    '<button class="diario-btn" onclick="saveObstaculo()">REGISTRAR</button>';
+function buildRocaHtml(){
+  var alreadyToday=(G.obstaculo||[]).some(function(e){return e.date===G.today;});
+  var html='<div class="roca-cita">"Hay que imaginarse a Sísifo feliz. La roca pertenece a Sísifo." — Albert Camus</div>'+
+    '<div class="diario-q">¿Cuál es tu roca hoy — ese peso que cargas cuesta arriba?</div>';
+  if(alreadyToday){
+    var last=(G.obstaculo||[]).filter(function(e){return e.date===G.today;})[0];
+    html+='<div style="background:var(--surf);border:1px solid var(--border);border-left:2px solid var(--acc);border-radius:3px;padding:10px;font-size:12px;line-height:1.5">'+esc(last.roca||last.mal||"")+'</div>'+
+    '<div style="font-size:10px;color:var(--txt3);margin-top:6px">Registrado hoy.</div>';
+  }else{
+    html+='<textarea class="roca-inp" id="roca-inp-el" placeholder="La cargo porque..."></textarea>'+
+    '<button class="diario-btn" onclick="saveRoca()">REGISTRAR</button>';
+  }
   var hist=(G.obstaculo||[]).slice().reverse().slice(0,3);
-  if(hist.length){
-    html+='<div style="margin-top:12px;font-size:10px;color:var(--txt2);text-transform:uppercase;letter-spacing:.06em;margin-bottom:6px">Ultimas entradas</div>';
+  if(hist.length&&!alreadyToday){
+    html+='<div style="margin-top:14px;font-size:10px;color:var(--txt2);text-transform:uppercase;letter-spacing:.07em;margin-bottom:6px">Rocas anteriores</div>';
     hist.forEach(function(e){
-      html+='<div class="obs-hist-item">'+
-        '<div style="font-size:10px;font-weight:700;color:var(--acc);margin-bottom:4px">'+esc(e.date)+'</div>'+
-        (e.mal?'<div style="margin-bottom:3px"><span style="color:var(--txt2);font-size:9px;text-transform:uppercase">Salio mal:</span><br>'+esc(e.mal)+'</div>':'')+
-        (e.como?'<div><span style="color:var(--txt2);font-size:9px;text-transform:uppercase">Como lo maneji:</span><br>'+esc(e.como)+'</div>':'')+
-      '</div>';
+      html+='<div class="roca-hist-item">'+esc(e.roca||e.mal||"")+'<div class="roca-hist-date">'+esc(e.date)+'</div></div>';
     });
   }
   return html;
@@ -1416,7 +1475,7 @@ function buildBookHtml(){
     '<div class="book-page-row">'+
       '<input class="book-inp" id="book-page-inp" type="number" min="0" max="'+cur.pages+'" value="'+cur.currentPage+'" placeholder="Página actual">'+
       '<button class="book-btn" onclick="updateBookPage()">Actualizar</button>'+
-      '<button class="book-fin-btn" onclick="finishBook()">Terminé</button>'+
+      '<button class="book-fin-btn" onclick="finishBook()"'+(cur.currentPage>=cur.pages?'':' disabled style="opacity:.3;cursor:default"')+'>Terminé</button>'+
     '</div>';
   if(hist.length){
     html+='<div class="book-hist" style="margin-top:10px"><div class="section-lbl">Leídos</div>'+
@@ -1434,6 +1493,57 @@ function showToast(title,msg,type,autoClose){
   t.innerHTML='<span class="notif-icon">'+(icons[type||"acc"]||icons.acc)+'</span><div class="notif-body"><div class="notif-title">'+title+'</div><div class="notif-msg">'+msg+'</div></div><button class="notif-close" onclick="this.closest(\'.notif-toast\').remove()">✕</button>';
   wrap.appendChild(t);
   if(autoClose!==false)setTimeout(function(){if(t.parentNode)t.remove();},7000);
+}
+
+function showQuoteModal(q){
+  var DIAS=["DOMINGO","LUNES","MARTES","MIÉRCOLES","JUEVES","VIERNES","SÁBADO"];
+  var MESES=["ENE","FEB","MAR","ABR","MAY","JUN","JUL","AGO","SEP","OCT","NOV","DIC"];
+  var d=new Date();
+  var label=DIAS[d.getDay()]+" "+d.getDate()+" "+MESES[d.getMonth()];
+  var m=document.getElementById("quote-modal");
+  var qd=document.getElementById("qm-day");
+  var qt=document.getElementById("qm-text");
+  if(!m||!qd||!qt)return;
+  qd.textContent=label;
+  qt.textContent=q;
+  m.style.display="flex";
+  setTimeout(function(){m.classList.add("visible");},20);
+}
+function closeQuoteModal(ev){
+  var m=document.getElementById("quote-modal");
+  if(!m)return;
+  if(ev&&ev.target!==m&&!ev.target.classList.contains("quote-close"))return;
+  m.classList.remove("visible");
+  setTimeout(function(){m.style.display="none";},300);
+}
+
+var _dayNoteDate=null;
+function openDayNoteModal(dateStr){
+  _dayNoteDate=dateStr;
+  var m=document.getElementById("day-note-modal");
+  var inp=document.getElementById("dnn-inp");
+  var title=document.getElementById("dnn-title");
+  if(!m)return;
+  var entry=(G.calData||{})[dateStr]||{};
+  if(title)title.textContent="NOTA — "+dateStr;
+  if(inp)inp.value=entry.note||"";
+  m.classList.add("open");
+  setTimeout(function(){if(inp)inp.focus();},100);
+}
+function closeDayNoteModal(){
+  var m=document.getElementById("day-note-modal");
+  if(m)m.classList.remove("open");
+  _dayNoteDate=null;
+}
+async function saveDayNote(){
+  if(!_dayNoteDate)return;
+  var inp=document.getElementById("dnn-inp");
+  var note=(inp&&inp.value||"").trim();
+  var entry=G.calData[_dayNoteDate]||(G.calData[_dayNoteDate]={w:0,s:0,m:[]});
+  entry.note=note;
+  await sbWrite("portal-cal-"+G.sid,G.calData);
+  closeDayNoteModal();
+  var calEl=document.getElementById("calendar-inner");if(calEl)calEl.innerHTML=buildCalendar();
 }
 
 function sendBrowserNotif(title,body){
@@ -1459,7 +1569,7 @@ async function checkNotifs(st,ev,calData){
   // Motivacional diario — una vez al día, frase no repetida
   if(!shown.quote){
     var q=await getNextQuote();
-    showToast("INAMOVIBLE",q,"acc",false);
+    showQuoteModal(q);
     sendBrowserNotif("INAMOVIBLE",q);
     shown.quote=1;
   }
@@ -1510,9 +1620,10 @@ async function checkNotifs(st,ev,calData){
   try{localStorage.setItem(lsKey,JSON.stringify(shown));}catch(e){}
 }
 
-(function(){var sid=sessionStorage.getItem("portal_sid");if(sid)loadDashboard(sid);})();
+(function(){try{var a=JSON.parse(localStorage.getItem("portal_auth")||"{}");if(a&&a.sid)loadDashboard(a.sid);}catch(e){}})();
 document.getElementById("inp-user").addEventListener("keydown",function(e){if(e.key==="Enter")document.getElementById("inp-pass").focus();});
 document.getElementById("inp-pass").addEventListener("keydown",function(e){if(e.key==="Enter")doLogin();});
+document.getElementById("reg-pass").addEventListener("keydown",function(e){if(e.key==="Enter")doRegister();});
 if("serviceWorker" in navigator){
   navigator.serviceWorker.register("/mis-espacios/sw.js").catch(function(){});
 }
