@@ -327,6 +327,15 @@ body{font-family:'Inter',system-ui,sans-serif;background:var(--bg);color:var(--t
 .quote-day{font-size:10px;color:var(--txt2);text-transform:uppercase;letter-spacing:.12em;margin-bottom:20px}
 .quote-text{font-family:'Oswald',sans-serif;font-size:22px;font-weight:500;line-height:1.45;color:var(--txt);margin-bottom:24px}
 .quote-close{background:var(--acc);color:#fff;border:none;border-radius:3px;padding:11px 28px;font-size:12px;font-weight:700;font-family:'Oswald',sans-serif;letter-spacing:.12em;text-transform:uppercase;cursor:pointer}
+/* FOTOS */
+.foto-upload-btn{display:flex;align-items:center;gap:8px;background:var(--surf);border:1px dashed var(--border2);color:var(--txt2);border-radius:3px;padding:12px;width:100%;font-size:12px;font-family:'Inter',sans-serif;cursor:pointer;text-align:left;margin-bottom:12px;transition:border-color .2s}
+.foto-upload-btn:hover{border-color:var(--acc);color:var(--txt)}
+.foto-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:6px}
+.foto-item{position:relative;aspect-ratio:3/4;border-radius:3px;overflow:hidden;background:var(--surf)}
+.foto-item img{width:100%;height:100%;object-fit:cover;display:block}
+.foto-date{position:absolute;bottom:0;left:0;right:0;background:rgba(0,0,0,.7);font-size:9px;color:#fff;padding:3px 5px;font-family:'Oswald',sans-serif;letter-spacing:.04em}
+.foto-del{position:absolute;top:4px;right:4px;background:rgba(0,0,0,.6);border:none;color:#fff;border-radius:50%;width:18px;height:18px;font-size:10px;cursor:pointer;display:flex;align-items:center;justify-content:center;line-height:1}
+.foto-empty{font-size:11px;color:var(--txt3);text-align:center;padding:20px 0}
 /* REGISTRO */
 .login-toggle{font-size:11px;color:var(--txt2);text-align:center;margin-top:14px}
 .login-toggle a{color:var(--acc);cursor:pointer;text-decoration:none;font-weight:600}
@@ -474,7 +483,8 @@ var I={
   note_s:'<svg style="width:14px;height:14px;vertical-align:-2px;margin-right:6px" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M21 15a2 2 0 01-2 2H7l-4 4V5a2 2 0 012-2h14a2 2 0 012 2z"/></svg>',
   medal_s:'<svg style="width:14px;height:14px;vertical-align:-2px;margin-right:6px" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="15" r="6"/><path d="M8.5 2.5l1 4.5M15.5 2.5l-1 4.5"/><polyline points="12,9 12,15"/></svg>',
   rank_s:'<svg style="width:14px;height:14px;vertical-align:-2px;margin-right:6px" viewBox="0 0 24 24" fill="currentColor"><rect x="2" y="15" width="4" height="7"/><rect x="10" y="9" width="4" height="13"/><rect x="18" y="3" width="4" height="19"/></svg>',
-  book_s:'<svg style="width:14px;height:14px;vertical-align:-2px;margin-right:6px" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 19.5A2.5 2.5 0 016.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 014 19.5v-15A2.5 2.5 0 016.5 2z"/></svg>'
+  book_s:'<svg style="width:14px;height:14px;vertical-align:-2px;margin-right:6px" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 19.5A2.5 2.5 0 016.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 014 19.5v-15A2.5 2.5 0 016.5 2z"/></svg>',
+  photo_s:'<svg style="width:14px;height:14px;vertical-align:-2px;margin-right:6px" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21,15 16,10 5,21"/></svg>'
 };
 var RM_EXERCISES=[
   {key:"squat",name:"Sentadilla",icon:I.barbell},
@@ -590,7 +600,7 @@ async function doRegister(){
 
 function doLogout(){
   try{localStorage.removeItem("portal_auth");}catch(e){}
-  Object.assign(G,{sid:null,calData:{},mealCount:5,stepsGoal:8000,nutriOk:false,st:{},nutrition:{},plan:null,evals:[],att:[],shownQuotes:[],notes:[],badges:{},ranking:[],book:null,diario:[],obstaculo:[]});
+  Object.assign(G,{sid:null,calData:{},mealCount:5,stepsGoal:8000,nutriOk:false,st:{},nutrition:{},plan:null,evals:[],att:[],shownQuotes:[],notes:[],badges:{},ranking:[],book:null,diario:[],obstaculo:[],fotos:[]});
   document.getElementById("login").style.display="flex";
   document.getElementById("app").style.display="none";
   document.getElementById("inp-pass").value="";
@@ -621,7 +631,8 @@ async function loadDashboard(sid){
       fetchSbKey("portal-ranking"),
       fetchSbKey("portal-book-"+sid),
       fetchSbKey("portal-diario-"+sid),
-      fetchSbKey("portal-obstaculo-"+sid)
+      fetchSbKey("portal-obstaculo-"+sid),
+      fetchSbKey("portal-fotos-"+sid)
     ]);
     var students=res[0]||[],rms=res[1]||{};
     G.plan=res[2];G.evals=res[3]||[];G.att=res[4]||[];
@@ -636,6 +647,7 @@ async function loadDashboard(sid){
     G.book=res[14]||null;
     G.diario=res[15]||[];
     G.obstaculo=res[16]||[];
+    G.fotos=res[17]||[];
     G.st=students.find(function(s){return s.id===sid;})||{};
     document.getElementById("app-stname").textContent=G.st.name||"Estudiante";
     document.getElementById("app-stobj").textContent=G.st.objective||"";
@@ -1027,7 +1039,10 @@ function renderDashboard(rms){
     statsHtml+='</div>';
   }
 
-  if(hasEval)leftHtml+='<div class="card"><div class="ct">'+I.stats_s+' CUERPO</div>'+statsHtml+'</div>';
+  if(hasEval){
+    leftHtml+='<div class="card"><div class="ct">'+I.stats_s+' CUERPO</div>'+statsHtml+'</div>';
+    leftHtml+='<div class="card"><div class="ct">'+I.photo_s+' FOTOS</div><div id="fotos-inner">'+buildFotosHtml()+'</div></div>';
+  }
 
   /* RM */
   var rmCards="";
@@ -1529,6 +1544,62 @@ function buildBookHtml(){
   return html;
 }
 
+function buildFotosHtml(){
+  var fotos=G.fotos||[];
+  var btn='<button class="foto-upload-btn" onclick="document.getElementById(\'foto-file-input\').click()">'+
+    '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width:16px;height:16px;flex-shrink:0"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/><polyline points="17,8 12,3 7,8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>'+
+    'Subir foto de progreso</button>';
+  if(!fotos.length) return btn+'<div class="foto-empty">Aún no hay fotos de progreso.</div>';
+  var grid='<div class="foto-grid">'+
+    fotos.map(function(f,i){
+      return '<div class="foto-item">'+
+        '<img src="'+f.data+'" alt="foto '+esc(f.date)+'">'+
+        '<div class="foto-date">'+esc(f.date)+'</div>'+
+        '<button class="foto-del" onclick="deleteFoto('+i+')" title="Eliminar">✕</button>'+
+      '</div>';
+    }).join("")+
+  '</div>';
+  return btn+grid;
+}
+
+async function uploadFoto(){
+  var inp=document.getElementById("foto-file-input");
+  if(!inp||!inp.files||!inp.files[0])return;
+  var file=inp.files[0];
+  inp.value="";
+  var img=new Image();
+  var reader=new FileReader();
+  reader.onload=function(e){
+    img.onload=async function(){
+      var MAX=600;
+      var w=img.width,h=img.height;
+      if(w>MAX||h>MAX){var s=Math.min(MAX/w,MAX/h);w=Math.round(w*s);h=Math.round(h*s);}
+      var cv=document.createElement("canvas");cv.width=w;cv.height=h;
+      cv.getContext("2d").drawImage(img,0,0,w,h);
+      var data=cv.toDataURL("image/jpeg",0.65);
+      var fotos=G.fotos||[];
+      var MESES=["ene","feb","mar","abr","may","jun","jul","ago","sep","oct","nov","dic"];
+      var d=new Date();
+      var dateStr=d.getDate()+"/"+MESES[d.getMonth()]+"/"+d.getFullYear();
+      fotos.unshift({date:dateStr,data:data});
+      G.fotos=fotos;
+      await sbWrite("portal-fotos-"+G.sid,fotos);
+      var el=document.getElementById("fotos-inner");if(el)el.innerHTML=buildFotosHtml();
+      showToast("Foto guardada","Registro fotográfico actualizado.","ok");
+    };
+    img.src=e.target.result;
+  };
+  reader.readAsDataURL(file);
+}
+
+async function deleteFoto(idx){
+  var fotos=G.fotos||[];
+  fotos.splice(idx,1);
+  G.fotos=fotos;
+  await sbWrite("portal-fotos-"+G.sid,fotos);
+  var el=document.getElementById("fotos-inner");if(el)el.innerHTML=buildFotosHtml();
+}
+
 function showToast(title,msg,type,autoClose){
   var wrap=document.getElementById("notif-banner");if(!wrap)return;
   var icons={acc:'<svg style="width:16px;height:16px" viewBox="0 0 24 24" fill="none" stroke="var(--acc)" stroke-width="2.5" stroke-linecap="round"><polyline points="4,12 9,17 20,6"/></svg>',ok:'<svg style="width:16px;height:16px" viewBox="0 0 24 24" fill="none" stroke="var(--green)" stroke-width="2.5" stroke-linecap="round"><polyline points="4,12 9,17 20,6"/></svg>',warn:'<svg style="width:16px;height:16px" viewBox="0 0 24 24" fill="none" stroke="var(--warn)" stroke-width="2.5" stroke-linecap="round"><path d="M10.3 3.6L2.1 18A2 2 0 004 21h16a2 2 0 001.9-2.4L13.7 3.6a2 2 0 00-3.4 0z"/><line x1="12" y1="9" x2="12" y2="13"/></svg>',alert:'<svg style="width:16px;height:16px" viewBox="0 0 24 24" fill="none" stroke="var(--danger)" stroke-width="2.5" stroke-linecap="round"><circle cx="12" cy="12" r="9"/><line x1="12" y1="8" x2="12" y2="12"/><circle cx="12" cy="16" r=".8" fill="var(--danger)"/></svg>'};
@@ -1693,5 +1764,6 @@ if("serviceWorker" in navigator){
   navigator.serviceWorker.register("/mis-espacios/sw.js").catch(function(){});
 }
 </script>
+<input type="file" id="foto-file-input" accept="image/*" capture="environment" style="display:none" onchange="uploadFoto()">
 </body>
 </html>
