@@ -332,7 +332,11 @@ body{font-family:'Inter',system-ui,sans-serif;background:var(--bg);color:var(--t
 .login-toggle a{color:var(--acc);cursor:pointer;text-decoration:none;font-weight:600}
 .reg-card{display:none}
 /* CAL NOTA */
-.cal-note-dot{width:5px;height:5px;border-radius:50%;background:var(--txt2);flex-shrink:0}
+.cal-note-dot{width:5px;height:5px;border-radius:50%;flex-shrink:0}
+.dot-note-ap{background:var(--txt2)}
+.dot-note-pend{background:var(--acc)}
+.cal-day.cal-selected{border-color:var(--acc)!important;background:var(--acc-d)!important}
+.cal-day.cal-selected .cal-dn{color:var(--acc)}
 .cal-note-inp{width:100%;background:var(--surf);border:1px solid var(--border);color:var(--txt);border-radius:3px;padding:8px 10px;font-size:11px;font-family:'Inter',sans-serif;outline:none;resize:none;min-height:56px;margin-top:8px}
 .cal-note-inp::placeholder{color:var(--txt2);opacity:1}
 .cal-note-inp:focus{border-color:var(--acc)}
@@ -366,6 +370,16 @@ body{font-family:'Inter',system-ui,sans-serif;background:var(--bg);color:var(--t
     <div id="reg-form" class="reg-card">
       <label class="fl">Nombre completo</label>
       <input class="fi" id="reg-name" placeholder="Tu nombre" autocorrect="off" autocapitalize="words">
+      <label class="fl">Fecha de nacimiento</label>
+      <input class="fi" id="reg-dob" type="date" style="color-scheme:dark">
+      <label class="fl">Sexo</label>
+      <select class="fi" id="reg-sex" style="cursor:pointer">
+        <option value="">Selecciona</option>
+        <option value="M">Hombre</option>
+        <option value="F">Mujer</option>
+      </select>
+      <label class="fl" style="color:var(--txt3)">Celular <span style="font-weight:400;text-transform:none;letter-spacing:0">(opcional)</span></label>
+      <input class="fi" id="reg-phone" type="tel" placeholder="+57 300 000 0000" autocomplete="off">
       <label class="fl">Usuario</label>
       <input class="fi" id="reg-user" placeholder="elige un usuario" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false">
       <label class="fl">Contraseña</label>
@@ -538,11 +552,15 @@ async function doLogin(){
 
 async function doRegister(){
   var name=(document.getElementById("reg-name").value||"").trim();
+  var dob=(document.getElementById("reg-dob").value||"").trim();
+  var sex=(document.getElementById("reg-sex").value||"").trim();
+  var phone=(document.getElementById("reg-phone").value||"").trim();
   var uname=(document.getElementById("reg-user").value||"").trim().toLowerCase();
   var pass=document.getElementById("reg-pass").value||"";
   var code=(document.getElementById("reg-code").value||"").trim();
   showRegErr("");
   if(!name){showRegErr("Escribe tu nombre");return;}
+  if(!sex){showRegErr("Selecciona tu sexo");return;}
   if(!uname||uname.length<3){showRegErr("Usuario debe tener al menos 3 caracteres");return;}
   if(pass.length<6){showRegErr("Contraseña debe tener al menos 6 caracteres");return;}
   setRegLoading(true);
@@ -553,7 +571,9 @@ async function doRegister(){
     var sid="u_"+uname+"_"+Date.now().toString(36);
     portales.push({username:uname,pwdHash:hash,studentId:sid});
     var users=await fetchSbKey("portal-users")||[];
-    var newUser={id:sid,name:name,selfRegistered:true};
+    var newUser={id:sid,name:name,sex:sex,selfRegistered:true};
+    if(dob)newUser.dob=dob;
+    if(phone)newUser.phone=phone;
     if(code){
       var coachCode=await fetchSbKey("portal-coach-code")||"";
       if(code===coachCode)newUser.coach_linked=true;
@@ -842,7 +862,7 @@ function buildDots(dateStr){
     '<div class="cal-dot '+(e.w?"dot-w":"dot-empty")+'" title="Entrenamiento"></div>'+
     '<div class="cal-dot '+(e.s?"dot-s":"dot-empty")+'" title="Pasos"></div>'+
     '<div class="cal-dot '+(mDone?"dot-m":mAny?"dot-m":"dot-empty")+'" style="'+(mAny&&!mDone?"opacity:.45":"")+'" title="Comidas"></div>'+
-    (hasNote?'<div class="cal-note-dot" title="'+esc(e.note)+'"></div>':'')+
+    (hasNote?'<div class="cal-note-dot '+(e.noteType==="pendiente"?"dot-note-pend":"dot-note-ap")+'" title="'+esc(e.note)+'"></div>':'')+
   '</div>';
 }
 function buildCalendar(){
@@ -858,7 +878,7 @@ function buildCalendar(){
     var dStr=yr+"-"+(mo+1<10?"0":"")+(mo+1)+"-"+(d<10?"0":"")+d;
     var isToday=(yr===todayY&&mo===todayM&&d===todayD);
     var isFuture=new Date(yr,mo,d)>new Date(todayY,todayM,todayD);
-    html+='<div class="cal-day'+(isToday?" today":"")+(isFuture?" future":"")+'"'+ (!isFuture?' onclick="openDayNoteModal(\''+dStr+'\')" style="cursor:pointer"':'')+'>'+
+    html+='<div class="cal-day'+(isToday?" today":"")+(isFuture?" future":"")+'" id="calday-'+dStr+'" onclick="openDayNoteModal(\''+dStr+'\')" style="cursor:pointer">'+
       '<div class="cal-dn">'+d+'</div>'+
       '<div id="caldots-'+dStr+'">'+(!isFuture?buildDots(dStr):"")+'</div></div>';
   }
@@ -882,10 +902,12 @@ function renderDashboard(rms){
   /* PERFIL */
 
   var profTags="";
-  if(st.age)profTags+='<span class="prof-tag">'+st.age+' años</span>';
   if(st.sex)profTags+='<span class="prof-tag">'+(st.sex==="M"?"Hombre":"Mujer")+'</span>';
+  if(st.dob){var dobAge=Math.floor((Date.now()-new Date(st.dob))/(365.25*24*3600*1000));if(dobAge>0&&dobAge<100)profTags+='<span class="prof-tag">'+dobAge+' años</span>';}
+  else if(st.age)profTags+='<span class="prof-tag">'+st.age+' años</span>';
   if(st.height)profTags+='<span class="prof-tag">'+parseHeight(st.height)+' cm</span>';
   if(st.months)profTags+='<span class="prof-tag">'+st.months+' meses entrenando</span>';
+  if(st.phone)profTags+='<span class="prof-tag">'+esc(st.phone)+'</span>';
   var ev0=G.evals&&G.evals.length?G.evals[0]:null;
   if(ev0&&ev0.weight)profTags+='<span class="prof-tag">'+ev0.weight+' kg</span>';
   if(st.objective)profTags+='<span class="prof-tag">'+esc(st.objective)+'</span>';
@@ -919,7 +941,18 @@ function renderDashboard(rms){
   }
 
   /* ESTADÍSTICAS */
-  var ev=G.evals&&G.evals.length?G.evals[0]:null;
+  var hasEval=G.evals&&G.evals.length>0;
+  var ev=hasEval?G.evals[0]:null;
+  if(!hasEval){
+    var lockHtml='<div style="text-align:center;padding:20px 10px">'+
+      '<div style="font-size:28px;margin-bottom:10px;opacity:.4">'+I.medal_s+'</div>'+
+      '<div style="font-family:\'Oswald\',sans-serif;font-size:15px;font-weight:700;letter-spacing:.06em;margin-bottom:8px">SECCIÓN BLOQUEADA</div>'+
+      '<div style="font-size:12px;color:var(--txt2);line-height:1.6;margin-bottom:14px">Para activar CUERPO e INGESTA necesitas tu evaluación inicial.<br>Solicítala directamente a tu coach.</div>'+
+      '<div style="font-size:11px;color:var(--txt3);font-style:italic">Una vez el coach registre tu evaluación,<br>esta sección se activa automáticamente.</div>'+
+    '</div>';
+    leftHtml+='<div class="card"><div class="ct">'+I.stats_s+' CUERPO</div>'+lockHtml+'</div>';
+    rightHtml+='<div class="card"><div class="ct">'+I.food_s+' INGESTA</div>'+lockHtml+'</div>';
+  }
   var wkg=parseFloat((ev&&ev.weight)||st.weight)||0;
   var hcm=parseHeight(st.height);
   var imc=hcm>0?Math.round((wkg/((hcm/100)*(hcm/100)))*10)/10:null;
@@ -994,7 +1027,7 @@ function renderDashboard(rms){
     statsHtml+='</div>';
   }
 
-  leftHtml+='<div class="card"><div class="ct">'+I.stats_s+' CUERPO</div>'+statsHtml+'</div>';
+  if(hasEval)leftHtml+='<div class="card"><div class="ct">'+I.stats_s+' CUERPO</div>'+statsHtml+'</div>';
 
   /* RM */
   var rmCards="";
@@ -1066,7 +1099,7 @@ function renderDashboard(rms){
     '</div></div>';
 
   /* INGESTA */
-  rightHtml+='<div class="card"><div class="ct">'+I.food_s+' INGESTA</div><div id="nutri-content">'+buildNutriHtml()+'</div></div>';
+  if(hasEval)rightHtml+='<div class="card"><div class="ct">'+I.food_s+' INGESTA</div><div id="nutri-content">'+buildNutriHtml()+'</div></div>';
 
   /* REGISTRO */
   rightHtml+='<div class="card"><div class="ct">'+I.cal_s+' REGISTRO</div><div id="calendar-inner">'+buildCalendar()+'</div></div>';
@@ -1549,14 +1582,21 @@ function openDayNoteModal(dateStr){
   var title=document.getElementById("dnn-title");
   if(!m)return;
   var entry=(G.calData||{})[dateStr]||{};
-  if(title)title.textContent="NOTA — "+dateStr;
+  var isFutureDate=dateStr>G.today;
+  var tipo=isFutureDate?"PENDIENTE":"APRENDIZAJE";
+  if(title)title.textContent=tipo+" — "+dateStr;
   if(inp)inp.value=entry.note||"";
+  // Resaltar día seleccionado en rojo
+  document.querySelectorAll(".cal-day.cal-selected").forEach(function(el){el.classList.remove("cal-selected");});
+  var dayEl=document.getElementById("calday-"+dateStr);
+  if(dayEl)dayEl.classList.add("cal-selected");
   m.classList.add("open");
   setTimeout(function(){if(inp)inp.focus();},100);
 }
 function closeDayNoteModal(){
   var m=document.getElementById("day-note-modal");
   if(m)m.classList.remove("open");
+  document.querySelectorAll(".cal-day.cal-selected").forEach(function(el){el.classList.remove("cal-selected");});
   _dayNoteDate=null;
 }
 async function saveDayNote(){
@@ -1565,6 +1605,7 @@ async function saveDayNote(){
   var note=(inp&&inp.value||"").trim();
   var entry=G.calData[_dayNoteDate]||(G.calData[_dayNoteDate]={w:0,s:0,m:[]});
   entry.note=note;
+  entry.noteType=_dayNoteDate>G.today?"pendiente":"aprendizaje";
   await sbWrite("portal-cal-"+G.sid,G.calData);
   closeDayNoteModal();
   var calEl=document.getElementById("calendar-inner");if(calEl)calEl.innerHTML=buildCalendar();
