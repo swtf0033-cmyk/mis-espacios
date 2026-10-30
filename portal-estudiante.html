@@ -1740,17 +1740,45 @@ async function requestMetaNotif(){
     showToast("Permiso denegado","Activa las notificaciones en la configuración de tu celular.","warn");
   }
 }
-function getStepRequired(act){
-  var dur=act.duration||{v:4,u:"semanas"};
-  var n=act.weeks?act.weeks.length:4;
-  var dias=act.diasPorSemana||3;
-  var chunk=dur.v/n;
-  var weeks=dur.u==="días"?chunk/7:dur.u==="meses"?chunk*4:chunk;
-  return Math.max(1,Math.round(weeks*dias));
+// Consecutive streak for the current step, going backwards from today
+// Only counts within this step's window (after previous step completed)
+function getStepStreak(act,stepIdx){
+  var checkins=act.checkins||{};
+  var stepStartStr;
+  if(stepIdx===0){
+    stepStartStr=act.created;
+  }else{
+    var prev=act.weeks[stepIdx-1];
+    if(!prev||!prev.completedDate)return 0;
+    var sd=new Date(prev.completedDate);sd.setDate(sd.getDate()+1);
+    stepStartStr=sd.toISOString().slice(0,10);
+  }
+  var stepStart=new Date(stepStartStr);
+  var d=new Date(G.today);
+  var streak=0;
+  while(d>=stepStart){
+    var dStr=d.toISOString().slice(0,10);
+    if(checkins[dStr]){streak++;d.setDate(d.getDate()-1);}
+    else break;
+  }
+  return streak;
 }
-function getTotalCheckins(act){
-  var c=act.checkins||{};
-  return Object.keys(c).filter(function(k){return c[k];}).length;
+
+// Did the streak break? (had at least one prior check-in but yesterday is empty)
+function isStreakBroken(act,stepIdx){
+  var checkins=act.checkins||{};
+  var stepStartStr=stepIdx===0?act.created:(function(){
+    var prev=act.weeks[stepIdx-1];
+    if(!prev||!prev.completedDate)return act.created;
+    var sd=new Date(prev.completedDate);sd.setDate(sd.getDate()+1);
+    return sd.toISOString().slice(0,10);
+  })();
+  var yd=new Date(G.today);yd.setDate(yd.getDate()-1);
+  var ydStr=yd.toISOString().slice(0,10);
+  if(ydStr<stepStartStr)return false; // step just started today
+  if(checkins[ydStr])return false; // yesterday was checked
+  // check if there's any prior check-in in this step
+  return Object.keys(checkins).some(function(k){return checkins[k]&&k>=stepStartStr&&k<G.today;});
 }
 
 async function checkInToday(){
@@ -1759,16 +1787,26 @@ async function checkInToday(){
   if(G.meta.active.checkins[G.today])return;
   G.meta.active.checkins[G.today]=true;
   var act=G.meta.active;
-  var req=getStepRequired(act);
-  var total=getTotalCheckins(act);
+  var req=act.diasPorSemana||3;
+  var curStepIdx=act.weeks.findIndex(function(w){return!w.done;});
   var stepUnlocked=false;
-  act.weeks.forEach(function(w,i){
-    if(!w.done&&total>=req*(i+1)){w.done=true;stepUnlocked=true;}
-  });
+  if(curStepIdx>=0){
+    var streak=getStepStreak(act,curStepIdx);
+    if(streak>=req){
+      act.weeks[curStepIdx].done=true;
+      act.weeks[curStepIdx].completedDate=G.today;
+      stepUnlocked=true;
+    }
+  }
   await sbWrite("portal-meta-"+G.sid,G.meta);
   var el=document.getElementById("meta-inner");if(el)el.innerHTML=buildMetaHtml();
-  if(stepUnlocked)showToast("PASO COMPLETADO","Lo ganaste día a día. Eso no se lo quita nadie.","ok");
-  else showToast("Registrado","Un día más en la racha. No pares.","acc");
+  if(stepUnlocked){
+    showToast("PASO COMPLETADO",req+" días seguidos. Nadie te los puede quitar.","ok");
+  }else{
+    var st=curStepIdx>=0?getStepStreak(act,curStepIdx):0;
+    var falta=req-st;
+    showToast("Registrado","Racha: "+st+" / "+req+" días seguidos. Faltan "+falta+".","acc");
+  }
 }
 
 var META_TIPOS={
@@ -1903,8 +1941,9 @@ function buildMetaHtml(){
   var curStepIdx=act.weeks.findIndex(function(w){return!w.done;});
   if(curStepIdx<0)curStepIdx=totalSteps-1;
   var curStep=act.weeks[curStepIdx];
-  var stepReq=getStepRequired(act);
-  var totalCheckins=getTotalCheckins(act);
+  var stepReq=act.diasPorSemana||3;
+  var curStreak=curStepIdx>=0&&!allDone?getStepStreak(act,curStepIdx):0;
+  var streakBroken=curStepIdx>=0&&!allDone?isStreakBroken(act,curStepIdx):false;
 
   // this week calendar
   var weekDates=getWeekDates();
@@ -1933,29 +1972,31 @@ function buildMetaHtml(){
   var dailyTask=getMetaDailyTask(act);
   var notifGranted=("Notification" in window)&&Notification.permission==="granted";
 
-  // step list — no manual checkbox, earned by daily check-ins
+  // step list — no manual checkbox, earned by consecutive streak
   var stepList=act.weeks.map(function(w,i){
     var lbl=_metaStepLabel(act,i);
     var isCur=i===curStepIdx&&!w.done;
-    var isLocked=!w.done&&i>curStepIdx;
-    // check-ins credited toward this step slot
-    var slotStart=stepReq*i;
-    var progressInSlot=Math.min(Math.max(totalCheckins-slotStart,0),stepReq);
-    var slotPct=Math.round(progressInSlot/stepReq*100);
-    var icon=w.done?'<span style="color:var(--green);font-size:13px">✓</span>':
-              isCur?'<span style="color:var(--acc);font-size:13px">→</span>':
-              '<span style="font-size:12px;opacity:.4">🔒</span>';
-    var statusLine=w.done
-      ?'<span style="color:var(--green)">Ganado</span>'
+    var isLocked=!w.done&&!isCur;
+    var icon=w.done
+      ?'<span style="color:var(--green);font-size:13px;font-weight:700">✓</span>'
       :isCur
-        ?'<span style="color:var(--acc)">'+progressInSlot+' / '+stepReq+' días</span>'
-        :'<span style="color:var(--txt3)">Bloqueado</span>';
-    return '<div class="meta-week-item'+(w.done?" done":isCur?" cur":"")+'" style="opacity:'+(isLocked?.45:1)+'">'+
-      '<div style="min-width:20px;text-align:center;padding-top:1px">'+icon+'</div>'+
+        ?'<span style="color:var(--acc);font-size:13px">→</span>'
+        :'<span style="font-size:12px;opacity:.35">🔒</span>';
+    var statusLine=w.done
+      ?('<span style="color:var(--green)">'+esc(w.completedDate||"Completado")+'</span>')
+      :isCur
+        ?(streakBroken
+          ?'<span style="color:var(--danger)">Racha rota — empieza de nuevo</span>'
+          :'<span style="color:var(--acc)">'+curStreak+' / '+stepReq+' días seguidos</span>')
+        :'<span style="color:var(--txt3)">'+stepReq+' días seguidos para desbloquear</span>';
+    return '<div class="meta-week-item'+(w.done?" done":isCur?" cur":"")+'" style="opacity:'+(isLocked?.35:1)+'">'+
+      '<div style="min-width:22px;text-align:center;padding-top:1px">'+icon+'</div>'+
       '<div class="meta-week-body">'+
         '<div class="meta-week-num">'+esc(lbl)+' · '+statusLine+'</div>'+
-        '<div class="meta-week-task">'+esc(w.task)+'</div>'+
-        (isCur?'<div class="meta-prog-bar" style="margin-top:5px"><div class="meta-prog-fill" style="width:'+slotPct+'%"></div></div>':'')+
+        '<div class="meta-week-task" style="'+(isLocked?"color:var(--txt3)":"")+'">'+esc(w.task)+'</div>'+
+        (isCur&&!streakBroken&&curStreak>0
+          ?'<div class="meta-prog-bar" style="margin-top:5px"><div class="meta-prog-fill" style="width:'+Math.min(Math.round(curStreak/stepReq*100),100)+'%"></div></div>'
+          :'')+
       '</div></div>';
   }).join("");
 
@@ -1969,16 +2010,28 @@ function buildMetaHtml(){
     /* Overall progress */
     '<div class="meta-progress" style="margin-bottom:10px">'+
       '<div style="display:flex;justify-content:space-between;font-size:10px;color:var(--txt2)">'+
-        '<span>Paso '+(curStepIdx+1)+' / '+totalSteps+(allDone?' — Todos completados':' — '+Math.min(Math.max(totalCheckins-stepReq*curStepIdx,0),stepReq)+'/'+stepReq+' días')+'</span><span>'+overallPct+'%</span>'+
+        '<span>Paso '+(allDone?totalSteps:curStepIdx+1)+' / '+totalSteps+(allDone?' — Completados':'')+'</span><span>'+overallPct+'%</span>'+
       '</div>'+
       '<div class="meta-prog-bar"><div class="meta-prog-fill" style="width:'+overallPct+'%"></div></div>'+
     '</div>'+
     /* Today card */
     '<div class="meta-today-card">'+
+      (streakBroken?
+        '<div style="background:rgba(239,68,68,.12);border:1px solid var(--danger);border-radius:2px;padding:6px 8px;margin-bottom:8px;font-size:10px;color:var(--danger);font-family:\'Oswald\',sans-serif;font-weight:700;letter-spacing:.06em">'+
+          '⚠ RACHA ROTA — Vuelves a 0 en este paso. Hoy empieza de nuevo.'+
+        '</div>':'')+
       '<div class="meta-today-label">Tu tarea de hoy</div>'+
       '<div class="meta-today-task">'+esc(dailyTask)+'</div>'+
-      '<button class="meta-checkin-btn"'+(todayChecked?' disabled':'')+' onclick="checkInToday()">'+
-        (todayChecked?'✓ Ya lo registraste hoy':'Lo hice hoy →')+
+      (!allDone?
+        '<div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:6px">'+
+          '<span style="font-size:10px;color:var(--txt2)">Días seguidos</span>'+
+          '<span style="font-family:\'Oswald\',sans-serif;font-size:16px;font-weight:700;color:'+(curStreak>=stepReq?'var(--green)':curStreak>0?'var(--acc)':'var(--txt2)')+'">'+
+            curStreak+' / '+stepReq+
+          '</span>'+
+        '</div>'+
+        '<div class="meta-prog-bar" style="margin-bottom:8px"><div class="meta-prog-fill" style="width:'+Math.min(Math.round(curStreak/stepReq*100),100)+'%"></div></div>':'')+
+      '<button class="meta-checkin-btn"'+(todayChecked||allDone?' disabled':'')+' onclick="checkInToday()">'+
+        (todayChecked?'✓ Ya registraste hoy — sigue mañana':allDone?'✓ Todos los pasos completados':'Lo hice hoy →')+
       '</button>'+
     '</div>'+
     /* Week calendar */
