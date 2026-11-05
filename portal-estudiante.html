@@ -288,6 +288,60 @@ body{font-family:'Inter',system-ui,sans-serif;background:var(--bg);color:var(--t
   .info-box td,.info-box th{padding:4px 4px 4px 0}
   .disclaimer-list li{font-size:10px}
 }
+/* MOBILE NAV */
+.mob-nav{display:none}
+@media(max-width:720px){
+  .mob-nav{display:flex;position:fixed;bottom:0;left:0;right:0;background:#080808;border-top:1px solid #1a1a1a;z-index:200;padding:6px 0 env(safe-area-inset-bottom,8px)}
+  .mob-nav-btn{flex:1;display:flex;flex-direction:column;align-items:center;gap:3px;background:none;border:none;color:var(--txt2);font-size:8px;font-family:'Oswald',sans-serif;font-weight:600;letter-spacing:.06em;text-transform:uppercase;cursor:pointer;padding:4px 0;transition:color .15s;-webkit-tap-highlight-color:transparent}
+  .mob-nav-btn.on{color:var(--acc)}
+  .mob-nav-ico{font-size:22px;line-height:1}
+  .app-body{padding-bottom:84px!important}
+  [data-mob-tab]{display:none}
+  [data-mob-tab].mob-active{display:block}
+}
+/* HABITS */
+.hab-section-lbl{font-size:9px;font-weight:700;font-family:'Oswald',sans-serif;letter-spacing:.12em;text-transform:uppercase;margin-bottom:8px;display:flex;align-items:center;gap:6px}
+.hab-card{display:flex;align-items:center;gap:12px;padding:12px;border-radius:4px;border:1px solid var(--border);background:var(--surf);margin-bottom:8px;cursor:pointer;-webkit-tap-highlight-color:transparent;transition:border-color .15s,background .15s;user-select:none}
+.hab-card.done{border-color:var(--green);background:rgba(34,197,94,.06)}
+.hab-card.anchor-card{border-color:var(--border2);border-left:3px solid var(--acc)}
+.hab-card.anchor-card.done{border-color:var(--green);border-left-color:var(--green);background:rgba(34,197,94,.08)}
+.hab-card-ico{font-size:22px;line-height:1;flex-shrink:0;width:28px;text-align:center}
+.hab-card-info{flex:1;min-width:0}
+.hab-card-name{font-family:'Oswald',sans-serif;font-size:14px;font-weight:700;letter-spacing:.04em;color:var(--txt)}
+.hab-card-min{font-size:10px;color:var(--txt2);margin-top:1px}
+.hab-card-week{font-size:9px;color:var(--txt3);margin-top:3px}
+.hab-card-week.ok{color:var(--green)}
+.hab-card-week.warn{color:var(--warn)}
+.hab-chk{width:28px;height:28px;border-radius:50%;border:2px solid var(--border2);display:flex;align-items:center;justify-content:center;flex-shrink:0;font-size:14px;color:transparent;transition:all .15s}
+.hab-card.done .hab-chk{background:var(--green);border-color:var(--green);color:#fff}
+.hab-card.anchor-card .hab-chk{border-color:var(--acc)}
+.hab-card.anchor-card.done .hab-chk{background:var(--green);border-color:var(--green);color:#fff}
+/* STREAK BIG */
+.streak-hero{text-align:center;padding:14px 0 6px}
+.streak-hero-num{font-family:'Oswald',sans-serif;font-size:72px;font-weight:700;color:var(--acc);line-height:1;letter-spacing:-.02em}
+.streak-hero-lbl{font-size:11px;color:var(--txt2);letter-spacing:.1em;text-transform:uppercase;margin-top:2px}
+.streak-hero-sub{font-size:10px;color:var(--txt3);margin-top:5px}
+/* HABITS SETUP BUTTON */
+.hab-setup-btn{background:none;border:1px dashed var(--border2);color:var(--txt2);border-radius:4px;padding:14px;font-size:11px;font-family:'Oswald',sans-serif;font-weight:600;letter-spacing:.06em;text-transform:uppercase;cursor:pointer;width:100%;text-align:center;margin-bottom:8px;transition:border-color .15s,color .15s}
+.hab-setup-btn:hover{border-color:var(--acc);color:var(--acc)}
+/* HABITS CONFIG MODAL */
+.hcfg-ov{position:fixed;inset:0;background:rgba(0,0,0,.85);z-index:400;display:flex;align-items:flex-end;justify-content:center}
+.hcfg-modal{background:var(--card);border-radius:12px 12px 0 0;padding:20px 18px;width:100%;max-width:520px;max-height:90vh;overflow-y:auto}
+.hcfg-ttl{font-family:'Oswald',sans-serif;font-size:18px;font-weight:700;letter-spacing:.06em;margin-bottom:4px}
+.hcfg-sub{font-size:11px;color:var(--txt2);margin-bottom:14px;line-height:1.6}
+.hcfg-lvl-lbl{font-size:9px;font-weight:700;font-family:'Oswald',sans-serif;letter-spacing:.12em;color:var(--txt2);text-transform:uppercase;margin-bottom:8px;margin-top:14px}
+.hcfg-lvl-lbl.red{color:var(--acc)}
+.hcfg-row{display:flex;gap:7px;margin-bottom:7px}
+.hcfg-ni{flex:1;background:var(--surf);border:1px solid var(--border);border-radius:3px;padding:8px 10px;font-size:12px;color:var(--txt);font-family:'Inter',sans-serif}
+.hcfg-ni:focus{border-color:var(--acc);outline:none}
+.hcfg-mi{width:110px;flex-shrink:0;background:var(--surf);border:1px solid var(--border);border-radius:3px;padding:8px 10px;font-size:11px;color:var(--txt2);font-family:'Inter',sans-serif}
+.hcfg-mi:focus{border-color:var(--border2);outline:none}
+.hcfg-presets{display:flex;flex-wrap:wrap;gap:5px;margin-bottom:4px}
+.hcfg-pr{background:var(--surf);border:1px solid var(--border);border-radius:99px;padding:4px 10px;font-size:10px;color:var(--txt2);cursor:pointer;white-space:nowrap;transition:border-color .1s,color .1s}
+.hcfg-pr:hover{border-color:var(--acc);color:var(--txt)}
+.hcfg-save{background:var(--acc);color:#fff;border:none;border-radius:3px;padding:13px;font-size:12px;font-family:'Oswald',sans-serif;font-weight:700;letter-spacing:.08em;text-transform:uppercase;cursor:pointer;width:100%;margin-top:12px;transition:opacity .15s}
+.hcfg-save:hover{opacity:.85}
+.hcfg-cancel{background:none;border:none;color:var(--txt3);font-size:11px;cursor:pointer;width:100%;margin-top:8px;padding:4px;font-family:'Inter',sans-serif}
 /* PROGRESO */
 .progreso-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:10px}
 @media(max-width:480px){.progreso-grid{grid-template-columns:1fr}}
@@ -436,15 +490,15 @@ body{font-family:'Inter',system-ui,sans-serif;background:var(--bg);color:var(--t
     <div class="login-logo">INAMOVIBLE <span>APP</span></div>
     <div class="login-sub">Portal del estudiante</div>
     <!-- LOGIN FORM -->
-    <div id="login-form">
+    <form id="login-form" onsubmit="event.preventDefault();doLogin();" autocomplete="on">
       <label class="fl">Usuario</label>
-      <input class="fi" id="inp-user" placeholder="tu usuario" autocomplete="username" autocorrect="off" autocapitalize="off" spellcheck="false">
+      <input class="fi" id="inp-user" name="username" placeholder="tu usuario" autocomplete="username" autocorrect="off" autocapitalize="off" spellcheck="false">
       <label class="fl">Contraseña</label>
-      <input class="fi" id="inp-pass" type="password" placeholder="••••••••" autocomplete="current-password" style="margin-bottom:4px">
-      <button class="login-btn" id="login-btn" onclick="doLogin()">Entrar</button>
+      <input class="fi" id="inp-pass" name="password" type="password" placeholder="••••••••" autocomplete="current-password" style="margin-bottom:4px">
+      <button class="login-btn" id="login-btn" type="submit">Entrar</button>
       <div class="login-err" id="login-err"></div>
       <div class="login-toggle">¿No tienes cuenta? <a onclick="showRegForm()">Regístrate</a></div>
-    </div>
+    </form>
     <!-- REGISTRO FORM -->
     <div id="reg-form" class="reg-card">
       <label class="fl">Nombre completo</label>
@@ -689,7 +743,7 @@ async function doRegister(){
 
 function doLogout(){
   try{localStorage.removeItem("portal_auth");}catch(e){}
-  Object.assign(G,{sid:null,calData:{},mealCount:5,stepsGoal:8000,nutriOk:false,st:{},nutrition:{},plan:null,evals:[],att:[],shownQuotes:[],notes:[],badges:{},ranking:[],book:null,diario:[],obstaculo:[],fotos:[],meta:null});
+  Object.assign(G,{sid:null,calData:{},mealCount:5,stepsGoal:8000,nutriOk:false,st:{},nutrition:{},plan:null,evals:[],att:[],shownQuotes:[],notes:[],badges:{},ranking:[],book:null,diario:[],obstaculo:[],fotos:[],meta:null,habitsConfig:null,rms:{}});
   document.getElementById("login").style.display="flex";
   document.getElementById("app").style.display="none";
   document.getElementById("inp-pass").value="";
@@ -722,7 +776,8 @@ async function loadDashboard(sid){
       fetchSbKey("portal-diario-"+sid),
       fetchSbKey("portal-obstaculo-"+sid),
       fetchSbKey("portal-fotos-"+sid),
-      fetchSbKey("portal-meta-"+sid)
+      fetchSbKey("portal-meta-"+sid),
+      fetchSbKey("portal-habits-"+sid)
     ]);
     var students=res[0]||[],rms=res[1]||{};
     G.plan=res[2];G.evals=res[3]||[];G.att=res[4]||[];
@@ -739,6 +794,7 @@ async function loadDashboard(sid){
     G.obstaculo=res[16]||[];
     G.fotos=res[17]||[];
     G.meta=res[18]||null;
+    G.habitsConfig=res[19]||null;
     // Try by direct sid, or by portalSid reference
     G.st=students.find(function(s){return s.id===sid||s.portalSid===sid;})||{};
     // If still no name, check portal-users for coachStudentId link or own data
@@ -761,6 +817,7 @@ async function loadDashboard(sid){
       var myRank=G.ranking.find(function(r){return r.sid===sid;});
       if(myRank&&myRank.name===sid){myRank.name=G.st.name;sbWrite("portal-ranking",G.ranking).catch(function(){});}
     }
+    G.rms=rms;
     renderDashboard(rms);
     requestNotifPermission();
     setTimeout(function(){checkNotifs(G.st,G.evals&&G.evals[0],G.calData).catch(function(){});},800);
@@ -1018,6 +1075,165 @@ function calNav(dir){
   var el=document.getElementById("calendar-inner");if(el)el.innerHTML=buildCalendar();
 }
 
+/* ══ HABITS SYSTEM ══ */
+var HABIT_PRESETS=[
+  {icon:"🏃",name:"Entrenar",min:"20 min activo"},
+  {icon:"🏋️",name:"Fuerza",min:"30 min de pesas"},
+  {icon:"🚶",name:"Caminar",min:"7,000 pasos"},
+  {icon:"📖",name:"Leer",min:"15 páginas"},
+  {icon:"✍️",name:"Diario",min:"3 párrafos"},
+  {icon:"🧘",name:"Meditación",min:"5 min de silencio"},
+  {icon:"💧",name:"Hidratación",min:"2 litros"},
+  {icon:"😴",name:"Dormir bien",min:"7 horas"},
+  {icon:"🥗",name:"Nutrición",min:"Sin comida basura"},
+  {icon:"🙏",name:"Gratitud",min:"1 cosa"},
+  {icon:"📵",name:"Sin pantallas",min:"1 hr sin cel"},
+  {icon:"🎯",name:"Foco profundo",min:"90 min sin distracciones"}
+];
+
+function isHabitDone(dateStr,habitId){var e=G.calData[dateStr]||{};return !!(e.h&&e.h[habitId]);}
+
+function getStrongWeekScore(habitId){
+  var today=new Date(G.today+'T12:00');
+  var dow=(today.getDay()+6)%7;
+  var score=0;
+  for(var d=0;d<=dow;d++){var dd=new Date(today);dd.setDate(today.getDate()-d);var dk=dd.toISOString().slice(0,10);var e=G.calData[dk]||{};if(e.h&&e.h[habitId])score++;}
+  return{done:score,total:dow+1};
+}
+
+function computeAnchorStreak(){
+  var hc=G.habitsConfig;
+  if(!hc||!hc.anchor)return computeLegacyStreak();
+  var aid=hc.anchor.id;
+  var c=0;var td=new Date();
+  for(var d=0;d<365;d++){var dd=new Date(td);dd.setDate(td.getDate()-d);var dk=dd.toISOString().slice(0,10);var e=G.calData[dk]||{};if(e.h&&e.h[aid]){c++;}else{break;}}
+  return c;
+}
+
+function computeLegacyStreak(){
+  var c=0;var td=new Date();
+  for(var d=0;d<365;d++){var dd=new Date(td);dd.setDate(td.getDate()-d);var dow=dd.getDay();var dk=dd.toISOString().slice(0,10);var en=(G.calData||{})[dk];if(en&&(en.w||en.s)){c++;}else if(dow===0||dow===6){}else{break;}}
+  return c;
+}
+
+async function toggleHabit(habitId,level){
+  if(!G.calData[G.today])G.calData[G.today]={};
+  var e=G.calData[G.today];
+  if(!e.h)e.h={};
+  e.h[habitId]=!e.h[habitId];
+  if(level==='anchor'){e.w=e.h[habitId];}
+  try{await sbWrite("portal-cal-"+G.sid,G.calData);}catch(err){}
+  renderDashboard(G.rms||{});
+}
+
+function buildHoyHabitsHtml(){
+  var hc=G.habitsConfig;
+  var today=G.today;
+  if(!hc||!hc.anchor){
+    return '<button class="hab-setup-btn" onclick="showHabitsSetup()">⚡ Configurar mis hábitos INAMOVIBLE</button>'+
+      '<div style="font-size:10px;color:var(--txt3);text-align:center;line-height:1.6">Define tu ancla y tus hábitos para<br>que la racha tenga sentido real.</div>';
+  }
+  var html='';
+  /* ANCLA */
+  var aDone=isHabitDone(today,hc.anchor.id);
+  html+='<div class="hab-section-lbl" style="color:var(--acc)">⚡ ANCLA <span style="color:var(--txt3);font-size:8px;font-weight:400;text-transform:none;letter-spacing:0">— si falla, racha rota</span></div>';
+  html+='<div class="hab-card anchor-card'+(aDone?' done':'')+'" onclick="toggleHabit(\''+hc.anchor.id+'\',\'anchor\')">';
+  html+='<div class="hab-card-ico">'+(hc.anchor.icon||'🎯')+'</div>';
+  html+='<div class="hab-card-info"><div class="hab-card-name">'+esc(hc.anchor.name)+'</div>';
+  if(hc.anchor.minViable)html+='<div class="hab-card-min">Mín: '+esc(hc.anchor.minViable)+'</div>';
+  html+='</div><div class="hab-chk">'+(aDone?'✓':'')+'</div></div>';
+  /* FUERTES */
+  if(hc.strong&&hc.strong.length){
+    html+='<div class="hab-section-lbl" style="margin-top:4px;color:var(--txt2)">🔥 FUERTES <span style="color:var(--txt3);font-size:8px;font-weight:400;text-transform:none;letter-spacing:0">— 5 de 7 días</span></div>';
+    hc.strong.forEach(function(h){
+      var done=isHabitDone(today,h.id);
+      var ws=getStrongWeekScore(h.id);
+      var pct=ws.total>0?ws.done/ws.total:0;
+      var weekCls=ws.done>=5?'ok':pct<0.5?'warn':'';
+      var weekTxt='Esta semana: '+ws.done+'/'+ws.total+' días'+(ws.done>=5?' ✓':'');
+      html+='<div class="hab-card'+(done?' done':'')+'" onclick="toggleHabit(\''+h.id+'\',\'strong\')">';
+      html+='<div class="hab-card-ico">'+(h.icon||'💪')+'</div>';
+      html+='<div class="hab-card-info"><div class="hab-card-name">'+esc(h.name)+'</div>';
+      if(h.minViable)html+='<div class="hab-card-min">Mín: '+esc(h.minViable)+'</div>';
+      html+='<div class="hab-card-week '+weekCls+'">'+weekTxt+'</div>';
+      html+='</div><div class="hab-chk">'+(done?'✓':'')+'</div></div>';
+    });
+  }
+  /* MICROS */
+  if(hc.micro&&hc.micro.length){
+    html+='<div class="hab-section-lbl" style="margin-top:4px;color:var(--txt3)">· MICRO <span style="font-size:8px;font-weight:400;text-transform:none;letter-spacing:0">— suman, no rompen</span></div>';
+    hc.micro.forEach(function(h){
+      var done=isHabitDone(today,h.id);
+      html+='<div class="hab-card'+(done?' done':'')+'" onclick="toggleHabit(\''+h.id+'\',\'micro\')">';
+      html+='<div class="hab-card-ico">'+(h.icon||'✨')+'</div>';
+      html+='<div class="hab-card-info"><div class="hab-card-name">'+esc(h.name)+'</div>';
+      if(h.minViable)html+='<div class="hab-card-min">Mín: '+esc(h.minViable)+'</div>';
+      html+='</div><div class="hab-chk">'+(done?'✓':'')+'</div></div>';
+    });
+  }
+  /* EDIT BUTTON */
+  html+='<button class="hab-setup-btn" style="margin-top:4px" onclick="showHabitsSetup()">Editar hábitos</button>';
+  return html;
+}
+
+function showHabitsSetup(){
+  var hc=G.habitsConfig||{
+    anchor:{id:'h_anchor',name:'',minViable:'',icon:'🎯'},
+    strong:[{id:'h_s0',name:'',minViable:'',icon:'💪'},{id:'h_s1',name:'',minViable:'',icon:'🏃'}],
+    micro:[{id:'h_m0',name:'',minViable:'',icon:'✨'},{id:'h_m1',name:'',minViable:'',icon:'🙏'}]
+  };
+  var pHtml=HABIT_PRESETS.map(function(p){return'<div class="hcfg-pr" onclick="hcfgFill(\''+p.icon+' '+p.name+'\',\''+p.min+'\')">'+p.icon+' '+p.name+'</div>';}).join('');
+  var html='<div class="hcfg-ov" id="hcfg-ov" onclick="if(event.target===this)closeHabitsSetup()">';
+  html+='<div class="hcfg-modal">';
+  html+='<div class="hcfg-ttl">Mis hábitos</div>';
+  html+='<div class="hcfg-sub">El Ancla define tu racha diaria. Los Fuertes requieren 5 de 7 días. Los Micro suman sin riesgo.</div>';
+  html+='<div style="font-size:9px;color:var(--txt2);text-transform:uppercase;letter-spacing:.08em;margin-bottom:6px;font-family:\'Oswald\',sans-serif;font-weight:700">Sugerencias rápidas</div>';
+  html+='<div class="hcfg-presets">'+pHtml+'</div>';
+  html+='<div class="hcfg-lvl-lbl red">⚡ Ancla — obligatorio cada día</div>';
+  html+='<div class="hcfg-row"><input class="hcfg-ni" id="hcni-a0" placeholder="Nombre del hábito ancla" value="'+esc(hc.anchor.name)+'"><input class="hcfg-mi" id="hcmi-a0" placeholder="Mínimo viable" value="'+esc(hc.anchor.minViable||'')+'"></div>';
+  html+='<div class="hcfg-lvl-lbl">🔥 Fuertes — 5 de 7 días</div>';
+  [0,1].forEach(function(i){var h=hc.strong&&hc.strong[i]||{};html+='<div class="hcfg-row"><input class="hcfg-ni" id="hcni-s'+i+'" placeholder="Hábito fuerte '+(i+1)+'" value="'+esc(h.name||'')+'"><input class="hcfg-mi" id="hcmi-s'+i+'" placeholder="Mínimo" value="'+esc(h.minViable||'')+'"></div>';});
+  html+='<div class="hcfg-lvl-lbl">· Micro — sin presión</div>';
+  [0,1].forEach(function(i){var h=hc.micro&&hc.micro[i]||{};html+='<div class="hcfg-row"><input class="hcfg-ni" id="hcni-m'+i+'" placeholder="Micro hábito '+(i+1)+'" value="'+esc(h.name||'')+'"><input class="hcfg-mi" id="hcmi-m'+i+'" placeholder="Mínimo" value="'+esc(h.minViable||'')+'"></div>';});
+  html+='<button class="hcfg-save" onclick="saveHabitsConfig()">Guardar hábitos</button>';
+  html+='<button class="hcfg-cancel" onclick="closeHabitsSetup()">Cancelar</button>';
+  html+='</div></div>';
+  document.body.insertAdjacentHTML('beforeend',html);
+}
+
+function hcfgFill(name,min){
+  var fields=['hcni-a0','hcni-s0','hcni-s1','hcni-m0','hcni-m1'];
+  var mfields=['hcmi-a0','hcmi-s0','hcmi-s1','hcmi-m0','hcmi-m1'];
+  for(var i=0;i<fields.length;i++){var el=document.getElementById(fields[i]);if(el&&!el.value.trim()){el.value=name;var mel=document.getElementById(mfields[i]);if(mel)mel.value=min;break;}}
+}
+
+async function saveHabitsConfig(){
+  var anm=(document.getElementById('hcni-a0')||{}).value||'';
+  if(!anm.trim()){alert('Define al menos el hábito ancla.');return;}
+  var hc={
+    anchor:{id:'h_anchor',icon:'🎯',name:anm.trim(),minViable:((document.getElementById('hcmi-a0')||{}).value||'').trim()},
+    strong:[0,1].map(function(i){return{id:'h_s'+i,icon:'💪',name:((document.getElementById('hcni-s'+i)||{}).value||'').trim(),minViable:((document.getElementById('hcmi-s'+i)||{}).value||'').trim()};}).filter(function(h){return h.name;}),
+    micro:[0,1].map(function(i){return{id:'h_m'+i,icon:'✨',name:((document.getElementById('hcni-m'+i)||{}).value||'').trim(),minViable:((document.getElementById('hcmi-m'+i)||{}).value||'').trim()};}).filter(function(h){return h.name;})
+  };
+  G.habitsConfig=hc;
+  try{await sbWrite("portal-habits-"+G.sid,hc);}catch(e){}
+  closeHabitsSetup();
+  notify('nt-ok','Hábitos','Guardados correctamente.');
+  renderDashboard(G.rms||{});
+}
+
+function closeHabitsSetup(){var el=document.getElementById('hcfg-ov');if(el)el.remove();}
+
+var _mobTab='hoy';
+try{_mobTab=localStorage.getItem('mob_tab')||'hoy';}catch(e){}
+function setMobTab(tab){
+  _mobTab=tab;
+  document.querySelectorAll('[data-mob-tab]').forEach(function(el){el.classList.toggle('mob-active',el.dataset.mobTab===tab);});
+  document.querySelectorAll('.mob-nav-btn').forEach(function(btn){btn.classList.toggle('on',btn.dataset.tab===tab);});
+  try{localStorage.setItem('mob_tab',tab);}catch(e){}
+  window.scrollTo(0,0);
+}
+
 function renderDashboard(rms){
   var st=G.st,sex=st.sex||"M";
   var leftHtml="",rightHtml="";
@@ -1026,26 +1242,35 @@ function renderDashboard(rms){
 
   /* ── HOY RESUMEN (top of left col) ── */
   var te0=todayEntry();
-  var rachaD=(function(){var c=0;var td=new Date();for(var d=0;d<365;d++){var dd=new Date(td);dd.setDate(dd.getDate()-d);var dow=dd.getDay();var dk=dd.toISOString().slice(0,10);var en=(G.calData||{})[dk];if(en&&(en.w||en.s)){c++;}else if(dow===0||dow===6){}else{break;}}return c;})();
+  var rachaD=computeAnchorStreak();
+  var hcNow=G.habitsConfig;
+  var allHabits=hcNow?[hcNow.anchor].concat(hcNow.strong||[]).concat(hcNow.micro||[]):[];
+  var doneTodayCount=allHabits.filter(function(h){return h&&isHabitDone(te0&&G.today,h.id);}).length;
+  var totalHabits=allHabits.length;
   var hoyPreview="";
   if(G.meta&&G.meta.active){var _mt=G.meta.active;var _ts=getMetaDailyTask(_mt);if(_ts)hoyPreview='<div class="hoy-meta-preview">Meta hoy: '+esc(_ts.length>70?_ts.slice(0,70)+"…":_ts)+'</div>';}
-  leftHtml+='<div class="card" style="margin-bottom:14px"><div class="ct">'+I.check_s+' RESUMEN DEL DÍA</div>'+
+  leftHtml+='<div class="card" data-mob-tab="hoy" style="margin-bottom:0"><div class="ct">'+I.check_s+' RESUMEN DEL DÍA</div>'+
     '<div class="hoy-sum-grid">'+
-    '<div class="hoy-sum-item'+(te0.w?" done":"")+'"><div class="hoy-sum-ico">'+(te0.w?"✓":"○")+'</div><div class="hoy-sum-lbl">Entreno</div></div>'+
-    '<div class="hoy-sum-item'+(te0.s?" done":"")+'"><div class="hoy-sum-ico">'+(te0.s?"✓":"○")+'</div><div class="hoy-sum-lbl">Pasos</div></div>'+
+    (hcNow?
+      '<div class="hoy-sum-item'+(isHabitDone(G.today,hcNow.anchor.id)?' done':'')+'"><div class="hoy-sum-ico">'+(isHabitDone(G.today,hcNow.anchor.id)?"✓":"○")+'</div><div class="hoy-sum-lbl">Ancla</div></div>'+
+      '<div class="hoy-sum-item'+(doneTodayCount>=totalHabits&&totalHabits>0?' done':'')+'"><div class="hoy-sum-ico">'+(totalHabits>0?doneTodayCount+'/'+totalHabits:'—')+'</div><div class="hoy-sum-lbl">Hábitos</div></div>'
+      :
+      '<div class="hoy-sum-item'+(te0.w?" done":"")+'"><div class="hoy-sum-ico">'+(te0.w?"✓":"○")+'</div><div class="hoy-sum-lbl">Entreno</div></div>'+
+      '<div class="hoy-sum-item'+(te0.s?" done":"")+'"><div class="hoy-sum-ico">'+(te0.s?"✓":"○")+'</div><div class="hoy-sum-lbl">Pasos</div></div>'
+    )+
     (rachaD>0?'<div class="hoy-sum-item done"><div class="hoy-sum-racha">'+rachaD+'</div><div class="hoy-sum-lbl">Racha</div></div>':'')+
     '</div>'+hoyPreview+'</div>';
 
-  /* ── ONBOARDING (mostrar si faltan pasos) ── */
+  /* ── ONBOARDING ── */
   var ob1=G.evals&&G.evals.length>0;
-  var ob2=!!(G.meta&&G.meta.active);
-  var ob3=Object.keys(G.calData||{}).some(function(k){var e=G.calData[k];return e&&(e.w||e.s);});
-  if(!ob1||!ob2||!ob3){
-    leftHtml+='<div class="onboard-card">'+
+  var ob2=!!(hcNow&&hcNow.anchor&&hcNow.anchor.name);
+  var ob3=Object.keys(G.calData||{}).some(function(k){var e=G.calData[k];return e&&(e.h||e.w||e.s);});
+  if(!ob2||!ob3){
+    leftHtml+='<div class="onboard-card" data-mob-tab="hoy">'+
       '<div class="onboard-title">Primeros pasos</div>'+
-      '<div class="onboard-step'+(ob1?" done":"")+'"><div class="onboard-step-ico">'+(ob1?"✓":"1")+'</div>Solicita tu evaluación al coach</div>'+
-      '<div class="onboard-step'+(ob2?" done":"")+'"><div class="onboard-step-ico">'+(ob2?"✓":"2")+'</div>Define tu primera meta (Mi Siguiente Paso)</div>'+
-      '<div class="onboard-step'+(ob3?" done":"")+'"><div class="onboard-step-ico">'+(ob3?"✓":"3")+'</div>Marca tu primer día completado</div>'+
+      '<div class="onboard-step'+(ob2?" done":"")+'"><div class="onboard-step-ico">'+(ob2?"✓":"1")+'</div>Configura tus hábitos INAMOVIBLE</div>'+
+      '<div class="onboard-step'+(ob3?" done":"")+'"><div class="onboard-step-ico">'+(ob3?"✓":"2")+'</div>Marca tu primer día completado</div>'+
+      (!ob1?'<div class="onboard-step"><div class="onboard-step-ico">3</div>Solicita tu evaluación al coach (opcional)</div>':'')+
     '</div>';
   }
 
@@ -1060,7 +1285,7 @@ function renderDashboard(rms){
   var ev0=G.evals&&G.evals.length?G.evals[0]:null;
   if(ev0&&ev0.weight)profTags+='<span class="prof-tag">'+ev0.weight+' kg</span>';
   if(st.objective)profTags+='<span class="prof-tag">'+esc(st.objective)+'</span>';
-  leftHtml+='<div class="card"><div class="ct">'+I.user_s+' PERFIL</div>'+
+  leftHtml+='<div class="card" data-mob-tab="perfil"><div class="ct">'+I.user_s+' PERFIL</div>'+
     '<div class="prof-row"><div class="prof-avatar"><img src="icon.png" style="width:100%;height:100%;object-fit:cover"></div>'+
     '<div><div class="prof-name" id="prof-name-disp">'+esc(st.name||"Estudiante")+'</div>'+
     (st.objective?'<div class="prof-obj" id="prof-obj-disp">'+esc(st.objective)+'</div>':'<div class="prof-obj" id="prof-obj-disp" style="display:none"></div>')+
@@ -1086,7 +1311,7 @@ function renderDashboard(rms){
     if(meso&&meso.start){var dp=Math.floor((Date.now()-new Date(meso.start))/(86400000));curWeek=Math.min(Math.max(Math.floor(dp/7),0),3);}
   }
   if(meso&&Array.isArray(meso.weeks)&&meso.weeks.length){
-    leftHtml+='<div class="card"><div class="ct">'+I.plan_s+' MI PLAN</div><div class="week-list">';
+    leftHtml+='<div class="card" data-mob-tab="perfil"><div class="ct">'+I.plan_s+' MI PLAN</div><div class="week-list">';
     meso.weeks.forEach(function(w,i){
       var mt=MESO_TYPES.find(function(t){return t.key===w.type;})||{label:w.type||"Semana",icon:I.barbell,reps:"—",pct:"—"};
       var isCur=i===curWeek;
@@ -1108,8 +1333,8 @@ function renderDashboard(rms){
       '<div style="font-size:12px;color:var(--txt2);line-height:1.6;margin-bottom:14px">Para activar CUERPO e INGESTA necesitas tu evaluación inicial.<br>Solicítala directamente a tu coach.</div>'+
       '<div style="font-size:11px;color:var(--txt3);font-style:italic">Una vez el coach registre tu evaluación,<br>esta sección se activa automáticamente.</div>'+
     '</div>';
-    leftHtml+='<div class="card"><div class="ct">'+I.stats_s+' CUERPO</div>'+lockHtml+'</div>';
-    rightHtml+='<div class="card"><div class="ct">'+I.food_s+' INGESTA</div>'+lockHtml+'</div>';
+    leftHtml+='<div class="card" data-mob-tab="mas"><div class="ct">'+I.stats_s+' CUERPO</div>'+lockHtml+'</div>';
+    rightHtml+='<div class="card" data-mob-tab="mas"><div class="ct">'+I.food_s+' INGESTA</div>'+lockHtml+'</div>';
   }
   var wkg=parseFloat((ev&&ev.weight)||st.weight)||0;
   var hcm=parseHeight(st.height);
@@ -1186,8 +1411,8 @@ function renderDashboard(rms){
   }
 
   if(hasEval){
-    leftHtml+='<div class="card"><div class="ct">'+I.stats_s+' CUERPO</div>'+statsHtml+'</div>';
-    leftHtml+='<div class="card"><div class="ct">'+I.photo_s+' FOTOS</div><div id="fotos-inner">'+buildFotosHtml()+'</div></div>';
+    leftHtml+='<div class="card" data-mob-tab="mas"><div class="ct">'+I.stats_s+' CUERPO</div>'+statsHtml+'</div>';
+    leftHtml+='<div class="card" data-mob-tab="mas"><div class="ct">'+I.photo_s+' FOTOS</div><div id="fotos-inner">'+buildFotosHtml()+'</div></div>';
   }
 
   /* RM */
@@ -1203,11 +1428,11 @@ function renderDashboard(rms){
     if(stored.isoDate){var dd=Math.floor((Date.now()-new Date(stored.isoDate))/(86400000));badge=dd>60?'<span class="badge bd">! Vencido</span>':dd>45?'<span class="badge bw">~ Por vencer</span>':'<span class="badge bg">✓ Vigente</span>';}
     rmCards+='<div class="rm-card"><div class="rm-icon">'+ex.icon+'</div><div class="rm-name">'+esc(effName)+'</div><div class="rm-val">'+esc(valStr)+'</div>'+(stored.date?'<div class="rm-date">'+esc(stored.date)+'</div>':'')+(badge?'<div style="margin-top:5px">'+badge+'</div>':'')+'</div>';
   });
-  if(rmCards)leftHtml+='<div class="card"><div class="ct">'+I.trophy_s+' MARCAS</div><div class="rm-grid">'+rmCards+'</div></div>';
+  if(rmCards)leftHtml+='<div class="card" data-mob-tab="mas"><div class="ct">'+I.trophy_s+' MARCAS</div><div class="rm-grid">'+rmCards+'</div></div>';
 
   /* PROGRESO */
   var prog=computeProgress(G.calData,G.book,G.diario.length);
-  leftHtml+='<div class="card"><div class="ct">'+I.medal_s+' PROGRESO</div>'+buildProgresoHtml(prog,G.badges||{})+'</div>';
+  leftHtml+='<div class="card" data-mob-tab="mas"><div class="ct">'+I.medal_s+' PROGRESO</div>'+buildProgresoHtml(prog,G.badges||{})+'</div>';
 
   /* ══ DERECHA ══ */
   var te=todayEntry(),mc=G.mealCount;
@@ -1215,70 +1440,43 @@ function renderDashboard(rms){
   var dateLabel=new Date(G.today+'T12:00').toLocaleDateString("es-CR",{weekday:"long",day:"numeric",month:"long"});
   dateLabel=dateLabel.charAt(0).toUpperCase()+dateLabel.slice(1);
 
-  /* HOY */
+  /* HOY — HABITS */
+  var rachaHoy=computeAnchorStreak();
+  var anchorDoneToday=G.habitsConfig&&G.habitsConfig.anchor?isHabitDone(G.today,G.habitsConfig.anchor.id):!!(te&&te.w);
+  var streakMsg=rachaHoy===0?'Empieza tu racha hoy':rachaHoy===1?'Primer día. No pares.':rachaHoy<7?'Van '+rachaHoy+' días. Sigue.':rachaHoy<30?rachaHoy+' días seguidos.':rachaHoy<100?rachaHoy+' días. Eso es disciplina real.':rachaHoy+' días. Eres inamovible.';
+  rightHtml+='<div class="card" data-mob-tab="hoy">'+
+    '<div class="streak-hero">'+
+      '<div class="streak-hero-num">'+rachaHoy+'</div>'+
+      '<div class="streak-hero-lbl">días de racha</div>'+
+      '<div class="streak-hero-sub">'+esc(streakMsg)+'</div>'+
+    '</div>'+
+    '<div style="font-size:10px;color:var(--txt2);text-align:center;margin-bottom:12px">'+esc(dateLabel)+'</div>'+
+    buildHoyHabitsHtml()+
+  '</div>';
+  /* REGISTRO CLÁSICO (accesible desde MÁS → REGISTRO) */
   var wtimePills=TIME_OPTS.map(function(t){return'<button id="wt-'+t.key+'" class="time-pill'+(te.wtime===t.key?" on":"")+'" onclick="setWtime(\''+t.key+'\')">'+I[t.ico]+t.label+'</button>';}).join("");
   var stepPct=te.s?100:0;
-  var rachaHoy=(function(){var c=0;var td=new Date();for(var d=0;d<365;d++){var dd=new Date(td);dd.setDate(dd.getDate()-d);var dow=dd.getDay();var dk=dd.toISOString().slice(0,10);var en=(G.calData||{})[dk];if(en&&(en.w||en.s)){c++;}else if(dow===0||dow===6){/* fin de semana opcional, no rompe racha */}else{break;}}return c;})();
-  rightHtml+='<div class="card"><div class="ct">'+I.check_s+' HOY <span style="font-size:11px;font-weight:400;color:var(--txt2);margin-left:4px">'+dateLabel+'</span></div>'+
-    (rachaHoy>0?'<div class="racha-display"><span class="racha-num">'+rachaHoy+'</span> dias consecutivos.</div>':'')+
-    '<div style="display:flex;flex-direction:column;gap:8px">'+
-    '<div class="today-block'+(te.w?" done-block":"")+'" id="tb-workout">'+
-      '<span class="today-block-icon">'+(te.w?I.done_b:I.workout_b)+'</span>'+
-      '<div class="today-block-info">'+
-        '<div class="today-block-name">Entrenamiento</div>'+
-        '<div class="today-block-sub">Sesión del día</div>'+
-        '<div id="wtime-section" style="display:'+(te.w?"block":"none")+'">'+
-          '<div style="font-size:9px;color:var(--txt2);margin-top:6px;margin-bottom:2px">¿En qué momento del día?</div>'+
-          '<div class="time-pills">'+wtimePills+'</div>'+
-        '</div>'+
-      '</div>'+
-      '<button class="check-btn'+(te.w?" done":"")+'" onclick="toggleWorkout()" style="margin-top:2px">'+(te.w?"✓":"○")+'</button>'+
-    '</div>'+
-    '<div class="today-block'+(te.s?" done-block":"")+'" id="tb-steps">'+
-      '<span class="today-block-icon">'+(te.s?I.done_b:I.steps_b)+'</span>'+
-      '<div class="today-block-info">'+
-        '<div class="today-block-name">Pasos</div>'+
-        '<div id="step-goal-lbl" class="today-block-sub">Meta: '+G.stepsGoal.toLocaleString("es-CO")+' pasos</div>'+
-        '<div class="step-bar-wrap"><div class="step-bar-fill" style="width:'+stepPct+'%"></div></div>'+
-        '<div class="step-goal-row" id="step-edit-row" style="display:none">'+
-          '<input class="step-goal-inp" id="step-goal-inp" type="number" min="1000" max="50000" step="500" placeholder="Pasos meta">'+
-          '<button class="step-save-btn" onclick="saveStepGoal()">Guardar</button>'+
-        '</div>'+
-        '<button class="edit-link" onclick="showStepEdit()">'+I.pencil+' Cambiar meta</button>'+
-      '</div>'+
-      '<button class="check-btn'+(te.s?" done":"")+'" onclick="toggleSteps()" style="margin-top:2px">'+(te.s?"✓":"○")+'</button>'+
-    '</div>'+
-    (function(){
-      var ym=G.today.slice(0,7);
-      var monthDays=Object.keys(G.calData).filter(function(d){return d.startsWith(ym)&&d<=G.today;});
-      var stepDays=monthDays.filter(function(d){return G.calData[d]&&G.calData[d].s;}).length;
-      var total=monthDays.length||1;
-      var pct=Math.round(stepDays/total*100);
-      var col=pct>=60?"var(--green)":"var(--acc)";
-      return'<div class="msteps-lbl" style="color:'+col+'">Pasos este mes: <strong>'+stepDays+' / '+total+' días</strong> ('+pct+'%)</div>';
-    })()+
-    '</div></div>';
 
   /* INGESTA */
-  if(hasEval)rightHtml+='<div class="card"><div class="ct">'+I.food_s+' INGESTA</div><div id="nutri-content">'+buildNutriHtml()+'</div></div>';
+  if(hasEval)rightHtml+='<div class="card" data-mob-tab="mas"><div class="ct">'+I.food_s+' INGESTA</div><div id="nutri-content">'+buildNutriHtml()+'</div></div>';
 
   /* REGISTRO */
-  rightHtml+='<div class="card"><div class="ct">'+I.cal_s+' REGISTRO</div><div id="calendar-inner">'+buildCalendar()+'</div></div>';
+  rightHtml+='<div class="card" data-mob-tab="mas"><div class="ct">'+I.cal_s+' REGISTRO</div><div id="calendar-inner">'+buildCalendar()+'</div></div>';
 
   /* DIARIO */
-  rightHtml+='<div class="card"><div class="ct">'+I.note_s+' DIARIO</div><div id="diario-inner">'+buildDiarioHtml()+'</div></div>';
+  rightHtml+='<div class="card" data-mob-tab="meta"><div class="ct">'+I.note_s+' DIARIO</div><div id="diario-inner">'+buildDiarioHtml()+'</div></div>';
 
   /* LA ROCA */
-  rightHtml+='<div class="card"><div class="ct">'+I.medal_s+' LA ROCA</div><div id="obstaculo-inner">'+buildRocaHtml()+'</div></div>';
+  rightHtml+='<div class="card" data-mob-tab="meta"><div class="ct">'+I.medal_s+' LA ROCA</div><div id="obstaculo-inner">'+buildRocaHtml()+'</div></div>';
 
   /* RANKING */
-  rightHtml+='<div class="card"><div class="ct">'+I.rank_s+' RANKING</div><div id="ranking-inner">'+buildRankingHtml()+'</div></div>';
+  rightHtml+='<div class="card" data-mob-tab="mas"><div class="ct">'+I.rank_s+' RANKING</div><div id="ranking-inner">'+buildRankingHtml()+'</div></div>';
 
   /* LECTURA */
-  rightHtml+='<div class="card"><div class="ct">'+I.book_s+' LECTURA</div><div id="book-inner">'+buildBookHtml()+'</div></div>';
+  rightHtml+='<div class="card" data-mob-tab="meta"><div class="ct">'+I.book_s+' LECTURA</div><div id="book-inner">'+buildBookHtml()+'</div></div>';
 
   /* NOTAS */
-  rightHtml+='<div class="card"><div class="ct">'+I.note_s+' NOTAS</div>'+
+  rightHtml+='<div class="card" data-mob-tab="perfil"><div class="ct">'+I.note_s+' NOTAS</div>'+
     '<div class="notes-list" id="notes-list-el">'+buildNotesHtml()+'</div>'+
     '<div class="note-send-row">'+
       '<textarea class="note-inp" id="note-inp-el" placeholder="Escríbele algo a tu coach..." rows="2"></textarea>'+
@@ -1300,13 +1498,21 @@ function renderDashboard(rms){
     memHtml+='<div class="mem-row"><span class="mem-key">Próximo pago</span><span class="mem-val">'+esc(st.nextPayDate)+' <span style="color:'+diffCol+';font-size:10px">('+( diff===0?"Hoy":diff>0?"En "+diff+"d":"Hace "+Math.abs(diff)+"d")+')</span></span></div>';
   }
   if(st.months)memHtml+='<div class="mem-row"><span class="mem-key">Meses entrenando</span><span class="mem-val">'+st.months+'</span></div>';
-  rightHtml+='<div class="card"><div class="ct">'+I.card_s+' ACCESO</div>'+memHtml+'</div>';
+  rightHtml+='<div class="card" data-mob-tab="perfil"><div class="ct">'+I.card_s+' ACCESO</div>'+memHtml+'</div>';
 
   /* MI SIGUIENTE PASO */
   var metaIcon='<svg style="width:14px;height:14px;vertical-align:-2px;margin-right:6px" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><polyline points="12,8 12,12 14,14"/></svg>';
-  leftHtml+='<div class="card"><div class="ct">'+metaIcon+'MI SIGUIENTE PASO</div><div id="meta-inner">'+buildMetaHtml()+'</div></div>';
+  leftHtml+='<div class="card" data-mob-tab="meta"><div class="ct">'+metaIcon+'MI SIGUIENTE PASO</div><div id="meta-inner">'+buildMetaHtml()+'</div></div>';
 
-  document.getElementById("app-body").innerHTML='<div class="two-col"><div class="col">'+leftHtml+'</div><div class="col">'+rightHtml+'</div></div>';
+  document.getElementById("app-body").innerHTML=
+    '<div class="two-col"><div class="col">'+leftHtml+'</div><div class="col">'+rightHtml+'</div></div>'+
+    '<nav class="mob-nav" id="mob-nav">'+
+      '<button class="mob-nav-btn" data-tab="hoy" onclick="setMobTab(\'hoy\')"><span class="mob-nav-ico">🏠</span><span>HOY</span></button>'+
+      '<button class="mob-nav-btn" data-tab="meta" onclick="setMobTab(\'meta\')"><span class="mob-nav-ico">🎯</span><span>META</span></button>'+
+      '<button class="mob-nav-btn" data-tab="perfil" onclick="setMobTab(\'perfil\')"><span class="mob-nav-ico">👤</span><span>PERFIL</span></button>'+
+      '<button class="mob-nav-btn" data-tab="mas" onclick="setMobTab(\'mas\')"><span class="mob-nav-ico">📊</span><span>MÁS</span></button>'+
+    '</nav>';
+  setTimeout(function(){setMobTab(_mobTab);},0);
 }
 
 /* ══ NOTIFICACIONES ══ */
