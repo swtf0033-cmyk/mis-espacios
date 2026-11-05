@@ -1126,12 +1126,34 @@ async function toggleHabit(habitId,level){
   renderDashboard(G.rms||{});
 }
 
+async function legacyToggle(field){
+  if(!G.calData[G.today])G.calData[G.today]={};
+  G.calData[G.today][field]=!G.calData[G.today][field];
+  try{await sbWrite("portal-cal-"+G.sid,G.calData);}catch(e){}
+  renderDashboard(G.rms||{});
+}
+
 function buildHoyHabitsHtml(){
   var hc=G.habitsConfig;
   var today=G.today;
   if(!hc||!hc.anchor){
-    return '<button class="hab-setup-btn" onclick="showHabitsSetup()">⚡ Configurar mis hábitos INAMOVIBLE</button>'+
-      '<div style="font-size:10px;color:var(--txt3);text-align:center;line-height:1.6">Define tu ancla y tus hábitos para<br>que la racha tenga sentido real.</div>';
+    var te=G.calData[G.today]||{};
+    var wDone=!!(te.w);
+    var sDone=!!(te.s);
+    return '<div style="display:flex;gap:10px;margin-bottom:12px">'+
+      '<button onclick="legacyToggle(\'w\')" style="flex:1;padding:16px 8px;border-radius:6px;border:1px solid '+(wDone?'var(--green)':'var(--border2)')+';background:'+(wDone?'rgba(34,197,94,.08)':'var(--surf)')+';cursor:pointer;text-align:center;transition:all .15s">'+
+        '<div style="font-size:24px;line-height:1;margin-bottom:4px">🏋️</div>'+
+        '<div style="font-family:\'Oswald\',sans-serif;font-size:12px;font-weight:700;letter-spacing:.04em;color:'+(wDone?'var(--green)':'var(--txt)')+'">ENTRENÉ</div>'+
+        '<div style="font-size:9px;color:var(--txt3);margin-top:2px">'+(wDone?'✓ Completado':'Toca para marcar')+'</div>'+
+      '</button>'+
+      '<button onclick="legacyToggle(\'s\')" style="flex:1;padding:16px 8px;border-radius:6px;border:1px solid '+(sDone?'var(--green)':'var(--border2)')+';background:'+(sDone?'rgba(34,197,94,.08)':'var(--surf)')+';cursor:pointer;text-align:center;transition:all .15s">'+
+        '<div style="font-size:24px;line-height:1;margin-bottom:4px">🚶</div>'+
+        '<div style="font-family:\'Oswald\',sans-serif;font-size:12px;font-weight:700;letter-spacing:.04em;color:'+(sDone?'var(--green)':'var(--txt)')+'">PASOS</div>'+
+        '<div style="font-size:9px;color:var(--txt3);margin-top:2px">'+(sDone?'✓ Completado':'Toca para marcar')+'</div>'+
+      '</button>'+
+    '</div>'+
+    '<button class="hab-setup-btn" onclick="showHabitsSetup()">⚡ Configurar mis hábitos INAMOVIBLE</button>'+
+    '<div style="font-size:10px;color:var(--txt3);text-align:center;line-height:1.6">Define tu ancla y tus hábitos para<br>que la racha tenga sentido real.</div>';
   }
   var html='';
   /* ANCLA */
@@ -1255,8 +1277,8 @@ function renderDashboard(rms){
       '<div class="hoy-sum-item'+(isHabitDone(G.today,hcNow.anchor.id)?' done':'')+'"><div class="hoy-sum-ico">'+(isHabitDone(G.today,hcNow.anchor.id)?"✓":"○")+'</div><div class="hoy-sum-lbl">Ancla</div></div>'+
       '<div class="hoy-sum-item'+(doneTodayCount>=totalHabits&&totalHabits>0?' done':'')+'"><div class="hoy-sum-ico">'+(totalHabits>0?doneTodayCount+'/'+totalHabits:'—')+'</div><div class="hoy-sum-lbl">Hábitos</div></div>'
       :
-      '<div class="hoy-sum-item'+(te0.w?" done":"")+'"><div class="hoy-sum-ico">'+(te0.w?"✓":"○")+'</div><div class="hoy-sum-lbl">Entreno</div></div>'+
-      '<div class="hoy-sum-item'+(te0.s?" done":"")+'"><div class="hoy-sum-ico">'+(te0.s?"✓":"○")+'</div><div class="hoy-sum-lbl">Pasos</div></div>'
+      '<div class="hoy-sum-item'+(te0.w?" done":"")+('" onclick="legacyToggle(\'w\')" style="cursor:pointer"')+'><div class="hoy-sum-ico">'+(te0.w?"✓":"○")+'</div><div class="hoy-sum-lbl">Entreno</div></div>'+
+      '<div class="hoy-sum-item'+(te0.s?" done":"")+('" onclick="legacyToggle(\'s\')" style="cursor:pointer"')+'><div class="hoy-sum-ico">'+(te0.s?"✓":"○")+'</div><div class="hoy-sum-lbl">Pasos</div></div>'
     )+
     (rachaD>0?'<div class="hoy-sum-item done"><div class="hoy-sum-racha">'+rachaD+'</div><div class="hoy-sum-lbl">Racha</div></div>':'')+
     '</div>'+hoyPreview+'</div>';
