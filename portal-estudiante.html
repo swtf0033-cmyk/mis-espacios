@@ -299,6 +299,41 @@ body{font-family:'Inter',system-ui,sans-serif;background:var(--bg);color:var(--t
   [data-mob-tab]{display:none}
   [data-mob-tab].mob-active{display:block}
 }
+/* RETOS */
+.reto-card{background:var(--surf);border:1px solid var(--border2);border-radius:6px;padding:14px;margin-bottom:10px;position:relative}
+.reto-card.reto-active{border-color:var(--acc);border-left:3px solid var(--acc)}
+.reto-card.reto-won{border-color:var(--green);border-left:3px solid var(--green)}
+.reto-card.reto-lost{border-color:var(--border2);opacity:.7}
+.reto-vs{display:flex;align-items:center;gap:10px;margin-bottom:10px}
+.reto-player{flex:1;text-align:center}
+.reto-player-name{font-family:'Oswald',sans-serif;font-size:13px;font-weight:700;letter-spacing:.04em}
+.reto-player-streak{font-size:22px;font-weight:700;font-family:'Oswald',sans-serif;color:var(--acc);line-height:1}
+.reto-player-streak.won{color:var(--green)}
+.reto-player-streak.lost{color:var(--danger)}
+.reto-player-lbl{font-size:9px;color:var(--txt2);text-transform:uppercase;letter-spacing:.06em}
+.reto-sep{font-size:11px;color:var(--txt3);font-family:'Oswald',sans-serif;font-weight:700;letter-spacing:.1em}
+.reto-meta{font-size:9px;color:var(--txt3);text-align:center;margin-bottom:8px}
+.reto-status-badge{display:inline-block;padding:3px 8px;border-radius:2px;font-size:9px;font-family:'Oswald',sans-serif;font-weight:700;letter-spacing:.08em;text-transform:uppercase}
+.reto-status-badge.active{background:var(--acc-d);color:var(--acc)}
+.reto-status-badge.won{background:var(--green-d);color:var(--green)}
+.reto-status-badge.lost{background:rgba(100,100,100,.1);color:var(--txt3)}
+.reto-status-badge.pending{background:var(--warn-d);color:var(--warn)}
+.reto-actions{display:flex;gap:7px;margin-top:10px}
+.reto-btn{flex:1;padding:8px;border-radius:3px;font-size:10px;font-family:'Oswald',sans-serif;font-weight:700;letter-spacing:.08em;text-transform:uppercase;cursor:pointer;border:none;transition:opacity .15s}
+.reto-btn-primary{background:var(--acc);color:#fff}
+.reto-btn-secondary{background:var(--surf);border:1px solid var(--border2);color:var(--txt2)}
+.reto-code-box{background:var(--bg);border:1px solid var(--border2);border-radius:4px;padding:12px;text-align:center;margin-top:8px}
+.reto-code{font-family:'Oswald',sans-serif;font-size:28px;font-weight:700;letter-spacing:.2em;color:var(--acc)}
+.reto-code-hint{font-size:10px;color:var(--txt2);margin-top:4px}
+.reto-create-btn{background:var(--acc);color:#fff;border:none;border-radius:3px;padding:14px;font-size:12px;font-family:'Oswald',sans-serif;font-weight:700;letter-spacing:.08em;text-transform:uppercase;cursor:pointer;width:100%;margin-bottom:10px;transition:opacity .15s}
+.reto-join-row{display:flex;gap:7px}
+.reto-join-inp{flex:1;background:var(--surf);border:1px solid var(--border2);border-radius:3px;padding:9px 10px;font-size:13px;font-family:'Oswald',sans-serif;font-weight:700;letter-spacing:.15em;text-transform:uppercase;color:var(--txt);text-align:center}
+.reto-join-inp::placeholder{font-size:11px;font-weight:400;letter-spacing:.04em;text-transform:none;color:var(--txt3)}
+.reto-join-inp:focus{border-color:var(--acc);outline:none}
+.reto-join-btn{background:var(--surf);border:1px solid var(--border2);color:var(--txt2);border-radius:3px;padding:9px 14px;font-size:11px;font-family:'Oswald',sans-serif;font-weight:700;letter-spacing:.06em;text-transform:uppercase;cursor:pointer;white-space:nowrap}
+.reto-win-banner{background:var(--green-d);border:1px solid var(--green);border-radius:4px;padding:12px;margin-bottom:12px;text-align:center}
+.reto-win-banner-ttl{font-family:'Oswald',sans-serif;font-size:14px;font-weight:700;color:var(--green);letter-spacing:.06em}
+.reto-win-banner-sub{font-size:10px;color:var(--txt2);margin-top:3px}
 /* HABITS */
 .hab-section-lbl{font-size:9px;font-weight:700;font-family:'Oswald',sans-serif;letter-spacing:.12em;text-transform:uppercase;margin-bottom:8px;display:flex;align-items:center;gap:6px}
 .hab-card{display:flex;align-items:center;gap:12px;padding:12px;border-radius:4px;border:1px solid var(--border);background:var(--surf);margin-bottom:8px;cursor:pointer;-webkit-tap-highlight-color:transparent;transition:border-color .15s,background .15s;user-select:none}
@@ -743,7 +778,7 @@ async function doRegister(){
 
 function doLogout(){
   try{localStorage.removeItem("portal_auth");}catch(e){}
-  Object.assign(G,{sid:null,calData:{},mealCount:5,stepsGoal:8000,nutriOk:false,st:{},nutrition:{},plan:null,evals:[],att:[],shownQuotes:[],notes:[],badges:{},ranking:[],book:null,diario:[],obstaculo:[],fotos:[],meta:null,habitsConfig:null,rms:{}});
+  Object.assign(G,{sid:null,calData:{},mealCount:5,stepsGoal:8000,nutriOk:false,st:{},nutrition:{},plan:null,evals:[],att:[],shownQuotes:[],notes:[],badges:{},ranking:[],book:null,diario:[],obstaculo:[],fotos:[],meta:null,habitsConfig:null,rms:{},battleIds:[],battleData:{},handle:null});
   document.getElementById("login").style.display="flex";
   document.getElementById("app").style.display="none";
   document.getElementById("inp-pass").value="";
@@ -777,7 +812,9 @@ async function loadDashboard(sid){
       fetchSbKey("portal-obstaculo-"+sid),
       fetchSbKey("portal-fotos-"+sid),
       fetchSbKey("portal-meta-"+sid),
-      fetchSbKey("portal-habits-"+sid)
+      fetchSbKey("portal-habits-"+sid),
+      fetchSbKey("portal-battles-"+sid),
+      fetchSbKey("portal-handle-"+sid)
     ]);
     var students=res[0]||[],rms=res[1]||{};
     G.plan=res[2];G.evals=res[3]||[];G.att=res[4]||[];
@@ -795,6 +832,16 @@ async function loadDashboard(sid){
     G.fotos=res[17]||[];
     G.meta=res[18]||null;
     G.habitsConfig=res[19]||null;
+    G.battleIds=res[20]||[];
+    G.handle=res[21]||null;
+    // Load individual battle data
+    if(G.battleIds.length){
+      var battleResults=await Promise.all(G.battleIds.map(function(bid){return fetchSbKey("battle-"+bid);}));
+      G.battleData={};
+      G.battleIds.forEach(function(bid,i){if(battleResults[i])G.battleData[bid]=battleResults[i];});
+    }else{G.battleData={};}
+    // Check for battle wins
+    checkBattleWins();
     // Try by direct sid, or by portalSid reference
     G.st=students.find(function(s){return s.id===sid||s.portalSid===sid;})||{};
     // If still no name, check portal-users for coachStudentId link or own data
@@ -820,6 +867,7 @@ async function loadDashboard(sid){
     G.rms=rms;
     renderDashboard(rms);
     requestNotifPermission();
+    scheduleDailyReminder();
     setTimeout(function(){checkNotifs(G.st,G.evals&&G.evals[0],G.calData).catch(function(){});},800);
     setTimeout(function(){setupMetaNotifications().catch(function(){});},1200);
   }catch(e){
@@ -1121,7 +1169,7 @@ async function toggleHabit(habitId,level){
   var e=G.calData[G.today];
   if(!e.h)e.h={};
   e.h[habitId]=!e.h[habitId];
-  if(level==='anchor'){e.w=e.h[habitId];}
+  if(level==='anchor'){e.w=e.h[habitId];await updateBattleLogs(G.today,!!e.w);}
   try{await sbWrite("portal-cal-"+G.sid,G.calData);}catch(err){}
   renderDashboard(G.rms||{});
 }
@@ -1129,6 +1177,7 @@ async function toggleHabit(habitId,level){
 async function legacyToggle(field){
   if(!G.calData[G.today])G.calData[G.today]={};
   G.calData[G.today][field]=!G.calData[G.today][field];
+  if(field==='w')await updateBattleLogs(G.today,!!G.calData[G.today].w);
   try{await sbWrite("portal-cal-"+G.sid,G.calData);}catch(e){}
   renderDashboard(G.rms||{});
 }
@@ -1246,6 +1295,258 @@ async function saveHabitsConfig(){
 
 function closeHabitsSetup(){var el=document.getElementById('hcfg-ov');if(el)el.remove();}
 
+/* ══ RETOS SYSTEM ══ */
+function genRetoId(){return Math.random().toString(36).slice(2,8).toUpperCase();}
+
+function getYesterday(){var d=new Date(G.today+'T12:00');d.setDate(d.getDate()-1);return d.toISOString().slice(0,10);}
+
+function getBattleStreak(bd,sid){
+  if(!bd||!bd.log||bd.status==='pending')return 0;
+  var c=0;var d=new Date(G.today+'T12:00');
+  for(var i=0;i<365;i++){
+    var dk=new Date(d);dk.setDate(d.getDate()-i);var key=dk.toISOString().slice(0,10);
+    if(key<(bd.startDate||''))break;
+    var entry=bd.log[key];
+    if(entry&&entry[sid])c++;else break;
+  }
+  return c;
+}
+
+function checkBattleWins(){
+  if(!G.battleIds||!G.battleIds.length)return;
+  var yest=getYesterday();
+  G.battleIds.forEach(function(bid){
+    var bd=G.battleData[bid];
+    if(!bd||bd.status!=='active')return;
+    var sids=Object.keys(bd.players||{});
+    if(sids.length<2)return;
+    var myS=bd.log&&bd.log[yest]&&bd.log[yest][G.sid];
+    var oppSid=sids.find(function(s){return s!==G.sid;});
+    var oppS=bd.log&&bd.log[yest]&&bd.log[yest][oppSid];
+    if(myS&&!oppS){bd.status='finished';bd.winner=G.sid;bd.endDate=yest;sbWrite("battle-"+bid,bd);}
+    else if(!myS&&oppS){bd.status='finished';bd.winner=oppSid;bd.endDate=yest;sbWrite("battle-"+bid,bd);}
+    else if(!myS&&!oppS&&yest>=(bd.startDate||'')){bd.status='finished';bd.winner=null;bd.endDate=yest;sbWrite("battle-"+bid,bd);}
+  });
+}
+
+async function updateBattleLogs(date,done){
+  if(!G.battleIds||!G.battleIds.length)return;
+  for(var i=0;i<G.battleIds.length;i++){
+    var bid=G.battleIds[i];var bd=G.battleData[bid];
+    if(!bd||bd.status!=='active')continue;
+    if(!bd.log)bd.log={};
+    if(!bd.log[date])bd.log[date]={};
+    bd.log[date][G.sid]=done;
+    G.battleData[bid]=bd;
+    await sbWrite("battle-"+bid,bd);
+  }
+}
+
+async function createReto(){
+  if(!G.handle){showHandleModal(createReto);return;}
+  var bid=genRetoId();
+  var bd={id:bid,type:'duelo',players:{},startDate:null,status:'pending',winner:null,endDate:null,log:{},revancha:null};
+  bd.players[G.sid]={handle:G.handle,joined:G.today};
+  G.battleIds.push(bid);G.battleData[bid]=bd;
+  await sbWrite("battle-"+bid,bd);
+  await sbWrite("portal-battles-"+G.sid,G.battleIds);
+  renderDashboard(G.rms||{});
+  setMobTab('retos');
+}
+
+async function joinReto(){
+  var inp=document.getElementById('reto-join-inp');
+  var code=(inp&&inp.value||'').trim().toUpperCase().slice(0,6);
+  if(!code||code.length<4){if(inp)inp.style.borderColor='var(--danger)';return;}
+  if(!G.handle){showHandleModal(function(){joinRetoByCode(code);});return;}
+  joinRetoByCode(code);
+}
+
+async function joinRetoByCode(code){
+  var bd=await fetchSbKey("battle-"+code);
+  if(!bd){showRetoMsg('Código no encontrado. Revísalo.');return;}
+  if(bd.status!=='pending'){showRetoMsg('Este reto ya comenzó o terminó.');return;}
+  if(bd.players[G.sid]){showRetoMsg('Ya estás en este reto.');return;}
+  if(Object.keys(bd.players).length>=2){showRetoMsg('Este reto ya tiene dos jugadores.');return;}
+  bd.players[G.sid]={handle:G.handle,joined:G.today};
+  bd.status='active';bd.startDate=G.today;
+  G.battleIds.push(code);G.battleData[code]=bd;
+  await sbWrite("battle-"+code,bd);
+  await sbWrite("portal-battles-"+G.sid,G.battleIds);
+  renderDashboard(G.rms||{});
+  setMobTab('retos');
+}
+
+async function offerRevancha(bid){
+  var bd=G.battleData[bid];if(!bd||bd.revancha)return;
+  var newId=genRetoId();
+  bd.revancha={offeredBy:G.sid,newBattleId:newId,status:'pending'};
+  var sids=Object.keys(bd.players||{});
+  var oppSid=sids.find(function(s){return s!==G.sid;});
+  var newBd={id:newId,type:'duelo',players:{},startDate:null,status:'pending',winner:null,endDate:null,log:{},revancha:null};
+  newBd.players[G.sid]={handle:G.handle||G.sid,joined:G.today};
+  G.battleIds.push(newId);G.battleData[newId]=newBd;
+  G.battleData[bid]=bd;
+  await sbWrite("battle-"+bid,bd);
+  await sbWrite("battle-"+newId,newBd);
+  await sbWrite("portal-battles-"+G.sid,G.battleIds);
+  showRetoMsg('Revancha creada. Código: '+newId+'\nCompártelo con '+esc((bd.players[oppSid]||{}).handle||'tu rival')+'.');
+  renderDashboard(G.rms||{});
+}
+
+function showRetoMsg(msg){
+  var d=document.createElement('div');
+  d.style.cssText='position:fixed;top:70px;left:50%;transform:translateX(-50%);background:var(--card);border:1px solid var(--border2);border-radius:4px;padding:12px 18px;font-size:12px;z-index:500;max-width:300px;text-align:center;white-space:pre-line;box-shadow:0 4px 20px rgba(0,0,0,.5)';
+  d.textContent=msg;document.body.appendChild(d);
+  setTimeout(function(){d.remove();},4000);
+}
+
+function showHandleModal(cb){
+  var ov=document.createElement('div');
+  ov.style.cssText='position:fixed;inset:0;background:rgba(0,0,0,.85);z-index:400;display:flex;align-items:flex-end;justify-content:center';
+  ov.innerHTML='<div style="background:var(--card);border-radius:12px 12px 0 0;padding:24px 20px;width:100%;max-width:520px">'+
+    '<div style="font-family:\'Oswald\',sans-serif;font-size:18px;font-weight:700;letter-spacing:.06em;margin-bottom:6px">¿Cómo te llaman?</div>'+
+    '<div style="font-size:11px;color:var(--txt2);margin-bottom:16px">Tu rival lo verá en el reto. Puede ser tu nombre, apodo o @.</div>'+
+    '<input id="handle-inp" style="width:100%;background:var(--surf);border:1px solid var(--border2);border-radius:3px;padding:11px 14px;font-size:16px;font-family:\'Oswald\',sans-serif;font-weight:700;letter-spacing:.08em;color:var(--txt);margin-bottom:12px" placeholder="Ej: Sebas, @ciro, el_crack" value="'+(G.handle||G.st.name||'')+'">'+
+    '<button onclick="saveHandleFromModal()" style="background:var(--acc);color:#fff;border:none;border-radius:3px;padding:13px;font-size:12px;font-family:\'Oswald\',sans-serif;font-weight:700;letter-spacing:.08em;text-transform:uppercase;cursor:pointer;width:100%;margin-bottom:8px">Guardar y continuar</button>'+
+    '<button onclick="this.closest(\'[data-hmo]\').remove()" style="background:none;border:none;color:var(--txt3);font-size:11px;cursor:pointer;width:100%;padding:4px">Cancelar</button>'+
+  '</div>';
+  ov.setAttribute('data-hmo','1');
+  ov.querySelector('[data-hmo]');
+  // close on overlay click
+  ov.addEventListener('click',function(e){if(e.target===ov)ov.remove();});
+  document.body.appendChild(ov);
+  window._handleCb=cb;
+}
+
+async function saveHandleFromModal(){
+  var inp=document.getElementById('handle-inp');
+  var h=(inp&&inp.value||'').trim().slice(0,30);
+  if(!h)return;
+  G.handle=h;
+  await sbWrite("portal-handle-"+G.sid,h);
+  document.querySelectorAll('[data-hmo]').forEach(function(el){el.remove();});
+  if(window._handleCb){window._handleCb();window._handleCb=null;}
+}
+
+function buildRetosHtml(){
+  var html='';
+  /* Win banners */
+  var newWins=G.battleIds.filter(function(bid){var bd=G.battleData[bid];return bd&&bd.status==='finished'&&bd.winner===G.sid&&!bd._seenWin;});
+  newWins.forEach(function(bid){
+    var bd=G.battleData[bid];
+    var sids=Object.keys(bd.players||{});
+    var oppSid=sids.find(function(s){return s!==G.sid;})||'';
+    var oppH=esc((bd.players[oppSid]||{}).handle||'Tu rival');
+    html+='<div class="reto-win-banner">'+
+      '<div class="reto-win-banner-ttl">RETO TERMINADO</div>'+
+      '<div class="reto-win-banner-sub">'+oppH+' no pudo completar. Ganaste.</div>'+
+      '<div class="reto-win-banner-sub" style="margin-top:4px;color:var(--txt3)">Ahora anímalo a que siga. No lo dejes caer.</div>'+
+      (!bd.revancha?'<button onclick="offerRevancha(\''+bid+'\')" class="reto-btn reto-btn-primary" style="margin-top:8px;width:100%;border-radius:3px">Ofrecer revancha</button>':'')+
+    '</div>';
+  });
+  /* Active retos */
+  var active=G.battleIds.filter(function(bid){var bd=G.battleData[bid];return bd&&bd.status==='active';});
+  if(active.length){
+    html+='<div style="font-size:9px;font-weight:700;font-family:\'Oswald\',sans-serif;letter-spacing:.12em;text-transform:uppercase;color:var(--txt2);margin-bottom:8px">EN CURSO</div>';
+    active.forEach(function(bid){
+      var bd=G.battleData[bid];
+      var sids=Object.keys(bd.players||{});
+      var oppSid=sids.find(function(s){return s!==G.sid;})||sids[0]||'';
+      var myH=esc(G.handle||'Tú');
+      var oppH=esc((bd.players[oppSid]||{}).handle||'Rival');
+      var myStr=getBattleStreak(bd,G.sid);
+      var oppStr=getBattleStreak(bd,oppSid);
+      var days=bd.startDate?Math.floor((new Date(G.today)-new Date(bd.startDate))/86400000)+1:0;
+      html+='<div class="reto-card reto-active">'+
+        '<div class="reto-vs">'+
+          '<div class="reto-player"><div class="reto-player-name">'+myH+'</div><div class="reto-player-streak">'+myStr+'</div><div class="reto-player-lbl">días</div></div>'+
+          '<div class="reto-sep">VS</div>'+
+          '<div class="reto-player"><div class="reto-player-name">'+oppH+'</div><div class="reto-player-streak">'+oppStr+'</div><div class="reto-player-lbl">días</div></div>'+
+        '</div>'+
+        '<div class="reto-meta">Duelo · Día '+days+'</div>'+
+        '<div style="text-align:center"><span class="reto-status-badge active">EN CURSO</span></div>'+
+      '</div>';
+    });
+  }
+  /* Pending retos (waiting for opponent) */
+  var pending=G.battleIds.filter(function(bid){var bd=G.battleData[bid];return bd&&bd.status==='pending';});
+  if(pending.length){
+    html+='<div style="font-size:9px;font-weight:700;font-family:\'Oswald\',sans-serif;letter-spacing:.12em;text-transform:uppercase;color:var(--txt2);margin:12px 0 8px">ESPERANDO RIVAL</div>';
+    pending.forEach(function(bid){
+      html+='<div class="reto-card">'+
+        '<div style="text-align:center;margin-bottom:8px"><span class="reto-status-badge pending">PENDIENTE</span></div>'+
+        '<div class="reto-code-box"><div class="reto-code">'+bid+'</div><div class="reto-code-hint">Comparte este código con tu rival</div></div>'+
+      '</div>';
+    });
+  }
+  /* Finished retos */
+  var finished=G.battleIds.filter(function(bid){var bd=G.battleData[bid];return bd&&bd.status==='finished';});
+  if(finished.length){
+    html+='<div style="font-size:9px;font-weight:700;font-family:\'Oswald\',sans-serif;letter-spacing:.12em;text-transform:uppercase;color:var(--txt2);margin:12px 0 8px">HISTORIAL</div>';
+    finished.slice(-5).reverse().forEach(function(bid){
+      var bd=G.battleData[bid];
+      var sids=Object.keys(bd.players||{});
+      var oppSid=sids.find(function(s){return s!==G.sid;})||sids[0]||'';
+      var myH=esc(G.handle||'Tú');
+      var oppH=esc((bd.players[oppSid]||{}).handle||'Rival');
+      var won=bd.winner===G.sid;
+      var draw=!bd.winner;
+      var myStr=getBattleStreak(bd,G.sid);
+      var oppStr=getBattleStreak(bd,oppSid);
+      html+='<div class="reto-card '+(won?'reto-won':'reto-lost')+'">'+
+        '<div class="reto-vs">'+
+          '<div class="reto-player"><div class="reto-player-name">'+myH+'</div><div class="reto-player-streak '+(won?'won':draw?'':'lost')+'">'+myStr+'</div><div class="reto-player-lbl">días</div></div>'+
+          '<div class="reto-sep">VS</div>'+
+          '<div class="reto-player"><div class="reto-player-name">'+oppH+'</div><div class="reto-player-streak '+((!won&&!draw)?'won':draw?'':'lost')+'">'+oppStr+'</div><div class="reto-player-lbl">días</div></div>'+
+        '</div>'+
+        '<div style="text-align:center"><span class="reto-status-badge '+(won?'won':'lost')+'">'+(draw?'EMPATE':won?'GANASTE':'PERDISTE')+'</span></div>'+
+        (won&&!bd.revancha?'<div class="reto-actions"><button class="reto-btn reto-btn-secondary" onclick="offerRevancha(\''+bid+'\')">Ofrecer revancha</button></div>':'')+
+      '</div>';
+    });
+  }
+  /* Create / Join */
+  html+='<div style="margin-top:16px">'+
+    '<button class="reto-create-btn" onclick="createReto()">⚔ Crear nuevo reto</button>'+
+    '<div class="reto-join-row">'+
+      '<input class="reto-join-inp" id="reto-join-inp" placeholder="Código del reto" maxlength="6">'+
+      '<button class="reto-join-btn" onclick="joinReto()">Unirse</button>'+
+    '</div>'+
+  '</div>';
+  return html||'<div style="font-size:12px;color:var(--txt3);text-align:center;padding:20px 0">Aún no tienes retos.</div>';
+}
+
+function saveReminderTime(){
+  var inp=document.getElementById('notif-time-inp');
+  var t=(inp&&inp.value)||'20:00';
+  try{localStorage.setItem('notif_reminder_time',t);}catch(e){}
+  scheduleDailyReminder();
+  showRetoMsg('Recordatorio programado para las '+t+' cada día.');
+}
+
+/* ══ NOTIFICACIÓN DIARIA ══ */
+function scheduleDailyReminder(){
+  try{
+    var t=localStorage.getItem('notif_reminder_time')||'20:00';
+    var parts=t.split(':');var h=parseInt(parts[0]),m=parseInt(parts[1]);
+    var now=new Date();var fire=new Date();
+    fire.setHours(h,m,0,0);
+    if(fire<=now)fire.setDate(fire.getDate()+1);
+    var ms=fire-now;
+    clearTimeout(window._reminderTimer);
+    window._reminderTimer=setTimeout(function(){
+      var hc=G.habitsConfig;
+      var anchorName=hc&&hc.anchor?hc.anchor.name:'tu ancla';
+      var e=G.calData&&G.calData[G.today]||{};
+      var anchorDone=hc&&hc.anchor?!!(e.h&&e.h[hc.anchor.id]):(!!e.w);
+      if(!anchorDone&&Notification&&Notification.permission==='granted'){
+        new Notification('INAMOVIBLE',{body:'¿Ya completaste '+anchorName+' hoy? La racha no espera.',icon:'icon.png',badge:'icon.png'});
+      }
+      scheduleDailyReminder();
+    },ms);
+  }catch(err){}
+}
+
 var _mobTab='hoy';
 try{_mobTab=localStorage.getItem('mob_tab')||'hoy';}catch(e){}
 function setMobTab(tab){
@@ -1322,6 +1623,15 @@ function renderDashboard(rms){
         '<button class="prof-cancel-btn" onclick="togglePerfilEdit()">Cancelar</button>'+
         '<button class="prof-save-btn" onclick="savePerfil()">Guardar</button>'+
       '</div>'+
+    '</div>'+
+    '<div style="margin-top:12px;padding-top:12px;border-top:1px solid var(--border)">'+
+      '<div style="font-size:9px;font-weight:700;font-family:\'Oswald\',sans-serif;letter-spacing:.12em;color:var(--txt2);text-transform:uppercase;margin-bottom:8px">Recordatorio diario</div>'+
+      '<div style="display:flex;align-items:center;gap:10px">'+
+        '<input type="time" id="notif-time-inp" value="'+(function(){try{return localStorage.getItem("notif_reminder_time")||"20:00";}catch(e){return"20:00";}}())+'" style="background:var(--surf);border:1px solid var(--border2);border-radius:3px;padding:7px 10px;font-size:13px;color:var(--txt);font-family:\'Inter\',sans-serif;cursor:pointer">'+
+        '<button onclick="saveReminderTime()" style="background:var(--surf);border:1px solid var(--border2);color:var(--txt2);border-radius:3px;padding:7px 12px;font-size:10px;font-family:\'Oswald\',sans-serif;font-weight:700;letter-spacing:.06em;text-transform:uppercase;cursor:pointer">Guardar</button>'+
+      '</div>'+
+      '<div style="font-size:9px;color:var(--txt3);margin-top:5px">Te avisamos si no has completado tu ancla a esta hora</div>'+
+      (G.handle?'<div style="font-size:10px;color:var(--txt2);margin-top:8px">Nombre en retos: <b style="color:var(--txt)">'+esc(G.handle)+'</b> <span onclick="showHandleModal(null)" style="color:var(--acc);cursor:pointer;font-size:9px">cambiar</span></div>':'<div style="font-size:10px;color:var(--txt2);margin-top:8px"><span onclick="showHandleModal(null)" style="color:var(--acc);cursor:pointer">Configura tu nombre para retos</span></div>')+
     '</div>'+
   '</div>';
 
@@ -1479,6 +1789,9 @@ function renderDashboard(rms){
   var wtimePills=TIME_OPTS.map(function(t){return'<button id="wt-'+t.key+'" class="time-pill'+(te.wtime===t.key?" on":"")+'" onclick="setWtime(\''+t.key+'\')">'+I[t.ico]+t.label+'</button>';}).join("");
   var stepPct=te.s?100:0;
 
+  /* RETOS */
+  rightHtml+='<div class="card" data-mob-tab="retos"><div class="ct">⚔ RETOS</div>'+buildRetosHtml()+'</div>';
+
   /* INGESTA */
   if(hasEval)rightHtml+='<div class="card" data-mob-tab="mas"><div class="ct">'+I.food_s+' INGESTA</div><div id="nutri-content">'+buildNutriHtml()+'</div></div>';
 
@@ -1530,6 +1843,7 @@ function renderDashboard(rms){
     '<div class="two-col"><div class="col">'+leftHtml+'</div><div class="col">'+rightHtml+'</div></div>'+
     '<nav class="mob-nav" id="mob-nav">'+
       '<button class="mob-nav-btn" data-tab="hoy" onclick="setMobTab(\'hoy\')"><span class="mob-nav-ico">🏠</span><span>HOY</span></button>'+
+      '<button class="mob-nav-btn" data-tab="retos" onclick="setMobTab(\'retos\')"><span class="mob-nav-ico">⚔</span><span>RETOS</span></button>'+
       '<button class="mob-nav-btn" data-tab="meta" onclick="setMobTab(\'meta\')"><span class="mob-nav-ico">🎯</span><span>META</span></button>'+
       '<button class="mob-nav-btn" data-tab="perfil" onclick="setMobTab(\'perfil\')"><span class="mob-nav-ico">👤</span><span>PERFIL</span></button>'+
       '<button class="mob-nav-btn" data-tab="mas" onclick="setMobTab(\'mas\')"><span class="mob-nav-ico">📊</span><span>MÁS</span></button>'+
